@@ -1,0 +1,2162 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPC: Medicina interna</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Fuentes adicionales para el logo */
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;900&display=swap');
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        /* Estilo para ocultar la barra de scroll en el sidebar pero permitir scroll */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        /* --- ESTILOS DEL LOGO --- */
+        :root {
+            --logo-blue: #004c8c;
+            --logo-green: #70b93d;
+        }
+
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1;
+        }
+
+        /* Clases base del logo */
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: var(--logo-blue);
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); 
+            background: linear-gradient(180deg, #005a9c 0%, #003d73 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.3));
+        }
+
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 500;
+            color: var(--logo-green);
+            margin-top: -0.2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.3));
+            position: relative;
+        }
+        
+        .logo-Lite sup {
+            font-size: 0.5em;
+            top: -0.5em;
+        }
+
+        /* Tamaños para el Logo Grande (Inicio) */
+        .welcome-logo .logo-enarm { font-size: 2.5rem; }
+        .welcome-logo .logo-Lite { font-size: 1.8rem; }
+
+        /* Tamaños para el Logo Interno (En módulos) */
+        .internal-logo .logo-enarm { font-size: 1.2rem; }
+        .internal-logo .logo-Lite { font-size: 0.9rem; }
+        
+        @media (min-width: 768px) {
+            .internal-logo .logo-enarm { font-size: 1.4rem; }
+            .internal-logo .logo-Lite { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 relative">
+
+    <div id="app-container" class="relative min-h-screen lg:flex">
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-slate-900 text-slate-300 w-80 p-6 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-2xl">
+            <div class="flex-1 overflow-y-auto min-h-0 pr-2 no-scrollbar">
+                <h2 class="text-2xl font-bold text-center text-amber-500 border-b border-slate-700 pb-4 mb-4">Medicina Interna</h2>
+                
+                <div class="mb-4 px-1">
+                    <div class="relative">
+                        <input type="text" id="module-search" placeholder="Buscar tema..." class="w-full bg-slate-800 text-slate-200 border border-slate-600 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:border-amber-500 transition-colors text-sm">
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <ul id="module-list" class="space-y-2"></ul>
+            </div>
+            <div class="pt-4 border-t border-slate-700">
+                <button id="bibliography-button" class="w-full bg-slate-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-all hover:bg-slate-600 active:scale-95 mb-2 flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 16c1.255 0 2.443-.29 3.5-.804V4.804zM14.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 0114.5 16c1.255 0 2.443-.29 3.5-.804v-10A7.968 7.968 0 0014.5 4z" /></svg>
+                    Bibliografía
+                </button>
+                <button id="reset-button" class="w-full bg-red-600/90 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-all hover:bg-red-600 active:scale-95 flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7V9a1 1 0 01-2 0V3a1 1 0 011-1zm12 1a1 1 0 011 1v3.099A5.002 5.002 0 008.113 14.666 1 1 0 016.228 14A7.002 7.002 0 0115.898 7.534V5a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+                    Reiniciar Progreso
+                </button>
+            </div>
+        </aside>
+
+        <main id="main-content" class="flex-1 p-4 sm:p-6 lg:p-8 transition-all duration-300 relative">
+            <button id="home-button" class="hidden fixed top-4 left-4 lg:left-[21rem] bg-white dark:bg-slate-800 p-2 rounded-full shadow-lg z-40 text-slate-600 dark:text-slate-300 transition-all duration-300 ease-in-out">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+            </button>
+            
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 bg-white dark:bg-slate-800 p-2 rounded-full shadow-lg z-40 text-slate-600 dark:text-slate-300 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+
+            <div id="mobile-module-logo" class="hidden md:hidden flex justify-center mb-6">
+                <div class="logo-container bg-white py-2 px-4 rounded-lg border border-slate-200 shadow-sm">
+                    <span class="logo-enarm">ENARM</span>
+                    <span class="logo-Lite">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div id="progress-container" class="hidden w-full bg-slate-200 dark:bg-slate-700 rounded-full mb-8 shadow-inner mt-2 lg:mt-0">
+                <div id="progress-bar" class="bg-amber-500 text-xs font-medium text-white text-center p-1.5 leading-none rounded-full transition-all duration-500" style="width: 0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300">
+                </div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-black bg-opacity-60 z-20"></div>
+
+    </div>
+    
+    <div id="reset-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-8 max-w-sm w-full text-center transform scale-95 transition-transform duration-300">
+            <h3 class="text-xl font-bold text-slate-800 dark:text-slate-200">Confirmar Acción</h3>
+            <p class="text-slate-600 dark:text-slate-400 my-4">¿Estás seguro de que quieres borrar todo tu progreso?</p>
+            <div class="flex justify-center gap-4 mt-6">
+                <button id="cancel-reset" class="py-2 px-6 bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-200 rounded-lg">Cancelar</button>
+                <button id="confirm-reset" class="py-2 px-6 bg-red-600 text-white rounded-lg hover:bg-red-700">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="bibliography-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-8 max-w-3xl w-full text-left transform scale-95 transition-transform duration-300 relative">
+            <button id="close-bibliography-modal" class="absolute top-4 right-4 text-slate-500 hover:text-slate-800 dark:text-slate-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <h3 class="text-2xl font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2 border-b dark:border-slate-700 pb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-500" viewBox="0 0 20 20" fill="currentColor"><path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 16c1.255 0 2.443-.29 3.5-.804V4.804zM14.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 0114.5 16c1.255 0 2.443-.29 3.5-.804v-10A7.968 7.968 0 0014.5 4z" /></svg>
+                Fuentes Bibliográficas
+            </h3>
+            <div id="bibliography-content" class="text-slate-600 dark:text-slate-400 my-4 space-y-3 max-h-[70vh] overflow-y-auto pr-4"></div>
+        </div>
+    </div>
+
+    <div id="summary-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-8 max-w-4xl w-full text-left transform scale-95 transition-transform duration-300 relative">
+            <button id="close-summary-modal" class="absolute top-4 right-4 text-slate-500 hover:text-slate-800 dark:text-slate-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <h3 id="summary-modal-title" class="text-2xl font-bold text-slate-800 dark:text-slate-200 flex items-center gap-3 border-b dark:border-slate-700 pb-4"></h3>
+            <div id="summary-content" class="text-slate-700 dark:text-slate-300 my-4 space-y-4 max-h-[70vh] overflow-y-auto pr-4"></div>
+        </div>
+    </div>
+
+    <button id="dark-mode-toggle" class="fixed bottom-4 right-4 bg-white dark:bg-slate-700 p-3 rounded-full shadow-lg z-50 text-slate-600 dark:text-yellow-300 transition-colors duration-300">
+        <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+        <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+    </button>
+
+    <script>
+        // --- LOGO SNIPPET (Desktop Module & Screens: Absolute Right inside content) ---
+        const desktopInnerLogoHtml = `
+            <div class="hidden md:block md:absolute md:top-8 md:right-8 z-10">
+                <div class="logo-container bg-white py-1 px-3 rounded-lg border border-slate-200 shadow-sm">
+                    <span class="logo-enarm text-xl">ENARM</span>
+                    <span class="logo-Lite text-base">Lite<sup>®</sup></span>
+                </div>
+            </div>
+        `;
+
+        // --- DATA DE LOS MÓDULOS ---
+        const summaryContentHtml = `
+            <div class="space-y-6">
+                <div>
+                    <h4 class="text-lg font-bold text-slate-800 dark:text-slate-200">Fisiología y Control Prenatal</h4>
+                    <p>La <strong>HCG</strong> alcanza su pico en la semana 10. Cambios fisiológicos incluyen anemia dilucional (Hb ~11 g/dl) y aumento del gasto cardíaco. Suplementar con ácido fólico (400 µg) y hierro (>20 sem). Vacuna Tdpa (>20 sem). Gammaglobulina anti-D a las 28 semanas en Rh- no sensibilizadas.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold text-slate-800 dark:text-slate-200">Hemorragias</h4>
+                    <ul class="list-disc pl-5 mt-2 space-y-1">
+                        <li><strong>1er Trimestre:</strong> Ectópico (ampular, β-HCG >1500 sin saco, Tx Metotrexato). Mola (imagen "copos de nieve", β-HCG >100k).</li>
+                        <li><strong>3er Trimestre:</strong> Placenta Previa (sangrado rojo brillante, indoloro, NO tacto). Abruptio (dolor, útero de madera, HTA). Vasa Previa (sufrimiento fetal tras amniorrexis).</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold text-slate-800 dark:text-slate-200">Patología Médica y Parto</h4>
+                    <p><strong>Preeclampsia:</strong> TA ≥ 140/90 + Proteinuria. Severidad: HELLP, síntomas neuro. Tx: Labetalol/Nifedipino y Sulfato de Magnesio.</p>
+                    <p><strong>Parto Pretérmino:</strong> Corticoides (24-34 sem). <strong>Hemorragia Posparto:</strong> Atonía es la causa #1.</p>
+                </div>
+            </div>
+        `;
+        
+        const courseModules = [
+{
+    id: 1,
+    title: "Módulo 1: Intervenciones de enfermería para la prevención, control y manejo de hipercolesterolemia",
+    gpcLink: "https://drive.google.com/file/d/15AUNuW0yz7R1nTdajNwmflRaw4yrPPhr/view?usp=sharing",
+    summary: `
+        <div class="space-y-6 text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed">
+            
+            <div class="bg-indigo-50 dark:bg-indigo-900/20 border-l-4 border-indigo-500 p-5 rounded-r-xl shadow-sm">
+                <h4 class="font-bold text-indigo-800 dark:text-indigo-300 text-lg mb-2 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    El Concepto Fundamental
+                </h4>
+                <p>El ENARM no evalúa la hipercolesterolemia como un hallazgo de laboratorio aislado, sino como el pivote de la <strong class="text-indigo-900 dark:text-indigo-200">prevención primaria cardiovascular</strong>; el objetivo central es detectar oportunamente a adultos jóvenes (Hombres 20-35, Mujeres 20-45) para <u class="decoration-indigo-400 decoration-2 font-medium">estratificar su riesgo mediante la escala SCORE</u> y prevenir el infarto o la muerte súbita.</p>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-5 rounded-xl shadow-sm">
+                <h4 class="font-bold text-slate-800 dark:text-slate-100 text-lg mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">🔄 FLUJO de MANEJO</h4>
+                <p class="mb-4">El flujo de decisión clínica en esta guía se mueve en tres tiempos críticos:</p>
+                
+                <div class="space-y-5">
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 rounded-full flex items-center justify-center font-bold shadow-sm">1</div>
+                        <div>
+                            <strong class="text-slate-800 dark:text-slate-200">El Filtro Inicial (Tamizaje):</strong> Identificar factores de riesgo. Si los laboratorios muestran <strong class="text-rose-600 dark:text-rose-400 font-bold">Colesterol Total > 200 mg/dl o LDL > 130 mg/dl</strong>, el algoritmo se activa. Si están normales, el paciente sale del radar por 5 años.
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 rounded-full flex items-center justify-center font-bold shadow-sm">2</div>
+                        <div>
+                            <strong class="text-slate-800 dark:text-slate-200">La Bifurcación (Riesgo vs. Cifras):</strong> Ante un resultado alterado, no se medica automáticamente. El paso obligatorio es <strong class="underline">aplicar la tabla SCORE (Systematic Coronary Risk Evaluation)</strong>.
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 rounded-full flex items-center justify-center font-bold shadow-sm">3</div>
+                        <div>
+                            <strong class="text-slate-800 dark:text-slate-200">La Decisión de Referencia:</strong> Si el riesgo calculado es <strong class="bg-indigo-100 dark:bg-indigo-900/50 px-1 rounded text-indigo-800 dark:text-indigo-300">≥ 5% a 10 años, o existen criterios de severidad directa (LDL > 190 mg/dl)</strong>, se escala a referencia médica para inicio de estatinas de alta intensidad.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-emerald-50 dark:bg-emerald-900/10 border-t-4 border-emerald-500 p-5 rounded-b-xl shadow-sm">
+                    <h4 class="font-bold text-emerald-800 dark:text-emerald-400 text-lg mb-3">📈 Correlación "High-Yield"</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><strong>Exploración Física:</strong> La presencia de <strong class="text-emerald-700 dark:text-emerald-300 font-bold">arco corneal, xantelasmas o xantomas tendinosos</strong> no son hallazgos estéticos; son manifestación clínica de una hiperlipidemia severa.</li>
+                        <li><strong>El Nexo Clínico:</strong> Estos hallazgos físicos suelen correlacionarse con un <u class="decoration-emerald-400 decoration-2 font-bold">LDL > 190 mg/dl</u>, lo que es un criterio absoluto de tratamiento farmacológico inmediato.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-rose-50 dark:bg-rose-900/10 border-t-4 border-rose-500 p-5 rounded-b-xl shadow-sm">
+                    <h4 class="font-bold text-rose-800 dark:text-rose-400 text-lg mb-3">🚩 "Red Flags" y Trampas ENARM</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><strong>La Trampa de "Todo es Primario":</strong> La guía marca explícitamente el <strong class="font-bold text-rose-600 dark:text-rose-400">hipotiroidismo</strong> como un factor de riesgo asociado; siempre descarta causas secundarias antes de asumir origen familiar.</li>
+                        <li><strong>El "Red Flag" Farmacológico:</strong> Paciente con estatinas que acude por dolor muscular u orina oscura = <u class="decoration-rose-500 decoration-2">Rabdomiólisis</u> (efecto adverso grave a vigilar junto con lesión hepática).</li>
+                        <li><strong>Confusión Dietética:</strong> Esta GPC especifica el uso de <strong class="font-bold">proteína de soya, té verde y esteroles vegetales</strong> como coadyuvantes con evidencia para reducir LDL.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-amber-100 to-yellow-50 dark:from-amber-900/30 dark:to-yellow-900/10 p-5 rounded-xl border border-amber-200 dark:border-amber-800/50 shadow-sm">
+                <h4 class="font-bold text-amber-900 dark:text-amber-400 text-lg mb-3 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-500" viewBox="0 0 20 20" fill="currentColor"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" /></svg>
+                    Las 5 Perlas de Oro (GPC SS-810-17)
+                </h4>
+                <ol class="list-decimal pl-5 space-y-2 font-medium text-slate-800 dark:text-slate-200">
+                    <li><strong class="text-amber-700 dark:text-amber-500">Criterio Absoluto de Estatina:</strong> Paciente con <strong class="underline">LDL > 190 mg/dl</strong> se debe referir para inicio inmediato de estatinas de alta intensidad.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Meta Terapéutica General:</strong> Reducir el Colesterol Total a <strong class="underline">< 200 mg/dl</strong> y el LDL a <strong class="underline">< 100 mg/dl</strong>.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Variables del SCORE:</strong> Se necesita: <strong class="underline">Sexo, Edad, Presión Arterial Sistólica, Colesterol Total, HDL y Tabaquismo</strong>.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Población Objetivo:</strong> El tamizaje intencionado inicia en <strong class="underline">hombres de 20 a 35 años y mujeres de 20 a 45 años</strong> si hay factores de riesgo.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Dieta Específica:</strong> Se recomienda la ingesta de <strong class="underline">crucíferas (brócoli, coliflor, coles de Bruselas)</strong> para reducir trastornos metabólicos.</li>
+                </ol>
+            </div>
+        </div>
+    `,
+    clinicalCase: `
+        <div class="space-y-4 text-slate-700 dark:text-slate-300 text-sm sm:text-base">
+            <div class="flex items-start gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
+                <div class="p-3 bg-pink-50 dark:bg-pink-900/20 rounded-full text-pink-600 dark:text-pink-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-slate-800 dark:text-slate-100">Masculino de <span class="text-pink-600 dark:text-pink-400">45 años</span></p>
+                    <p class="mt-1">Fumador activo, acude a revisión general. <strong class="bg-pink-200 dark:bg-pink-900/40 text-pink-900 dark:text-pink-300 px-1.5 py-0.5 rounded">Antecedente paterno de infarto agudo al miocardio a los 52 años</strong>. Asintomático cardiovascular.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-rose-50 dark:bg-rose-900/10 p-4 rounded-xl border border-rose-100 dark:border-rose-900/30">
+                    <strong class="text-rose-800 dark:text-rose-400 block mb-2 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77-1.333.192 3 1.732 3z" /></svg>
+                        Exploración Física
+                    </strong>
+                    <ul class="space-y-1">
+                        <li><strong>SV:</strong> IMC 31 kg/m² (Obesidad grado I), TA 135/85 mmHg.</li>
+                        <li>Se observan <strong class="text-rose-700 dark:text-rose-400 font-bold">placas amarillentas ligeramente elevadas en los párpados superiores</strong>.</li>
+                        <li><u class="decoration-rose-500 decoration-2">Anillo grisáceo en la periferia del iris de ambos ojos.</u></li>
+                    </ul>
+                </div>
+
+                <div class="bg-blue-50 dark:bg-blue-900/10 p-4 rounded-xl border border-blue-100 dark:border-blue-900/30">
+                    <strong class="text-blue-800 dark:text-blue-400 block mb-2 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                        Laboratorios
+                    </strong>
+                    <ul class="space-y-2 text-sm">
+                        <li><strong>Colesterol Total:</strong> 240 mg/dL</li>
+                        <li><strong>LDL:</strong> <strong class="text-blue-700 dark:text-blue-300 font-bold">165 mg/dL</strong></li>
+                        <li><strong>HDL:</strong> 35 mg/dL, <strong>TG:</strong> 190 mg/dL</li>
+                        <li class="border-t border-blue-200 dark:border-blue-800/50 pt-1">
+                            Glucosa en ayuno 95 mg/dL.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    `,
+    quiz: [
+        { 
+            question: "¿Cuál es la escala clínica recomendada explícitamente por esta guía para estimar el riesgo cardiovascular en este paciente?", 
+            options: ["Framingham", "SCORE", "Globorisk", "ASCVD Risk Estimator"], 
+            answer: 1, 
+            justification: "La guía indica aplicar al usuario la escala SCORE (Systematic Coronary Risk Evaluation) para estimar el riesgo cardiovascular, tomando los parámetros de: sexo, edad, presión arterial sistólica, colesterol total, HDL y tabaquismo.", 
+            source: "Guía de Práctica Clínica SS-810-17: Intervenciones de enfermería para la prevención, control y manejo de hipercolesterolemia. Sección: Detección." 
+        },
+        { 
+            question: "El hallazgo físico observado en la periferia del iris del paciente se denomina:", 
+            options: ["Xantelasma", "Pterigión", "Arco corneal", "Catarata nuclear"], 
+            answer: 2, 
+            justification: "La guía instruye buscar signos de hiperlipidemia, definiendo los depósitos blanquecinos, grises o amarillentos alrededor de la circunferencia de la córnea como arco corneal.", 
+            source: "Guía de Práctica Clínica SS-810-17: Intervenciones de enfermería para la prevención, control y manejo de hipercolesterolemia. Sección: Detección." 
+        },
+        { 
+            question: "Independientemente del cálculo de riesgo, ¿cuál de los siguientes niveles de LDL sería un criterio inmediato para referir e iniciar terapia con estatinas de alta intensidad?", 
+            options: ["> 130 mg/dL", "> 160 mg/dL", "> 190 mg/dL", "> 100 mg/dL"], 
+            answer: 2, 
+            justification: "Se debe referir al usuario a consulta médica para el inicio de terapia con estatinas de alta intensidad cuando se cumpla el criterio de personas con nivel de colesterol de baja densidad (LDL) > 190 mg/dl.", 
+            source: "Guía de Práctica Clínica SS-810-17: Intervenciones de enfermería para la prevención, control y manejo de hipercolesterolemia. Sección: Detección." 
+        },
+        { 
+            question: "Además del ejercicio, ¿qué modificación dietética específica recomienda la guía, incluyendo el consumo de ciertos alimentos funcionales?", 
+            options: ["Dieta cetogénica estricta", "Ingesta de té verde, esteroles vegetales y proteína de soya", "Ayuno intermitente y reducción de gluten", "Suplementación exclusiva con Omega 3"], 
+            answer: 1, 
+            justification: "Se recomienda modificar el estilo de vida con cambios en la dieta, específicamente la ingesta de té verde, esteroles vegetales y proteína de soya, con el objetivo de reducir la cantidad de colesterol total y LDL.", 
+            source: "Guía de Práctica Clínica SS-810-17: Intervenciones de enfermería para la prevención, control y manejo de hipercolesterolemia. Sección: Control." 
+        },
+        { 
+            question: "Si se inicia tratamiento farmacológico con estatinas, ¿cuál es el efecto adverso grave que se debe vigilar según la guía?", 
+            options: ["Tos persistente", "Rabdomiólisis", "Hipoglucemia severa", "Hiperplasia gingival"], 
+            answer: 1, 
+            justification: "Se deben vigilar los posibles efectos adversos originados por el tratamiento con estatinas como: lesiones hepáticas, calambres musculares, rabdomiólisis, sequedad en la piel y erupción cutánea.", 
+            source: "Guía de Práctica Clínica SS-810-17: Intervenciones de enfermería para la prevención, control y manejo de hipercolesterolemia. Sección: Control." 
+        }
+    ]
+},
+{
+    id: 2,
+    title: "Módulo 2: Intervenciones de enfermería para la atención del adulto amputado de extremidad inferior por diabetes mellitus",
+    gpcLink: "https://drive.google.com/file/d/1X8peuH3QoNhjqXGOHmXRWfgVnBPxQe7a/view?usp=sharing",
+    summary: `
+        <div class="space-y-6 text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed">
+            
+            <div class="bg-indigo-50 dark:bg-indigo-900/20 border-l-4 border-indigo-500 p-5 rounded-r-xl shadow-sm">
+                <h4 class="font-bold text-indigo-800 dark:text-indigo-300 text-lg mb-2 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    El Concepto Fundamental
+                </h4>
+                <p>El ENARM busca que comprendas que el abordaje del paciente diabético con riesgo de amputación no inicia en el quirófano, sino que es un <strong class="text-indigo-900 dark:text-indigo-200">continuo preventivo donde el control metabólico estricto, la estadificación anatómica precisa (Wagner) y la optimización nutricional preoperatoria</strong> dictan la sobrevida del tejido y el <u class="decoration-indigo-400 decoration-2 font-medium">éxito de la rehabilitación</u>.</p>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-5 rounded-xl shadow-sm">
+                <h4 class="font-bold text-slate-800 dark:text-slate-100 text-lg mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">🔄 FLUJO de MANEJO</h4>
+                <p class="mb-4">La guía no aborda la amputación como un evento aislado, sino como una falla en la cascada de prevención:</p>
+                
+                <div class="space-y-5">
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 rounded-full flex items-center justify-center font-bold shadow-sm">1</div>
+                        <div>
+                            <strong class="text-slate-800 dark:text-slate-200">Tamizaje y Desarrollo de Úlcera:</strong> El paciente sin lesiones se estratifica clínicamente. Una vez que hay pérdida de continuidad, el manejo exige una <strong class="text-rose-600 dark:text-rose-400 font-bold">estratificación sistemática mediante la clasificación de Wagner y el sistema de Saint Elian</strong>.
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 rounded-full flex items-center justify-center font-bold shadow-sm">2</div>
+                        <div>
+                            <strong class="text-slate-800 dark:text-slate-200">Decisión de Amputación (Perioperatorio):</strong> Si el paciente va a amputación, el enfoque cambia a asegurar que el muñón sobreviva. El algoritmo detiene la intervención hasta <strong class="underline">monitorizar glucemia capilar y evaluar el pronóstico de cicatrización</strong>.
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 rounded-full flex items-center justify-center font-bold shadow-sm">3</div>
+                        <div>
+                            <strong class="text-slate-800 dark:text-slate-200">Postoperatorio y Rehabilitación:</strong> Una vez amputado, el eje del tratamiento gira hacia la <strong class="bg-indigo-100 dark:bg-indigo-900/50 px-1 rounded text-indigo-800 dark:text-indigo-300">protección del muñón y el manejo multidimensional del dolor fantasma</strong>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-emerald-50 dark:bg-emerald-900/10 border-t-4 border-emerald-500 p-5 rounded-b-xl shadow-sm">
+                    <h4 class="font-bold text-emerald-800 dark:text-emerald-400 text-lg mb-3">📈 Correlación "High-Yield"</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><strong>Dato Clínico -> Isquemia:</strong> Ante sospecha de insuficiencia arterial periférica (pulsos disminuidos), el estudio inicial exigido es la medición del <strong class="text-emerald-700 dark:text-emerald-300 font-bold">Índice Tobillo-Brazo (ITB) y la Diferencial de Presiones Segmentarias (DPS)</strong>.</li>
+                        <li><strong>Viabilidad del Muñón:</strong> El estado de desgaste general preoperatorio debe corroborarse con dos laboratorios específicos predictores de cicatrización: <u class="decoration-emerald-400 decoration-2 font-bold">albúmina y recuento de linfocitos</u>.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-rose-50 dark:bg-rose-900/10 border-t-4 border-rose-500 p-5 rounded-b-xl shadow-sm">
+                    <h4 class="font-bold text-rose-800 dark:text-rose-400 text-lg mb-3">🚩 "Red Flags" y Trampas ENARM</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><strong>Clasificación de Wagner (2 vs 3):</strong> Un Wagner 2 llega hasta ligamentos pero <strong class="font-bold text-rose-600 dark:text-rose-400">NUNCA expone hueso</strong>. La presencia de mal olor o absceso profundo salta automáticamente a Wagner 3.</li>
+                        <li><strong>Cuidado de los Pies (El Talco):</strong> <u class="decoration-rose-500 decoration-2 font-bold">No se recomienda el uso de talco</u> porque produce resequedad extrema y riesgo de fisuras. Es una práctica prohibida.</li>
+                        <li><strong>Dolor Fantasma:</strong> Exige derivación a experto y abordaje con <strong class="font-bold">intervenciones no farmacológicas</strong> apoyado con morfina oral, no debe tratarse solo con AINEs.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-amber-100 to-yellow-50 dark:from-amber-900/30 dark:to-yellow-900/10 p-5 rounded-xl border border-amber-200 dark:border-amber-800/50 shadow-sm">
+                <h4 class="font-bold text-amber-900 dark:text-amber-400 text-lg mb-3 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-500" viewBox="0 0 20 20" fill="currentColor"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" /></svg>
+                    Las 5 Perlas de Oro (GPC SS-813-17)
+                </h4>
+                <ol class="list-decimal pl-5 space-y-2 font-medium text-slate-800 dark:text-slate-200">
+                    <li><strong class="text-amber-700 dark:text-amber-500">Meta de Control Prevención:</strong> La meta estricta para reducir riesgo de amputación es mantener una HbA1c <strong class="underline"><7%</strong>.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Seguimiento Clínico:</strong> Anual (sin neuropatía), Semestral (con neuropatía), y <strong class="underline">Trimestral</strong> (neuropatía + enfermedad vascular o deformidad).</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Herramientas de Valoración:</strong> Ante toda lesión, es imperativo utilizar la <strong class="underline">Clasificación de Wagner y el sistema de Saint Elian</strong>.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Farmacología Preventiva:</strong> La administración de <strong class="underline">estatinas</strong> está recomendada para disminuir el riesgo de alteraciones microvasculares.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Cuidado del Muñón:</strong> En el postoperatorio, se deben emplear <strong class="underline">vendajes de compresión gradual</strong> para mantener la integridad frente a la futura prótesis.</li>
+                </ol>
+            </div>
+        </div>
+    `,
+    clinicalCase: `
+        <div class="space-y-4 text-slate-700 dark:text-slate-300 text-sm sm:text-base">
+            <div class="flex items-start gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
+                <div class="p-3 bg-pink-50 dark:bg-pink-900/20 rounded-full text-pink-600 dark:text-pink-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-slate-800 dark:text-slate-100">Paciente masculino de <span class="text-pink-600 dark:text-pink-400">62 años</span></p>
+                    <p class="mt-1">Diabético de 15 años de evolución. Acude por presentar <strong class="bg-pink-200 dark:bg-pink-900/40 text-pink-900 dark:text-pink-300 px-1.5 py-0.5 rounded">lesión en pie derecho de tres semanas de evolución</strong>.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-rose-50 dark:bg-rose-900/10 p-4 rounded-xl border border-rose-100 dark:border-rose-900/30">
+                    <strong class="text-rose-800 dark:text-rose-400 block mb-2 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77-1.333.192 3 1.732 3z" /></svg>
+                        Signos Vitales
+                    </strong>
+                    <ul class="space-y-1">
+                        <li><strong>TA:</strong> 130/80 mmHg, <strong>FC:</strong> 88 lpm.</li>
+                        <li><strong>Temp:</strong> 37.8°C.</li>
+                        <li><strong class="text-rose-700 dark:text-rose-400 font-bold">Glucosa capilar 210 mg/dL</strong>.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-blue-50 dark:bg-blue-900/10 p-4 rounded-xl border border-blue-100 dark:border-blue-900/30">
+                    <strong class="text-blue-800 dark:text-blue-400 block mb-2 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                        Exploración de la Lesión
+                    </strong>
+                    <ul class="space-y-2 text-sm">
+                        <li>Úlcera plantar a nivel de la cabeza del primer metatarsiano.</li>
+                        <li><u class="decoration-blue-400 decoration-2 font-bold">Penetra piel, tejido subcutáneo y ligamentos, presentando secreción purulenta y eritema.</u></li>
+                        <li class="border-t border-blue-200 dark:border-blue-800/50 pt-1">
+                            A la palpación <strong class="text-blue-700 dark:text-blue-300 font-bold">no se expone hueso</strong>. Pulsos pedios disminuidos de forma bilateral.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    `,
+    quiz: [
+        { 
+            question: "¿Cuál es el estudio inicial indicado para detectar de forma oportuna la presencia de insuficiencia arterial periférica en este paciente?", 
+            options: ["Índice Tobillo-Brazo", "Angiografía por tomografía", "Ultrasonido Doppler venoso", "Resonancia magnética"], 
+            answer: 0, 
+            justification: "La evaluación del flujo arterial periférico es el paso inicial clave. La GPC marca textualmente: 'Realizar la medición de Índice Tobillo-Brazo (ITB) y la Diferencial de Presiones Segmentarias (DPS), para detectar oportunamente alguna complicación por insuficiencia arterial'.", 
+            source: "Guía de Práctica Clínica SS-813-17: Intervenciones de enfermería para la atención del adulto amputado de extremidad inferior por diabetes mellitus. Sección: Prevención." 
+        },
+        { 
+            question: "Para prevenir complicaciones severas y la progresión del cuadro actual, ¿cuál es la meta estricta de hemoglobina glucosilada (HbA1c) en este paciente?", 
+            options: ["Menor a 6.0%", "Menor a 6.5%", "Menor a 7.0%", "Menor a 8.0%"], 
+            answer: 2, 
+            justification: "El control metabólico estricto es el pilar para detener el daño micro y macrovascular. La GPC establece: 'Concientizar al paciente sobre un control glucémico adecuado hemoglobina glucosilada <7% para reducir la incidencia de úlceras del pie diabético y el riesgo subsiguiente de amputación'.", 
+            source: "Guía de Práctica Clínica SS-813-17: Intervenciones de enfermería para la atención del adulto amputado de extremidad inferior por diabetes mellitus. Sección: Promoción." 
+        },
+        { 
+            question: "En caso de que el paciente presente progresión isquémica o infecciosa y requiera amputación, ¿qué estudios clínicos perioperatorios permiten predecir el pronóstico de cicatrización del muñón?", 
+            options: ["Fibrinógeno y plaquetas", "Albúmina y recuento de linfocitos", "Proteína C reactiva y VSG", "Dímero D y tiempos de coagulación"], 
+            answer: 1, 
+            justification: "El estado nutricional e inmunológico preoperatorio impacta en la viabilidad de los tejidos. La indicación de la GPC es: 'Valorar los estudios clínicos peri operatorios como: albúmina y recuento de linfocitos, para predecir el proceso de cicatrización'.", 
+            source: "Guía de Práctica Clínica SS-813-17: Intervenciones de enfermería para la atención del adulto amputado de extremidad inferior por diabetes mellitus. Sección: Intervenciones de enfermería." 
+        },
+        { 
+            question: "Con base en los hallazgos de exploración física (lesión que penetra hasta ligamentos, infectada, sin afección ósea), ¿qué grado le corresponde según la clasificación de Wagner?", 
+            options: ["Grado 1", "Grado 2", "Grado 3", "Grado 4"], 
+            answer: 1, 
+            justification: "La estadificación correcta define la urgencia. El grado 2 corresponde a úlceras profundas con penetración en piel, grasa, ligamentos, sin afección al hueso, infectada. Si hubiera absceso profundo o mal olor, saltaría a Grado 3.", 
+            source: "Guía de Práctica Clínica SS-813-17: Intervenciones de enfermería para la atención del adulto amputado de extremidad inferior por diabetes mellitus. Sección: Intervenciones de Enfermería y Cuadros." 
+        },
+        { 
+            question: "Como parte de la educación para el cuidado en el hogar orientada a evitar nuevas lesiones o fisuras en este paciente, ¿qué medida preventiva debe instruirse?", 
+            options: ["Evitar uso de talco", "Deambulación descalzo controlada", "Aseo con isodine diario", "Uso de calcetines de compresión fuerte"], 
+            answer: 0, 
+            justification: "El exceso de sequedad favorece la pérdida de continuidad en la piel. La guía señala explícitamente: 'No se recomienda el uso de talco en los pies ya que produce resequedad en la piel, y tienen el riesgo de generar fisuras y probables úlceras'.", 
+            source: "Guía de Práctica Clínica SS-813-17: Intervenciones de enfermería para la atención del adulto amputado de extremidad inferior por diabetes mellitus. Sección: Intervenciones de Enfermería." 
+        }
+    ]
+},
+{
+    id: 3,
+    title: "Módulo 3: Intervenciones de enfermería a pacientes que requieren cuidados paliativos en el hogar",
+    gpcLink: "https://drive.google.com/file/d/1ncn9xl3TqfdzDYbheM03g-5QVFqtkJtE/view?usp=sharing",
+    summary: `
+        <div class="space-y-6 text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed">
+            
+            <div class="bg-indigo-50 dark:bg-indigo-900/20 border-l-4 border-indigo-500 p-5 rounded-r-xl shadow-sm">
+                <h4 class="font-bold text-indigo-800 dark:text-indigo-300 text-lg mb-2 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    El Concepto Fundamental
+                </h4>
+                <p>El ENARM busca que domines la transición clínica entre el control sintomático y el proceso de muerte, <strong class="text-indigo-900 dark:text-indigo-200">reconociendo tempranamente los últimos días de vida</strong> para evitar medidas fútiles y <u class="decoration-indigo-400 decoration-2 font-medium">priorizar el confort domiciliario integral (paciente-familia)</u> sobre la medicalización hospitalaria innecesaria.</p>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-5 rounded-xl shadow-sm">
+                <h4 class="font-bold text-slate-800 dark:text-slate-100 text-lg mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">🔄 FLUJO de MANEJO</h4>
+                <p class="mb-4">El algoritmo de cuidados paliativos se basa en un plan de atención en el hogar con monitoreo estrecho (evaluando cambios al menos cada 24 horas):</p>
+                
+                <div class="space-y-5">
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 rounded-full flex items-center justify-center font-bold shadow-sm">1</div>
+                        <div>
+                            <strong class="text-slate-800 dark:text-slate-200">Manejo en el Hogar:</strong> El paciente se mantiene en casa para fortalecer vínculos familiares. El control es puramente sintomático y de confort.
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 rounded-full flex items-center justify-center font-bold shadow-sm">2</div>
+                        <div>
+                            <strong class="text-slate-800 dark:text-slate-200">El Punto Crítico (Aparición de Complicaciones):</strong> Se justifica la <strong class="text-rose-600 dark:text-rose-400 font-bold">hospitalización inmediata</strong> SÓLO ante complicaciones refractarias o inmanejables en domicilio (ej. alteraciones neuropsíquicas, deshidratación severa, alteraciones cardíacas, vómito o depresión profundas).
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 rounded-full flex items-center justify-center font-bold shadow-sm">3</div>
+                        <div>
+                            <strong class="text-slate-800 dark:text-slate-200">La Fase Agónica:</strong> Si no hay complicaciones refractarias, el paciente debe <strong class="bg-indigo-100 dark:bg-indigo-900/50 px-1 rounded text-indigo-800 dark:text-indigo-300">continuar en su hogar hasta el deceso</strong>, pasando al apoyo familiar durante el duelo.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-emerald-50 dark:bg-emerald-900/10 border-t-4 border-emerald-500 p-5 rounded-b-xl shadow-sm">
+                    <h4 class="font-bold text-emerald-800 dark:text-emerald-400 text-lg mb-3">📈 Correlación "High-Yield"</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><strong>Deterioro Funcional:</strong> Se evalúa objetivamente con la escala <strong class="text-emerald-700 dark:text-emerald-300 font-bold">EQ-5D-5L (EuroQol)</strong>, que mide movilidad, autocuidado, actividades, dolor/malestar y ansiedad/depresión.</li>
+                        <li><strong>Factor Farmacológico:</strong> Uso crónico de opiáceos = Invariable alteración del tránsito intestinal. Exige el inicio <u class="decoration-emerald-400 decoration-2 font-bold">profiláctico de laxantes y dieta adecuada</u>.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-rose-50 dark:bg-rose-900/10 border-t-4 border-rose-500 p-5 rounded-b-xl shadow-sm">
+                    <h4 class="font-bold text-rose-800 dark:text-rose-400 text-lg mb-3">🚩 "Red Flags" y Trampas ENARM</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><strong>La Trampa del Rescate Invasivo:</strong> Intentar trasladar o intubar a un paciente que presenta súbitamente <strong class="font-bold text-rose-600 dark:text-rose-400">respiración de Cheyne-Stokes, agitación o secreciones ruidosas</strong>. No es una urgencia reversible, son signos de los últimos días/horas.</li>
+                        <li><strong>Verdadera Urgencia:</strong> Diferenciar el proceso de muerte de <u class="decoration-rose-500 decoration-2">síntomas de difícil control</u> (alteraciones psiquiátricas graves) que sí ameritan hospitalización paliativa.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-amber-100 to-yellow-50 dark:from-amber-900/30 dark:to-yellow-900/10 p-5 rounded-xl border border-amber-200 dark:border-amber-800/50 shadow-sm">
+                <h4 class="font-bold text-amber-900 dark:text-amber-400 text-lg mb-3 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-500" viewBox="0 0 20 20" fill="currentColor"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" /></svg>
+                    Las 5 Perlas de Oro (GPC SS-816-17)
+                </h4>
+                <ol class="list-decimal pl-5 space-y-2 font-medium text-slate-800 dark:text-slate-200">
+                    <li><strong class="text-amber-700 dark:text-amber-500">El inicio del fin:</strong> La fase agónica se diagnostica por la tétrada de: <strong class="underline">piel moteada, deterioro de conciencia, respiración de Cheyne-Stokes y secreciones ruidosas</strong>.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Prevención Obligatoria:</strong> Ante tratamiento crónico con opiáceos, es recomendación fuerte iniciar rutinariamente <strong class="underline">laxantes e ingesta de líquidos</strong>.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Escala Estrella:</strong> Para objetivar la calidad de vida, el "gold standard" es el cuestionario <strong class="underline">EuroQol-EQ-5D</strong>.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Terapia no Farmacológica:</strong> Las intervenciones con <strong class="underline">música</strong> tienen recomendación fuerte para reducir dolor, ansiedad y trastornos del ánimo.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Frecuencia de Monitoreo:</strong> Las visitas domiciliarias para actualizar el plan de cuidados deben realizarse <strong class="underline">al menos cada 24 horas</strong>.</li>
+                </ol>
+            </div>
+        </div>
+    `,
+    clinicalCase: `
+        <div class="space-y-4 text-slate-700 dark:text-slate-300 text-sm sm:text-base">
+            <div class="flex items-start gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
+                <div class="p-3 bg-pink-50 dark:bg-pink-900/20 rounded-full text-pink-600 dark:text-pink-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-slate-800 dark:text-slate-100">Paciente masculino de <span class="text-pink-600 dark:text-pink-400">78 años</span></p>
+                    <p class="mt-1">Con diagnóstico de <strong class="bg-pink-200 dark:bg-pink-900/40 text-pink-900 dark:text-pink-300 px-1.5 py-0.5 rounded">neoplasia avanzada en fase terminal</strong>, en manejo domiciliario con opiáceos crónicos. El cuidador solicita evaluación por deterioro clínico agudo.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-rose-50 dark:bg-rose-900/10 p-4 rounded-xl border border-rose-100 dark:border-rose-900/30">
+                    <strong class="text-rose-800 dark:text-rose-400 block mb-2 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77-1.333.192 3 1.732 3z" /></svg>
+                        Exploración Física
+                    </strong>
+                    <ul class="space-y-1">
+                        <li>Franco deterioro del nivel de conciencia.</li>
+                        <li><strong class="text-rose-700 dark:text-rose-400 font-bold">Patrón respiratorio de Cheyne-Stokes</strong> y secreciones respiratorias ruidosas.</li>
+                        <li><u class="decoration-rose-500 decoration-2">Piel moteada.</u></li>
+                    </ul>
+                </div>
+
+                <div class="bg-blue-50 dark:bg-blue-900/10 p-4 rounded-xl border border-blue-100 dark:border-blue-900/30">
+                    <strong class="text-blue-800 dark:text-blue-400 block mb-2 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                        Signos Vitales y Contexto
+                    </strong>
+                    <ul class="space-y-2 text-sm">
+                        <li><strong>SV:</strong> FC 55 lpm, FR irregular.</li>
+                        <li class="border-t border-blue-200 dark:border-blue-800/50 pt-1">
+                            La familia se encuentra angustiada y solicita orientación sobre la conducta a seguir y la pertinencia de trasladarlo al hospital.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    `,
+    quiz: [
+        { 
+            question: "¿Qué diagnóstico clínico inmediato infiere a partir de los signos físicos presentes en este paciente?", 
+            options: ["Falla cardíaca aguda", "Últimos días de vida", "Toxicidad por opiáceos", "Neumonía nosocomial"], 
+            answer: 1, 
+            justification: "El paciente presenta los signos clásicos de la fase agónica. La GPC establece como recomendación evaluar los cambios que sugieren los últimos momentos de vida: respiración de Cheyne-Stokes, deterioro del nivel de conciencia, piel moteada y secreciones respiratorias ruidosas.", 
+            source: "Guía de Práctica Clínica GPC-SS-816-17: Intervenciones de enfermería a pacientes que requieren cuidados paliativos en el hogar. Sección: Intervenciones de Enfermería." 
+        },
+        { 
+            question: "¿Qué complicación clásica asociada al factor de riesgo principal de este paciente (terapia con opiáceos) se debe prevenir inminentemente?", 
+            options: ["Úlceras por presión", "Retención aguda de orina", "Estreñimiento", "Depresión respiratoria"], 
+            answer: 2, 
+            justification: "El uso crónico de analgésicos narcóticos tiene un efecto paralizante del tránsito intestinal. La GPC recomienda la ingesta adecuada de líquidos, dieta y laxantes como medidas preventivas contra el estreñimiento por su alta prevalencia con opiáceos.", 
+            source: "Guía de Práctica Clínica GPC-SS-816-17: Intervenciones de enfermería a pacientes que requieren cuidados paliativos en el hogar. Sección: Intervenciones de Enfermería." 
+        },
+        { 
+            question: "¿Cuál es la escala de elección para valorar la calidad de vida en sus cinco dimensiones (movilidad, autocuidado, actividades, dolor/malestar y ansiedad/depresión)?", 
+            options: ["Escala de Karnofsky", "Escala ECOG", "Escala ESAS", "Escala EQ-5D-5L (EuroQol)"], 
+            answer: 3, 
+            justification: "Para estandarizar el impacto de la enfermedad terminal, la GPC recomienda: Valorar la calidad de vida que presenta el paciente con cuidados paliativos, mediante la escala EQ-5D-5L (EuroQol).", 
+            source: "Guía de Práctica Clínica GPC-SS-816-17: Intervenciones de enfermería a pacientes que requieren cuidados paliativos en el hogar. Sección: Intervenciones de Enfermería / Cuadros o Figuras." 
+        },
+        { 
+            question: "Además del manejo farmacológico, ¿qué intervención terapéutica recomienda la guía clínica para el manejo del dolor, ansiedad y trastornos del ánimo?", 
+            options: ["Intervenciones con música", "Acupuntura avanzada", "Terapia electroconvulsiva", "Rehabilitación pulmonar"], 
+            answer: 0, 
+            justification: "Las terapias complementarias han demostrado utilidad. La GPC dicta considerar intervenciones con música para impactar positivamente sobre la disminución del dolor, la ansiedad y trastornos del estado de ánimo.", 
+            source: "Guía de Práctica Clínica GPC-SS-816-17: Intervenciones de enfermería a pacientes que requieren cuidados paliativos en el hogar. Sección: Intervenciones de Enfermería." 
+        },
+        { 
+            question: "Para fortalecer los vínculos familiares y mantener el confort, ¿en qué entorno clínico se recomienda priorizar la continuidad de los cuidados de este paciente?", 
+            options: ["Unidad de Terapia Intensiva", "Centro geriátrico", "En el hogar", "Servicio de Urgencias"], 
+            answer: 2, 
+            justification: "Al no existir indicación de hospitalización por síntomas refractarios, el manejo debe seguir en domicilio. La GPC recomienda: 'Continuar el cuidado paliativo en el hogar, para fortalecer los vínculos familiares, atendiendo las necesidades de confort'.", 
+            source: "Guía de Práctica Clínica GPC-SS-816-17: Intervenciones de enfermería a pacientes que requieren cuidados paliativos en el hogar. Sección: Intervenciones de Enfermería." 
+        }
+    ]
+},
+{
+    id: 4,
+    title: "Módulo 4: Intervenciones de enfermería para la prevención y el cuidado de la hipoglucemia en el adulto con diabetes tipo 2 en el primer y segundo nivel de atención",
+    gpcLink: "https://drive.google.com/file/d/1CNQnaFBpKuT7W4GdRHH0AWSeHq_LHnRY/view?usp=sharing",
+    summary: `
+        <div class="space-y-6 text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed">
+            
+            <div class="bg-indigo-50 dark:bg-indigo-900/20 border-l-4 border-indigo-500 p-5 rounded-r-xl shadow-sm">
+                <h4 class="font-bold text-indigo-800 dark:text-indigo-300 text-lg mb-2 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    El Concepto Fundamental
+                </h4>
+                <p>La hipoglucemia debe entenderse como un espectro clínico donde la prioridad absoluta es <strong class="text-indigo-900 dark:text-indigo-200">diferenciar la capacidad de autoprotección de la vía aérea del paciente</strong>; el ENARM evaluará tu decisión de iniciar la "Regla de los 15" (vía oral) frente a la reanimación metabólica inmediata (IV/IM) basándose no solo en la cifra de glucosa, sino en el <u class="decoration-indigo-400 decoration-2 font-medium">estado neurológico</u>.</p>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-5 rounded-xl shadow-sm">
+                <h4 class="font-bold text-slate-800 dark:text-slate-100 text-lg mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">🔄 FLUJO de MANEJO</h4>
+                <p class="mb-4">El abordaje clínico sigue una narrativa de seguridad escalonada:</p>
+                
+                <div class="space-y-5">
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 rounded-full flex items-center justify-center font-bold shadow-sm">1</div>
+                        <div>
+                            <strong class="text-slate-800 dark:text-slate-200">El primer filtro (Screening y Sospecha):</strong> Buscar activamente factores de riesgo (edad avanzada, polifarmacia, deterioro cognitivo) antes de los síntomas. Si hay sospecha, confirmar con glucometría.
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 rounded-full flex items-center justify-center font-bold shadow-sm">2</div>
+                        <div>
+                            <strong class="text-slate-800 dark:text-slate-200">Vía A (Paciente Alerta y Deglute):</strong> Con glucosa < 70 mg/dL, se opta por el manejo conservador mediante la <strong class="text-emerald-600 dark:text-emerald-500 font-bold">"Regla de los 15"</strong> (15g de carbohidratos rápidos) y reevaluar cada 15 minutos para evitar hiperglucemia de rebote.
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 rounded-full flex items-center justify-center font-bold shadow-sm">3</div>
+                        <div>
+                            <strong class="text-slate-800 dark:text-slate-200">Vía B (Compromiso Neurológico/Severa):</strong> Si está inconsciente, convulsiona o tiene <strong class="bg-indigo-100 dark:bg-indigo-900/50 px-1 rounded text-indigo-800 dark:text-indigo-300">glucosa < 50 mg/dL requiriendo ayuda</strong>, la vía oral está contraindicada. Escalar a <strong class="text-rose-600 dark:text-rose-400 font-bold">Glucagón 1 mg IM/SC o bolo de Glucosa al 50% IV</strong>, repitiendo si no hay respuesta en 10 min.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-emerald-50 dark:bg-emerald-900/10 border-t-4 border-emerald-500 p-5 rounded-b-xl shadow-sm">
+                    <h4 class="font-bold text-emerald-800 dark:text-emerald-400 text-lg mb-3">📈 Correlación "High-Yield"</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><strong>Fase de Alarma (Síntomas Neurogénicos/Autonómicos):</strong> Liberación de catecolaminas. Paciente <strong class="text-emerald-700 dark:text-emerald-300 font-bold">húmedo y tembloroso</strong> (diaforesis, palpitaciones, ansiedad). Mecanismos de contrarregulación intactos.</li>
+                        <li><strong>Fase de Falla Cerebral (Síntomas Neuroglucopénicos):</strong> El cerebro se queda sin sustrato. Cuadro de <u class="decoration-emerald-400 decoration-2 font-bold">confusión, disartria, cambios visuales, somnolencia o coma</u>. Requiere vigilancia estrecha o manejo parenteral.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-rose-50 dark:bg-rose-900/10 border-t-4 border-rose-500 p-5 rounded-b-xl shadow-sm">
+                    <h4 class="font-bold text-rose-800 dark:text-rose-400 text-lg mb-3">🚩 "Red Flags" y Trampas ENARM</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><strong>Paciente Sintomático sin Glucometría:</strong> <strong class="font-bold text-rose-600 dark:text-rose-400">Trata como hipoglucemia.</strong> No retrases el aporte de glucosa por falta de un dato de laboratorio.</li>
+                        <li><strong>Deterioro Cognitivo vs. Hipoglucemia:</strong> La GPC recomienda el Mini-Mental (MMSE). Un puntaje <u class="decoration-rose-500 decoration-2 font-bold">< 14 indica deterioro GRAVE</u>, factor de riesgo mayor para hipoglucemias por incapacidad de autogestión.</li>
+                        <li><strong>Glucagón vs. Glucosa IV:</strong> La <strong class="font-bold">Glucosa 50% IV es el estándar hospitalario</strong>. El Glucagón IM/SC es la alternativa sin acceso venoso (común en prehospitalario).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-amber-100 to-yellow-50 dark:from-amber-900/30 dark:to-yellow-900/10 p-5 rounded-xl border border-amber-200 dark:border-amber-800/50 shadow-sm">
+                <h4 class="font-bold text-amber-900 dark:text-amber-400 text-lg mb-3 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-500" viewBox="0 0 20 20" fill="currentColor"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" /></svg>
+                    Las 5 Perlas de Oro (GPC SS-817-17)
+                </h4>
+                <ol class="list-decimal pl-5 space-y-2 font-medium text-slate-800 dark:text-slate-200">
+                    <li><strong class="text-amber-700 dark:text-amber-500">Manejo de Hipoglucemia Severa:</strong> Bolo IV de <strong class="underline">Glucosa al 50% (50 ml / 25 gr)</strong> o Glucagón 1 mg IM/SC si no hay vía.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Prevención en Ejercicio:</strong> Reponer <strong class="underline">15 gramos de hidratos de carbono</strong> por cada hora de ejercicio, administrados a los 20 minutos de iniciar.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">La "Regla de los 15":</strong> Ingerir <strong class="underline">15g de carbohidratos rápidos</strong>, esperar 15 minutos y repetir glucometría.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Criterio de Hipoglucemia Severa:</strong> Glucosa <strong class="underline">< 50 mg/dL</strong> asociada a coma, convulsiones o alteración neurológica que requiere ayuda.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Meta de Seguridad:</strong> En pacientes con riesgo alto, mantener glucosas preprandiales <strong class="underline">no menores a 110 mg/dl</strong> para evitar eventos.</li>
+                </ol>
+            </div>
+        </div>
+    `,
+    clinicalCase: `
+        <div class="space-y-4 text-slate-700 dark:text-slate-300 text-sm sm:text-base">
+            <div class="flex items-start gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
+                <div class="p-3 bg-pink-50 dark:bg-pink-900/20 rounded-full text-pink-600 dark:text-pink-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-slate-800 dark:text-slate-100">Masculino de <span class="text-pink-600 dark:text-pink-400">72 años</span></p>
+                    <p class="mt-1">Diabético tipo 2 en tratamiento con insulina NPH. Llevado a urgencias por <strong class="bg-pink-200 dark:bg-pink-900/40 text-pink-900 dark:text-pink-300 px-1.5 py-0.5 rounded">alteración del estado de alerta y diaforesis profusa</strong> tras ayuno prolongado.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-rose-50 dark:bg-rose-900/10 p-4 rounded-xl border border-rose-100 dark:border-rose-900/30">
+                    <strong class="text-rose-800 dark:text-rose-400 block mb-2 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77-1.333.192 3 1.732 3z" /></svg>
+                        Exploración y Clínica
+                    </strong>
+                    <ul class="space-y-1">
+                        <li>Estuporoso, disártrico, con <strong class="text-rose-700 dark:text-rose-400 font-bold">temblor fino distal y palidez</strong> de tegumentos.</li>
+                        <li><u class="decoration-rose-500 decoration-2">Incapacidad para deglutir de forma segura.</u></li>
+                    </ul>
+                </div>
+
+                <div class="bg-blue-50 dark:bg-blue-900/10 p-4 rounded-xl border border-blue-100 dark:border-blue-900/30">
+                    <strong class="text-blue-800 dark:text-blue-400 block mb-2 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                        Signos Vitales y Laboratorio
+                    </strong>
+                    <ul class="space-y-2 text-sm">
+                        <li><strong>SV:</strong> FC 112 lpm, TA 110/70 mmHg, FR 22 rpm.</li>
+                        <li class="border-t border-blue-200 dark:border-blue-800/50 pt-1">
+                            <strong>Glucometría capilar:</strong> <strong class="text-blue-700 dark:text-blue-300 font-bold">45 mg/dL</strong>.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    `,
+    quiz: [
+        { 
+            question: "Ante la condición neurológica del paciente y la cifra de glucosa, ¿cuál es la intervención inmediata de elección?", 
+            options: ["Administrar 15g de carbohidratos vía oral", "Bolo de solución Glucosa 50% IV", "Infusión de solución salina 0.9%", "Observación por 15 minutos y repetir glucosa"], 
+            answer: 1, 
+            justification: "El paciente cursa con Hipoglucemia Severa (< 50 mg/dl con alteraciones neurológicas o requerimiento de ayuda). Al estar inconsciente o con incapacidad para ingerir, la indicación es 'Administrar Glucagón 1 mg por vía IM o SC dosis única o bolo vía IV de glucosa 50%'.", 
+            source: "Guía de Práctica Clínica SS-817-17: Intervenciones de enfermería para la prevención y el cuidado de la hipoglucemia. Sección: Diagrama de Flujo 1." 
+        },
+        { 
+            question: "Los signos de temblor, palpitaciones y diaforesis que presentó el paciente se clasifican fisiopatológicamente como:", 
+            options: ["Neuroglucopénicos", "Neurogénicos", "Psicosomáticos", "Metabólicos tardíos"], 
+            answer: 1, 
+            justification: "Los síntomas neurogénicos (autonómicos) incluyen explícitamente: 'Temblor, palpitaciones, transpiración, ansiedad, hambre, náuseas y estremecimiento'. Los neuroglucopénicos se refieren a la disfunción cerebral.", 
+            source: "Guía de Práctica Clínica SS-817-17: Intervenciones de enfermería para la prevención y el cuidado de la hipoglucemia. Sección: Cuadro Clínico." 
+        },
+        { 
+            question: "Para prevenir recurrencias, la GPC sugiere valorar el deterioro cognitivo. Según el Mini-Mental State Examination (MMSE) incluido en la guía, ¿qué puntaje indica un deterioro cognoscitivo 'Grave'?", 
+            options: ["Menor a 24 puntos", "Entre 19 y 23 puntos", "Entre 14 y 18 puntos", "Menor a 14 puntos"], 
+            answer: 3, 
+            justification: "Según el Anexo del MMSE modificado proporcionado en la guía, la interpretación de los puntajes es: 19-23 Leve, 14-18 Moderado y 'MENOR A 14 = GRAVE'.", 
+            source: "Guía de Práctica Clínica SS-817-17: Intervenciones de enfermería para la prevención y el cuidado de la hipoglucemia. Sección: Anexos (Examen Mini-mental)." 
+        },
+        { 
+            question: "Si el paciente estuviera despierto, con glucosa < 70 mg/dL y pudiera deglutir, se aplicaría la 'Regla de los 15'. ¿En qué consiste el primer paso?", 
+            options: ["Ingerir 30g de carbohidratos complejos", "Ingerir 15g de carbohidratos de acción rápida", "Aplicar 15 UI de insulina rápida", "Esperar 15 minutos sin intervención"], 
+            answer: 1, 
+            justification: "El primer paso de la Regla de los 15 es 'Proporcionar 15 gramos de carbohidratos de acción rápida que es fácil de consumir (por ejemplo, la mitad de un refresco, 3 cucharaditas de azúcar o miel, etc.)', luego esperar 15 minutos.", 
+            source: "Guía de Práctica Clínica SS-817-17: Intervenciones de enfermería para la prevención y el cuidado de la hipoglucemia. Sección: Tratamiento." 
+        },
+        { 
+            question: "Como medida de prevención en pacientes diabéticos que realizan ejercicio, ¿cuántos gramos de hidratos de carbono se deben reponer por cada hora de actividad física?", 
+            options: ["5 gramos", "10 gramos", "15 gramos", "30 gramos"], 
+            answer: 2, 
+            justification: "Como medida preventiva, la guía recomienda específicamente como punto de buena práctica: 'Por cada hora de ejercicio reponer con 15 gr., de hidratos de carbono después de 20 minutos de iniciar la rutina'.", 
+            source: "Guía de Práctica Clínica SS-817-17: Intervenciones de enfermería para la prevención y el cuidado de la hipoglucemia. Sección: Prevención." 
+        }
+    ]
+},
+{
+    id: 5,
+    title: "Módulo 5: Intervenciones de enfermería para la detección oportuna y control del episodio depresivo mayor sin síntomas psicóticos en mujeres mayores de 18 años",
+    gpcLink: "https://drive.google.com/file/d/1GdA5TGGAHAJi-PQxgf3ffXgZo0hiCWkT/view?usp=sharing",
+    summary: `
+        <div class="space-y-6 text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed">
+            
+            <div class="bg-indigo-50 dark:bg-indigo-900/20 border-l-4 border-indigo-500 p-5 rounded-r-xl shadow-sm">
+                <h4 class="font-bold text-indigo-800 dark:text-indigo-300 text-lg mb-2 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    El Concepto Fundamental
+                </h4>
+                <p>En el ENARM, la depresión mayor sin síntomas psicóticos en la mujer adulta no debe entenderse exclusivamente como un desequilibrio neuroquímico, sino como un <strong class="text-indigo-900 dark:text-indigo-200">trastorno biopsicosocial fuertemente asociado a la violencia y al trauma temprano</strong>, donde el pilar del abordaje inicial prioriza la <u class="decoration-indigo-400 decoration-2 font-medium">objetivación clínica mediante escalas validadas</u> y el agotamiento de intervenciones psicoterapéuticas, psicoeducativas y de estilo de vida antes de escalar al manejo farmacológico y especializado.</p>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-5 rounded-xl shadow-sm">
+                <h4 class="font-bold text-slate-800 dark:text-slate-100 text-lg mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">🔄 FLUJO de MANEJO</h4>
+                <p class="mb-4">El algoritmo diagnóstico-terapéutico de la GPC fluye a través de una estratificación estricta de factores de riesgo y respuesta al tratamiento:</p>
+                
+                <div class="space-y-5">
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 rounded-full flex items-center justify-center font-bold shadow-sm">1</div>
+                        <div>
+                            <strong class="text-slate-800 dark:text-slate-200">Detección y Valoración Inicial:</strong> La sospecha clínica se corrobora obligatoriamente con escalas estructuradas (ej. Beck, Hamilton) y la <strong class="text-rose-600 dark:text-rose-400 font-bold">búsqueda intencionada de factores de riesgo</strong> como violencia íntima y maltrato en la niñez.
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 rounded-full flex items-center justify-center font-bold shadow-sm">2</div>
+                        <div>
+                            <strong class="text-slate-800 dark:text-slate-200">Manejo de Primer Nivel:</strong> No se salta directamente a los antidepresivos. Se instaura un bloqueo inicial basado en <strong class="underline">programas educativos, prevención de violencia, psicoterapia y actividad física</strong>.
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 rounded-full flex items-center justify-center font-bold shadow-sm">3</div>
+                        <div>
+                            <strong class="text-slate-800 dark:text-slate-200">Derivación por Falla Terapéutica:</strong> Si la paciente NO mejora, se envía a segundo/tercer nivel. La conducta cambia a <strong class="bg-indigo-100 dark:bg-indigo-900/50 px-1 rounded text-indigo-800 dark:text-indigo-300">Terapia Cognitivo-Conductual (TCC), antidepresivos y búsqueda incisiva de riesgo suicida</strong>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-emerald-50 dark:bg-emerald-900/10 border-t-4 border-emerald-500 p-5 rounded-b-xl shadow-sm">
+                    <h4 class="font-bold text-emerald-800 dark:text-emerald-400 text-lg mb-3">📈 Correlación "High-Yield"</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><strong>Tamizaje vs Monitoreo:</strong> Usa el <strong class="text-emerald-700 dark:text-emerald-300 font-bold">Inventario de Depresión de Beck (BDI-II) o PHQ-9</strong> para tamizaje inicial. Reserva la Escala de Hamilton para evaluar pacientes ya diagnosticadas o monitorizar mejoría.</li>
+                        <li><strong>Conexión Metabólica:</strong> La paciente deprimida requiere intencionadamente la evaluación de <u class="decoration-emerald-400 decoration-2 font-bold">riesgos cardiovasculares modificables</u>, ya que perpetúan el estado inflamatorio y anhedónico.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-rose-50 dark:bg-rose-900/10 border-t-4 border-rose-500 p-5 rounded-b-xl shadow-sm">
+                    <h4 class="font-bold text-rose-800 dark:text-rose-400 text-lg mb-3">🚩 "Red Flags" y Trampas ENARM</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><strong>Riesgo Suicida Paradojal:</strong> Paciente que tras intensa agitación muestra súbitamente una <strong class="font-bold text-rose-600 dark:text-rose-400">"calma inquietante"</strong>. No es mejoría, es una alerta roja de estructuración de acto suicida.</li>
+                        <li><strong>Predictor de Letalidad:</strong> El antecedente de <u class="decoration-rose-500 decoration-2">depresión en la adolescencia</u> es el factor de riesgo clave para predecir/prevenir suicidio en edad adulta.</li>
+                        <li><strong>Red Flag Farmacológica:</strong> Si se añade constipación, sequedad bucal grave o temblor, el diferencial primario es un <strong class="font-bold">efecto adverso</strong> a antipsicóticos/antidepresivos, no empeoramiento somático.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-amber-100 to-yellow-50 dark:from-amber-900/30 dark:to-yellow-900/10 p-5 rounded-xl border border-amber-200 dark:border-amber-800/50 shadow-sm">
+                <h4 class="font-bold text-amber-900 dark:text-amber-400 text-lg mb-3 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-500" viewBox="0 0 20 20" fill="currentColor"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" /></svg>
+                    Las 5 Perlas de Oro (GPC SS-819-17)
+                </h4>
+                <ol class="list-decimal pl-5 space-y-2 font-medium text-slate-800 dark:text-slate-200">
+                    <li><strong class="text-amber-700 dark:text-amber-500">Diagnóstico y Categorización:</strong> Utiliza el CIE-10 combinado con <strong class="underline">BDI-II o PHQ-9</strong> para establecer presencia y severidad.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">El Factor de Riesgo Indispensable:</strong> Detectar intencionadamente la <strong class="underline">violencia de compañero íntimo y el maltrato en la niñez</strong>.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Terapia de Estilo de Vida:</strong> Está fuertemente recomendado integrar el <strong class="underline">ejercicio físico (aeróbico y anaeróbico)</strong> como intervención psicoeducativa.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Afrontamiento Espiritual/Social:</strong> Fomentar prácticas como <strong class="underline">la oración, lectura religiosa y el apoyo familiar activo</strong>.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Indicadores de Suicidio:</strong> Vigilar desórdenes familiares en la infancia, <strong class="underline">aislamiento (ausencia de contactos) y dificultades financieras</strong>.</li>
+                </ol>
+            </div>
+        </div>
+    `,
+    clinicalCase: `
+        <div class="space-y-4 text-slate-700 dark:text-slate-300 text-sm sm:text-base">
+            <div class="flex items-start gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
+                <div class="p-3 bg-pink-50 dark:bg-pink-900/20 rounded-full text-pink-600 dark:text-pink-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-slate-800 dark:text-slate-100">Mujer de <span class="text-pink-600 dark:text-pink-400">45 años</span></p>
+                    <p class="mt-1">Acude a consulta externa refiriendo <strong class="bg-pink-200 dark:bg-pink-900/40 text-pink-900 dark:text-pink-300 px-1.5 py-0.5 rounded">fatiga crónica, insomnio de mantenimiento y "sensación de vacío"</strong> de 3 meses de evolución.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-rose-50 dark:bg-rose-900/10 p-4 rounded-xl border border-rose-100 dark:border-rose-900/30">
+                    <strong class="text-rose-800 dark:text-rose-400 block mb-2 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77-1.333.192 3 1.732 3z" /></svg>
+                        Antecedentes y Signos
+                    </strong>
+                    <ul class="space-y-1">
+                        <li><strong>Antecedente:</strong> <strong class="text-rose-700 dark:text-rose-400 font-bold">Maltrato emocional en la niñez.</strong></li>
+                        <li>Familiares notan abandono del arreglo personal y llanto frecuente.</li>
+                        <li><u class="decoration-rose-500 decoration-2">Facies triste, bradipsiquia y llanto durante la entrevista.</u></li>
+                    </ul>
+                </div>
+
+                <div class="bg-blue-50 dark:bg-blue-900/10 p-4 rounded-xl border border-blue-100 dark:border-blue-900/30">
+                    <strong class="text-blue-800 dark:text-blue-400 block mb-2 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                        Estado Mental y Conducta
+                    </strong>
+                    <ul class="space-y-2 text-sm">
+                        <li>Refiere <strong class="text-blue-700 dark:text-blue-300 font-bold">anhedonia total y dificultad para concentrarse</strong>.</li>
+                        <li>Sin alteraciones sensoperceptivas ni delusiones.</li>
+                        <li class="border-t border-blue-200 dark:border-blue-800/50 pt-1">
+                            Niega ideación suicida estructurada al momento, pero expresa <strong>desesperanza hacia el futuro</strong>.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    `,
+    quiz: [
+        { 
+            question: "¿Cuál es la escala validada recomendada inicialmente para identificar esta patología?", 
+            options: ["Escala de Montgomery-Asberg", "Inventario de Depresión de Beck", "Escala de Glasgow", "Cuestionario de Ansiedad"], 
+            answer: 1, 
+            justification: "El abordaje inicial requiere instrumentos estandarizados para corroborar la sospecha clínica. La recomendación clave es aplicar escalas validadas para identificar el trastorno depresivo mayor, como el Inventario de depresión de Beck versión II (BDI-II).", 
+            source: "Guía de Práctica Clínica SS-819-17: Intervenciones de enfermería para la detección oportuna y control del episodio depresivo mayor. Sección: Intervenciones de Enfermería." 
+        },
+        { 
+            question: "Además del antecedente de su infancia, ¿qué factor de riesgo debe detectarse intencionadamente en esta paciente?", 
+            options: ["Violencia de compañero íntimo", "Tabaquismo pasivo", "Exposición a neurotóxicos", "Sedentarismo extremo"], 
+            answer: 0, 
+            justification: "La violencia es un detonante crítico. La GPC recomienda detectar la presencia de violencia de compañero íntimo en las mujeres mayores de 18 años con depresión.", 
+            source: "Guía de Práctica Clínica SS-819-17: Intervenciones de enfermería para la detección oportuna y control del episodio depresivo mayor. Sección: Prevención." 
+        },
+        { 
+            question: "Para prevenir y predecir el riesgo de suicidio durante este episodio actual, ¿qué antecedente psiquiátrico específico se debe indagar?", 
+            options: ["Trastorno límite de la personalidad", "Depresión en la adolescencia", "Abuso de sustancias ilícitas", "Psicosis puerperal previa"], 
+            answer: 1, 
+            justification: "Existe un continuo temporal en la presentación clínica. Se debe indagar el antecedente de depresión en la adolescencia para prevenir el riesgo de suicidio durante el episodio depresivo en la edad adulta.", 
+            source: "Guía de Práctica Clínica SS-819-17: Intervenciones de enfermería para la detección oportuna y control del episodio depresivo mayor. Sección: Prevención." 
+        },
+        { 
+            question: "¿Qué intervención psicoeducativa está recomendada para incrementar sus años de vida saludable?", 
+            options: ["Aislamiento social temporal", "Dieta cetogénica estricta", "Ejercicio físico aeróbico y anaeróbico", "Terapia electroconvulsiva temprana"], 
+            answer: 2, 
+            justification: "El acondicionamiento físico tiene un impacto directo. Es imperativo recomendar realizar ejercicio físico (aeróbico y anaeróbico) como intervención psicoeducativa que contribuye a incrementar los años de vida saludable.", 
+            source: "Guía de Práctica Clínica SS-819-17: Intervenciones de enfermería para la detección oportuna y control del episodio depresivo mayor. Sección: Intervenciones de Enfermería." 
+        },
+        { 
+            question: "Como parte de la promoción de la salud, ¿qué riesgos adicionales integrales deben valorarse en este estado depresivo?", 
+            options: ["Riesgos cardiovasculares", "Riesgos oncológicos", "Riesgos de osteoporosis", "Riesgos reumatológicos"], 
+            answer: 0, 
+            justification: "Las alteraciones del ánimo se asocian a un empeoramiento metabólico general. Se deben valorar riesgos cardiovasculares modificables (sedentarismo, hábitos alimenticios, tabaquismo) y no modificables en mujeres en estado depresivo.", 
+            source: "Guía de Práctica Clínica SS-819-17: Intervenciones de enfermería para la detección oportuna y control del episodio depresivo mayor. Sección: Promoción." 
+        }
+    ]
+},
+{
+    id: 6,
+    title: "Módulo 6: Intervenciones de enfermería en tanatología a la persona al final de la vida",
+    gpcLink: "https://drive.google.com/file/d/1wKJG_xswdzjgFuOnlll_FWDOUQvCrejK/view?usp=sharing",
+    summary: `
+        <div class="space-y-6 text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed">
+            
+            <div class="bg-indigo-50 dark:bg-indigo-900/20 border-l-4 border-indigo-500 p-5 rounded-r-xl shadow-sm">
+                <h4 class="font-bold text-indigo-800 dark:text-indigo-300 text-lg mb-2 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    El Concepto Fundamental
+                </h4>
+                <p>La atención al final de la vida no es un proceso pasivo; exige una intervención clínica y ética estructurada que se detona formalmente ante un <strong class="text-indigo-900 dark:text-indigo-200">índice de Karnofsky menor a 20 puntos</strong>, enfocando el manejo en la comunicación asertiva, la gestión de las etapas del duelo y la <u class="decoration-indigo-400 decoration-2 font-medium">transición al código de No Resucitación (DNR)</u>.</p>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-5 rounded-xl shadow-sm">
+                <h4 class="font-bold text-slate-800 dark:text-slate-100 text-lg mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">🔄 FLUJO de MANEJO</h4>
+                <p class="mb-4">El abordaje de este paciente cambia radicalmente según su deterioro funcional:</p>
+                
+                <div class="space-y-5">
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 rounded-full flex items-center justify-center font-bold shadow-sm">1</div>
+                        <div>
+                            <strong class="text-slate-800 dark:text-slate-200">Punto de Inflexión Absoluto:</strong> El enfoque deja de ser curativo para volverse estrictamente paliativo y tanatológico cuando el <strong class="text-rose-600 dark:text-rose-400 font-bold">Karnofsky cae por debajo de 20 puntos</strong>.
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 rounded-full flex items-center justify-center font-bold shadow-sm">2</div>
+                        <div>
+                            <strong class="text-slate-800 dark:text-slate-200">Acciones Inmediatas:</strong> Al cruzar el umbral, el algoritmo obliga a valorar las <strong class="underline">etapas del duelo</strong> (paciente y familia) y determinar los cuidados paliativos.
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 rounded-full flex items-center justify-center font-bold shadow-sm">3</div>
+                        <div>
+                            <strong class="text-slate-800 dark:text-slate-200">Mantenimiento Paliativo:</strong> El manejo se centra en establecer redes de apoyo, fomentar la comunicación efectiva y, de ser posible, <strong class="bg-indigo-100 dark:bg-indigo-900/50 px-1 rounded text-indigo-800 dark:text-indigo-300">trasladar los cuidados paliativos al hogar</strong>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-emerald-50 dark:bg-emerald-900/10 border-t-4 border-emerald-500 p-5 rounded-b-xl shadow-sm">
+                    <h4 class="font-bold text-emerald-800 dark:text-emerald-400 text-lg mb-3">📈 Correlación "High-Yield"</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><strong>Deterioro Físico = Karnofsky:</strong> "Encamado por completo, muy grave, que necesita hospitalización" equivale mentalmente a un <strong class="text-emerald-700 dark:text-emerald-300 font-bold">Karnofsky de 20</strong>, justificando el inicio del protocolo.</li>
+                        <li><strong>El Familiar Exigente:</strong> Un familiar hostil/agresivo tras malas noticias = <u class="decoration-emerald-400 decoration-2 font-bold">Etapa de Ira de Kübler-Ross</u>. La perla terapéutica es aplicar el algoritmo de comunicación: reconocer la emoción, identificar a quién va dirigida y legitimarla.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-rose-50 dark:bg-rose-900/10 border-t-4 border-rose-500 p-5 rounded-b-xl shadow-sm">
+                    <h4 class="font-bold text-rose-800 dark:text-rose-400 text-lg mb-3">🚩 "Red Flags" y Trampas ENARM</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><strong>Trampa de Karnofsky (20 vs 10):</strong> 20 puntos = encamado y muy grave. 10 puntos = "Moribundo". El abordaje inicia a los 20 puntos; <strong class="font-bold text-rose-600 dark:text-rose-400">no esperes a la fase moribunda (10 pts)</strong> para intervenir.</li>
+                        <li><strong>"Red Flag" en Comunicación:</strong> Ante hostilidad, la opción que marque <u class="decoration-rose-500 decoration-2">"confrontar con las opciones del profesional"</u> es SIEMPRE incorrecta.</li>
+                        <li><strong>Encarnizamiento vs Eutanasia:</strong> La respuesta nunca es abandonar ni adelantar la muerte, sino <strong class="font-bold">orientar sobre el código de No Resucitación (DNR)</strong> y Voluntad Anticipada.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-amber-100 to-yellow-50 dark:from-amber-900/30 dark:to-yellow-900/10 p-5 rounded-xl border border-amber-200 dark:border-amber-800/50 shadow-sm">
+                <h4 class="font-bold text-amber-900 dark:text-amber-400 text-lg mb-3 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-500" viewBox="0 0 20 20" fill="currentColor"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" /></svg>
+                    Las 5 Perlas de Oro (GPC SS-822-18)
+                </h4>
+                <ol class="list-decimal pl-5 space-y-2 font-medium text-slate-800 dark:text-slate-200">
+                    <li><strong class="text-amber-700 dark:text-amber-500">Disparador del Algoritmo:</strong> La valoración tanatológica inicia ineludiblemente con un Karnofsky <strong class="underline">< 20 puntos</strong>.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Modelo de Kübler-Ross:</strong> Las 5 etapas del duelo son: <strong class="underline">Negación, Ira, Negociación, Depresión y Aceptación</strong>.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Código DNR:</strong> Es obligación del equipo multidisciplinario orientar explícitamente a la familia y paciente sobre el <strong class="underline">código de No Resucitación (DNR)</strong>.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Profilaxis en UCI:</strong> Para prevenir daños psicológicos, se debe <strong class="underline">informar tempranamente</strong> sobre diagnóstico y pronóstico al ingresar a la unidad.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Acompañamiento en Hogar:</strong> La GPC emite una recomendación fuerte para promover el <strong class="underline">plan de cuidados paliativos en el hogar</strong>.</li>
+                </ol>
+            </div>
+        </div>
+    `,
+    clinicalCase: `
+        <div class="space-y-4 text-slate-700 dark:text-slate-300 text-sm sm:text-base">
+            <div class="flex items-start gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
+                <div class="p-3 bg-pink-50 dark:bg-pink-900/20 rounded-full text-pink-600 dark:text-pink-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-slate-800 dark:text-slate-100">Hombre de <span class="text-pink-600 dark:text-pink-400">75 años</span></p>
+                    <p class="mt-1">Con <strong class="bg-pink-200 dark:bg-pink-900/40 text-pink-900 dark:text-pink-300 px-1.5 py-0.5 rounded">adenocarcinoma gástrico etapa IV</strong>. Ingresa a urgencias por deterioro neurológico y respiratorio.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-rose-50 dark:bg-rose-900/10 p-4 rounded-xl border border-rose-100 dark:border-rose-900/30">
+                    <strong class="text-rose-800 dark:text-rose-400 block mb-2 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77-1.333.192 3 1.732 3z" /></svg>
+                        Exploración Física
+                    </strong>
+                    <ul class="space-y-1">
+                        <li><strong>SV:</strong> TA 80/50 mmHg, FC 115 lpm, FR 28 rpm, SatO2 82%.</li>
+                        <li>Escala de coma de <strong class="text-rose-700 dark:text-rose-400 font-bold">Glasgow 7</strong>.</li>
+                        <li><u class="decoration-rose-500 decoration-2">Paciente caquéctico, francamente moribundo y encamado por completo.</u></li>
+                    </ul>
+                </div>
+
+                <div class="bg-blue-50 dark:bg-blue-900/10 p-4 rounded-xl border border-blue-100 dark:border-blue-900/30">
+                    <strong class="text-blue-800 dark:text-blue-400 block mb-2 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                        Contexto Familiar
+                    </strong>
+                    <ul class="space-y-2 text-sm">
+                        <li>La hija se muestra <strong class="text-blue-700 dark:text-blue-300 font-bold">agresiva con el personal médico</strong>.</li>
+                        <li class="border-t border-blue-200 dark:border-blue-800/50 pt-1">
+                            Exige a gritos que <strong>"lo intuben y hagan todo lo posible para salvarlo"</strong> tras recibir el reporte inicial de gravedad.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    `,
+    quiz: [
+        { 
+            question: "Según el diagrama de intervenciones tanatológicas, ¿qué puntaje de la escala de Karnofsky justifica iniciar la valoración de duelo en este paciente?", 
+            options: ["Menor a 50 puntos", "Menor a 40 puntos", "Menor a 30 puntos", "Menor a 20 puntos"], 
+            answer: 3, 
+            justification: "El algoritmo de intervenciones tanatológicas establece que se debe realizar la valoración de Karnofsky y, si el resultado es menor a 20 puntos, proceder de inmediato a valorar las etapas de duelo para determinar cuidados paliativos.", 
+            source: "Guía de Práctica Clínica GPC-SS-822-18: Intervenciones de Enfermería en Tanatología a la Persona al Final de la Vida. Sección: Diagramas de Flujo." 
+        },
+        { 
+            question: "La actitud de la hija del paciente corresponde clásicamente a la siguiente etapa del modelo de duelo de Elisabeth Kübler-Ross:", 
+            options: ["Negación", "Ira", "Negociación", "Depresión"], 
+            answer: 1, 
+            justification: "Las manifestaciones de agresión, exigencia irracional y enojo hacia el personal de salud son características definitorias de la etapa de Ira dentro de las cinco etapas del duelo. Ante esto, se debe reconocer la emoción y evitar confrontar.", 
+            source: "Guía de Práctica Clínica GPC-SS-822-18: Intervenciones de Enfermería en Tanatología a la Persona al Final de la Vida. Sección: Cuadros o Figuras." 
+        },
+        { 
+            question: "De acuerdo con la Escala de Valoración Funcional de Karnofsky, el estado 'Moribundo' de este paciente se clasifica exactamente con el siguiente puntaje:", 
+            options: ["30 puntos", "20 puntos", "10 puntos", "0 puntos"], 
+            answer: 2, 
+            justification: "Un puntaje de 20 corresponde a un paciente 'encamado por completo y muy grave'. El término clínico 'Moribundo', que marca la inminencia del fallecimiento, se asigna de forma estricta y exclusiva al puntaje de 10.", 
+            source: "Guía de Práctica Clínica GPC-SS-822-18: Intervenciones de Enfermería en Tanatología a la Persona al Final de la Vida. Sección: Cuadros o Figuras." 
+        },
+        { 
+            question: "Con base en el marco legal y la atención integral, ¿qué intervención se debe priorizar con la familia ante la futilidad del caso?", 
+            options: ["Intubación orotraqueal inmediata", "Orientar sobre código de No Resucitación", "Enviar a psiquiatría de urgencia", "Aplicar sedación paliativa profunda"], 
+            answer: 1, 
+            justification: "Ante exigencias de medidas fútiles, el equipo multidisciplinario deberá orientar a la familia en la toma de decisiones sobre el código No Resucitación (DNR) como parte de la atención integral que genera autonomía.", 
+            source: "Guía de Práctica Clínica GPC-SS-822-18: Intervenciones de Enfermería en Tanatología a la Persona al Final de la Vida. Sección: Promoción." 
+        },
+        { 
+            question: "Como medida preventiva al ingresar a un área de cuidados críticos, ¿cuál es una acción fundamental a realizar con la red de apoyo para mitigar respuestas de estrés?", 
+            options: ["Limitar el horario de visitas", "Iniciar terapia cognitivo-conductual", "Informar situación y pronóstico", "Administrar ansiolíticos profilácticos"], 
+            answer: 2, 
+            justification: "La incertidumbre genera crisis. La GPC indica: 'El personal de enfermería deberá informar a la persona y su red de apoyo sobre la situación en el diagnóstico y pronóstico al momento de ingresar a la unidad de cuidados intensivos'.", 
+            source: "Guía de Práctica Clínica GPC-SS-822-18: Intervenciones de Enfermería en Tanatología a la Persona al Final de la Vida. Sección: Prevención." 
+        }
+    ]
+},
+{
+    id: 7,
+    title: "Módulo 7: Intervenciones de enfermería para la detección y control de tuberculosis pulmonar",
+    gpcLink: "https://drive.google.com/file/d/1B27fenz9JN08AA61Tkdwaq4fV_T0UUTR/view?usp=sharing",
+    summary: `
+        <div class="space-y-6 text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed">
+            
+            <div class="bg-indigo-50 dark:bg-indigo-900/20 border-l-4 border-indigo-500 p-5 rounded-r-xl shadow-sm">
+                <h4 class="font-bold text-indigo-800 dark:text-indigo-300 text-lg mb-2 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    El Concepto Fundamental
+                </h4>
+                <p>La piedra angular en el ENARM para la Tuberculosis Pulmonar es la identificación temprana del sintomático respiratorio, el diagnóstico rápido mediante baciloscopía y la <strong class="text-indigo-900 dark:text-indigo-200">garantía de curación a través de la Terapia Directamente Observada (TDO / DOTS)</strong> para <u class="decoration-indigo-400 decoration-2 font-medium">romper la cadena de transmisión y evitar la drogo-resistencia</u>.</p>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-5 rounded-xl shadow-sm">
+                <h4 class="font-bold text-slate-800 dark:text-slate-100 text-lg mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">🔄 FLUJO de MANEJO</h4>
+                <p class="mb-4">El abordaje del paciente inicia con la valoración de los factores de riesgo (pobreza, hacinamiento, VIH, Diabetes Mellitus y adicciones):</p>
+                
+                <div class="space-y-5">
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 rounded-full flex items-center justify-center font-bold shadow-sm">1</div>
+                        <div>
+                            <strong class="text-slate-800 dark:text-slate-200">El Primer Punto de Inflexión (Signos y Síntomas):</strong> Si el paciente es un sintomático respiratorio, el paso inmediato obligado es <strong class="text-rose-600 dark:text-rose-400 font-bold">solicitar una baciloscopía de esputo</strong>.
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 rounded-full flex items-center justify-center font-bold shadow-sm">2</div>
+                        <div>
+                            <strong class="text-slate-800 dark:text-slate-200">La Doble Vía de Acción (Baciloscopía Positiva):</strong> Iniciar la ministración de medicamento por 6 meses y realizar un cerco epidemiológico urgente buscando a familiares y contactos sintomáticos.
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 rounded-full flex items-center justify-center font-bold shadow-sm">3</div>
+                        <div>
+                            <strong class="text-slate-800 dark:text-slate-200">El Cambio de Manejo (Baciloscopía Negativa o Falla al Tratamiento):</strong> El punto crítico ocurre cuando el paciente persiste como "sintomático respiratorio" pero tiene una baciloscopía inicial negativa o cuando no mejora con el tratamiento. En este escenario, la conducta clínica cambia radicalmente: <strong class="bg-indigo-100 dark:bg-indigo-900/50 px-1 rounded text-indigo-800 dark:text-indigo-300">se debe enviar la muestra a cultivo para identificar drogo-resistencia</strong>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-emerald-50 dark:bg-emerald-900/10 border-t-4 border-emerald-500 p-5 rounded-b-xl shadow-sm">
+                    <h4 class="font-bold text-emerald-800 dark:text-emerald-400 text-lg mb-3">📈 Correlación "High-Yield"</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><strong>Tétrada Cardinal:</strong> Tos crónica > 2 semanas, fiebre con sudoración nocturna, anorexia y pérdida de peso.</li>
+                        <li><strong>Conducta "High-Yield":</strong> Ante la tétrada cardinal, NO pedir estudios de imagen complejos, sino solicitar la recolección de esputo e <strong class="text-emerald-700 dark:text-emerald-300 font-bold">indicar microscopía de luz Ziehl-Neelsen en el frotis del mismo día</strong>.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-rose-50 dark:bg-rose-900/10 border-t-4 border-rose-500 p-5 rounded-b-xl shadow-sm">
+                    <h4 class="font-bold text-rose-800 dark:text-rose-400 text-lg mb-3">🚩 "Red Flags" y Trampas ENARM</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><strong>Aislamiento:</strong> Todo paciente hospitalizado con TB pulmonar o laríngea activa requiere <u class="decoration-rose-500 decoration-2 font-bold">estrictamente habitación individual y reducción de visitas</u>.</li>
+                        <li><strong>Protección Respiratoria (Cepa MDR):</strong> No usar N95 o quirúrgico; personal de salud y visitantes deben usar <strong class="font-bold text-rose-600 dark:text-rose-400">máscaras filtrantes faciales (FFP3)</strong>.</li>
+                        <li><strong>Vulnerabilidad Extrema:</strong> En niños < 5 años y en pacientes con VIH, se exigen <strong class="font-bold">estrategias complementarias activas y profilaxis inmediata</strong> si son contactos de un frotis positivo.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-amber-100 to-yellow-50 dark:from-amber-900/30 dark:to-yellow-900/10 p-5 rounded-xl border border-amber-200 dark:border-amber-800/50 shadow-sm">
+                <h4 class="font-bold text-amber-900 dark:text-amber-400 text-lg mb-3 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-500" viewBox="0 0 20 20" fill="currentColor"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" /></svg>
+                    Las 5 Perlas de Oro (GPC SS-828-18)
+                </h4>
+                <ol class="list-decimal pl-5 space-y-2 font-medium text-slate-800 dark:text-slate-200">
+                    <li><strong class="text-amber-700 dark:text-amber-500">Clínica Pivote:</strong> <strong class="underline">Tos crónica > 2 semanas, pérdida de peso, anorexia y fiebre</strong> en zona endémica exige sospecha obligada de TB.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">"Estándar de Oro" Preventivo:</strong> <strong class="underline">Vacunar con BCG al nacer o al primer contacto</strong> protege contra TB miliar y meníngea.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Estudio Inicial de Elección:</strong> <strong class="underline">Microscopía de luz Ziehl-Neelsen</strong> en el frotis de esputo recolectado el mismo día.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Manejo Definitivo:</strong> Es obligatorio el uso de la <strong class="underline">Terapia Directamente Observada (TDO) o DOTS</strong> por 6 meses.</li>
+                    <li><strong class="text-amber-700 dark:text-amber-500">Insumo de Alta Seguridad:</strong> Ante sospecha de TB multirresistente, se deben usar <strong class="underline">máscaras filtrantes faciales FFP3</strong>.</li>
+                </ol>
+            </div>
+        </div>
+    `,
+    clinicalCase: `
+        <div class="space-y-4 text-slate-700 dark:text-slate-300 text-sm sm:text-base">
+            <div class="flex items-start gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
+                <div class="p-3 bg-pink-50 dark:bg-pink-900/20 rounded-full text-pink-600 dark:text-pink-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-slate-800 dark:text-slate-100">Paciente masculino de <span class="text-pink-600 dark:text-pink-400">45 años</span></p>
+                    <p class="mt-1">Con antecedente de diabetes mellitus, residente de zona rural marginada. Acude a urgencias por cuadro de <strong class="bg-pink-200 dark:bg-pink-900/40 text-pink-900 dark:text-pink-300 px-1.5 py-0.5 rounded">3 semanas de evolución caracterizado por tos productiva constante, fiebre de predominio vespertino, anorexia y pérdida de peso no intencionada de 5 kg</strong>.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-rose-50 dark:bg-rose-900/10 p-4 rounded-xl border border-rose-100 dark:border-rose-900/30">
+                    <strong class="text-rose-800 dark:text-rose-400 block mb-2 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77-1.333.192 3 1.732 3z" /></svg>
+                        Exploración Física
+                    </strong>
+                    <ul class="space-y-1">
+                        <li><strong>SV:</strong> <strong class="text-rose-700 dark:text-rose-400 font-bold">Temp 38.5°C</strong>, FC 98 lpm, FR 22 rpm, SatO2 94%.</li>
+                        <li>A la auscultación pulmonar destacan <u class="decoration-rose-500 decoration-2">estertores crepitantes en el ápice pulmonar derecho</u>.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    `,
+    quiz: [
+        { 
+            question: "¿Cuál es la acción inicial o estudio de elección para abordar a este paciente?", 
+            options: ["Radiografía de tórax", "Cultivo Lowenstein-Jensen", "Baciloscopía de esputo", "Prueba de Tuberculina"], 
+            answer: 2, 
+            justification: "Ante un paciente sintomático respiratorio, el envío de muestra para baciloscopía es la intervención inicial indispensable según el algoritmo de detección. Considerar la recolección de esputo como una estrategia de bajo costo y usar la microscopía de luz Ziehl-Neelsen en el frotis de esputo del mismo día.", 
+            source: "Guía de Práctica Clínica GPC-SS-828-18: Intervenciones de enfermería para la detección y control de Tuberculosis Pulmonar. Sección: Prevención." 
+        },
+        { 
+            question: "¿Cuál es el dato clínico pivote que obliga a sospechar esta patología en zonas de alta prevalencia?", 
+            options: ["Tos mayor de 2 semanas", "Expectoración purulenta", "Dolor torácico pleurítico", "Disnea de medianos esfuerzos"], 
+            answer: 0, 
+            justification: "El cuadro clínico clásico es la piedra angular. La GPC indica: 'Considerar en zonas con alta prevalencia, la tos crónica mayor de 2 semanas, la anorexia, pérdida de peso y fiebre como datos clínicos que sugieran TB'.", 
+            source: "Guía de Práctica Clínica GPC-SS-828-18: Intervenciones de enfermería para la detección y control de Tuberculosis Pulmonar. Sección: Prevención." 
+        },
+        { 
+            question: "Si durante el abordaje se sospecha que el paciente cursa con tuberculosis multirresistente, ¿qué insumo de protección específica está indicado para el personal de salud y visitantes?", 
+            options: ["Cubrebocas quirúrgico tricapa", "Mascarilla de oxígeno con reservorio", "Máscaras filtrantes faciales FFP3", "Mascarilla N95 estándar"], 
+            answer: 2, 
+            justification: "La protección respiratoria debe escalarse ante la sospecha de cepas multirresistentes. La GPC recomienda: 'Usar máscaras filtrantes faciales (FFP3) tanto el equipo de salud como los visitantes durante el contacto con una persona con sospecha de TB multirresistente'.", 
+            source: "Guía de Práctica Clínica GPC-SS-828-18: Intervenciones de enfermería para la detección y control de Tuberculosis Pulmonar. Sección: Intervenciones de enfermería." 
+        },
+        { 
+            question: "Una vez confirmado el diagnóstico, ¿cuál es la estrategia de manejo estándar para asegurar el apego y evitar la drogo-resistencia?", 
+            options: ["Aislamiento estricto por 6 meses", "Terapia directamente observada (TDO)", "Tratamiento autoadministrado en casa", "Hospitalización hasta cultivo negativo"], 
+            answer: 1, 
+            justification: "El abandono del tratamiento es la principal causa de falla terapéutica. La GPC indica: 'Emplear estrategias del tratamiento supervisado de corta duración (DOTS) y ofrecer terapia directamente observada (TDO) como parte del mejor manejo de casos'.", 
+            source: "Guía de Práctica Clínica GPC-SS-828-18: Intervenciones de enfermería para la detección y control de Tuberculosis Pulmonar. Sección: Intervenciones de enfermería." 
+        },
+        { 
+            question: "Para la prevención de las formas diseminadas y letales de esta enfermedad, ¿cuál es la medida profiláctica de elección en el país?", 
+            options: ["Quimioprofilaxis con Isoniazida", "Vacunación con BCG al nacer", "Profilaxis con Rifampicina", "Aislamiento de contactos asintomáticos"], 
+            answer: 1, 
+            justification: "La prevención primaria en México es vital. La GPC recomienda: 'Vacunar con BCG al nacer, en la infancia o al primer contacto con los servicios de salud, para proteger contra la tuberculosis miliar, meníngea y la enfermedad pulmonar'.", 
+            source: "Guía de Práctica Clínica GPC-SS-828-18: Intervenciones de enfermería para la detección y control de Tuberculosis Pulmonar. Sección: Prevención." 
+        }
+    ]
+}
+        ];
+
+        // Títulos completos originales
+        const allModuleTitles = [
+            "Evaluación diagnóstica de parálisis cerebral en lactantes",
+            "Manifestaciones clínicas para la sospecha del abuso físico en menores",
+            "Diagnóstico y tratamiento de la mucopolisacaridosis tipo I"
+        ];
+
+        // Títulos cortos (2-3 palabras) exclusivos para la barra lateral
+        const allModuleShortTitles = [
+"Hipercolesterolemia",
+"Amputación por diabetes",
+"Cuidados paliativos en el hogar",
+"Hipoglucemia en el adulto",
+"Depresión en la mujer",
+"Tanatología fin de la vida",
+"Tuberculosis pulmonar"
+        ];
+
+        let userProgress = {};
+        let currentModuleId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            renderModuleList(); 
+            renderBibliography();
+            
+            let lastModuleId = null;
+            try {
+                lastModuleId = localStorage.getItem('pediatríauno9LastModuleId');
+            } catch (e) {
+                console.error("Error fetching last module:", e);
+            }
+            displayModule(lastModuleId ? parseInt(lastModuleId) : null);
+
+            setupEventListeners();
+        });
+
+        // --- CONTROLADOR DE VISIBILIDAD DEL LOGO MÓVIL (Módulo) ---
+        function updateMobileLogoState(showInHeader) {
+            const mobileLogo = document.getElementById('mobile-module-logo');
+            if (showInHeader) {
+                mobileLogo.classList.remove('hidden');
+            } else {
+                mobileLogo.classList.add('hidden');
+            }
+        }
+
+        // --- FUNCIONES DE NAVEGACIÓN Y UI ---
+
+        function setupEventListeners() {
+            const searchInput = document.getElementById('module-search');
+            searchInput.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                const listItems = document.querySelectorAll('#module-list li');
+                listItems.forEach(li => {
+                    const text = li.innerText.toLowerCase();
+                    li.style.display = text.includes(term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('reset-button').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.classList.remove('hidden');
+                setTimeout(()=>m.querySelector('div').classList.remove('scale-95'),10);
+            });
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', resetProgress);
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            // LÓGICA DE LA BARRA LATERAL Y EL BOTON DE HOME
+            menuToggle.addEventListener('click', () => {
+                const homeButton = document.getElementById('home-button');
+                
+                if (window.innerWidth >= 1024) {
+                    // MODO ESCRITORIO: Toggle clases para colapsar/expandir lateralmente
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    // Desplazar el botón home dinámicamente si está visible
+                    if(!homeButton.classList.contains('hidden')){
+                        homeButton.classList.toggle('lg:left-[21rem]');
+                        homeButton.classList.toggle('left-4'); // Posición original cuando el sidebar colapsa
+                    }
+                } else {
+                    // MODO MÓVIL: Comportamiento original (slide sobre contenido)
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            setupModalListeners('bibliography-modal', 'close-bibliography-modal', 'bibliography-button');
+            setupModalListeners('summary-modal', 'close-summary-modal');
+
+            document.getElementById('home-button').addEventListener('click', () => displayModule(null));
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        function setupModalListeners(modalId, closeBtnId, openBtnId = null) {
+            const modal = document.getElementById(modalId);
+            const closeBtn = document.getElementById(closeBtnId);
+            if(openBtnId) {
+                document.getElementById(openBtnId).addEventListener('click', () => {
+                    modal.classList.remove('hidden');
+                    setTimeout(()=>modal.querySelector('div').classList.remove('scale-95'),10);
+                });
+            }
+            closeBtn.addEventListener('click', () => {
+                modal.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>modal.classList.add('hidden'),300);
+            });
+            modal.addEventListener('click', (e) => {
+                if(e.target === modal) closeBtn.click();
+            });
+        }
+
+        function showModuleSummary(moduleId) {
+            const module = courseModules.find(m => m.id === moduleId);
+            if (!module) return;
+            
+            const titleEl = document.getElementById('summary-modal-title');
+            const contentEl = document.getElementById('summary-content');
+            
+            titleEl.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-500" viewBox="0 0 20 20" fill="currentColor"><path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 16c1.255 0 2.443-.29 3.5-.804V4.804zM14.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 0114.5 16c1.255 0 2.443-.29 3.5-.804v-10A7.968 7.968 0 0014.5 4z" /></svg>
+                Resumen: ${module.title.split(':')[0]}
+            `;
+            contentEl.innerHTML = `<p class="text-lg leading-relaxed">${module.summary}</p>`;
+            
+            const modal = document.getElementById('summary-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.querySelector('div').classList.remove('scale-95'),10);
+        }
+
+        // --- LÓGICA PRINCIPAL ---
+
+        function displayWelcomeScreen() {
+            updateMobileLogoState(false); 
+            const displayArea = document.getElementById('module-display');
+            const firstUncompletedId = courseModules.find(m => !userProgress[m.id]?.completed)?.id || 1;
+            const firstUncompletedModule = courseModules.find(m => m.id === firstUncompletedId);
+            const definedModules = courseModules.map(m => m.id);
+            const allCompleted = definedModules.every(id => userProgress[id]?.completed);
+
+            let nextUpHtml = '';
+            
+            if (allCompleted) {
+                nextUpHtml = `
+                    <div class="mb-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-6 text-white shadow-xl flex flex-col items-center text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+                        <h2 class="text-3xl font-bold">¡Curso Completado!</h2>
+                        <p class="mt-2 opacity-90">Has dominado los módulos disponibles de Medicina Interna.</p>
+                        <div class="mt-6 flex flex-col sm:flex-row justify-center gap-4">
+                            <button onclick="showFinalSummary()" class="bg-white text-emerald-600 font-bold py-3 px-8 rounded-lg shadow-lg transition-transform hover:scale-105">Ver Resultados</button>
+                            <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="bg-emerald-700/50 text-white font-semibold py-3 px-8 rounded-lg shadow-lg transition-transform hover:scale-105 border border-white/20">Reiniciar Curso</button>
+                        </div>
+                    </div>
+                `;
+            } else if (firstUncompletedModule) {
+                nextUpHtml = `
+                    <div class="mb-12">
+                        <h2 class="text-2xl font-bold text-slate-800 dark:text-slate-200 mb-4">Continuar Aprendizaje</h2>
+                        <div class="bg-gradient-to-br from-amber-500 to-orange-600 dark:from-amber-600 dark:to-orange-800 rounded-2xl p-6 text-white shadow-2xl shadow-orange-200 dark:shadow-none flex flex-col md:flex-row items-center gap-6 group relative overflow-hidden">
+                            <div class="flex-shrink-0 relative z-10">
+                                <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center animate-pulse">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v11.494m-5.747-4.247l11.494 0M4.253 12l15.494 0" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="flex-1 text-center md:text-left relative z-10">
+                                <span class="text-xs font-bold uppercase tracking-wider bg-white/20 px-3 py-1 rounded-full">Siguiente Módulo</span>
+                                <h3 class="text-2xl font-bold mt-3">${firstUncompletedModule.title}</h3>
+                                <p class="mt-2 opacity-80 text-sm max-w-2xl line-clamp-2">${firstUncompletedModule.summary.replace(/<[^>]*>?/gm, '')}</p>
+                            </div>
+                            <div class="flex flex-col gap-2 w-full md:w-auto flex-shrink-0 relative z-10">
+                                <button onclick="displayModule(${firstUncompletedModule.id})" class="bg-white text-amber-600 font-bold py-3 px-6 rounded-lg shadow-lg transition-transform hover:scale-105 active:scale-100">
+                                    Comenzar Módulo
+                                </button>
+                                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="bg-orange-700/30 hover:bg-amber-700/50 text-white font-semibold py-2 px-6 rounded-lg border border-white/20 text-sm">
+                                    Reiniciar Curso
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            let allModulesHtml = '<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">';
+            for(let i = 1; i <= 7; i++) {
+                const module = courseModules.find(m => m.id === i);
+                const titleText = module ? module.title.split(':')[1].trim() : (allModuleTitles[i-1] || `Módulo ${i}`);
+                const isCompleted = userProgress[i]?.completed;
+
+                let cardHtml;
+                if (module) {
+                    if(isCompleted) {
+                        cardHtml = `
+                            <div class="group relative bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border-l-4 border-l-emerald-500 flex items-center gap-4 cursor-pointer transition-all hover:shadow-lg hover:border-l-amber-500 hover:scale-[1.02] overflow-hidden" onclick="displayModule(${i})">
+                                <div class="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-3xl"></div>
+                                <div class="flex-1 relative z-10">
+                                    <p class="text-xs font-bold text-emerald-600 dark:text-emerald-400">Completado</p>
+                                    <h4 class="font-semibold text-slate-800 dark:text-slate-200 mt-1">${titleText}</h4>
+                                </div>
+                                <div class="text-emerald-500 dark:text-emerald-400 relative z-10">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        cardHtml = `
+                            <div class="group relative bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border-l-4 border-l-amber-500 flex items-center gap-4 cursor-pointer transition-all hover:shadow-lg hover:border-l-orange-500 hover:scale-[1.02] overflow-hidden" onclick="displayModule(${i})">
+                                <div class="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-3xl"></div>
+                                <div class="flex-1 relative z-10">
+                                    <p class="text-xs font-bold text-amber-500">Módulo ${i}</p>
+                                    <h4 class="font-semibold text-slate-800 dark:text-slate-200 mt-1">${titleText}</h4>
+                                </div>
+                                <div class="text-amber-500 relative z-10">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                                </div>
+                            </div>
+                        `;
+                    }
+                } else {
+                    cardHtml = `
+                        <div class="bg-slate-100 dark:bg-slate-800/50 p-5 rounded-3xl border-l-4 border-l-slate-300 dark:border-l-slate-700 flex items-center gap-4 cursor-not-allowed opacity-60">
+                            <div class="flex-1">
+                                <p class="text-xs font-bold text-slate-400">Módulo ${i}</p>
+                                <h4 class="font-semibold text-slate-500 dark:text-slate-500 mt-1">${titleText}</h4>
+                            </div>
+                            <div class="text-slate-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" /></svg>
+                            </div>
+                        </div>
+                    `;
+                }
+                allModulesHtml += cardHtml;
+            }
+            allModulesHtml += '</div>';
+
+            displayArea.innerHTML = `
+                <div class="animate-fade-in-up">
+                    <div class="flex justify-center mb-6 md:hidden">
+                        <div class="welcome-logo logo-container bg-white py-2 px-4 rounded-lg border border-slate-200 shadow-sm">
+                            <span class="logo-enarm">ENARM</span>
+                            <span class="logo-Lite">Lite<sup>®</sup></span>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-amber-50 to-orange-100 dark:from-slate-800 dark:to-slate-900 p-8 rounded-2xl shadow-inner border border-slate-200/50 dark:border-slate-700 text-center mb-12 relative">
+                        ${desktopInnerLogoHtml}
+                        
+                        <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 dark:text-white tracking-tight pr-0 md:pr-32">Medicina Interna</h1>
+                        <p class="mt-3 text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">Domina las guías de práctica clínica nacionales: Parte IX</p>
+                    </div>
+                    
+                    ${nextUpHtml}
+
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800 dark:text-slate-200 mb-4 mt-8">Ruta de Aprendizaje</h2>
+                        ${allModulesHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayModule(moduleId) {
+            const homeButton = document.getElementById('home-button');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const menuToggle = document.getElementById('menu-toggle');
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+
+            if (!displayArea) return;
+            // Scroll to top when loading new module
+            document.getElementById('main-content').scrollTop = 0;
+            window.scrollTo(0,0);
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentModuleId = moduleId ? parseInt(moduleId) : null;
+                saveProgress();
+
+                if (!currentModuleId) {
+                    homeButton.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    // Resetear barra lateral a estado desplegado (por defecto al salir)
+                    sidebar.classList.remove('lg:translate-x-0');
+                    mainContent.classList.remove('lg:ml-80');
+                    homeButton.classList.remove('lg:left-[21rem]', 'left-4');
+                    progressContainer.classList.add('hidden');
+
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    return;
+                }
+                
+                // MÓDULO ACTIVO
+                updateMobileLogoState(true);
+
+                homeButton.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                
+                // Asegurar que el sidebar se expanda siempre al entrar a un módulo en desktop
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.add('lg:translate-x-0');
+                    mainContent.classList.add('lg:ml-80');
+                    homeButton.classList.add('lg:left-[21rem]');
+                    homeButton.classList.remove('left-4');
+                }
+
+                progressContainer.classList.remove('hidden');
+                
+                const moduleData = courseModules.find(m => m.id === currentModuleId);
+                if (!moduleData) {
+                    displayModule(null);
+                    return;
+                }
+                
+                if (userProgress[currentModuleId] && userProgress[currentModuleId].completed) {
+                    showCompletedModule(currentModuleId);
+                } else {
+                    showActiveModule(currentModuleId);
+                }
+
+                renderModuleList();
+                displayArea.classList.remove('opacity-0');
+            }, 200);
+        }
+
+        function showActiveModule(moduleId) {
+            const moduleData = courseModules.find(m => m.id === moduleId);
+            let quizHtml = `<form class="quiz-form space-y-6 mt-8" id="quiz-form-${moduleId}">`;
+            moduleData.quiz.forEach((q, index) => {
+                quizHtml += `
+                <div id="q-container-${index}" class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-100 dark:border-slate-700 transition-all duration-300">
+                    <p class="font-semibold text-slate-800 dark:text-slate-200 mb-4 text-lg">${index + 1}. ${q.question}</p>
+                    <div class="space-y-3">
+                        ${q.options.map((opt, i) => `
+                            <label class="flex items-center p-4 border-2 border-slate-200 dark:border-slate-600 rounded-lg cursor-pointer transition-all hover:bg-amber-50 dark:hover:bg-amber-900/30 has-[:checked]:bg-amber-100 dark:has-[:checked]:bg-amber-900/50 has-[:checked]:border-amber-500">
+                                <input type="radio" name="q${index}" value="${i}" class="h-5 w-5 text-amber-600 focus:ring-amber-500">
+                                <span class="ml-4 text-slate-700 dark:text-white">${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>`;
+            });
+            // Validación añadida en onClick
+            quizHtml += `<button type="button" class="w-full sm:w-auto bg-amber-600 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:bg-amber-700 transition-all mt-6" onclick="submitQuiz(${moduleId})">Validar Respuestas</button></form>`;
+
+            const displayArea = document.getElementById('module-display');
+            displayArea.innerHTML = `
+                <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl shadow-xl animate-fade-in-up mt-12 md:mt-0 relative">
+                    ${desktopInnerLogoHtml}
+                    
+                    <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-6 pr-0 md:pr-40">${moduleData.title}</h2>
+                    <div class="mb-8">
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-slate-200 mb-3">Caso Clínico</h3>
+                        <div class="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 p-5 rounded-r-lg text-amber-900 dark:text-amber-100 leading-relaxed">
+                            ${moduleData.clinicalCase}
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-slate-200 mb-4">Autoevaluación</h3>
+                        ${quizHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        function showCompletedModule(moduleId) {
+            updateMobileLogoState(true);
+            const moduleData = courseModules.find(m => m.id === parseInt(moduleId));
+            const progressData = userProgress[moduleId];
+            const nextModuleId = parseInt(moduleId) + 1;
+            const nextModule = courseModules.find(m => m.id === nextModuleId);
+
+            // Verificamos si todos los modulos DISPONIBLES están completados
+            const definedModules = courseModules.map(m => m.id);
+            const allCompleted = definedModules.every(id => userProgress[id]?.completed);
+
+            let quizHtml = '<div class="space-y-8 mt-6">';
+            moduleData.quiz.forEach((q, index) => {
+                const userAnswer = progressData.answers ? progressData.answers[index] : null;
+                const isCorrect = userAnswer === q.answer;
+                
+                quizHtml += `
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow border dark:border-slate-700">
+                    <p class="font-semibold text-slate-800 dark:text-slate-200 mb-3">${index+1}. ${q.question}</p>
+                    <div class="space-y-2">
+                        ${q.options.map((opt, i) => {
+                            let classes = "p-3 rounded border flex justify-between items-center ";
+                            let icon = "";
+                            if(i === q.answer) { 
+                                classes += "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-500 text-emerald-900 dark:text-emerald-100"; // Emerald 100 for better dark mode readability
+                                if(i === userAnswer) icon = "✓";
+                            } else if(i === userAnswer) {
+                                classes += "bg-red-50 dark:bg-red-900/20 border-red-500 text-red-900 dark:text-red-100";
+                                icon = "✕";
+                            } else {
+                                classes += "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-600 opacity-60 text-slate-700 dark:text-white";
+                            }
+                            return `<div class="${classes}"><span>${opt}</span><span class="font-bold">${icon}</span></div>`;
+                        }).join('')}
+                    </div>
+                    <div class="mt-4 p-4 rounded bg-slate-50 dark:bg-slate-700/50 border-l-4 ${isCorrect ? 'border-emerald-500' : 'border-red-500'}">
+                        <p class="text-sm text-slate-700 dark:text-white"><strong>${isCorrect ? 'Correcto' : 'Incorrecto'}.</strong> ${q.justification}</p>
+                        <p class="text-xs text-slate-500 mt-1 italic">Fuente: ${q.source}</p>
+                    </div>
+                </div>`;
+            });
+            quizHtml += '</div>';
+
+            let nextBtn = "";
+            if (allCompleted) {
+                // Solo si YA COMPLETO TODOS, se muestra el de resultados
+                nextBtn = `<button class="w-full sm:w-auto bg-emerald-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-emerald-700 transition-all" onclick="showFinalSummary()">Ver Resultados</button>`;
+            } else if (nextModule) {
+                nextBtn = `<button class="w-full sm:w-auto bg-amber-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-amber-700 transition-all" onclick="displayModule(${nextModuleId})">Siguiente Módulo</button>`;
+            } else {
+                // Si es el ultimo, pero le faltan los primeros por contestar
+                nextBtn = `<button class="w-full sm:w-auto bg-slate-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-slate-700 transition-all" onclick="displayModule(null)">Volver al Menú</button>`;
+            }
+
+            document.getElementById('module-display').innerHTML = `
+                <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl shadow-xl animate-fade-in-up mt-12 md:mt-0 relative">
+                    ${desktopInnerLogoHtml}
+
+                    <h2 class="text-3xl font-bold text-slate-900 dark:text-white pr-0 md:pr-40">${moduleData.title} <span class="text-emerald-500 text-lg align-middle ml-2">(Completado)</span></h2>
+                    
+                    <div class="mt-4 mb-6 flex flex-col sm:flex-row gap-3">
+                        <button onclick="showModuleSummary(${moduleId})" class="flex-1 bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 font-semibold py-3 px-4 rounded-lg border border-amber-200 dark:border-amber-700 hover:bg-amber-100 dark:hover:bg-amber-900/50 transition-colors flex items-center justify-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 16c1.255 0 2.443-.29 3.5-.804V4.804zM14.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 0114.5 16c1.255 0 2.443-.29 3.5-.804v-10A7.968 7.968 0 0014.5 4z" /></svg>
+                            Ver Resumen del Módulo
+                        </button>
+                        
+                        <a href="${moduleData.gpcLink}" target="_blank" class="flex-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold py-3 px-4 rounded-lg border border-slate-200 dark:border-slate-600 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors flex items-center justify-center gap-2">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            GPC "Referencia rápida"
+                        </a>
+                    </div>
+
+                    <div class="mt-6">
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-slate-200 mb-3">Caso Clínico</h3>
+                        <div class="bg-amber-50 dark:bg-amber-900/10 border-l-4 border-amber-500 p-5 rounded-r-lg text-amber-900 dark:text-amber-100 leading-relaxed">
+                            <p class="mb-4 italic">${moduleData.clinicalCase}</p>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-bold text-slate-800 dark:text-slate-200 mt-8">Revisión del Test</h3>
+                    ${quizHtml}
+                    <div class="mt-8 text-center">${nextBtn}</div>
+                </div>
+            `;
+        }
+
+        // --- SISTEMA DE CERTIFICADO ---
+        function showFinalSummary() {
+            updateMobileLogoState(false); // Ocultar logo barra móvil
+            
+            // SCROLL AUTOMÁTICO AL INICIO DE LA PÁGINA
+            document.getElementById('main-content').scrollTop = 0;
+            window.scrollTo(0, 0);
+            
+            let totalScore = 0;
+            let totalQuestions = 0;
+            
+            let stats = {
+                alta: { correct: 0, total: 0 },
+                media: { correct: 0, total: 0 },
+                baja: { correct: 0, total: 0 }
+            };
+
+            let moduleScoresHtml = '<div class="space-y-3 mt-4 max-h-60 overflow-y-auto pr-2">';
+
+            courseModules.forEach(module => {
+                if (userProgress[module.id]?.completed) {
+                    const answers = userProgress[module.id].answers;
+                    const score = userProgress[module.id].score;
+                    const total = module.quiz.length;
+                    
+                    totalScore += score;
+                    totalQuestions += total;
+                    const pct = (score/total)*100;
+
+                    module.quiz.forEach((q, index) => {
+                        let diffType = 'media'; 
+                        if (index === 1 || index === 4) diffType = 'baja';
+                        else if (index === 0 || index === 3) diffType = 'media';
+                        else if (index === 2) diffType = 'alta';
+
+                        stats[diffType].total++;
+                        if (answers[index] === q.answer) {
+                            stats[diffType].correct++;
+                        }
+                    });
+                    
+                    moduleScoresHtml += `
+                    <div class="text-sm">
+                        <div class="flex justify-between mb-1 text-slate-700 dark:text-slate-300">
+                            <span class="truncate pr-4">${module.title.split(':')[0]}</span>
+                            <span>${score}/${total}</span>
+                        </div>
+                        <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5">
+                            <div class="bg-amber-600 h-1.5 rounded-full" style="width: ${pct}%"></div>
+                        </div>
+                    </div>`;
+                }
+            });
+            moduleScoresHtml += '</div>';
+            
+            const finalPct = totalQuestions > 0 ? Math.round((totalScore/totalQuestions)*100) : 0;
+            const dateStr = new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
+
+            document.getElementById('module-display').innerHTML = `
+                <div class="animate-fade-in-up">
+                    <div class="flex justify-center mb-6 md:hidden">
+                        <div class="welcome-logo logo-container bg-white py-2 px-4 rounded-lg border border-slate-200 shadow-sm">
+                            <span class="logo-enarm">ENARM</span>
+                            <span class="logo-Lite">Lite<sup>®</sup></span>
+                        </div>
+                    </div>
+
+                    <div id="final-score-screen" class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl relative">
+                        ${desktopInnerLogoHtml}
+
+                        <div class="text-center mb-8">
+                            <div class="inline-block p-4 rounded-full bg-emerald-100 dark:bg-emerald-900/30 mb-4">
+                                <svg class="h-16 w-16 text-emerald-600 dark:text-emerald-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+                            </div>
+                            <h2 class="text-3xl font-bold text-slate-800 dark:text-slate-100">¡Curso Completado!</h2>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200 mb-4 border-b pb-2 dark:border-slate-700">Rendimiento por Dificultad</h3>
+                                
+                                <div class="grid grid-cols-3 gap-2 mb-6">
+                                    <div class="p-2 bg-red-50 dark:bg-red-900/20 rounded-lg text-center border border-red-200 dark:border-red-800">
+                                        <p class="text-[10px] text-red-600 dark:text-red-400 font-bold uppercase">Alta</p>
+                                        <p class="text-lg font-bold text-slate-800 dark:text-slate-200">${stats.alta.correct}/${stats.alta.total}</p>
+                                    </div>
+                                    <div class="p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg text-center border border-yellow-200 dark:border-yellow-800">
+                                        <p class="text-[10px] text-yellow-600 dark:text-yellow-400 font-bold uppercase">Media</p>
+                                        <p class="text-lg font-bold text-slate-800 dark:text-slate-200">${stats.media.correct}/${stats.media.total}</p>
+                                    </div>
+                                    <div class="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg text-center border border-green-200 dark:border-green-800">
+                                        <p class="text-[10px] text-green-600 dark:text-green-400 font-bold uppercase">Baja</p>
+                                        <p class="text-lg font-bold text-slate-800 dark:text-slate-200">${stats.baja.correct}/${stats.baja.total}</p>
+                                    </div>
+                                </div>
+
+                                <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200 mb-4 border-b pb-2 dark:border-slate-700">Detalle por Módulo</h3>
+                                ${moduleScoresHtml}
+                                
+                                <div class="mt-6 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl text-center">
+                                    <span class="block text-sm text-slate-500 uppercase">Promedio Final</span>
+                                    <span class="block text-5xl font-extrabold text-amber-600 dark:text-amber-400 mt-1">${finalPct}%</span>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col justify-center gap-6">
+                                <div class="bg-slate-50 dark:bg-slate-700/30 p-6 rounded-lg border border-slate-200 dark:border-slate-600 text-center">
+                                    <p class="text-slate-600 dark:text-slate-300 mb-2">¡Felicidades por completar el curso!</p>
+                                </div>
+
+                                <button onclick="displayModule(null)" class="w-full bg-white dark:bg-slate-700 text-slate-700 dark:text-white font-bold py-3 px-4 rounded-lg shadow border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors">
+                                    Volver al Menú
+                                </button>
+                                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-300 font-bold py-3 px-4 rounded-lg shadow border border-red-200 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors text-sm">
+                                    Reiniciar Curso Completo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function renderModuleList() {
+            const list = document.getElementById('module-list');
+            if(!list) return;
+            list.innerHTML = '';
+
+            // MODIFICACIÓN: Iterar sobre la lista COMPLETA de títulos cortos
+            allModuleShortTitles.forEach((shortTitle, index) => {
+                const moduleId = index + 1;
+                // Buscar si el módulo existe en la variable courseModules (módulo disponible)
+                const module = courseModules.find(m => m.id === moduleId);
+                const isCompleted = userProgress[moduleId]?.completed;
+                const isActive = moduleId === currentModuleId;
+
+                const li = document.createElement('li');
+                
+                if (module) {
+                    // MÓDULO DISPONIBLE
+                    let classes = 'p-3 rounded-lg cursor-pointer transition-all duration-200 flex items-center justify-between gap-3 ';
+                    if (isActive) classes += 'bg-amber-600 font-bold text-white shadow-lg';
+                    else if (isCompleted) classes += 'bg-emerald-800/80 text-emerald-300 hover:bg-emerald-700/80';
+                    else classes += 'bg-slate-700 hover:bg-slate-600 hover:pl-4';
+
+                    li.className = classes;
+                    
+                    let iconSvg = isCompleted 
+                        ? '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />'
+                        : '<path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 16c1.255 0 2.443-.29 3.5-.804V4.804zM14.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 0114.5 16c1.255 0 2.443-.29 3.5-.804v-10A7.968 7.968 0 0014.5 4z" />';
+
+                    let innerHTML = `
+                        <div class="flex items-center gap-3 overflow-hidden">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0 opacity-70" viewBox="0 0 20 20" fill="currentColor">
+                                ${iconSvg}
+                            </svg>
+                            <span class="truncate text-sm">${shortTitle}</span>
+                        </div>
+                    `;
+
+                    if (isCompleted) {
+                        innerHTML += `
+                            <button onclick="event.stopPropagation(); showModuleSummary(${moduleId})" class="p-1 hover:bg-white/20 rounded-full transition-colors" title="Ver Resumen">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </button>
+                        `;
+                    }
+
+                    li.innerHTML = innerHTML;
+                    li.onclick = () => displayModule(moduleId);
+                } else {
+                    // MÓDULO NO DISPONIBLE AÚN
+                    li.className = 'p-3 rounded-lg flex items-center gap-3 bg-slate-800 text-slate-500 cursor-not-allowed opacity-50';
+                    li.innerHTML = `
+                        <div class="flex items-center gap-3 overflow-hidden">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0 opacity-50" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                            </svg>
+                            <span class="truncate text-sm">${shortTitle}</span>
+                        </div>
+                    `;
+                }
+                list.appendChild(li);
+            });
+        }
+
+        // --- FUNCIONES RESTANTES ---
+
+        function renderBibliography() {
+            const bibliographyContent = document.getElementById('bibliography-content');
+            if (!bibliographyContent) return;
+
+            const allSources = [
+"GPC-SS-810-17. Intervenciones de enfermería para la prevención, control y manejo de hipercolesterolemia. 2015.",
+"GPC-SS-813-17. Intervenciones de enfermería para la atención del adulto amputado de extremidad inferior por diabetes mellitus. 2015.",
+"GPC-SS-816-17. Intervenciones de enfermería a pacientes que requieren cuidados paliativos en el hogar. 2015.",
+"GPC-SS-817-17. Intervenciones de enfermería para la prevención y el cuidado de la hipoglucemia. 2015.",
+"GPC-SS-819-17. Intervenciones de enfermería para la detección oportuna y control del episodio depresivo mayor sin síntomas psicóticos en mujeres mayores de 18 años. 2015.",
+"GPC-SS-822-18. Intervenciones de enfermería en tanatología a la persona al final de la vida. 2015.",
+"GPC-SS-828-18. Intervenciones de enfermería para la detección y control de tuberculosis pulmonar. 2015."
+            ];
+            
+            bibliographyContent.innerHTML = '';
+            allSources.forEach(citation => {
+                const item = document.createElement('div');
+                item.className = 'bg-slate-100 dark:bg-slate-700 p-3 rounded-lg flex items-start gap-3 text-sm';
+                item.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-500 dark:text-slate-400 flex-shrink-0 mt-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 16c1.255 0 2.443-.29 3.5-.804V4.804zM14.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 0114.5 16c1.255 0 2.443-.29 3.5-.804v-10A7.968 7.968 0 0014.5 4z" />
+                    </svg>
+                    <span>${citation}</span>
+                `;
+                bibliographyContent.appendChild(item);
+            });
+        }
+
+        function updateProgressBar() {
+            const totalDefined = courseModules.length; 
+            const completed = Object.keys(userProgress).filter(id => parseInt(id) <= totalDefined && userProgress[id].completed).length;
+            const pct = totalDefined > 0 ? Math.round((completed / totalDefined) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if(bar) {
+                bar.style.width = pct + '%';
+                bar.textContent = pct + '%';
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('pediatríauno9CourseProgress', JSON.stringify(userProgress));
+                if(currentModuleId) localStorage.setItem('pediatríauno9LastModuleId', currentModuleId);
+                else localStorage.removeItem('pediatríauno9LastModuleId');
+            } catch(e) { console.error("Error saving progress", e); }
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('pediatríauno9CourseProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { 
+                console.error("Error loading progress", e);
+                userProgress = {}; 
+            }
+            updateProgressBar();
+        }
+
+        function resetProgress() {
+            localStorage.removeItem('pediatríauno9CourseProgress');
+            localStorage.removeItem('pediatríauno9LastModuleId');
+            window.location.reload();
+        }
+
+        function submitQuiz(moduleId) {
+            const moduleData = courseModules.find(m => m.id === moduleId);
+            const form = document.getElementById('quiz-form-' + moduleId);
+            
+            if(!moduleData) return;
+
+            const totalQuestions = moduleData.quiz.length;
+            
+            // MODIFICACIÓN: LÓGICA PARA SCROLLEAR A LA PRIMERA PREGUNTA SIN CONTESTAR (Sin Alert)
+            let firstUnansweredIndex = -1;
+            
+            for (let i = 0; i < totalQuestions; i++) {
+                const isAnswered = form.querySelector(`input[name="q${i}"]:checked`);
+                if (!isAnswered) {
+                    firstUnansweredIndex = i;
+                    break;
+                }
+            }
+
+            if (firstUnansweredIndex !== -1) {
+                const questionEl = document.getElementById(`q-container-${firstUnansweredIndex}`);
+                if (questionEl) {
+                    // Mueve silenciosamente la pantalla a la pregunta
+                    questionEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Resalta el contenedor momentáneamente
+                    questionEl.classList.add('ring-4', 'ring-amber-500/50');
+                    setTimeout(() => questionEl.classList.remove('ring-4', 'ring-amber-500/50'), 1500);
+                }
+                // No mostrar alert, simplemente retornar y no evaluar
+                return;
+            }
+
+            let score = 0;
+            let userAnswers = {};
+
+            moduleData.quiz.forEach((q, index) => {
+                const selected = form.querySelector(`input[name="q${index}"]:checked`);
+                if (selected) {
+                    const val = parseInt(selected.value);
+                    userAnswers[index] = val;
+                    if (val === q.answer) score++;
+                }
+            });
+
+            if (!userProgress[moduleId]) userProgress[moduleId] = {};
+            userProgress[moduleId].completed = true;
+            userProgress[moduleId].score = score;
+            userProgress[moduleId].answers = userAnswers;
+
+            saveProgress();
+            updateProgressBar();
+            showCompletedModule(moduleId);
+            renderModuleList();
+            
+            document.getElementById('main-content').scrollTop = 0;
+            window.scrollTo(0, 0);
+        }
+
+        function loadTheme() {
+            // Predeterminado: Modo Diurno. Solo si el usuario forzó 'dark' anteriormente se usa dark.
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+    <!-- SCRIPT GUARDIÁN DE SEGURIDAD -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // 1. Tu misma configuración de Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0",
+        authDomain: "enarm-lite.firebaseapp.com",
+        projectId: "enarm-lite",
+        storageBucket: "enarm-lite.firebasestorage.app",
+        messagingSenderId: "767032952477",
+        appId: "1:767032952477:web:84347320ed3d376f7e7674",
+        measurementId: "G-PVR3RBVNSV"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // 2. Ocultamos la página por 1 segundo para que no vean el contenido si no tienen sesión
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.5s ease';
+
+    // 3. Revisamos quién entra
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            // Está logueado, pero ¿sigue en la lista blanca?
+            const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            
+            if(userDocSnap.exists()) {
+                // ¡Todo en orden! Mostramos el contenido
+                document.body.style.opacity = '1';
+            } else {
+                // Está logueado pero no en la lista blanca -> Al inicio
+                window.location.href = "index.html"; 
+            }
+        } else {
+            // No tiene sesión abierta -> Al inicio
+            window.location.href = "index.html";
+        }
+    });
+</script>
+</body>
+</html>
