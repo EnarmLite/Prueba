@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-purple-500 to-fuchsia-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================
+        // DATA: BASE DE DATOS DE PREGUNTAS (AGREGA AQUÍ HASTA 280+)
+        // =========================================================
+        const questionsData = [
+            {
+                id: 1, 
+                question: "Basado en la GPC de Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con elevación del segmento ST, ¿cuál es el hallazgo electrocardiográfico que integra el diagnóstico presuntivo en un hombre de treinta y cinco años?", 
+                options: ["Mayor 0.15 milivoltios en V2-V3", "Mayor 0.20 milivoltios en V2-V3", "Mayor 0.25 milivoltios en V2-V3", "Mayor 0.1 milivoltios en V7-V9"], 
+                answer: 2, 
+                justification: "De acuerdo a la GPC de Infarto Agudo de Miocardio, el punto de corte para considerar una nueva elevación del segmento ST varía según la edad y sexo del paciente, siendo más exigente en hombres jóvenes para evitar falsos positivos por repolarización precoz.<br><br>Perla ENARM: \"Nueva elevación del segmento ST en por lo menos dos derivaciones electro-anatómicas contiguas con los siguientes puntos de corte: mayor o igual a 0.25 milivoltios en hombres con edad menor a 40 años en V2 y V3\".<br><br>Análisis de Distractores: La opción A corresponde al punto de corte establecido para mujeres de cualquier edad. La opción B es el punto de corte diagnóstico para hombres mayores de 40 años. La opción D es el criterio para infartos posteriores en derivaciones V7 a V9 en hombres menores de 40 años, no el patrón diagnóstico estándar precordial.", 
+                source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con elevación del segmento ST, 2021, Cuadros o Figuras (Cuadro 3), Página 11." 
+            },
+            {
+                id: 2, 
+                question: "En el contexto de Enfermedad Tromboembólica Venosa en México, ¿cuál es el factor de riesgo genético con mayor asociación reportado para investigar en un primer evento según la fuente?", 
+                options: ["Obesidad grado tres", "Uso de estrógenos orales", "Deficiencia de Proteína C", "Neoplasia maligna activa"], 
+                answer: 2, 
+                justification: "De acuerdo a la GPC de Enfermedad Tromboembólica Venosa, en pacientes con un primer evento no provocado por factores adquiridos o ambientales, es fundamental el rastreo de trombofilias hereditarias que alteran la cascada de coagulación, como el déficit de anticoagulantes naturales.<br><br>Perla ENARM: Se recomienda que a la persona que presente un primer evento de ETV se investiguen los factores de riesgo para verificar sí son genéticos, adquiridos o ambientales. Entre los genéticos destacan: Deficiencia de antitrombina, Deficiencia de proteína C, Deficiencia de proteína S y Factor V de Leiden.<br><br>Análisis de Distractores: La obesidad, el uso de terapia hormonal (estrógenos) y el cáncer activo son factores de riesgo procoagulantes fuertemente asociados, pero se clasifican como factores adquiridos y ambientales, no genéticos.", 
+                source: "GPC-IMSS-425-18, Diagnóstico y tratamiento enfermedad tromboembólica venosa, 2018, Promoción y Cuadro 1, Páginas 2 y 11." 
+            },
+            {
+                id: 3, 
+                question: "¿Cuál es el líquido de elección para el manejo de reanimación inicial durante la primera hora en el Estado Hiperglucémico Hiperosmolar en un paciente sin contraindicaciones?", 
+                options: ["Solución salina al 0.9%", "Solución salina al 0.45%", "Solución glucosada al 5%", "Cloruro de potasio intravenoso"], 
+                answer: 0, 
+                justification: "De acuerdo a la GPC de Estado Hiperglucémico Hiperosmolar... la principal causa de mortalidad a corto plazo en estas crisis metabólicas es el colapso circulatorio inducido por la diuresis osmótica masiva. El paso inicial y universal es la expansión agresiva del volumen intravascular con un cristaloide isotónico antes de corregir cualquier otro parámetro.<br><br>Perla ENARM: \"Paciente con criterios de EHH: Solución salina al 0.9% 15 a 20 mililitros por kilogramo intravenosa en la primera hora\".<br><br>Análisis de Distractores: La solución hipotónica al 0.45% y la glucosada al 5% son fluidos de mantenimiento secundario condicionados por el Sodio y la Glucosa respectivamente, nunca de reanimación inicial. El cloruro de potasio se añade a la mezcla posteriormente según los niveles séricos, pero no es una solución de expansión de volumen.", 
+                source: "SS-160-09, Diagnóstico y Tratamiento del Estado Hiperglucémico Hiperosmolar en Adultos con Diabetes Mellitus Tipo 2, 2018, Algoritmo 1, Página 1." 
+            },
+            {
+                id: 4, 
+                question: "Basado en la GPC de Síndrome de Apnea Obstructiva, ¿cuál es el signo clínico o síntoma que apoya el diagnóstico presuntivo en niños?", 
+                options: ["Enuresis secundaria", "Cefalea matutina", "Insomnio", "Diaforesis nocturna"], 
+                answer: 0, 
+                justification: "De acuerdo a la GPC de Síndrome de Apnea Obstructiva, la presentación clínica varía según el grupo etario, siendo los síntomas diurnos más prevalentes en adultos, mientras que en niños destacan los problemas conductuales y el control de esfínteres durante el sueño.<br><br>Perla ENARM: \"Síntomas de SAOS en niños: Ronquido habitual, Apnea, Respiración oral o ruidosa, Despertares frecuentes, Enuresis secundaria, Trastornos de la conducta, Problemas de aprendizaje\".<br><br>Análisis de Distractores: La cefalea matutina (B), el insomnio (C) y la diaforesis nocturna (D) son síntomas característicos de la población adulta, por lo que no orientan de forma primaria al diagnóstico en el paciente pediátrico.", 
+                source: "GPC-SS-572-21, Diagnóstico y Tratamiento del Síndrome de Apnea Obstructiva del Sueño en población pediátrica y adulta en el primer y segundo nivel de atención, 2021, Cuadros o Figuras, Página 8." 
+            },
+            {
+                id: 5, 
+                question: "Basado en la GPC de Leucemia Linfoblástica Aguda, ¿cuál es el estudio estándar indispensable para confirmar el diagnóstico presuntivo y realizar la subclasificación?", 
+                options: ["Frotis de sangre periférica", "Citometría de flujo en sangre", "Biopsia de hueso", "Aspirado de médula ósea"], 
+                answer: 3, 
+                justification: "De acuerdo a la GPC de Leucemia Linfoblástica Aguda, el abordaje integral para confirmar la infiltración medular exige la visualización directa celular y la recolección de sustrato para paneles moleculares avanzados.<br><br>Perla ENARM: \"Realizar aspirado de médula ósea tomar muestras para: Extendido, tinción Right, Inmunofenotipo, Citogenética, Estudios moleculares\".<br><br>Análisis de Distractores: El frotis (A) y la citometría en sangre (B) son de sospecha inicial pero no confirmatorios definitivos ni suficientes para todos los estudios requeridos por el algoritmo. La biopsia de hueso (C) se reserva únicamente para cuando el aspirado de médula ósea resulta inadecuado (ej. aspirado seco).", 
+                source: "IMSS-142-08, Diagnóstico y Tratamiento Leucemia Linfoblástica Aguda en el Adulto, 2018, Algoritmo Diagnóstico, 1." 
+            },
+            {
+                id: 6, 
+                question: "En el contexto de la Patología de la Válvula Mitral en México, ¿cuál es la etiología o factor de riesgo con mayor asociación para desarrollar estenosis reportado por la fuente?", 
+                options: ["Fiebre reumática aguda", "Cardiopatía isquémica", "Degeneración mixomatosa", "Endocarditis infecciosa"], 
+                answer: 0, 
+                justification: "De acuerdo a la GPC de Patología de Válvula Mitral, la carditis aguda por fiebre reumática es la causa predominante de la estenosis mitral en nuestro medio, generando secuelas fibróticas y fusión de comisuras a largo plazo.<br><br>Perla ENARM: \"Se recomienda que a los pacientes sospechosos de fiebre reumática se les realice ecocardiografía. La ecocardiografía en la carditis aguda reumática es más sensible y específica que la auscultación.\"<br><br>Análisis de Distractores: La cardiopatía isquémica y la degeneración mixomatosa son etiologías clásicas de la insuficiencia mitral (secundaria y primaria, respectivamente), no de la estenosis. La endocarditis infecciosa típicamente causa insuficiencia aguda por destrucción del aparato valvular.", 
+                source: "IMSS-235-09, Diagnóstico y Tratamiento de la Patología de la Válvula Mitral, 2017, Estenosis de la válvula mitral por enfermedad reumática, p. 9." 
+            },
+            {
+                id: 7, 
+                question: "Basado en el PRONAM de Diabetes tipo 2 y síndrome metabólico, ¿cuál es el hallazgo laboratorial que obliga al inicio combinado de un inhibidor del co-transportador de sodio glucosa tipo 2 (iSGLT-2)?", 
+                options: ["Glucosa ≥ 126 mg/dL", "Relación albúmina/creatinina ≥ 30 mg/g", "Tasa de filtración disminuida", "Hemoglobina glucosilada de 8.5%"], 
+                answer: 1, 
+                justification: "De acuerdo a la PRONAM de Diabetes y Síndrome Metabólico, el grado de albuminuria es un determinante crítico para añadir nefroprotección específica al tratamiento base, independientemente del control glucémico aislado.<br><br>Perla ENARM: \"Si el paciente presenta relación albúmina/creatinina ≥ 30 mg/g, agregar tratamiento con iSGLT-2 (inhibidor del co-transportador de sodio glucosa tipo 2), en combinación con inhibidor de enzima convertidora de angiotensina o antagonista de los receptores de angiotensina II\".<br><br>Análisis de Distractores: La glucosa y la hemoglobina glucosilada alteradas justifican la intensificación general del tratamiento, pero el trigger específico y obligatorio para usar un iSGLT-2 como protección orgánica es la albuminuria ≥ 30 mg/g. La tasa de filtración disminuida por sí sola exige ajuste de dosis, no forzosamente la adición inmediata de esta familia sin albuminuria o falla cardíaca.", 
+                source: "PRONAM, Protocolo Nacional de Atención Médica Diabetes tipo 2 y síndrome metabólico, 2024, Tratamiento farmacológico. Principios generales, Página 8." 
+            },
+            {
+                id: 8, 
+                question: "Basado en la GPC de Exacerbación de Asma, ¿cuál es el estudio de medición objetiva indispensable que integra el diagnóstico inicial de la gravedad de obstrucción al flujo aéreo?", 
+                options: ["Gasometría arterial de ingreso", "Radiografía de tórax posteroanterior", "Oximetría de pulso continua", "Flujo Espiratorio Máximo (PEF)"], 
+                answer: 3, 
+                justification: "De acuerdo a la GPC de Exacerbación de Asma, la evaluación inicial nunca debe basarse únicamente en la clínica del paciente, ya que esta tiende a subestimar la severidad real del broncoespasmo. Se requiere forzosamente objetivar el déficit obstructivo mediante una espirometría o flujometría.<br><br>Perla ENARM: \"La evaluación de cualquier exacerbación de asma debe incluir la identificación de signos y antecedentes de crisis de riesgo vital y la utilización de medidas objetivas (PEF o espirometría) para cuantificar el grado de obstrucción al flujo aéreo (evaluación estática).\"<br><br>Análisis de Distractores: La gasometría arterial (A) y la radiografía de tórax (B) no son estudios de primera línea ni indispensables para el diagnóstico o estadiaje inicial de todos los pacientes; se reservan para casos graves con sospecha de complicaciones (ej. neumotórax, hipercapnia o fatiga muscular). La oximetría (C) mide el intercambio gaseoso, pero no cuantifica la obstrucción de la vía aérea.", 
+                source: "IMSS-806-17, Diagnóstico, tratamiento y prevención de la exacerbación de asma en Adultos, 2017, Diagnóstico, Página 13." 
+            },
+            {
+                id: 9, 
+                question: "¿Cuál es la meta terapéutica del parámetro laboratorial (INR) que establece la norma para un paciente con Enfermedad Tromboembólica Venosa tratado con Warfarina?", 
+                options: ["Mantener entre uno y dos", "Mantener entre dos y tres", "Mantener entre tres y cuatro", "Mantener en cinco puntos"], 
+                answer: 1, 
+                justification: "De acuerdo a la GPC de Enfermedad Tromboembólica Venosa, la eficacia de los Antagonistas de la Vitamina K depende estrictamente del nivel de anticoagulación; valores menores predisponen a recurrencia trombótica, y valores mayores aumentan el riesgo de hemorragia fatal.<br><br>Perla ENARM: Mantener el rango terapéutico de International Naturalized Ratio (INR) entre 2.0 a 3.0 (objetivo 2.5), en lugar de niveles bajos (< 2) o altos (3.0-5.0).<br><br>Análisis de Distractores: Un INR menor a dos es sub-terapéutico y no protege contra la extensión del trombo. Valores entre 3 y 5 son supraterapéuticos e incrementan drásticamente el riesgo de complicaciones hemorrágicas.", 
+                source: "GPC-IMSS-425-18, Diagnóstico y tratamiento enfermedad tromboembólica venosa, 2018, Tratamiento, Página 9." 
+            },
+            {
+                id: 10, 
+                question: "¿Cuál es el fármaco de elección para el manejo antiagregante inicial del Infarto Agudo de Miocardio con elevación del segmento ST previo a la intervención coronaria?", 
+                options: ["Clopidogrel seiscientos miligramos", "Prasugrel sesenta miligramos", "Ácido acetilsalicílico trescientos miligramos", "Tenecteplase en dosis única"], 
+                answer: 2, 
+                justification: "De acuerdo a la GPC de Infarto Agudo de Miocardio, la inhibición temprana de la ciclooxigenasa plaquetaria es el primer paso farmacológico indispensable para limitar el crecimiento del trombo coronario tanto en tratamiento invasivo como farmacológico.<br><br>\"Se debe administrar ácido acetilsalicílico 162 a 325 miligramos antes de la intervención coronaria primaria percutánea. Debe ser administrado de 150 a 300 miligramos, de preferencia 300 miligramos, a todos los pacientes a quienes se les administra tratamiento fibrinolítico\".<br><br>Análisis de Distractores: La opción A y B son dosis de carga de inhibidores P2Y12 que se usan de forma adjunta, pero no sustituyen el mandato universal de la aspirina como primera línea inicial indispensable. La opción D es un fibrinolítico, no un antiagregante.", 
+                source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con elevación del segmento ST, 2021, Tratamiento (Recomendación Clave), Página 8." 
+            },
+            {
+                id: 11, 
+                question: "Basado en la GPC de Estado Hiperglucémico Hiperosmolar, ¿cuál es el hallazgo laboratorial que integra el diagnóstico de resolución clínica?", 
+                options: ["Glucosa menor a 200", "Osmolaridad menor a 310", "Potasio mayor a 5.2", "Sodio mayor a 135"], 
+                answer: 1, 
+                justification: "De acuerdo a la GPC de Estado Hiperglucémico Hiperosmolar... el objetivo principal del manejo no es únicamente llevar a la normoglucemia, sino restaurar la homeostasis del espacio extracelular y revertir la hipertonicidad que deprime el estado de alerta del paciente.<br><br>Perla ENARM: \"Criterios de resolución del EHH: osmolaridad sérica efectiva < 310 mOsm/Kg, glucosa < 250 mg/dl, alerta y con capacidad de deglutir\".<br><br>Análisis de Distractores: La glucosa menor a 200 no es la meta estricta de resolución (la guía marca < 250 miligramos por decilitro). El potasio mayor a 5.2 y el sodio mayor a 135 son parámetros para ajustar líquidos o suspender reposición de potasio, no definen la curación del cuadro.", 
+                source: "SS-160-09, Diagnóstico y Tratamiento del Estado Hiperglucémico Hiperosmolar en Adultos con Diabetes Mellitus Tipo 2, 2018, Algoritmo 1, Página 2." 
+            },
+            {
+                id: 12, 
+                question: "¿Cuál es la patología o condición clínica que contraindica el uso de estudios simplificados en el Síndrome de Apnea Obstructiva, requiriendo polisomnografía?", 
+                options: ["Insuficiencia cardíaca congestiva", "Hipertensión arterial sistémica", "Hipertrofia adenoamigdalina", "Obesidad mórbida"], 
+                answer: 0, 
+                justification: "De acuerdo a la GPC de Síndrome de Apnea Obstructiva, existen morbilidades que alteran la arquitectura del sueño o inducen eventos centrales, lo que disminuye la precisión diagnóstica de los dispositivos portátiles y obliga a un mapeo completo en el laboratorio.<br><br>Perla ENARM: \"Se sugiere considerar como factores que afectan los resultados de estudios simplificados del sueño a: Una enfermedad pulmonar de moderada a grave, Una enfermedad neuromuscular, La insuficiencia cardíaca congestiva...\".<br><br>Análisis de Distractores: La hipertensión arterial sistémica (B) suma riesgo clínico pero no invalida el estudio portátil. La hipertrofia adenoamigdalina (C) es indicación quirúrgica en niños. La obesidad mórbida (D) agrava el cuadro pero no contraindica el estudio simplificado per se.", 
+                source: "GPC-SS-572-21, Diagnóstico y Tratamiento del Síndrome de Apnea Obstructiva del Sueño en población pediátrica y adulta en el primer y segundo nivel de atención, 2021, Diagnóstico en Adultos, Páginas 6-7." 
+            },
+            {
+                id: 13, 
+                question: "¿Cuál es la meta temporal que establece la norma para evaluar la remisión clínica en un paciente con Leucemia Linfoblástica Aguda y considerarla un factor de buen pronóstico?", 
+                options: ["Remisión completa a las 2 semanas", "Remisión completa a las 4 semanas", "Remisión completa a las 8 semanas", "Remisión completa a los 6 meses"], 
+                answer: 1, 
+                justification: "De acuerdo a la GPC de Leucemia Linfoblástica Aguda, la rapidez con la que se limpia la médula ósea refleja la sensibilidad biológica de la clona neoplásica al esquema de inducción.<br><br>Perla ENARM: \"Factores de buen pronóstico: Dinámica de la respuesta: remisión completa a las 4 semanas de iniciada quimioterapia\".<br><br>Análisis de Distractores: Una limpieza en solo 2 semanas (A) no es el corte temporal establecido por el consenso de la GPC. Si el paciente demora 8 semanas o más (C y D), el algoritmo lo califica explícitamente como \"RC tardía\", lo que cambia inmediatamente el estatus a factor de mal pronóstico y alto riesgo.", 
+                source: "IMSS-142-08, Diagnóstico y Tratamiento Leucemia Linfoblástica Aguda en el Adulto, 2018, Algoritmo 3 Pronóstico LLA, 3-4." 
+            },
+            {
+                id: 14, 
+                question: "¿Cuál es el fármaco de elección para el manejo anticoagulante inicial en Patología de la Válvula Mitral tipo estenosis con fibrilación auricular paroxística, en un paciente sin contraindicaciones?", 
+                options: ["Warfarina o acenocumarina", "Ácido acetilsalicílico", "Rivaroxabán o apixabán", "Heparina de bajo peso"], 
+                answer: 0, 
+                justification: "De acuerdo a la GPC de Patología de Válvula Mitral, la fibrilación auricular valvular (secundaria a estenosis mitral) tiene un muy alto riesgo embolígeno, por lo que requiere antagonistas de la vitamina K de forma obligatoria.<br><br>Perla ENARM: \"Iniciar anticoagulación oral con cumarínicos (warfarina o acenocumarina) en pacientes con: Estenosis y arritmias AF–paroxísticas malignas, persistente y permanente.\"<br><br>Análisis de Distractores: El ácido acetilsalicílico no ofrece protección suficiente para la FA valvular. Los anticoagulantes directos (rivaroxabán) no están indicados como primera línea en FA valvular reumática moderada-severa por la GPC. Las heparinas son terapias puente, no el manejo de mantenimiento a largo plazo.", 
+                source: "IMSS-235-09, Diagnóstico y Tratamiento de la Patología de la Válvula Mitral, 2017, Tratamiento médico de los trastornos del ritmo, p. 15." 
+            },
+            {
+                id: 15, 
+                question: "En el contexto de Diabetes tipo 2 y síndrome metabólico, ¿cuál es el factor de riesgo presente en el paciente que contraindica absolutamente el uso de sulfonilureas?", 
+                options: ["Índice de masa corporal > 30 kg/m²", "Triglicéridos de 180 mg/dL", "Glucosa en ayuno elevada", "Colesterol LDL elevado"], 
+                answer: 0, 
+                justification: "De acuerdo a la PRONAM de Diabetes y Síndrome Metabólico, los secretagogos de insulina como las sulfonilureas generan hiperinsulinemia endógena, lo que favorece el aumento de peso y empeora la resistencia a la insulina en pacientes que ya cursan con obesidad.<br><br>Perla ENARM: \"Contraindicaciones: En pacientes con edad > 65 años o con índice de masa corporal > 30 kg/m² o con tasa del filtrado glomerular < 45 mL/min\".<br><br>Análisis de Distractores: La dislipidemia (triglicéridos y LDL) y la hiperglucemia de ayuno son comorbilidades y manifestaciones del descontrol que no contraindican per se a las sulfonilureas. Cabe destacar que el paciente también tiene edad > 65 años y filtración glomerular < 45 mL/min, los cuales también son contraindicaciones absolutas, pero la obesidad (IMC > 30 kg/m²) es el único factor listado en las opciones.", 
+                source: "PRONAM, Protocolo Nacional de Atención Médica Diabetes tipo 2 y síndrome metabólico, 2024, Tratamiento de hiperglucemia, Página 10." 
+            },
+            {
+                id: 16, 
+                question: "Ante la sospecha clínica de Exacerbación de Asma en el servicio de urgencias, ¿cuál es el primer paso en la evaluación estática que debe realizarse según el algoritmo oficial?", 
+                options: ["Iniciar ventilación mecánica no invasiva", "Solicitar radiografía de tórax urgente", "Identificar signos de riesgo vital", "Administrar sulfato de magnesio intravenoso"], 
+                answer: 2, 
+                justification: "De acuerdo a la GPC de Exacerbación de Asma, la estabilización de un paciente en triage respiratorio obliga a realizar una división inmediata (\"evaluación estática\"): detectar si el paciente está en parada respiratoria inminente (tórax silente, bradicardia, confusión) para proceder a intubación, o si permite tomar mediciones y dar terapia broncodilatadora.<br><br>Perla ENARM: \"La valoración de la crisis se realiza en dos etapas: Inicial (o estática). Sus objetivos son: identificar a los pacientes con factores de riesgo vital identificar los signos y síntomas de compromiso vital; y medir de forma objetiva el grado de obstrucción al flujo aéreo...\"<br><br>Análisis de Distractores: Iniciar ventilación mecánica no invasiva (A) y sulfato de magnesio (D) son escalones terapéuticos posteriores para exacerbaciones graves que fallan al manejo estándar inicial, no son el primer paso evaluativo. La radiografía de tórax (B) retrasa las maniobras de salvamento y solo se pide para buscar diagnósticos diferenciales.", 
+                source: "IMSS-806-17, Diagnóstico, tratamiento y prevención de la exacerbación de asma en Adultos, 2017, Diagnóstico, Página 15." 
+            },
+            {
+                id: 17, 
+                question: "Basado en la GPC de Síndrome Coronario Agudo SEST, ¿cuál es el hallazgo laboratorial que integra el diagnóstico presuntivo de un Infarto Agudo al Miocardio Sin Elevación del Segmento ST?", 
+                options: ["Elevación de transaminasas", "Biomarcadores en percentila 99", "Depuración menor a 60 mL/min", "Troponinas en percentila 50"], 
+                answer: 1, 
+                justification: "De acuerdo a la GPC de Síndrome Coronario Agudo SEST... la confirmación de necrosis miocárdica en un paciente con isquemia aguda se establece al detectar niveles de enzimas cardiacas (Troponina I, CPK MB) por encima del límite superior de referencia poblacional, lo cual diferencia un infarto agudo de una angina inestable y dicta la necesidad de un abordaje invasivo percutáneo.<br><br>Perla ENARM: \"Elevacion biomarcadores percentila 99 SI IAM SEST\".<br><br>Análisis de Distractores: La opción C corresponde a un factor de clasificación para riesgo intermedio, no a un hallazgo diagnóstico de infarto. Las opciones A y D son valores y parámetros ficticios en este algoritmo, por lo que solo no son correctas.", 
+                source: "IMSS-191-10, Guía de Referencia Rápida Diagnóstico y Tratamiento del Síndrome Coronario Agudo Sin Elevación del Segmento ST, 2018, Algoritmo 1, Página 2." 
+            },
+            {
+                id: 18, 
+                question: "Utilizando la escala probabilística de Wells para Enfermedad Tromboembólica Venosa (TVP), ¿cómo se clasifica a un paciente con los siguientes hallazgos: Cáncer activo (1 punto) y postración en cama por cuatro días (1 punto), con un total de 2 puntos?", 
+                options: ["Probabilidad clínica nula", "Probabilidad clínica baja", "Probabilidad clínica intermedia", "Probabilidad clínica alta"], 
+                answer: 2, 
+                justification: "De acuerdo a la GPC de Enfermedad Tromboembólica Venosa, la estratificación del riesgo es el primer paso ineludible. Cada hallazgo clínico suma puntos que nos dictan el algoritmo a seguir; un puntaje de 1 a 2 agrupa al paciente en una zona donde la trombosis es probable y amerita imagen.<br><br>Perla ENARM: Probabilidades clínicas de riesgo: Baja (menor o igual a 0), Intermedio (1-2), Alta (mayor o igual a 3).<br><br>Análisis de Distractores: La probabilidad baja corresponde a 0 o menos puntos. La probabilidad alta es de 3 puntos o más. Nula no es una clasificación válida en esta escala estandarizada.", 
+                source: "GPC-IMSS-425-18, Diagnóstico y tratamiento enfermedad tromboembólica venosa, 2018, Cuadro 7, Página 21." 
+            },
+            {
+                id: 19, 
+                question: "¿Cuáles son los criterios clínicos específicos que obligan al envío a tercer nivel de un paciente pediátrico con Síndrome de Apnea Obstructiva?", 
+                options: ["Alteraciones maxilofaciales", "Hipertrofia adenoamigdalina", "Enuresis secundaria nocturna", "Obesidad mórbida"], 
+                answer: 0, 
+                justification: "De acuerdo a la GPC de Síndrome de Apnea Obstructiva, los pacientes pediátricos con malformaciones cráneo-faciales tienen un compromiso anatómico complejo que rebasa las intervenciones estándar (como la amigdalectomía), requiriendo manejo por alta especialidad.<br><br>Perla ENARM: \"Se sugiere en niños con sospecha de SAOS (por cuadro clínico y factores de riesgo) y alteraciones maxilofaciales, enviar a tercer nivel de atención, para realizar protocolo diagnóstico\".<br><br>Análisis de Distractores: La hipertrofia adenoamigdalina (B) es tributaria de manejo quirúrgico en segundo nivel. La enuresis secundaria (C) y la obesidad (D) son un síntoma y un factor de riesgo manejables, no un criterio absoluto de derivación a alta especialidad.", 
+                source: "GPC-SS-572-21, Diagnóstico y Tratamiento del Síndrome de Apnea Obstructiva del Sueño en población pediátrica y adulta en el primer y segundo nivel de atención, 2021, Prevención en Niños, Página 5." 
+            },
+            {
+                id: 20, 
+                question: "¿Cuál es el fármaco de elección para el manejo antiagregante inicial del Infarto Agudo de Miocardio con elevación del segmento ST previo a la intervención coronaria?", 
+                options: ["Clopidogrel seiscientos miligramos", "Prasugrel sesenta miligramos", "Ácido acetilsalicílico trescientos miligramos", "Tenecteplase en dosis única"], 
+                answer: 2, 
+                justification: "De acuerdo a la GPC de Infarto Agudo de Miocardio, la inhibición temprana de la ciclooxigenasa plaquetaria es el primer paso farmacológico indispensable para limitar el crecimiento del trombo coronario tanto en tratamiento invasivo como farmacológico.<br><br>\"Se debe administrar ácido acetilsalicílico 162 a 325 miligramos antes de la intervención coronaria primaria percutánea. Debe ser administrado de 150 a 300 miligramos, de preferencia 300 miligramos, a todos los pacientes a quienes se les administra tratamiento fibrinolítico\".<br><br>Análisis de Distractores: La opción A y B son dosis de carga de inhibidores P2Y12 que se usan de forma adjunta, pero no sustituyen el mandato universal de la aspirina como primera línea inicial indispensable. La opción D es un fibrinolítico, no un antiagregante.", 
+                source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con elevación del segmento ST, 2021, Tratamiento (Recomendación Clave), Página 8." 
+            },
+            {
+                id: 21, 
+                question: "¿Cuál es la indicación absoluta del uso de adrenalina (epinefrina) intramuscular, adicional al manejo estándar en un cuadro de Exacerbación de Asma?", 
+                options: ["Parada respiratoria inminente confirmada", "Falla a broncodilatadores iniciales", "Exacerbación grave con hipoxemia", "Asma asociada a anafilaxis"], 
+                answer: 3, 
+                justification: "De acuerdo a la GPC de Exacerbación de Asma, aunque la adrenalina tiene potentes efectos broncodilatadores (agonismo beta) y vasoconstrictores (agonismo alfa), su perfil de efectos adversos cardiovasculares hace que no sea parte de los algoritmos de rutina de crisis asmática pura. Solo salva vidas cuando la crisis es componente de un choque anafiláctico.<br><br>Perla ENARM: \"El uso de la adrenalina (epinefrina) solo está indicada vía intramuscular aunado al tratamiento estándar, en el asma aguda asociada a anafilaxis y angioedema.\"<br><br>Análisis de Distractores: Las crisis con parada inminente (A), la falla al SABA/SAMA (B) y la hipoxemia grave (C) tienen indicación de asegurar vía aérea, iniciar ventilación mecánica, usar esteroides IV e incluso considerar sulfato de magnesio, pero no epinefrina de rutina por el riesgo de arritmias sin anafilaxia confirmada.", 
+                source: "IMSS-806-17, Diagnóstico, tratamiento y prevención de la exacerbación de asma en Adultos, 2017, Tratamiento, Página 23." 
+            },
+            {
+                id: 22, 
+                question: "Según la estrategia de prevención primaria para Patología de la Válvula Mitral, ¿cuál es la intervención en la que está indicada la profilaxis antibiótica para infección endocárdica en pacientes con prótesis?", 
+                options: ["Manipulación de tejido gingival", "Endoscopia esofagogastroduodenal", "Colonoscopia diagnóstica", "Cateterismo cardíaco"], 
+                answer: 0, 
+                justification: "De acuerdo a la GPC de Patología de Válvula Mitral, la bacteriemia transitoria generada por disrupción de la mucosa oral es un factor de alto riesgo para colonización de material protésico o válvulas dañadas, justificando la profilaxis.<br><br>Perla ENARM: \"Dar profilaxis para infección endocárdica en pacientes con prótesis valvular cardíaca... y manipulación del tejido gingival o periapical y perforación de mucosa oral.\"<br><br>Análisis de Distractores: La GPC establece explícitamente como \"No recomendada\" (Nivel de evidencia IIa) la administración de profilaxis antibiótica para procedimientos de tracto gastrointestinal (endoscopia, colonoscopia) o procedimientos intravasculares estériles (cateterismo cardíaco) en ausencia de infección activa.", 
+                source: "IMSS-235-09, Diagnóstico y Tratamiento de la Patología de la Válvula Mitral, 2017, Prevención de fiebre reumática recurrente, p. 11-12." 
+            },
+            {
+                id: 23, 
+                question: "¿Cuál es el fármaco o esquema de elección para el manejo inicial de Síndrome Coronario Agudo SEST en un paciente clasificado como riesgo bajo?", 
+                options: ["Oxígeno, nitratos, bloqueador beta", "Fibrinolíticos sistémicos", "Inotrópicos y vasopresores", "Analgésicos y esteroides"], 
+                answer: 0, 
+                justification: "De acuerdo a la GPC de Síndrome Coronario Agudo SEST... el paciente sin criterios de alto riesgo requiere estabilización hemodinámica y disminución del consumo miocárdico de oxígeno mediante manejo médico óptimo integral previo a evaluar isquemia inducible.<br><br>Perla ENARM: \"Tratamiento antisquémico óptimo: Oxígeno, nitratos, bloqueador beta, antiagregantes, anticoagulantes\".<br><br>Análisis de Distractores: La opción B está totalmente contraindicada en pacientes sin elevación del segmento ST. La opción C se reserva para choque cardiogénico (Riesgo Muy Alto). La opción D es ficticia para el manejo antiisquémico, por lo que solo no es correcta.", 
+                source: "IMSS-191-10, Guía de Referencia Rápida Diagnóstico y Tratamiento del Síndrome Coronario Agudo Sin Elevación del Segmento ST, 2018, Algoritmo 2, Página 3." 
+            },
+            {
+                id: 24, 
+                question: "De acuerdo a los criterios de la GPC, ¿cuál es el tiempo de tratamiento específico que define la terapia estándar de Enfermedad Tromboembólica Venosa provocada por un factor transitorio (ej. cirugía)?", 
+                options: ["Cuarenta y cinco días", "Tres meses de tratamiento", "Seis meses de tratamiento", "Terapia anticoagulante de por vida"], 
+                answer: 1, 
+                justification: "De acuerdo a la GPC de Enfermedad Tromboembólica Venosa, el endotelio tarda en sanar y recanalizarse; ante un factor desencadenante que ya fue resuelto (como una operación), un trimestre de anticoagulación es suficiente para prevenir el síndrome postrombótico y recurrencias.<br><br>Perla ENARM: Se recomienda anticoagulación: Por 3 meses en persona con TVP proximal de pierna o TEP provocada por un factor de riesgo transitorio no quirúrgico o seguido de una cirugía.<br><br>Análisis de Distractores: Terapias menores a 3 meses son ineficaces y predisponen a re-trombosis. La terapia extendida (>6 meses) o indefinida (de por vida) se reserva para eventos recurrentes, trombofilias severas o casos no provocados con riesgo alto.", 
+                source: "GPC-IMSS-425-18, Diagnóstico y tratamiento enfermedad tromboembólica venosa, 2018, Tratamiento, Página 10." 
+            },
+            {
+                id: 25, 
+                question: "¿Cuál es la dosis máxima ajustada de Sitagliptina (inhibidor de dipeptidil peptidasa-4) en Diabetes tipo 2 y síndrome metabólico si la filtración es de 40 mL/min/1.73 m²?", 
+                options: ["100 mg al día", "50 mg al día", "25 mg al día", "Suspensión total del fármaco"], 
+                answer: 1, 
+                justification: "De acuerdo a la PRONAM de Diabetes y Síndrome Metabólico, la mayoría de los iDPP-4 (a excepción de la linagliptina) tienen excreción renal, por lo que su dosis debe reducirse a la mitad al caer la filtración por debajo de 45 mL/min para evitar toxicidad.<br><br>Perla ENARM: \"Sitagliptina: en pacientes con tasa de filtrado glomerular entre 30 y 45 mL/min la dosis es de 50 mg\".<br><br>Análisis de Distractores: La dosis plena de 100 mg se reserva para pacientes con función renal preservada (≥ 45 mL/min). La dosis de 25 mg se indica exclusivamente cuando la filtración cae por debajo de 30 mL/min o el paciente está en diálisis. No hay indicación para suspenderlo totalmente en este rango de filtrado.", 
+                source: "PRONAM, Protocolo Nacional de Atención Médica Diabetes tipo 2 y síndrome metabólico, 2024, Tratamiento de hiperglucemia, Página 10." 
+            }
+        ];
+
+        // ==========================================
+        // LÓGICA DE LA APLICACIÓN 
+        // ==========================================
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('ELex1LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('ELex1Progress');
+                localStorage.removeItem('ELex1LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-purple-500 shadow-md z-10 border-purple-500 dark:border-purple-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-fuchsia-500 to-purple-600 hover:from-purple-600 hover:to-fuchsia-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-purple-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-fuchsia-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "Banco de Preguntas";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "PREPARACIÓN ENARM 2026";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "Evaluación diseñada para fortalecer tus conocimientos con reactivos de alta exigencia.";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-purple-600 dark:text-slate-400 dark:hover:text-purple-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="examen_esp30.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-purple-100 dark:border-purple-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-purple-50 has-[:checked]:border-purple-400 dark:has-[:checked]:bg-purple-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-purple-600 focus:ring-purple-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-purple-600 dark:hover:bg-purple-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-fuchsia-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('ELex1Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('ELex1LastQId', currentQuestionId);
+                else localStorage.removeItem('ELex1LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('ELex1Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+    <!-- SCRIPT GUARDIÁN DE SEGURIDAD -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // 1. Tu misma configuración de Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0",
+        authDomain: "enarm-lite.firebaseapp.com",
+        projectId: "enarm-lite",
+        storageBucket: "enarm-lite.firebasestorage.app",
+        messagingSenderId: "767032952477",
+        appId: "1:767032952477:web:84347320ed3d376f7e7674",
+        measurementId: "G-PVR3RBVNSV"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // 2. Ocultamos la página por 1 segundo para que no vean el contenido si no tienen sesión
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.5s ease';
+
+    // 3. Revisamos quién entra
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            // Está logueado, pero ¿sigue en la lista blanca?
+            const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            
+            if(userDocSnap.exists()) {
+                // ¡Todo en orden! Mostramos el contenido
+                document.body.style.opacity = '1';
+            } else {
+                // Está logueado pero no en la lista blanca -> Al inicio
+                window.location.href = "index.html"; 
+            }
+        } else {
+            // No tiene sesión abierta -> Al inicio
+            window.location.href = "index.html";
+        }
+    });
+</script>
+</body>
+</html>
