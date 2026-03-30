@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================
+        // =========================================================
+        const questionsData = [
+            {
+                id: 1,
+                question: "¿Cuál es el marcador de pronóstico ultrasonográfico que predice mayor riesgo de mortalidad en una Amenaza de Aborto temprana?",
+                options: [
+                    "Taquicardia fetal reactiva",
+                    "Hemorragia endocervical escasa",
+                    "Saco vitelino simétrico ecogénico",
+                    "Bradicardia fetal menor 110 lpm"
+                ],
+                answer: 3,
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de aborto, la disminución drástica de los latidos fetales por debajo del percentil mínimo esperado marca un proceso de declive hipóxico o cromosómico severo del embrión, siendo el signo premonitorio ecográfico más ominoso de pérdida inminente.<br><br>Perla ENARM: \"Los marcadores ultrasonograficos que predicen aborto en mujeres con viabilidad fetal confirmada son: Bradicardia fetal (con FCF < 110 lpm, entre la 6 a 14 SDG, Sen 68 y Esp 97%)\".<br><br>Análisis de Distractores: La taquicardia (A) no es mencionada como el marcador pronóstico nefasto por excelencia en el primer trimestre. Un saco vitelino simétrico y ecogénico normoinserto (C) denota normalidad implantatoria y vitelina. La hemorragia (B) predice riesgo clínico, pero la bradicardia es el marcador pronóstico ecográfico directo letal.",
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto, 2020, Pronóstico, Página 17."
+            },
+            {
+                id: 2, 
+                question: "En miomatosis uterina, ¿cuál es el criterio clínico o antecedente que integra el diagnóstico presuntivo para proceder al tratamiento quirúrgico definitivo según la Guía de Práctica Clínica?", 
+                options: ["Útero mayor a 500 gramos", "Falla al manejo conservador", "Deseo de fertilidad futura", "Sangrado uterino anormal leve"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la Guía de Práctica Clínica de Histerectomía en patología benigna, el tratamiento quirúrgico radical se reserva estrictamente para aquellas pacientes sintomáticas con paridad satisfecha que no presentaron mejoría tras el uso de alternativas farmacológicas o de mínima invasión.<br><br>Perla ENARM: \"Diagrama de flujo 1. Histerectomía en patología uterina benigna: ¿Es candidata a tratamiento conservador? SI -> Valorar uso de Pesario/Manejo conservador -> ¿Mejoría? NO -> Histerectomía\".<br><br>Análisis de Distractores: El peso uterino (A) no es el indicador primario para decidir extirpar el órgano si hay opciones médicas funcionales. El deseo de fertilidad (C) y un sangrado leve (D) favorecerían la preservación del útero y la vigilancia.", 
+                source: "GPC SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Anexos, Página 36." 
+            },
+            {
+                id: 3, 
+                question: "¿Cuál es la maniobra de control temporal recomendada en el choque hemorrágico en obstetricia para disminuir el sangrado mientras se espera el efecto farmacológico o el traslado?", 
+                options: ["Taponamiento con gasas secas", "Técnica de Zea", "Ligadura de arterias hipogástricas", "Empaquetamiento tipo Mikulicz"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, antes de abrir un abdomen de urgencia, se deben pinzar las arterias uterinas vía vaginal como un \"torniquete\" temporal para estabilizar hemodinámicamente a la mujer en la sala.<br><br>Perla ENARM: \"Se recomienda la técnica de Zea como control temporal de la hemorragia obstetrica, a fin de: Identificar las causas del sangrado, Antes de su traslado a quirófano o a otra unidad hospitalaria\".<br><br>Análisis de Distractores: El taponamiento uterino ideal es con balones (Bakri/Sengstaken), no gasas secas (A) que rasgan el tejido. La ligadura de hipogástricas (C) o el empaquetamiento de Mikulicz (D) son terapias definitivas o de \"control de daños\" que exigen una laparotomía, no una maniobra inicial de puente.", 
+                source: "GPC IMSS-162-09, Diagnóstico y tratamiento del choque hemorrágico en obstetricia, 2017, Tratamiento No Farmacológico, Página 26." 
+            },
+            {
+                id: 4, 
+                question: "En Sepsis Materna, ¿cuál es el signo clínico o hallazgo que integra el tamizaje positivo según la escala modificada (omqSOFA) recomendada por la GPC?", 
+                options: ["Presión arterial sistólica ≤90", "Frecuencia respiratoria ≥22", "Frecuencia cardiaca >100", "Temperatura corporal >38.5°C"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, el embarazo produce cambios cardiovasculares fisiológicos que hacen inexactas las escalas convencionales. Por ello, la evaluación rápida de disfunción orgánica en obstetricia (omqSOFA) ajusta el criterio hemodinámico a una presión sistólica más baja (≤90 mmHg) en conjunto con frecuencia respiratoria ≥25 por minuto y alteración del estado de conciencia.<br><br>Perla ENARM: \"Se recomienda emplear la escala de omqSOFA (puntaje modificado en obstetricia, para la evaluación rápida de la falla orgánica) para el tamizaje de la sepsis materna\".<br><br>Análisis de Distractores: La opción B corresponde al valor de la escala qSOFA para población general, la cual no está ajustada al aumento fisiológico de la ventilación en el embarazo (el corte obstétrico es ≥25). Las opciones C y D pertenecen a los antiguos criterios de SIRS, que la guía aconseja abandonar por su baja especificidad y alta tasa de falsos positivos en la mujer gestante.", 
+                source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Diagnóstico Clínico, Página 15." 
+            },
+            {
+                id: 5, 
+                question: "En el contexto de pérdida del bienestar fetal durante el trabajo de parto, ¿cuál es el evento semiológico característico que debe orientar inmediatamente al diagnóstico diferencial de Prolapso de Cordón Umbilical?", 
+                options: ["Bradicardia o desaceleraciones fetales súbitas", "Taquicardia fetal sostenida compensatoria", "Disminución crónica de movimientos fetales", "Contracciones uterinas de baja intensidad"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Emergencias Obstétricas, especialmente posterior a la salida abrupta e intensa del volumen considerable de líquido amniótico que rodea a la presentación (ya sea por ruptura espontánea de bolsas o por ruptura artificial de membranas terapéutica programada), el cordón desciende velozmente arrastrado y empujado hacia el segmento menor para finalmente ser aplastado, pinzado u ocluido físicamente por la dura cabeza fetal que desciende como cuña o tapón contra el anillo rígido cérvico-pélvico o sínfisis púbica materna, cortando inminentemente el flujo de sangre oxigenada oxigenante de las arterias venosas eferentes aferentes y causando un reflejo vagal asfíctico directo secundario intenso al barorreflejo instantáneo y la hipoxia, que se exterioriza visualmente y monitoriza clásicamente en el trazo continuo externo como una caída drástica y repetitiva (dip grave profundo o en V/U) o sostenida letal inmediata (línea plana) en el papel o monitor visual.<br><br>Perla ENARM: \"Las alteraciones en la frecuencia cardiaca fetal (deceleraciones variables, recurrentes, súbitas y con duración mayor a un minuto), por lo general son el primer signo de prolapso de cordón umbilical\".<br><br>Análisis de Distractores: La taquicardia fetal que se exacerba (>160 latidos) compensatoria prolongada y sin variabilidad transitoria suele presentarse frecuentemente en estados de síndrome de respuesta inflamatoria materna por corioamnionitis pélvica instaurada o cuadros secundarios acompañantes de fiebre materna o taquicardias inducidas por simpaticomiméticos tocolíticos, y no primariamente ante la asfixia oclusiva pura directa letal. La disminución crónica severa o la incapacidad materna repentina o silente diaria progresiva paulatina prolongada pre-hospitalaria de percibir o contabilizar clínicamente los movimientos y patadas (C) es un signo de insuficiencia placentaria ateromatosa u obstétrica o restricción subaguda del crecimiento en casa o seguimiento, y no el signo inicial premonitorio directo mecánico asfíctico letal que ocurre tras estallido físico de membranas y compresión vascular intrahospitalaria obstétrica del cordón en minutos agudos transparto. Las contracciones que se presentan o detectan muy disminuidas en amplitud o espaciadas (bajas en tono) o de baja intensidad (D) indican y rigen la pauta de inducción oxitócica trans-hospitalaria de una simple inercia funcional fisiológica distócica en la distocia de dinámica de labor, no un riesgo de obstrucción física aguda o isquémica anóxica per se para requerir estatutariamente y como única terapéutica inmediata la urgente reanimación neonatal ex-utero emergente de urgencia sin retraso del cordón umbilical prolapsado patológico que excede la entrada del canal pélvico inferior en revisión con desgarro vital del soporte funicular biológico extraído del producto intraparto final e irrecuperable por las contracciones intraútero persistentes ocluidas.", 
+                source: "GPC IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Prolapso de cordón umbilical, Página 32." 
+            },
+            {
+                id: 6, 
+                question: "En una paciente con sospecha de preeclampsia, ¿cuál es el dato clínico que integra el diagnóstico de preeclampsia con datos de severidad aun sin documentar proteinuria, según la Guía de Práctica Clínica?", 
+                options: ["Edema severo de miembros inferiores.", "Cefalea leve ocasional.", "Dolor agudo en epigastrio.", "Tensión arterial de 150/90."], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la Guía de Práctica Clínica de Prevención, Diagnóstico y Tratamiento de la Preeclampsia, el dolor abdominal superior refleja distensión de la cápsula de Glisson por isquemia y edema hepático, fungiendo como un criterio absoluto de daño a órgano blanco.<br><br>Perla ENARM: \"La presencia de hipertensión severa, dolor en epigastrio, dolor en hipocondrio derecho, náusea y vómito severo, aun cuando no se demuestre de manera inmediata proteinuria, incrementan la certeza diagnóstica de preeclampsia y ameritan hospitalización urgente\".<br><br>Análisis de Distractores: El edema clínico ha sido retirado de los criterios de severidad. La cefalea debe ser persistente o de novo con alteraciones visuales, no leve ni ocasional. Una tensión arterial de 150/90 no cumple la meta (>160/110) para considerarse un criterio de severidad de forma aislada.", 
+                source: "GPC IMSS-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Diagnóstico Clínico, Página 29." 
+            },
+            {
+                id: 7, 
+                question: "En el abordaje de la Ruptura Prematura de Membranas Pretérmino, ¿cuál es el grupo farmacológico cuyo uso no se recomienda de forma profiláctica ni terapéutica porque no mejora los resultados perinatales?", 
+                options: ["Antibióticos de amplio espectro", "Terapia con corticosteroides", "Sulfato de magnesio neuroprotector", "Terapia farmacológica con tocolíticos"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Ruptura Prematura de Membranas Pretérmino, en el contexto donde el feto tiene sus membranas intactas pero presenta actividad uterina (amenaza de parto prematuro), la tocólisis gana tiempo valioso. Sin embargo, en el escenario específico donde las membranas ya están rotas, la tocólisis no solo falla al intentar prevenir el parto, sino que no ofrece ninguna mejora demostrable en los resultados de morbilidad y mortalidad en el neonato pretérmino, pudiendo además enmascarar signos de una infección intraamniótica inminente.<br><br>Perla ENARM: No se recomienda el uso de tocólisis profiláctica ni terapéutica en mujeres con ruptura prematura de membranas pretérmino.<br><br>Análisis de Distractores: Los antibióticos de amplio espectro (A) prolongan eficazmente el embarazo y están muy indicados de forma profiláctica por 7 días. La terapia con corticosteroides (B) como la betametasona tiene enorme evidencia en la reducción del riesgo del síndrome de dificultad respiratoria. El sulfato de magnesio neuroprotector (C) está ampliamente recomendado de la semana 24 hasta la 32 si es inminente el nacimiento.", 
+                source: "GPC-SEDENA-446-18, Diagnóstico y Tratamiento de la Ruptura Prematura de Membranas Pretérmino, 2018, Evidencias y Recomendaciones, página 22." 
+            },
+            {
+                id: 8, 
+                question: "De acuerdo a los criterios de la guía clínica, ante la sospecha de Hemorragia Postparto, ¿cuál es el volumen de pérdida sanguínea que define a la patología independientemente de la vía de resolución?", 
+                options: ["Sangrado mayor 500 mililitros", "Sangrado mayor 1000 mililitros", "Pérdida del 10%", "Caída de 2 gramos "], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención y manejo de la hemorragia postparto, el concepto clínico moderno avalado por el Colegio Americano de Obstetras y Ginecólogos unifica el umbral de sangrado. Fisiológicamente, un volumen de mil mililitros ya representa un impacto hemodinámico importante en la reserva circulatoria materna, independientemente de si el nacimiento fue por vía vaginal o abdominal.<br><br>Perla ENARM: \"Define la hemorragia posparto como pérdida de sangre mayor o igual a 1000 ml o pérdida de sangre con signos o síntomas de hipovolemia dentro de las 24 horas posteriores al parto, ya sea cesárea o parto vaginal\".<br><br>Análisis de Distractores: La opción A es el umbral clásico e histórico solo para parto vaginal, pero no es la definición actual estandarizada. La opción C y D corresponden a descripciones que evalúan complicaciones hemorrágicas secundarias, pero no son el criterio diagnóstico inmediato y universal.", 
+                source: "GPC-SS-103-21, Prevención y manejo de la hemorragia postparto, 2021, Introducción, Página 14." 
+            },
+            {
+                id: 9, 
+                question: "En el contexto del diagnóstico diferencial o abordaje secundario de la Trombosis Venosa Profunda (TVP) en pacientes obstétricas, ¿qué estudio de imagen está contraindicado debido al riesgo de generar afección cutánea/fibrosis o muerte neonatal?", 
+                options: ["Angiotomografía pulmonar computarizada.", "Gamagrama de ventilación perfusión.", "Ultrasonido con compresión venosa.", "Resonancia magnética con gadolinio."], 
+                answer: 3, 
+                justification: "Justificación: Aunque ciertas modalidades de imagen son biológicamente seguras por su ausencia de radiación ionizante (como la Resonancia), el uso de contrastes específicos cruza la placenta comprometiendo la viabilidad y función orgánica fetal. De acuerdo a la GPC de Enfermedad Tromboembólica Venosa Obstétrica, el material de contraste basado en gadolinio asocia fibrosis sistémica nefrogénica, toxicidad cutánea fetal y desenlaces adversos graves.<br><br>Perla ENARM: \"No se recomienda realizar resonancia magnética con gadolinio en pacientes embarazadas con sospecha de TVP\".<br><br>Análisis de Distractores: La angiotomografía pulmonar y el gamagrama son sumamente útiles en TEP y tienen indicaciones válidas (el yodo no causa la toxicidad específica letal del gadolinio) bajo consentimiento informado. El ultrasonido de compresión no utiliza contraste alguno y es el Gold Standard inocuo primario para TVP.", 
+                source: "GPC SS-544-20, Prevención, diagnóstico y tratamiento de la enfermedad tromboembólica venosa en la paciente obstétrica, 2020, Pruebas diagnósticas, Página 25." 
+            },
+            {
+                id: 10, 
+                question: "En el contexto de Ruptura Uterina, ¿cuál es el hallazgo en la monitorización que integra la alerta diagnóstica más consistente según la Guía de Práctica Clínica?", 
+                options: ["Registro cardiotocográfico anormal", "Hemorragia transvaginal abundante", "Hipertonía uterina sostenida", "Dolor en epigastrio"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Ruptura Uterina, aunque el cuadro clásico se asocia a dolor abdominal intenso, el registro cardiotocográfico (RCTG) anormal, específicamente la aparición de alteraciones como la bradicardia fetal, es el signo de alerta inicial más frecuente, presentándose en el 66% al 76% de los eventos.<br><br>Perla ENARM: Se debe de estar alerta durante la fase activa del trabajo de parto buscando intencionadamente datos sugestivos de ruptura uterina durante esta etapa.<br><br>Análisis de Distractores: La hemorragia transvaginal (B) puede presentarse, pero no es el signo más temprano ni constante, ya que el sangrado puede ser intraabdominal. La hipertonía (C) es patognomónica del desprendimiento prematuro de placenta, no de la ruptura. El dolor epigástrico (D) se asocia a preeclampsia con datos de severidad.", 
+                source: "GPC SS-296-10, Prevención, diagnóstico y manejo oportuno de la ruptura uterina, 2017, Diagnóstico clínico, Página 26." 
+            },
+            {
+                id: 11, 
+                question: "En la sospecha de Preeclampsia, ¿cuál es el hallazgo inicial en tira reactiva de orina que integra el diagnóstico presuntivo y obliga a su confirmación cuantitativa según la GPC?", 
+                options: ["Trazas de proteínas", "1+ de proteínas", "2+ de proteínas", "3+ de proteínas"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Enfermedades Hipertensivas del Embarazo, el análisis de la tira reactiva en orina es un método semicuantitativo inicial muy popular para evaluar la pérdida de proteínas. Un hallazgo de 1+ en la tira (que equivale aproximadamente a 30-100 mg/dl) es el umbral que alerta sobre daño renal incipiente, obligando a realizar pruebas confirmatorias más precisas como la recolección de orina.<br><br>Perla ENARM: \"Un resultado por tira reactiva de 1+ requiere confirmación a través de recolección de orina de 24 horas para cuantificar la cantidad de proteinuria, debido a que se correlaciona con 0.3 g o más de proteinuria\".<br><br>Análisis de Distractores: Las trazas de proteínas (A) equivalen a 15 a 30 mg/dl y no alcanzan el umbral normativo para obligar a confirmación. Los valores de 2+ y 3+ (C y D) son francamente patológicos e indican mayor severidad (100 a >1000 mg/dl), pero el punto de corte diagnóstico mínimo para iniciar la confirmación es 1+.", 
+                source: "GPC IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Diagnóstico, Página 21." 
+            },
+            {
+                id: 12, 
+                question: "En el diagnóstico diferencial de las medidas terapéuticas, ¿cuál es la intervención que la GPC contraindica explícitamente en el Parto Pretérmino por aumentar el riesgo tromboembólico?", 
+                options: ["Hidratación intravenosa rápida", "Reposo estricto en cama", "Administración de nitratos", "Uso de antibióticos profilácticos"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, es imperativo desmitificar viejas costumbres obstétricas. Mantener en decúbito absoluto a una gestante (estado inherentemente hipercoagulable) expone a la madre a trombosis venosa profunda y no cambia el pronóstico del embarazo.<br><br>Perla ENARM: \"El reposo estricto en cama incrementa el riesgo tromboembólico y no disminuye el riesgo de parto pretérmino. No se recomienda la hidratación y el reposo estricto en cama como tratamientos específicos e intervenciones que disminuyan el parto pretérmino.\"<br><br>Análisis de Distractores: La hidratación rápida (Opción A) tampoco sirve y eleva riesgo de edema agudo de pulmón (sobre todo combinada con tocolíticos como betamiméticos), pero el riesgo tromboembólico es la huella específica del reposo. Los nitratos (Opción C) están en fase experimental. Los antibióticos profilácticos (Opción D) con membranas íntegras no son recomendados, pero no causan trombosis.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Tratamiento, Página 92 y 93." 
+            },
+            {
+                id: 13, 
+                question: "Según la GPC de Diagnóstico y Tratamiento de Candidosis Vulvovaginal, ¿cuál es el hallazgo paraclínico que integra el diagnóstico de probabilidad en una paciente con flujo blanquecino y prurito?", 
+                options: ["Observación de células clave", "Levaduras en examen fresco", "Trichomonas en movimiento", "Cultivo en medio Sabouraud"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, el diagnóstico inicial se basa en la clínica (flujo sin olor) apoyada por estudios de consultorio rápidos y accesibles. El examen en fresco con solución salina o KOH al 10% permite visualizar directamente las estructuras micóticas (levaduras o pseudohifas), con una sensibilidad del 40 al 60%, siendo la prueba inicial de elección por su rapidez.<br><br>Perla ENARM: \"Los criterios para el diagnóstico de probabilidad de CVV son el flujo o secreción vaginal sin olor desagradable. Observación de levaduras o pseudohifas en el examen en fresco del exudado vaginal\".<br><br>Análisis de Distractores: La opción A corresponde a vaginosis bacteriana. La opción C es patognomónica de tricomoniasis. La opción D (cultivo) es el estándar de oro y diagnóstico de certeza, pero no es la prueba inicial de probabilidad rutinaria en un primer episodio no complicado.", 
+                source: "GPC-IMSS-609-19, Diagnóstico y tratamiento de candidosis vulvovaginal en mujeres mayores a 12 años de edad, 2019, Diagnóstico clínico y pruebas diagnósticas, Página 15." 
+            },
+            {
+                id: 14, 
+                question: "En una paciente con sospecha de riesgo de parto pretérmino, ¿cuál es el hallazgo ecográfico que confirma el alto riesgo y la necesidad de prevención secundaria según la GPC?", 
+                options: ["Dilatación cervical de 2 cm", "Longitud cervical de 30 mm", "Longitud cervical de 25 mm", "Presencia de fibronectina fetal"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del parto pretérmino, la medición anatómica del cérvix es el predictor más fuerte para falla estructural. Un cérvix corto pierde su capacidad de barrera mecánica y contención, elevando drásticamente el riesgo de expulsión prematura. El punto de corte estricto para definir esta incompetencia o riesgo inminente es de 25 mm o menos, lo cual dicta el inicio inmediato de progesterona.<br><br>Perla ENARM: \"Se recomienda usar el valor de corte de 25 mm o menos de longitud cervical en población de riesgo, principalmente en embarazos menores de 32 semanas de gestación (para evitar la pérdida de pacientes que se beneficien con el tratamiento)\".<br><br>Análisis de Distractores: La dilatación de 2 cm (A) ya es un criterio de trabajo de parto activo, no de tamizaje de riesgo. Un cérvix de 30 mm (B) es considerado normoevolutivo y seguro. La fibronectina fetal (D) tiene alto valor predictivo positivo en pacientes sintomáticas, pero la GPC establece explícitamente que no debe usarse de forma rutinaria como tamizaje primario sobre el ultrasonido.", 
+                source: "GPC-SS-118-18, Prevención primaria y tamizaje del parto pretérmino en el primer nivel de atención, 2018, Tamizaje, Página 22." 
+            },
+            {
+                id: 15, 
+                question: "En la valoración prenatal inicial para la prevención del parto pretérmino, ¿cuál es el factor de riesgo clínico más fuerte con mayor asociación a recurrencia reportado por la GPC?", 
+                options: ["Edad materna avanzada", "Antecedente de parto pretérmino", "Infección de vías urinarias", "Diabetes Mellitus tipo 1"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del parto pretérmino, el historial obstétrico previo es el pilar de la estratificación de riesgo. Fisiopatológicamente, un parto prematuro previo indica una susceptibilidad basal en la paciente (incompetencia cervical anatómica, defectos en la tolerancia inmunológica fetal o alteraciones en la cascada inflamatoria uterina) que persiste en gestaciones subsecuentes.<br><br>Perla ENARM: \"Uno de los factores de riesgo clínico más fuertes para el parto prematuro es el antecedente de parto prematuro. El historial materno de nacimientos prematuros confiere un riesgo 1.5 a 2 veces mayor en un embarazo posterior\".<br><br>Análisis de Distractores: Aunque la edad extrema (A), las infecciones (C) y la diabetes (D) son factores de riesgo reconocidos que exacerban la inflamación sistémica, estadísticamente ninguno supera el peso predictivo de haber tenido un evento prematuro previo.", 
+                source: "GPC-SS-118-18, Prevención primaria y tamizaje del parto pretérmino en el primer nivel de atención, 2018, Prevención Secundaria, Página 23." 
+            },
+            {
+                id: 16, 
+                question: "¿Cuál es el antecedente clínico clave que permite suspender definitivamente el tamizaje de lesiones precursoras de cáncer de cuello uterino, diferenciando su manejo de la población general?", 
+                options: ["Edad mayor de 60 años sin tamizaje", "Histerectomía total por proceso benigno", "Dos citologías negativas en 10 años", "Vacunación completa contra VPH"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Lesiones precursoras del cáncer cervical, para que se desarrolle un cáncer de cérvix primitivo escamoso o glandular, debe existir tejido cervical. Si una mujer fue sometida a histerectomía total (extirpación completa de cuerpo y cuello uterino) por causas ginecológicas no oncológicas (como miomatosis, adenomiosis o hemorragia obstétrica), y no existe antecedente previo de displasia de alto grado documentada (NIC 2+), el riesgo de que la paciente desarrolle una neoplasia en la cúpula vaginal es biológicamente nulo o despreciable, cesando la justificación costo-beneficio del escrutinio.<br><br>Perla ENARM: \"Criterios para suspender el tamizaje: Mujer con antecedente de histerectomía total secundaria a proceso benigno... el riesgo de padecer esta neoplasia maligna luego de histerectomía total por proceso benigno, es muy bajo\".<br><br>Análisis de Distractores: A los 60 años (A) el tamizaje aún continúa rutinariamente (termina formalmente a los 69). Para suspender a los 69 años se requieren tres (no dos) citologías negativas en los últimos 10 años (C). La vacuna (D) protege contra la infección por ciertos genotipos, pero no exime a la paciente del escrutinio preventivo de los genotipos no incluidos.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Prevención y Suspensión de Tamizaje, Página 34." 
+            },
+            {
+                id: 17, 
+                question: "En la evaluación de una paciente con sospecha clínica de depresión posparto, ¿cuál es el instrumento clínico de tamizaje de primera elección recomendado?", 
+                options: ["Entrevista diagnóstica estructurada", "Inventario de Beck", "Escala de Edimburgo", "Escala de Hamilton"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la Guía de Práctica Clínica de Depresión prenatal y posparto, el tamizaje inicial y universal debe realizarse con una herramienta validada y económica que distinga rápidamente a las pacientes en riesgo. Aunque la entrevista clínica es confirmatoria, el abordaje inicial siempre es con la Escala de Edimburgo por su alta sensibilidad y especificidad en este grupo.<br><br>Perla ENARM: \"La Escala de Depresión Postnatal de Edimburgo (EPDE) es la herramienta de detección de depresión recomendada para el período perinatal\".<br><br>Análisis de Distractores: La opción A es el estándar de oro confirmatorio, no el tamizaje inicial. La opción B (Inventario de Beck) se utiliza más para clasificar la severidad de la depresión una vez identificada. La opción D no es la herramienta principal recomendada para el cribado perinatal en esta normatividad.", 
+                source: "GPC SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Detección, Página 17." 
+            },
+            {
+                id: 18, 
+                question: "En una mujer con Bacteriuria Asintomática en el embarazo, ¿cuál es la complicación directa que se desarrolla hasta en un 40% de los casos si no recibe tratamiento?", 
+                options: ["Pielonefritis aguda", "Insuficiencia renal crónica", "Sepsis neonatal temprana", "Aborto espontáneo"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, la dilatación de los cálices y uréteres combinada con la falta de aclaramiento facilita que las cepas asintomáticas asciendan masivamente, progresando la colonización silenciosa hacia destrucción e inflamación tubular.<br><br>Perla ENARM: \"En la gestante el tamizaje de BA en primer trimestre o en la primera consulta está justificado, ya que, de no tratarse, hasta 40% de mujeres puede desarrollar pielonefritis\".<br><br>Análisis de Distractores: Aunque las infecciones aumentan el riesgo de parto pretérmino y el bajo peso, la cifra de incidencia obstétrica altísima recae de forma exclusiva sobre la pielonefritis. La insuficiencia renal crónica no es la secuencia epidemiológica temporal habitual en estas gestantes.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Introducción, Página 8." 
+            },
+            {
+                id: 19, 
+                question: "¿Cuál de los siguientes esquemas antimicrobianos está contraindicado utilizar de manera empírica en Infección de Vías Urinarias en el embarazo según la GPC mexicana?", 
+                options: ["Fosfomicina trometamol", "Ampicilina o amoxicilina", "Nitrofurantoína profiláctica", "Ceftriaxona intravenosa"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, la presión de betalactamasas circulantes en territorio nacional por mal uso crónico anuló la utilidad primaria de las penicilinas convencionales y cefalosporinas tempranas.<br><br>Perla ENARM: \"No se recomienda la utilización de forma empírica de ampicilina, amoxicilina y/o cefalexina debido a la tasa elevada de resistencia identificada en uropatógenos...\".<br><br>Análisis de Distractores: Fosfomicina trometamol y nitrofurantoína son precisamente las opciones terapéuticas de primera elección empírica en México (con sus debidas consideraciones por trimestre). Ceftriaxona es un manejo parenteral altamente validado para tratar ITU complicadas o Pielonefritis de manera hospitalaria.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Herramientas, Página 36." 
+            },
+            {
+                id: 20, 
+                question: "¿Cuál es el dato clínico clave que permite distinguir el verdadero trabajo de parto de su diferencial, las contracciones de Braxton-Hicks?", 
+                options: ["Intensidad mayor a 15 mmHg", "Endurecimiento uterino indoloro", "Modificaciones cervicales evidentes", "Duración menor a 30 segundos"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Trabajo de parto de bajo riesgo, mientras las contracciones de Braxton-Hicks son indoloras, irregulares, de baja intensidad (10-15 mmHg) y no causan efecto mecánico en el canal cervical, el verdadero trabajo de parto se define como aquella actividad contráctil uterina dolorosa y rítmica que genera borramiento y dilatación (modificaciones cervicales).<br><br>Perla ENARM: Se recomienda considerar a la fase latente del trabajo de parto como el periodo caracterizado por contracciones uterinas dolorosas que causan modificaciones cervicales.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo de bajo riesgo, 2019, Glosario, p. 48." 
+            },
+            {
+                id: 21, 
+                question: "En sospecha de Cáncer de Mama, ¿cuál es el par de estudios de imagen iniciales que integra el diagnóstico presuntivo?", 
+                options: ["Mastografía y ultrasonido mamario", "Resonancia magnética y tomografía", "Gammagrama óseo y mastografía", "Tomografía y ultrasonido mamario"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, el abordaje clínico exige integrar los hallazgos de la exploración física con estudios de imagen básicos para estatificar el riesgo locorregional y guiar la toma de biopsia percutánea en el tumor primario.<br><br>Perla ENARM: Se recomienda realizar en la persona con sospecha de cáncer de mama historia clínica y examen físico, así como considerar solicitar mastografía bilateral y ultrasonido mamario.<br><br>Análisis de Distractores: La resonancia magnética (B) se reserva para pacientes con mamas densas, implantes o primario oculto; el gammagrama óseo (C) y la tomografía (D) son estudios de extensión que solo se justifican si existen signos clínicos de metástasis a distancia (dolor óseo o síntomas respiratorios).", 
+                source: "GPC IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Abordaje inicial de pacientes con diagnóstico de Cáncer de mama, Página 34." 
+            },
+            {
+                id: 22, 
+                question: "¿Cuál es el subtipo histopatológico de Cáncer Cervicouterino que, por su extrema agresividad de invasión temprana, obliga a excluir a la paciente del algoritmo quirúrgico estándar de la guía y requiere envío inmediato a centro especializado?", 
+                options: ["Carcinoma epidermoide invasor", "Carcinoma de células pequeñas", "Adenocarcinoma mucinoso endocervical", "Carcinoma adenoescamoso clásico"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la Guía de Práctica Clínica de Cáncer Cervicouterino, aunque más del 90% de los tumores entran en la variante epidermoide o adenoescamosa clásica (las cuales siguen los pasos de estatificación convencionales), ciertos subtipos celulares tienen comportamientos metastásicos atípicos independientemente del tamaño cervical, exigiendo terapias multimodales desde el día uno. \"Bajo circunstancias especiales en pacientes con histología diferente a epidermoide o adenoescamoso. (Neuroendocrino, de células pequeñas, carcinoma adenoideo quístico, etc.) Se debe particularizar el tratamiento y envío a centro oncológico especializado\".<br><br>Análisis de Distractores: El carcinoma epidermoide invasor (A) es la estirpe dominante por excelencia (70-80% de los casos) y el objetivo primario de los algoritmos de estadiaje clínico del documento. El adenocarcinoma mucinoso (C) y el carcinoma adenoescamoso clásico (D) aunque de pronóstico ligeramente más reservado en algunas cohortes, se rigen exactamente por las mismas normativas de conización y radicalidad quirúrgica escalonada (Piver) que marca la guía sin requerir un algoritmo extraordinario de entrada.", 
+                source: "GPC IMSS-333-09, Tratamiento del Cáncer Cervicouterino en Segundo y Tercer nivel de atención, 2017, Tratamiento del Cáncer, p. 18." 
+            },
+            {
+                id: 23, 
+                question: "En una paciente con sospecha clínica de Vasa Previa, ¿cuál es el signo clínico o hallazgo en el registro cardiotocográfico que integra el diagnóstico presuntivo agudo tras la ruptura de membranas?", 
+                options: ["Hipertonía uterina y bradicardia", "Taquicardia fetal y fiebre", "Sangrado oscuro y desaceleraciones", "Sangrado rojo rutilante indoloro"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la Guía de Práctica Clínica de Anomalías de Inserción Placentaria, a diferencia del desprendimiento prematuro o la previa, la sangre en este padecimiento proviene directamente del feto, por lo que su aspecto es más oscuro (venoso/fetal) y la pérdida de volumen circulante fetal se refleja en el monitor inmediatamente con desaceleraciones graves o bradicardia súbita.<br><br>Perla ENARM: \"En casos de vasa previa, la principal manifestación clínica es el sangrado transvaginal obscuro, sin presencia de dolor, seguido de alteraciones súbitas en el registro cardiotocográfico (debido a la exanguinación fetal)\".<br><br>Análisis de Distractores: La hipertonía uterina (Opción A) es clásica del desprendimiento prematuro de placenta normoincerta. La taquicardia y fiebre (Opción B) sugieren corioamnionitis infecciosa. El sangrado rojo rutilante indoloro (Opción D) es el cuadro clínico característico y distintivo de la placenta previa, no de la vasa previa.", 
+                source: "GPC IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Diagnóstico clínico, Página 13." 
+            },
+            {
+                id: 24,
+                question: "En el tamizaje de osteoporosis secundaria dentro de mujeres posmenopáusicas aparentemente sanas, ¿qué estudio laboratorial distingue diferencialmente a las discrasias de células plasmáticas?",
+                options: ["Triptasa sérica en ayuno", "Electroforesis de proteínas séricas", "Anticuerpos antitransglutaminasa tisular", "Cortisol libre en orina"],
+                answer: 1,
+                justification: "Justificación: De acuerdo a la GPC de Osteoporosis posmenopáusica, el mieloma múltiple puede presentarse exclusivamente como pérdida de masa ósea y fracturas por fragilidad. Este estudio revela el pico monoclonal característico de la enfermedad.<br><br>Análisis de Distractores: La triptasa (opción A) evalúa mastocitosis, los anticuerpos (opción C) la enfermedad celíaca, y el cortisol (opción D) el hipercortisolismo, todas causas plausibles pero ajenas a las células plasmáticas.<br><br>Perla ENARM: \"Exámenes adicionales, si están indicados (pero no limitados a): Electroforesis de proteínas y proteínas de Bence Jones en orina (sospecha de mieloma).\"",
+                source: "GPC-IMSS-673-18, Diagnóstico y Tratamiento de Osteoporosis en Mujeres Posmenopáusicas, 2018, Anexos, Página 123."
+            },
+            {
+                id: 25,
+                question: "En la Amenaza de Aborto, ¿cuál es el hallazgo clínico o físico durante la especuloscopía que integra el diagnóstico presuntivo?",
+                options: [
+                    "Modificaciones cervicales ausentes",
+                    "Dilatación cervical mayor 2 cm",
+                    "Sangrado con expulsión ovular",
+                    "Ruptura prematura de membranas"
+                ],
+                answer: 0,
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de aborto, la entidad clínica se define estrictamente por la presencia de hemorragia intrauterina antes de la semana 22 de gestación sin dilatación cervical. La presencia de modificaciones cervicales cambia el diagnóstico hacia un aborto inevitable o en evolución.<br><br>Perla ENARM: \"La amenaza de aborto se define como la presencia de sangrado trasvaginal, que puede estar acompañado o no de dolor abdominal, así como ausencia de dilatación cervical antes de la semana 22 de gestación\".<br><br>Análisis de Distractores: Las opciones B y C corresponden a aborto inevitable o incompleto. La opción D indica una complicación diferente u otro estadio clínico que ya no clasifica como amenaza.",
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto, 2020, Introducción, Página 8."
+            },
+            {
+                id: 26, 
+                question: "¿Cuál es el dato clínico clave que exime a una paciente con diagnóstico ecográfico de leiomiomatosis uterina del abordaje quirúrgico y obliga al manejo de observación y seguimiento?", 
+                options: ["Sangrado uterino anormal persistente", "Paridad totalmente satisfecha", "Paciente totalmente asintomática", "Falla al manejo conservador"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la Guía de Práctica Clínica de Histerectomía en patología benigna, los miomas uterinos tienen una alta prevalencia en la población general y en una gran proporción de los casos no generan compresión pélvica de órganos vecinos (vejiga, uréteres, recto) ni distorsionan la cavidad causando hipermenorrea o anemia. El simple hallazgo incidental ecográfico de un tumor benigno del músculo liso no es una indicación médica para tratamientos agresivos ni mutilantes.<br><br>Perla ENARM: \"Diagrama de flujo 1. Histerectomía en patología uterina benigna: Miomatosis -> ¿Paciente Asintomática? SI -> Seguimiento\".<br><br>Análisis de Distractores: El sangrado persistente anemizante (A) y la falla comprobada al manejo hormonal previo (D) son precisamente los conductores principales en el algoritmo hacia la histerectomía. La paridad satisfecha (B) facilita éticamente la decisión quirúrgica si hay síntomas intratables, pero si la paciente no tiene absolutamente ningún síntoma (C), extirpar el órgano constituye una mala praxis quirúrgica innecesaria.", 
+                source: "GPC SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Anexos, Página 36." 
+            },
+            {
+                id: 27, 
+                question: "En el choque hemorrágico en obstetricia, ¿cuál es el parámetro clínico que integra de forma precoz el diagnóstico de inestabilidad hemodinámica y predice el pronóstico adverso según la GPC?", 
+                options: ["Índice de choque mayor 0.9", "Llenado capilar > 3 segundos", "Frecuencia de 120 latidos", "Presión sistólica < 90 mmHg"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, los mecanismos compensatorios del embarazo enmascaran inicialmente la hipotensión. La relación entre frecuencia y presión sistólica es más sensible que los valores aislados para detectar tempranamente la inestabilidad.<br><br>Perla ENARM: \"El \"índice de choque\" definido como el coeficiente de la frecuencia cardíaca y la presión arterial sistólica (normal hasta 0.9 en obstetricia) ha demostrado ser un indicador preciso de los cambios compensatorios del sistema cardiovascular ante la pérdida sanguínea\".<br><br>Análisis de Distractores: El llenado capilar (B), la taquicardia aislada (C) y la hipotensión (D) son parámetros útiles pero tardíos. La GPC destaca al índice de choque como el predictor de mayor sensibilidad (100%) para pronóstico adverso e ingreso a cuidados intensivos.", 
+                source: "GPC IMSS-162-09, Diagnóstico y tratamiento del choque hemorrágico en obstetricia, 2017, Diagnóstico Clínico, Página 24." 
+            },
+            {
+                id: 28, 
+                question: "¿Cuál es el punto de corte en laboratorios clave que justifica iniciar terapia estricta con insulina intravenosa en el área de Cuidados Intensivos por Sepsis Materna?", 
+                options: ["Glucemia mayor de 180 mg/dl", "Glucemia mayor de 140 mg/dl", "Glucemia mayor de 110 mg/dl", "Glucemia mayor de 200 mg/dl"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, el estrés biológico crítico libera grandes cantidades de cortisol, catecolaminas y glucagón, exacerbando la resistencia a la insulina periférica y causando hiperglucemia, la cual deteriora gravemente la función inmunitaria (diapedesis y fagocitosis de neutrófilos). No obstante, forzar controles excesivamente rigurosos en la paciente grave incrementa el riesgo de hipoglucemias yatrogénicas letales. El límite superior de tolerancia en la paciente en choque para iniciar protocolo de goteo de insulina son tomas repetidas que excedan el límite internacional del control metabólico de UCI (180 mg/dl).<br><br>Perla ENARM: \"Se recomienda la administración de insulina cuando los niveles de glucemia consecutivos sean mayores de 180 mg/dl\".<br><br>Análisis de Distractores: Las opciones B y C (140 y 110 mg/dl) aplican como metas de normoglucemia pre o posprandiales en mujeres con diabetes gestacional estables en consulta externa, pero su aplicación estricta es peligrosa si se exigen rígidamente en UCI. La opción D permite un margen descontrolado superior a 200 mg/dl que favorecería francamente la diuresis osmótica y parálisis inmunológica local.", 
+                source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Tratamiento No Farmacológico (Terapia de Soporte), Página 21." 
+            },
+            {
+                id: 29, 
+                question: "En la evaluación de la Embolia de Líquido Amniótico, ¿cuál es el criterio paraclínico o clínico indispensable que integra el diagnóstico presuntivo junto con el colapso cardiorrespiratorio y la ausencia de fiebre, según la GPC?", 
+                options: ["Coagulación intravascular diseminada", "Fiebre mayor a 38 grados", "Elevación de creatinin cinasa", "Hipertensión arterial sistémica severa"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Emergencias Obstétricas, el paso masivo de detritos fetales a la circulación materna desencadena una respuesta anafilactoide severa que consume los factores de coagulación rápidamente, provocando sangrado masivo.<br><br>Perla ENARM: \"Los criterios para establecer el diagnóstico de embolia de líquido amniótico [...] son: 1. Paro cardiorrespiratorio o hipotensión súbita y compromiso respiratorio. 2. Presencia de coagulación intravascular diseminada (CID). 3. Que el cuadro clínico se presente durante el trabajo de parto [...] 4. Ausencia de fiebre\".<br><br>Análisis de Distractores: La fiebre mayor a 38 grados es un criterio de exclusión (orienta a choque séptico). La elevación de la creatinin cinasa es sugestiva de daño miocárdico o isquemia. La hipertensión severa orienta a complicaciones del espectro de la preeclampsia-eclampsia, mientras que la embolia cursa clásicamente con hipotensión súbita profunda.", 
+                source: "GPC IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Embolia de líquido amniótico, Página 22." 
+            },
+            {
+                id: 30, 
+                question: "¿Cuál es el factor de riesgo materno que presenta la mayor asociación y riesgo relativo para el desarrollo de preeclampsia según la Guía de Práctica Clínica?", 
+                options: ["Presencia de síndrome antifosfolípidos.", "Embarazo múltiple o gemelar.", "Nuliparidad en mujeres jóvenes.", "Índice de masa corporal elevado."], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la Guía de Práctica Clínica de Prevención, Diagnóstico y Tratamiento de la Preeclampsia, las patologías autoinmunes provocan daño microvascular e isquemia endotelial primaria, otorgando un riesgo relativo de 9.72 para la enfermedad, siendo el factor pronóstico más alto documentado.<br><br>Perla ENARM: \"En las pacientes con embarazo se recomiendan clasificar como riesgo bajo o aumentado de preeclampsia, por lo general, por la presencia de uno o más de los marcadores de riesgo\".<br><br>Análisis de Distractores: El embarazo múltiple, la nuliparidad y la obesidad (índice de masa corporal >30) son factores de riesgo proinflamatorios clásicos, pero estadísticamente sus riesgos relativos rondan apenas entre 2.4 y 2.9, muy por debajo de la patología trombofílica materna.", 
+                source: "GPC IMSS-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Anexos, Página 59." 
+            }
+        ];
+
+        // ==========================================
+        // ==========================================
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('Exagyo30LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('Exagyo30Progress');
+                localStorage.removeItem('Exagyo30LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-pink-500 shadow-md z-10 border-pink-500 dark:border-pink-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-rose-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "PREPARACIÓN ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "GINECOLOGÍA Y OBSTETRICIA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "Preguntas diseñadas para fortalecer tus conocimientos con reactivos de alta exigencia y enfoque clínico tipo ENARM basadas en las GPC mexicanas.";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="pronam_proximamente.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-pink-100 dark:border-pink-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-pink-50 has-[:checked]:border-pink-400 dark:has-[:checked]:bg-pink-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-pink-600 dark:hover:bg-pink-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('Exagyo30Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('Exagyo30LastQId', currentQuestionId);
+                else localStorage.removeItem('Exagyo30LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('Exagyo30Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0",
+        authDomain: "enarm-lite.firebaseapp.com",
+        projectId: "enarm-lite",
+        storageBucket: "enarm-lite.firebasestorage.app",
+        messagingSenderId: "767032952477",
+        appId: "1:767032952477:web:84347320ed3d376f7e7674",
+        measurementId: "G-PVR3RBVNSV"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.5s ease';
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            
+            if(userDocSnap.exists()) {
+                document.body.style.opacity = '1';
+            } else {
+                window.location.href = "index.html"; 
+            }
+        } else {
+            window.location.href = "index.html";
+        }
+    });
+</script>
+</body>
+</html>
