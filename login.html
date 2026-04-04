@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | ENARM Lite</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        // Colores pastel personalizados para la barra lateral
+                        pastel: {
+                            pink: '#fdf2f8',
+                            blue: '#eff6ff',
+                            purple: '#f5f3ff',
+                            green: '#f0fdf4'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --logo-blue: #004c8c;
+            --logo-green: #70b93d;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Ocultar scrollbar para un look más limpio */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Estilos del Logo */
+        .logo-container { display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 0.9; }
+        .logo-enarm { font-family: 'Inter', sans-serif; font-weight: 900; color: var(--logo-blue); letter-spacing: -0.02em; text-transform: uppercase; font-size: 1.5rem; }
+        .logo-Lite { font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: var(--logo-green); position: relative; font-size: 1rem; margin-top: 0.15rem; }
+        .logo-Lite sup { font-size: 0.4em; top: -1em; }
+
+        /* Estilos Personalizados para Acordeones Nativos */
+        details > summary { list-style: none; outline: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        
+        /* Animación suave para el acordeón */
+        details[open] summary ~ * {
+            animation: slideDown 0.3s ease-in-out;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Ocultar pestañas inactivas */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 transition-colors duration-300 antialiased flex h-screen overflow-hidden">
+
+    <!-- OVERLAY PARA MÓVIL (Oscurece el fondo al abrir el menú) -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden transition-opacity duration-300" onclick="toggleSidebar()"></div>
+
+    <!-- ========================================== -->
+    <!-- SIDEBAR (Barra Lateral Izquierda)          -->
+    <!-- ========================================== -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 z-50 w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col shadow-2xl md:shadow-none">
+        
+        <!-- Logo y Botón Cerrar (Móvil) -->
+        <div class="h-20 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
+            <div class="logo-container cursor-pointer mx-auto md:mx-0">
+                <span class="logo-enarm">ENARM</span>
+                <span class="logo-Lite">Lite<sup>®</sup></span>
+            </div>
+            <button onclick="toggleSidebar()" class="md:hidden text-slate-500 hover:text-slate-800 dark:hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <!-- Navegación Colorida (Pasteles) -->
+        <nav class="flex-1 overflow-y-auto no-scrollbar py-8 px-4 space-y-3">
+            <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Panel de Estudio</p>
+            
+            <!-- Botón Tab: Temario GPC (Pastel Rosa) -->
+            <button id="btn-gpc" onclick="switchTab('gpc', this, 'bg-pink-50 dark:bg-pink-900/20', 'text-pink-700 dark:text-pink-400')" class="tab-btn active w-full flex items-center gap-3 px-4 py-3.5 text-sm font-semibold rounded-2xl bg-pink-50 dark:bg-pink-900/20 text-pink-700 dark:text-pink-400 transition-all hover:scale-[1.02] text-left">
+                <div class="shrink-0 p-1.5 bg-white dark:bg-slate-800 rounded-lg shadow-sm">
+                    <svg class="w-5 h-5 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                </div>
+                <span class="leading-tight">GPC</span>
+            </button>
+
+            <!-- Botón Tab: Protocolos PRONAM (Pastel Azul/Cyan) -->
+            <button id="btn-pronam" onclick="switchTab('pronam', this, 'bg-blue-50 dark:bg-blue-900/20', 'text-blue-700 dark:text-blue-400')" class="tab-btn w-full flex items-center gap-3 px-4 py-3.5 text-sm font-medium rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all hover:scale-[1.02] text-left">
+                <div class="shrink-0 p-1.5 bg-white dark:bg-slate-800 rounded-lg shadow-sm">
+                    <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </div>
+                <span class="leading-tight">Protocolos PRONAM</span>
+            </button>
+
+            <!-- Botón Tab: Exámenes (Pastel Morado/Indigo) -->
+            <button id="btn-examenes" onclick="switchTab('examenes', this, 'bg-purple-50 dark:bg-purple-900/20', 'text-purple-700 dark:text-purple-400')" class="tab-btn w-full flex items-center gap-3 px-4 py-3.5 text-sm font-medium rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all hover:scale-[1.02] text-left">
+                <div class="shrink-0 p-1.5 bg-white dark:bg-slate-800 rounded-lg shadow-sm">
+                    <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                </div>
+                <span class="leading-tight">Exámenes por Especialidad</span>
+            </button>
+        </nav>
+
+        <!-- Perfil Usuario Abajo -->
+        <div class="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+            <div class="flex items-center gap-3 p-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm cursor-pointer hover:border-pink-300 transition-colors">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-pink-500 to-orange-400 text-white flex items-center justify-center font-bold shadow-inner">
+                    Dr
+                </div>
+                <div class="flex-1 overflow-hidden">
+                    <p class="text-sm font-bold text-slate-800 dark:text-white truncate">Suscripción</p>
+                    <p class="text-xs text-emerald-600 dark:text-emerald-400 font-medium truncate flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Activa
+                    </p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ========================================== -->
+    <!-- CONTENIDO PRINCIPAL                        -->
+    <!-- ========================================== -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative w-full">
+        
+        <!-- Header Móvil (Hamburguesa) -->
+        <header class="md:hidden h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 z-20 sticky top-0">
+            <button onclick="toggleSidebar()" class="p-2 -ml-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+            <div class="logo-container transform scale-75">
+                <span class="logo-enarm">ENARM</span><span class="logo-Lite">Lite<sup>®</sup></span>
+            </div>
+            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-pink-500 to-orange-400 text-white flex items-center justify-center font-bold text-xs">
+                Dr
+            </div>
+        </header>
+
+        <!-- Área de contenido -->
+        <div id="area-scroll" class="flex-1 overflow-y-auto p-4 md:p-8 lg:p-10 no-scrollbar relative z-10 w-full">
+            <div class="max-w-6xl mx-auto">
+                
+                <!-- Encabezado de Bienvenida Dinámico -->
+                <div class="mb-8 bg-gradient-to-r from-pink-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800/50 dark:to-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 right-0 -mt-8 -mr-8 w-40 h-40 bg-pink-200 dark:bg-pink-900/20 rounded-full mix-blend-multiply filter blur-2xl opacity-60"></div>
+                    
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                                ENARM 2026
+                            </span>
+                        </div>
+                        <h1 class="text-2xl md:text-3xl font-extrabold font-display text-slate-800 dark:text-white mb-1" id="page-title">GPC</h1>
+                        <p class="text-slate-600 dark:text-slate-400 text-sm md:text-base max-w-2xl" id="page-subtitle">Domina las 185 guías de práctica clínica oficiales vigentes.</p>
+                    </div>
+                </div>
+
+                <!-- ========================================================================= -->
+                <!-- PESTAÑA 1: TEMARIO GPC (Acordeones Arreglados)                            -->
+                <!-- ========================================================================= -->
+                <div id="tab-gpc" class="tab-content active space-y-5">
+                    
+                    <!-- INICIO ESPECIALIDAD: GINECOLOGÍA -->
+                    <details class="group bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all overflow-hidden" open>
+                        <summary class="flex justify-between items-center cursor-pointer p-6 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                            <div class="flex items-center gap-4">
+                                <div class="w-14 h-14 rounded-2xl bg-pink-100 dark:bg-pink-900/30 text-pink-600 flex items-center justify-center shadow-inner">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl md:text-2xl font-bold text-slate-800 dark:text-white">Ginecología y Obstetricia</h2>
+                                    <p class="text-sm font-medium text-slate-500">30 GPC</p>
+                                </div>
+                            </div>
+                            <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center transition-transform duration-300 group-open:rotate-180 text-slate-500">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </summary>
+                        
+                        <div class="border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 p-6">
+                            <div class="grid gap-3">
+                                <!-- AQUÍ PONES TUS ENLACES HTML DE GINECOLOGÍA (href="...") -->
+                                <a href="ginecologia_parte1.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-pink-400 dark:hover:border-pink-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-pink-50 dark:bg-pink-900/50 text-pink-600 flex items-center justify-center font-bold text-sm">1</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">Parte I</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">5 Casos Clínicos • 25 Preguntas</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-pink-600 text-white shadow-sm shadow-pink-600/30 group-hover:-translate-y-0.5 transition-transform">Empezar</span>
+                                    <span class="md:hidden text-pink-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+                                
+                                <a href="ginecologia_parte2.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-pink-400 dark:hover:border-pink-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-pink-50 dark:bg-pink-900/50 text-pink-600 flex items-center justify-center font-bold text-sm">2</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">Parte II</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">5 Casos Clínicos • 25 Preguntas</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-pink-600 text-white shadow-sm shadow-pink-600/30 group-hover:-translate-y-0.5 transition-transform">Empezar</span>
+                                    <span class="md:hidden text-pink-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+
+                                <a href="ginecologia_parte3.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-pink-400 dark:hover:border-pink-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-pink-50 dark:bg-pink-900/50 text-pink-600 flex items-center justify-center font-bold text-sm">3</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">Parte III</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">10 Casos Clínicos •  50 Preguntas</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-pink-600 text-white shadow-sm shadow-pink-600/30 group-hover:-translate-y-0.5 transition-transform">Empezar</span>
+                                    <span class="md:hidden text-pink-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+
+                                <a href="ginecologia_parte4.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-pink-400 dark:hover:border-pink-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-pink-50 dark:bg-pink-900/50 text-pink-600 flex items-center justify-center font-bold text-sm">4</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">Parte IV</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">10 Casos Clínicos • 50 Preguntas</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-pink-600 text-white shadow-sm shadow-pink-600/30 group-hover:-translate-y-0.5 transition-transform">Empezar</span>
+                                    <span class="md:hidden text-pink-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+                            </div>
+                        </div>
+                    </details>
+                    <!-- FIN ESPECIALIDAD: GINECOLOGÍA -->
+
+                    <!-- INICIO ESPECIALIDAD: PEDIATRÍA -->
+                    <details class="group bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all overflow-hidden">
+                        <summary class="flex justify-between items-center cursor-pointer p-6 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                            <div class="flex items-center gap-4">
+                                <div class="w-14 h-14 rounded-2xl bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 flex items-center justify-center shadow-inner">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl md:text-2xl font-bold text-slate-800 dark:text-white">Pediatría</h2>
+                                    <p class="text-sm font-medium text-slate-500">50 GPC</p>
+                                </div>
+                            </div>
+                            <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center transition-transform duration-300 group-open:rotate-180 text-slate-500">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </summary>
+                        <div class="border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 p-6">
+                            <div class="grid gap-3">
+                                <!-- AQUÍ PONES TUS ENLACES HTML DE PEDIATRÍA -->
+                                <a href="pediatria_parte1.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/50 text-indigo-600 flex items-center justify-center font-bold text-sm">1</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Parte I</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">10 Casos Clínicos • 50 Preguntas</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-indigo-600 text-white shadow-sm shadow-indigo-600/30 group-hover:-translate-y-0.5 transition-transform">Empezar</span>
+                                    <span class="md:hidden text-indigo-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+
+                                <a href="pediatria_parte2.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/50 text-indigo-600 flex items-center justify-center font-bold text-sm">2</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Parte II</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">10 Casos Clínicos • 50 Preguntas</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-indigo-600 text-white shadow-sm shadow-indigo-600/30 group-hover:-translate-y-0.5 transition-transform">Empezar</span>
+                                    <span class="md:hidden text-indigo-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+
+                                <a href="pediatria_parte3.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/50 text-indigo-600 flex items-center justify-center font-bold text-sm">3</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Parte III</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">10 Casos Clínicos • 50 Preguntas</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-indigo-600 text-white shadow-sm shadow-indigo-600/30 group-hover:-translate-y-0.5 transition-transform">Empezar</span>
+                                    <span class="md:hidden text-indigo-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+
+                                <a href="pediatria_parte4.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/50 text-indigo-600 flex items-center justify-center font-bold text-sm">4</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Parte IV</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">10 Casos Clínicos • 50 Preguntas</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-indigo-600 text-white shadow-sm shadow-indigo-600/30 group-hover:-translate-y-0.5 transition-transform">Empezar</span>
+                                    <span class="md:hidden text-indigo-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+
+                                <a href="pediatria_parte5.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/50 text-indigo-600 flex items-center justify-center font-bold text-sm">5</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Parte V</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">10 Casos Clínicos • 50 Preguntas</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-indigo-600 text-white shadow-sm shadow-indigo-600/30 group-hover:-translate-y-0.5 transition-transform">Empezar</span>
+                                    <span class="md:hidden text-indigo-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+                            </div>
+                        </div>
+                    </details>
+                    <!-- FIN ESPECIALIDAD: PEDIATRÍA -->
+
+                    <!-- INICIO ESPECIALIDAD: CIRUGÍA -->
+                    <details class="group bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all overflow-hidden">
+                        <summary class="flex justify-between items-center cursor-pointer p-6 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                            <div class="flex items-center gap-4">
+                                <div class="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 flex items-center justify-center shadow-inner">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z"></path></svg>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl md:text-2xl font-bold text-slate-800 dark:text-white">Cirugía General</h2>
+                                    <p class="text-sm font-medium text-slate-500">18 GPC</p>
+                                </div>
+                            </div>
+                            <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center transition-transform duration-300 group-open:rotate-180 text-slate-500">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </summary>
+                        <div class="border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 p-6">
+                            <div class="grid gap-3">
+                                <!-- AQUÍ PONES TUS ENLACES HTML DE CIRUGÍA -->
+                                <a href="cirugia_parte1.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/50 text-emerald-600 flex items-center justify-center font-bold text-sm">1</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Parte I</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">5 Casos Clínicos • 25 Preguntas</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-emerald-600 text-white shadow-sm shadow-emerald-600/30 group-hover:-translate-y-0.5 transition-transform">Empezar</span>
+                                    <span class="md:hidden text-emerald-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+
+                                <a href="cirugia_parte2.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/50 text-emerald-600 flex items-center justify-center font-bold text-sm">2</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Parte II</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">5 Casos Clínicos • 25 Preguntas</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-emerald-600 text-white shadow-sm shadow-emerald-600/30 group-hover:-translate-y-0.5 transition-transform">Empezar</span>
+                                    <span class="md:hidden text-emerald-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+
+                                <a href="cirugia_parte3.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/50 text-emerald-600 flex items-center justify-center font-bold text-sm">3</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Parte III</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">5 Casos Clínicos • 25 Preguntas</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-emerald-600 text-white shadow-sm shadow-emerald-600/30 group-hover:-translate-y-0.5 transition-transform">Empezar</span>
+                                    <span class="md:hidden text-emerald-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+
+                                <a href="cirugia_parte4.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/50 text-emerald-600 flex items-center justify-center font-bold text-sm">4</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Parte IV</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">3 Casos Clínicos • 15 Preguntas</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-emerald-600 text-white shadow-sm shadow-emerald-600/30 group-hover:-translate-y-0.5 transition-transform">Empezar</span>
+                                    <span class="md:hidden text-emerald-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+                            </div>
+                        </div>
+                    </details>
+                    <!-- FIN ESPECIALIDAD: CIRUGÍA -->
+
+                    <!-- INICIO ESPECIALIDAD: MEDICINA INTERNA -->
+                    <details class="group bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all overflow-hidden">
+                        <summary class="flex justify-between items-center cursor-pointer p-6 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                            <div class="flex items-center gap-4">
+                                <div class="w-14 h-14 rounded-2xl bg-amber-100 dark:bg-amber-900/30 text-amber-600 flex items-center justify-center shadow-inner">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl md:text-2xl font-bold text-slate-800 dark:text-white">Medicina Interna</h2>
+                                    <p class="text-sm font-medium text-slate-500">87 GPC</p>
+                                </div>
+                            </div>
+                            <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center transition-transform duration-300 group-open:rotate-180 text-slate-500">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </summary>
+                        <div class="border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 p-6">
+                            <div class="grid gap-3">
+                                <!-- AQUÍ PONES TUS ENLACES HTML DE MEDICINA INTERNA -->
+                                <a href="interna_parte1.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-amber-400 dark:hover:border-amber-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/50 text-amber-600 flex items-center justify-center font-bold text-sm">1</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Parte I</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">10 Casos Clínicos • 50 Preguntas</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-amber-600 text-white shadow-sm shadow-amber-600/30 group-hover:-translate-y-0.5 transition-transform">Empezar</span>
+                                    <span class="md:hidden text-amber-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+
+                                <a href="interna_parte2.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-amber-400 dark:hover:border-amber-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/50 text-amber-600 flex items-center justify-center font-bold text-sm">2</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Parte II</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">10 Casos Clínicos • 50 Preguntas</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-amber-600 text-white shadow-sm shadow-amber-600/30 group-hover:-translate-y-0.5 transition-transform">Empezar</span>
+                                    <span class="md:hidden text-amber-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+
+                                <a href="interna_parte3.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-amber-400 dark:hover:border-amber-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/50 text-amber-600 flex items-center justify-center font-bold text-sm">3</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Parte III</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">10 Casos Clínicos • 50 Preguntas</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-amber-600 text-white shadow-sm shadow-amber-600/30 group-hover:-translate-y-0.5 transition-transform">Empezar</span>
+                                    <span class="md:hidden text-amber-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+
+                                <a href="interna_parte4.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-amber-400 dark:hover:border-amber-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/50 text-amber-600 flex items-center justify-center font-bold text-sm">4</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Parte IV</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">10 Casos Clínicos • 50 Preguntas</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-amber-600 text-white shadow-sm shadow-amber-600/30 group-hover:-translate-y-0.5 transition-transform">Empezar</span>
+                                    <span class="md:hidden text-amber-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+
+                                <a href="interna_parte5.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-amber-400 dark:hover:border-amber-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/50 text-amber-600 flex items-center justify-center font-bold text-sm">5</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Parte V</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">10 Casos Clínicos • 50 Preguntas</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-amber-600 text-white shadow-sm shadow-amber-600/30 group-hover:-translate-y-0.5 transition-transform">Empezar</span>
+                                    <span class="md:hidden text-amber-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+
+                                <a href="interna_parte6.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-amber-400 dark:hover:border-amber-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/50 text-amber-600 flex items-center justify-center font-bold text-sm">6</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Parte VI</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">10 Casos Clínicos • 50 Preguntas</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-amber-600 text-white shadow-sm shadow-amber-600/30 group-hover:-translate-y-0.5 transition-transform">Empezar</span>
+                                    <span class="md:hidden text-amber-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+
+                                <a href="interna_parte7.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-amber-400 dark:hover:border-amber-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/50 text-amber-600 flex items-center justify-center font-bold text-sm">7</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Parte VII</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">10 Casos Clínicos • 50 Preguntas</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-amber-600 text-white shadow-sm shadow-amber-600/30 group-hover:-translate-y-0.5 transition-transform">Empezar</span>
+                                    <span class="md:hidden text-amber-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+
+                                <a href="interna_parte8.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-amber-400 dark:hover:border-amber-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/50 text-amber-600 flex items-center justify-center font-bold text-sm">8</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Parte VIII</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">10 Casos Clínicos • 50 Preguntas</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-amber-600 text-white shadow-sm shadow-amber-600/30 group-hover:-translate-y-0.5 transition-transform">Empezar</span>
+                                    <span class="md:hidden text-amber-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+
+                                <a href="interna_parte9.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-amber-400 dark:hover:border-amber-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/50 text-amber-600 flex items-center justify-center font-bold text-sm">9</div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Parte IX</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">7 Casos Clínicos • 35 Preguntas</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-amber-600 text-white shadow-sm shadow-amber-600/30 group-hover:-translate-y-0.5 transition-transform">Empezar</span>
+                                    <span class="md:hidden text-amber-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+                            </div>
+                        </div>
+                    </details>
+                    <!-- FIN ESPECIALIDAD: MEDICINA INTERNA -->
+
+                </div>
+
+                <!-- ========================================================================= -->
+                <!-- PESTAÑA 2: PROTOCOLOS PRONAM                                              -->
+                <!-- ========================================================================= -->
+                <div id="tab-pronam" class="tab-content space-y-5">
+                    
+                    <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 rounded-3xl p-6 md:p-8 mb-6 flex flex-col md:flex-row gap-6 items-center">
+                        <div class="w-16 h-16 shrink-0 bg-blue-100 dark:bg-blue-900/50 rounded-full flex items-center justify-center text-blue-600">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-blue-900 dark:text-blue-400 mb-2">¿Qué son los protocolos PRONAM?</h3>
+                            <p class="text-blue-800 dark:text-blue-300 text-sm md:text-base leading-relaxed">Son documentos que emiten directrices basadas en la mejor evidencia científica, para la prevención, diagnóstico y tratamiento de aquellas enfermedades que determina el Consejo de Salubridad General.</p>
+                        </div>
+                    </div>
+
+                    <!-- INICIO PROTOCOLOS -->
+                    <details class="group bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden" open>
+                        <summary class="flex justify-between items-center cursor-pointer p-6 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                            <div class="flex items-center gap-4">
+                                <div class="w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center shadow-inner">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl md:text-2xl font-bold text-slate-800 dark:text-white">Protocolos</h2>
+                                    <p class="text-sm font-medium text-slate-500">PRONAM</p>
+                                </div>
+                            </div>
+                            <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center transition-transform duration-300 group-open:rotate-180 text-slate-500">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </summary>
+                        
+                        <div class="border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 p-6">
+                            <div class="grid gap-3">
+                                <!-- ENLACE HTML DE PROTOCOLO -->
+                                <a href="pronam_erc.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/50 text-blue-600 flex items-center justify-center font-bold">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Enfermedad Renal Crónica</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">Primer nivel de atención</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 group-hover:bg-blue-600 group-hover:text-white transition-colors">Iniciar</span>
+                                    <span class="md:hidden text-blue-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+
+                                <a href="pronam_has.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/50 text-blue-600 flex items-center justify-center font-bold">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Hipertensión Arterial Sistémica</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">Primer nivel de atención</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 group-hover:bg-blue-600 group-hover:text-white transition-colors">Iniciar</span>
+                                    <span class="md:hidden text-blue-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+
+                                <a href="pronam_dt2.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/50 text-blue-600 flex items-center justify-center font-bold">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Diabetes Tipo 2 y Síndrome Metabólico (DT2)</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">Primer nivel de atención</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 group-hover:bg-blue-600 group-hover:text-white transition-colors">Iniciar</span>
+                                    <span class="md:hidden text-blue-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+
+                                <a href="pronam_sobrep_obes.html" class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md transition-all group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/50 text-blue-600 flex items-center justify-center font-bold">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Sobrepeso y Obesidad</p>
+                                            <p class="text-xs font-medium text-slate-500 mt-0.5">Primer nivel de atención</p>
+                                        </div>
+                                    </div>
+                                    <span class="hidden md:flex px-4 py-2 text-sm font-bold rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 group-hover:bg-blue-600 group-hover:text-white transition-colors">Iniciar</span>
+                                    <span class="md:hidden text-blue-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></span>
+                                </a>
+
+
+
+                            </div>
+                        </div>
+                    </details>
+                    <!-- FIN PROTOCOLOS -->
+                </div>
+
+                <!-- ========================================================================= -->
+                <!-- PESTAÑA 3: EXÁMENES POR ESPECIALIDAD (Botones con enlaces Reales)         -->
+                <!-- ========================================================================= -->
+                <div id="tab-examenes" class="tab-content">
+                    
+                    <!-- GRID RESPONSIVO PARA LAS TARJETAS (1 columna en movil, 2 en tablet, 3 en PC) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                        
+                        <!-- TARJETA: GINECOLOGÍA -->
+                        <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 md:p-8 hover:shadow-xl transition-shadow relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-pink-50 dark:bg-pink-900/10 rounded-bl-full -mr-4 -mt-4 z-0 transition-transform group-hover:scale-110"></div>
+                            <div class="relative z-10 flex flex-col h-full">
+                                <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">Ginecología</h3>
+                                <p class="text-sm text-slate-500 mb-8 flex-1">Genera un simulador aleatorio con las preguntas más frecuentes de esta rama.</p>
+                                
+                                <p class="text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-3">Longitud del Examen:</p>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <!-- AQUÍ PONES TUS ENLACES PARA LOS EXAMENES (href="...") -->
+                                    <a href="Ex_GYO1.html" class="flex items-center justify-center py-2.5 px-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-pink-50 hover:text-pink-600 hover:border-pink-300 transition-all hover:-translate-y-0.5">15 Pregs</a>
+                                    <a href="Ex_GYO2.html" class="flex items-center justify-center py-2.5 px-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-pink-50 hover:text-pink-600 hover:border-pink-300 transition-all hover:-translate-y-0.5">30 Pregs</a>
+                                    <a href="Ex_GYO3.html" class="flex items-center justify-center py-2.5 px-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-pink-50 hover:text-pink-600 hover:border-pink-300 transition-all hover:-translate-y-0.5">50 Pregs</a>
+                                    <a href="Ex_GYO4.html" class="flex items-center justify-center py-2.5 px-2 rounded-xl bg-pink-600 text-white text-sm font-bold shadow-md shadow-pink-600/30 hover:bg-pink-700 transition-all hover:-translate-y-0.5">75 Pregs</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TARJETA: PEDIATRÍA -->
+                        <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 md:p-8 hover:shadow-xl transition-shadow relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 dark:bg-indigo-900/10 rounded-bl-full -mr-4 -mt-4 z-0 transition-transform group-hover:scale-110"></div>
+                            <div class="relative z-10 flex flex-col h-full">
+                                <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">Pediatría</h3>
+                                <p class="text-sm text-slate-500 mb-8 flex-1">Genera un simulador aleatorio con las preguntas más frecuentes de esta rama.</p>
+                                
+                                <p class="text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-3">Longitud del Examen:</p>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <a href="Ex_PEDIA15.html" class="flex items-center justify-center py-2.5 px-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all hover:-translate-y-0.5">15 Pregs</a>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TARJETA: CIRUGÍA -->
+                        <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 md:p-8 hover:shadow-xl transition-shadow relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-50 dark:bg-emerald-900/10 rounded-bl-full -mr-4 -mt-4 z-0 transition-transform group-hover:scale-110"></div>
+                            <div class="relative z-10 flex flex-col h-full">
+                                <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">Cirugía General</h3>
+                                <p class="text-sm text-slate-500 mb-8 flex-1">Genera un simulador aleatorio con las preguntas más frecuentes de esta rama.</p>
+                                
+                                <p class="text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-3">Longitud del Examen:</p>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <a href="Ex_CG1.html" class="flex items-center justify-center py-2.5 px-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-300 transition-all hover:-translate-y-0.5">15 Pregs</a>
+                                    <a href="Ex_CG2.html" class="flex items-center justify-center py-2.5 px-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-300 transition-all hover:-translate-y-0.5">30 Pregs</a>
+                                    <a href="Ex_CG3.html" class="flex items-center justify-center py-2.5 px-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-300 transition-all hover:-translate-y-0.5">50 Pregs</a>
+                                    <a href="Ex_CG4.html" class="flex items-center justify-center py-2.5 px-2 rounded-xl bg-emerald-600 text-white text-sm font-bold shadow-md shadow-emerald-600/30 hover:bg-emerald-700 transition-all hover:-translate-y-0.5">75 Pregs</a>
+                                </div>
+                            </div>
+                        </div>
+
+
+                       <!--sig--> 
+
+                    </div>
+                </div>
+
+            </div>
+            
+            <!-- Footer super discreto -->
+            <div class="mt-16 border-t border-slate-200 dark:border-slate-800 pt-8 text-center pb-12">
+                <p class="text-sm font-medium text-slate-400">ENARM Lite © 2026. Preparación Inteligente.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Script para Pestañas y Menú Móvil -->
+    <script>
+// Objeto con la información de títulos por cada sección
+const seccionInfo = {
+    'gpc': { titulo: 'GPC', subtitulo: 'Domina las 185 guías de práctica clínica oficiales vigentes' },
+    'pronam': { titulo: 'Protocolos Nacionales de Atención Médica (PRONAM)', subtitulo: 'Recomendaciones basadas en evidencia científica para la población mexicana' },
+    'examenes': { titulo: 'Exámenes por Especialidad', subtitulo: 'Mide tus conocimientos. Elige la especialidad y el tamaño del reto' }
+};
+
+// Función para cambiar de pestañas
+function switchTab(tabId, buttonElement, activeBgClass, activeTextClass) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.className = "tab-btn w-full flex items-center gap-3 px-4 py-3.5 text-sm font-medium rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all hover:scale-[1.02] text-left";
+    });
+    
+    buttonElement.className = `tab-btn active w-full flex items-center gap-3 px-4 py-3.5 text-sm font-semibold rounded-2xl transition-all hover:scale-[1.02] text-left ${activeBgClass} ${activeTextClass}`;
+    
+    document.getElementById('page-title').innerText = seccionInfo[tabId].titulo;
+    document.getElementById('page-subtitle').innerText = seccionInfo[tabId].subtitulo;
+
+    // Guardar la pestaña activa en memoria
+    localStorage.setItem('pestañaGuardada', tabId);
+
+    // Cerrar menú móvil SOLO si está abierto (Esto soluciona tu bug de la barra lateral)
+    const sidebar = document.getElementById('sidebar');
+    if(window.innerWidth < 768 && !sidebar.classList.contains('-translate-x-full')) {
+        toggleSidebar();
+    }
+}
+
+// Función para el menú hamburguesa
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    
+    sidebar.classList.toggle('-translate-x-full');
+    
+    if (overlay.classList.contains('hidden')) {
+        overlay.classList.remove('hidden');
+        setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+    } else {
+        overlay.classList.add('opacity-0');
+        setTimeout(() => overlay.classList.add('hidden'), 300);
+    }
+}
+
+// --- RESTAURAR PESTAÑA Y SCROLL AL RECARGAR ---
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. Restaurar la pestaña exacta
+    const pestañaActiva = localStorage.getItem('pestañaGuardada');
+    if (pestañaActiva) {
+        const boton = document.getElementById('btn-' + pestañaActiva);
+        if (boton) {
+            boton.click();
+        }
+    }
+
+    // 2. Restaurar el lugar exacto de lectura (Scroll)
+    const areaScroll = document.getElementById('area-scroll');
+    if (areaScroll) {
+        const scrollGuardado = localStorage.getItem('scrollGuardado');
+        if (scrollGuardado) {
+            // Un micro-retraso para que el navegador acomode el contenido antes de hacer scroll
+            setTimeout(() => {
+                areaScroll.scrollTop = scrollGuardado;
+            }, 50);
+        }
+
+        // Guardar silenciosamente el scroll cada vez que bajes o subas
+        areaScroll.addEventListener('scroll', () => {
+            localStorage.setItem('scrollGuardado', areaScroll.scrollTop);
+        });
+    }
+});
+
+
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0",
+        authDomain: "enarm-lite.firebaseapp.com",
+        projectId: "enarm-lite",
+        storageBucket: "enarm-lite.firebasestorage.app",
+        messagingSenderId: "767032952477",
+        appId: "1:767032952477:web:84347320ed3d376f7e7674",
+        measurementId: "G-PVR3RBVNSV"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.5s ease';
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            
+            if(userDocSnap.exists()) {
+                document.body.style.opacity = '1';
+            } else {
+                window.location.href = "index.html"; 
+            }
+        } else {
+            window.location.href = "index.html";
+        }
+    });
+</script>
+</body>
+</html>
