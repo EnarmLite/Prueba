@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-cyan-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+            {
+                id: 1, 
+                question: "¿Qué conducta marca la GPC de prevención de tétanos neonatal ante un niño de 8 años con esquema incompleto que recibe inadvertidamente la vacuna DPaT en el hospital general?", 
+                options: ["Cuenta como dosis de adolescente", "Reiniciar el esquema de cero", "Provocará toxicidad por pertussis", "Contraindica dosis en edad adulta"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Tétanos Neonatal, las formulaciones biológicas varían sus cargas antigénicas según el rango etario (DPT vs Tdap); sin embargo, si un biológico de presentación pediátrica alta se administra en el rango preadolescente por un error de aplicación de enfermería, su contenido antigénico se considera absolutamente válido por la epidemiología para sustituir el booster (refuerzo) inicial sin perjudicar o invalidar el seguimiento a largo plazo.<br><br>Perla ENARM: \"Niños entre 7 y 10 años que reciban dosis inadvertidas de DTap, esta contará como parte de la serie y como la dosis de Tdap del adolescente o podrá recibirla posteriormente entre los 11 y 12 años\".<br><br>Análisis de Distractores: Reiniciar todo el esquema primario de pentavalente/hexavalente desde cero (B) sobrevacunaría injustificadamente al infante, incrementando dramáticamente el riesgo de reacciones locales de hipersensibilidad severa (reacción de Arthus). Un cuadro de dosis tóxica fulminante (C) y una futura contraindicación absoluta a la inmunización en la vida adulta (D) son premisas completamente falsas, pues los componentes toxoides son inertes, sumamente seguros y de ninguna manera impiden o alteran la necesidad de los refuerzos programados con toxoide (Td) que requiere todo adulto sano cada diez años.", 
+                source: "GPC IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Algoritmos, Página 39." 
+            },
+            {
+                id: 2, 
+                question: "En un paciente pediátrico con sospecha de tumor de sistema nervioso central, ¿cuál es el hallazgo clínico que, acompañado de cefalea, tiene mayor valor predictivo para integrar el diagnóstico presuntivo?", 
+                options: ["Diarrea crónica con moco", "Fiebre y rigidez nucal", "Vómito de predominio vespertino", "Regresión de hitos del desarrollo"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Tumores de Sistema Nervioso, la cefalea aislada sin otra alteración neurológica tiene un valor predictivo positivo menor al 1%. La clave clínica en la población pediátrica radica en identificar signos de focalización o deterioro progresivo cerebral incipiente, como la pérdida de habilidades motoras o cognitivas previamente adquiridas (regresión).<br><br>Perla ENARM: \"Se recomienda identificar las características de la cefalea acompañada de datos de alarma, como: Cefalea crónica y progresiva; Vómito recurrente... Regresión de hitos del desarrollo\".<br><br>Análisis de Distractores: El vómito asociado a tumores es clásicamente de predominio matutino y persistente, no vespertino. La fiebre y rigidez nucal son patognomónicos de un síndrome meníngeo infeccioso agudo, mientras que la diarrea crónica orienta a un cuadro gastrointestinal sistémico, los cuales son diagnósticos diferenciales de otras esferas.", 
+                source: "GPC ISSSTE-136-18, Diagnóstico y tratamiento inicial de tumores de sistema nervioso central en pacientes pediátricos en primer y segundo nivel de atención, 2018, Diagnóstico Clínico, Página 13." 
+            },
+            {
+                id: 3, 
+                question: "¿Cuál es la medición clínica indirecta indicada en la consulta de primer nivel para correlacionar el desarrollo de adiposidad central y riesgo cardiovascular en casos de sobrepeso y obesidad en niños y adolescentes?", 
+                options: ["Circunferencia de cintura abdominal", "Medición del pliegue cutáneo", "Relación peso para la talla", "Impedancia eléctrica de miembros"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Sobrepeso y Obesidad Pediátrica, la simple acumulación o suma bruta del peso no es el único factor de peligro vital; la topografía de la distribución o localización física de esa grasa corporal importa clínica y pronósticamente tanto o más que el peso total. La abultada grasa intraabdominal (cúmulo visceral epiploico) es biológica y metabólicamente sumamente activa (pro-inflamatoria), funge como un órgano endocrino anómalo, y es el predictor clínico indirecto directo más fidedigno de la resistencia periférica a la insulina hepática.<br><br>Perla ENARM: \"Se sugiere medir la circunferencia de cintura en niños y adolescentes con o sin factores de riesgo para correlacionarlo con el riesgo de adiposidad (central y cardiovascular)\".<br><br>Análisis de Distractores: El tradicional pliegue cutáneo conplicómetro bicipital/tricipital (B) solo pellizca y mide la grasa subcutánea periférica superficial aislada (no la peligrosa omental o visceral profunda de alto riesgo metabólico y aterogénico). La gráfica de relación o indicador peso/talla puro (C) no identifica ni delinea jamás la distribución regional del tejido (obesidad androide vs ginecoide). La rápida impedancia eléctrica de miembros o extremidades (D) no se correlaciona visual o topográficamente en absoluto con el diámetro destructivo visceral omento-mesentérico a menos que se haga un costoso análisis de segmentos corporales totales en bipedestación.", 
+                source: "GPC SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Diagnóstico Clínico, Página 18." 
+            },
+            {
+                id: 4, 
+                question: "En Leucemia Aguda Pediátrica, ¿cuál es el hallazgo de laboratorio inicial en el frotis que integra el diagnóstico presuntivo?", 
+                options: ["Exceso de linfocitos maduros", "Blastos en sangre periférica", "Trombocitosis reactiva severa", "Presencia de esferocitos abundantes"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, ante la sospecha de esta patología secundaria a un síndrome anémico, infeccioso, purpúrico o infiltrativo, el primer paso en el algoritmo diagnóstico exige realizar una biometría hemática. La presencia de blastos en sangre periférica o citopenias marcan el criterio para referir al paciente inmediatamente a un centro especializado, ya que integran el diagnóstico presuntivo de insuficiencia medular.<br><br>Perla ENARM: \"La evaluación de pacientes con sospecha de LA debe incluir: Biometría hemática completa con frotis de sangre periférica\".<br><br>Análisis de Distractores: El exceso de linfocitos maduros sugiere cuadros virales (como mononucleosis). La trombocitosis reactiva es común en infecciones o deficiencia de hierro, pero la leucemia cursa típicamente con trombocitopenia. Los esferocitos son indicativos de anemia hemolítica autoinmune o esferocitosis hereditaria, no de infiltración medular.", 
+                source: "GPC SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría, 2017, Diagnóstico, Página 17." 
+            },
+            {
+                id: 5, 
+                question: "Durante la exploración pediátrica rutinaria del niño sano, ¿cuál de los siguientes datos clínicos ocultos o inespecíficos exige realizar pruebas de tamizaje buscando descartar Enfermedad Renal Crónica de fondo?", 
+                options: ["Retraso en el crecimiento pondoestatural", "Soplo cardíaco eyectivo funcional vibratorio", "Criptorquidia unilateral asintomática", "Dermatitis atópica eccematosa severa"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Enfermedad Renal Crónica en pacientes menores de 18 años, un niño que inexplicablemente \"no crece\" en sus gráficas somatométricas esconde invariablemente y de forma subrepticia una profunda patología de base devastadora. La insidiosa acidosis tubular renal no compensada, la desnutrición crónica inducida por anorexia urémica leve o la destructiva osteodistrofia renal por hiperparatiroidismo secundario actúan tempranamente como férreos bloqueadores hormonales y mecánicos del desarrollo estaturo-ponderal normal, y constituyen epidemiológicamente el gran y devastador síntoma silente primario de la nefrología infantil.<br><br>Perla ENARM: \"Se sugiere que a los pacientes menores de 18 años que cursen con alguno de los siguientes hallazgos clínicos como: Retraso en el crecimiento... se les realice: Creatinina o cistatina C séricas para estimar la TFG... EGO...\".<br><br>Análisis de Distractores: La criptorquidia unilateral aislada (C) es fundamentalmente un defecto anatómico de migración de la línea urogenital gonadal que no compromete, amenaza ni lesiona por sí mismo de ninguna manera el tejido parenquimatoso ni el filtrado renal vital superior. El clásico soplo cardíaco funcional inocente infantil (B) es estrictamente benigno, acústico por hiperdinamia del tórax delgado y autolimitado sin significancia patológica real. La molesta dermatitis atópica (D) afecta la piel. El inexplicable y torpido retraso severo del crecimiento lineal es, por excelencia de la medicina general, la gran bandera roja metabólica que el médico de primer contacto u obstetra/pediatra jamás debe pasar por alto al buscar falla renal.", 
+                source: "GPC SS-188-18, Prevención, diagnóstico y referencia oportuna de la enfermedad renal crónica en pacientes menores de 18 años, 2018, Diagnóstico Clínico, Página 22." 
+            },
+            {
+                id: 6,
+                question: "En la Displasia del Desarrollo de la Cadera, ¿cuál es el signo clínico o hallazgo de exploración que integra el diagnóstico presuntivo en el recién nacido a término?",
+                options: ["Asimetría de pliegues cutáneos", "Maniobra de Ortolani anormal", "Limitación a la aducción", "Acortamiento de la extremidad"],
+                answer: 1,
+                justification: "Justificación: De acuerdo a la Guía de Práctica Clínica de Detección del recién nacido de término, aunque existan otros estudios como el ultrasonido, la inestabilidad detectada por maniobras clínicas es el pilar diagnóstico. La asimetría de pliegues no es confirmatoria y es poco específica.<br><br>Perla ENARM: \"Se demuestra que la exploración física continúa siendo el método principal por el cual se establece el diagnóstico de Displasia del Desarrollo de la Cadera. Se debe realizar la exploración física (Ortolani o Barlow) alterada como factor de fuerte relación.\"<br><br>Análisis de Distractores: La asimetría de pliegues (A) es un signo inespecífico frecuente en neonatos sanos. La limitación a la aducción (C) no aplica, es la limitación a la abducción. El acortamiento (D) o signo de Galeazzi es tardío y no es el hallazgo presuntivo inicial de primera línea comparado con Ortolani/Barlow.",
+                source: "GPC-SS-226-20, Detección, referencia oportuna y pautas de egreso hospitalario del recién nacido de término, 2020, Evidencias y Recomendaciones, página 13."
+            },
+            {
+                id: 7, 
+                question: "Durante la evaluación clínica pediátrica basal de un recién nacido portador de labio y paladar hendido, ¿qué condición gastrointestinal frecuente en estos neonatos debe diagnosticarse y manejarse médicamente de manera prioritaria antes de autorizar el inicio de la colocación de aparatología u ortopedia prequirúrgica palatina?", 
+                options: ["Reflujo gastroesofágico", "Hipertrofia de adenoides", "Atresia de coanas bilateral", "Cardiopatía congénita compleja"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del labio y paladar hendido, la falla estructural congénita de los delicados mecanismos esfinterianos deglutorios y la enorme comunicación de la cavidad bucal por el paladar hendido predisponen masiva y peligrosamente al neonato a padecer constante microaspiración o macroaspiración nasal y broncopulmonar del contenido gástrico ácido, lo cual imposibilita por completo el manejo y colocación temporal segura de voluminosos aparatos ortopédicos orales de acrílico (placas palatinas u obturadores) por el altísimo riesgo de asfixia mecánica aguda o neumonía química fatal por la retención o impacto del vómito.<br><br>Perla ENARM: \"Se debe realizar la evaluación pediátrica integral de los pacientes con síndromes asociados, problemas neurológicos, de la mecánica de la deglución y con reflujo gastroesofágico, previo al inicio del tratamiento ortopédico prequirúrgico\".<br><br>Análisis de Distractores: Aunque las diversas cardiopatías congénitas cianógenas (D) y la obstructiva atresia de coanas ósea (C) son patologías vitales sumamente graves que exigen UCI, el diagnóstico clínico diferencial explícito en el algoritmo de abordaje y en la recomendación pre-ortopedia de barrera de la GPC es específicamente el problema mecánico deglutorio y los episodios constantes de reflujo gastroesofágico por la interferencia física directa, continua y peligrosa con las placas obturatrices palatinas en la boca del lactante no vigilado.", 
+                source: "GPC SS-807-17, Tratamiento ortopédico y quirúrgico del labio y paladar hendido en niños menores de dos años de edad, 2017, Tratamiento conservador, Página 11." 
+            },
+            {
+                id: 8, 
+                question: "Según la Guía de Práctica Clínica, en un paciente adolescente con obesidad mórbida, ¿cuál es el Índice de Masa Corporal (IMC) mínimo requerido sin comorbilidades para considerarlo candidato a cirugía bariátrica?", 
+                options: ["Mayor a 35", "Mayor a 40", "Mayor a 45", "Mayor a 50"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Obesidad Mórbida en Adolescentes, la cirugía bariátrica requiere indicaciones precisas para no someter a un menor de edad a riesgos injustificados.<br><br>Perla ENARM: \"Identificar como candidato para cirugía bariátrica al adolescente que cumpla los siguientes criterios: IMC >= a 35 más una o más comorbilidades o IMC >= a 40 con y sin comorbilidad\".<br><br>Análisis de Distractores: La opción A (IMC >35) requiere obligatoriamente la presencia de comorbilidades asociadas. Las opciones C y D (45 y 50) son estadios de mayor severidad (superobesidad), pero el punto de corte mínimo exacto sin comorbilidades dictado por la GPC es 40.", 
+                source: "GPC IMSS-050-08, Tratamiento Quirúrgico de la Obesidad Mórbida en la Población Adolescente, 2018, Tratamiento Quirúrgico (Indicaciones), Página 21." 
+            },
+            {
+                id: 9, 
+                question: "¿Cuál es el engañoso dato laboratorial fisiopatológico clave de la edad que obliga inexcusablemente al pediatra a retrasar meses el diagnóstico confirmatorio para diferenciar una verdadera Hemofilia B leve de un estado funcional inmaduro en un recién nacido sano?", 
+                options: ["El TTPa suele ser muy corto o normal al nacer", "Factor IX basal biológicamente bajo al nacer", "Factor VIII falsamente elevado por estrés del parto", "Trombocitopenia neonatal aloinmune severa"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Hemofilia Hereditaria Pediátrica, el Factor IX sérico es una vital proenzima totalmente \"vitamina K dependiente\". El inmaduro sistema de coagulación hepático del neonato a término recién nacido condiciona niveles basales circulantes fisiológicamente bajos que alcanzan a ser hasta un 50% menores en franca comparación con los estables niveles de un adulto joven sano. Emitir apresuradamente un severo diagnóstico de Hemofilia B leve genético solo por hallar un nivel limítrofe en el neonato en su primer día es un enorme error médico conceptual.<br><br>Perla ENARM: \"Para la evaluación de los niveles de FIX se debe considerar que la actividad de FIX al nacimiento es cerca de 50% menor que los niveles del adulto, sugiriendo diagnóstico de hemofilia leve, por lo que para el diagnóstico de certeza, los niveles de FIX deben ser repetidos a los 6 a 12 meses\".<br><br>Análisis de Distractores: La opción C (FVIII fuertemente elevado como reactante de fase aguda durante el parto) es muy real fisiológicamente y dificulta gravemente ver o tamizar las verdaderas Hemofilias A leves o von Willebrand por encubrir los niveles, pero lógicamente no aplica a la variante B (gen del FIX) por la que se pregunta. Las opciones A y D carecen totalmente de fundamento fisiológico causal respecto a las confusas bajas concentraciones aisladas de factores de coagulación dependientes de Vit. K detectables al nacer.", 
+                source: "GPC IMSS-141-18, Diagnóstico y Tratamiento de Hemofilia Hereditaria en Menores de 16 Años, 2018, Diagnóstico Diferencial, Página 15." 
+            },
+            {
+                id: 10, 
+                question: "En un paciente pediátrico con Primera Crisis Convulsiva no provocada y exploración neurológica normal, ¿cuál es el estudio inicial de elección indicado para el abordaje diagnóstico?", 
+                options: ["Tomografía computarizada simple", "Electroencefalograma de vigilia", "Resonancia magnética cerebral", "Punción lumbar diagnóstica"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, cuando un paciente presenta un primer evento no provocado y se ha recuperado íntegramente sin focalización, el abordaje no requiere imagen anatómica de urgencia, sino evaluar la actividad eléctrica cortical funcional.<br><br>Perla ENARM: \"Se recomienda realizar un electroencefalograma en quienes han presentado una crisis convulsiva de primera vez no provocada, para realizar un diagnóstico temprano\".<br><br>Análisis de Distractores: La tomografía y resonancia se reservan para crisis focales, déficit neurológico o trauma. La punción lumbar es exclusiva de sospecha de infección del sistema nervioso central.", 
+                source: "GPC IMSS-244-09, Guía de Práctica Clínica Diagnóstico y Tratamiento de la Primera Crisis Convulsiva, 2017, Pruebas diagnósticas, p. 19." 
+            },
+            {
+                id: 11, 
+                question: "¿Cuál es el dato paraclínico fraccional específico de alarma que descarta temporalmente a la Ictericia Neonatal común e indica una sospecha urgente de enfermedad hepática obstructiva grave (diagnóstico diferencial)?", 
+                options: ["Bilirrubina conjugada mayor de 1.47 mg/dl", "Bilirrubina sérica total en zona de alto riesgo", "Reticulocitos inmaduros mayores al tres por ciento", "Prueba de antiglobulina cruzada débil"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Diagnóstico y Tratamiento de la Ictericia Neonatal, el flujo natural del padecimiento clásico esperado asume un problema abrumador en el tránsito del pigmento indirecto o destrucción celular temprana (hemólisis/reabsorción); por el contrario, un aumento marcado y absoluto en la fracción directa o conjugada advierte indudablemente un daño obstructor biliar y estructural colestásico que escapa por completo al algoritmo convencional con lámparas (ej. Atresia de vías biliares, quiste de colédoco o sepsis).<br><br>Perla ENARM: \"Los recién nacidos con bilirrubina conjugada mayor de 1.47 mg/dl (25 μmol/l) deben ser vigilados y estudiados porque esto puede indicar enfermedad hepática grave\".<br><br>Análisis de Distractores: Las cifras de bilirrubinas totales masivamente elevadas (B) confirman solo la presencia de hiperbilirrubinemia clásica severa, de requerir nomogramas. Los reticulocitos elevados o los cruces reactivos positivos de anticuerpos maternos (C, D) orientan directa y lógicamente a la causa número uno \"no-fisiológica\" esperada en este grupo etario (isoinmunización por grupo/Rh y hemólisis grave por aloinmunidad con hiperbilirrubinemia indirecta), siendo la fracción directa/conjugada aislada el verdadero y letal diferencial hepático obstructor que pregunta el reactivo.", 
+                source: "GPC IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Auxiliares diagnósticos, Página 21." 
+            },
+            {
+                id: 12, 
+                question: "En la Estenosis Hipertrófica Congénita de Píloro, ¿cuál es el hallazgo de laboratorio clásico que integra el diagnóstico presuntivo en urgencias?", 
+                options: ["Acidosis metabólica hiperclorémica.", "Alcalosis respiratoria con hipokalemia.", "Alcalosis metabólica hipoclorémica.", "Acidosis láctica con hipernatremia."], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la Guía de Práctica Clínica de Estenosis Hipertrófica de Píloro, esta patología es la causa principal de desequilibrio ácido-base en lactantes, derivado del vómito de contenido gástrico puro con alta pérdida de hidrogeniones y cloro. La opción correcta es la C, ya que la pérdida sistemática de ácido clorhídrico detona este estado metabólico.<br><br>Perla ENARM: \"La Estenosis Hipertrófica de Píloro es la causa principal de alcalosis metabólica en pediatría, secundaria al vómito que contiene principalmente secreciones gástricas; la pérdida de electrolitos es principalmente de hidrogeniones (H+) y (Cl-)\".<br><br>Análisis de Distractores: La acidosis metabólica hiperclorémica es clásica de pérdidas intestinales bajas (diarrea). La alcalosis respiratoria se asocia a hiperventilación y la acidosis láctica a choque, ninguna de las cuales es la alteración primaria patognomónica en una obstrucción alta de estómago.", 
+                source: "GPC IMSS-330-10, Diagnóstico y tratamiento de la Estenosis Hipertrófica Congénita de Píloro, 2017, Auxiliares Diagnósticos, Página 15." 
+            },
+            {
+                id: 13, 
+                question: "Con el objetivo estricto de disminuir el riesgo de muerte súbita y accidentes asfícticos durante el tratamiento prolongado de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, ¿cuál es la posición corporal obligada e innegociable en la cuna de fototerapia?", 
+                options: ["Colocación en decúbito supino", "Colocación en decúbito prono", "Colocación en decúbito lateral", "Colocación semi-Fowler con protección"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Isoinmunización a Rh Neonatal, aunado al delicado aislamiento térmico (y protección ocular opaca irrestricta) necesario que exige mantener a un paciente inmaduro desnudo bajo lámparas y con antifaces oscuros por horas, la normatividad impone lineamientos absolutos de seguridad postural pediátrica internacional (Campaña \"Back to Sleep\") para minimizar a cero la asfixia posicional inadvertida bajo los estorbosos equipos radiantes lumínicos en las salas cunas.<br><br>Perla ENARM: \"Para disminuir el riesgo de muerte súbita, los recién nacidos deben ser colocados en posición decúbito supino, a menos que otras condiciones clínicas lo impidan, lo importante es asegurar que la luz alcance la máxima superficie de piel\".<br><br>Análisis de Distractores: Las opciones B, C y D (prono, lateral, fowler) representan posturas anatómicamente inestables con demostradamente el mayor riesgo estadístico epidemiológico contundente de provocar el Síndrome de muerte súbita infantil (muerte de cuna posicional por asfixia/reflujo) o, en su defecto, no demuestran ni brindan mayor beneficio clínico documentado sobre la espalda para ampliar de forma segura la codiciada superficie de exposición dérmica a los haces lumínicos curativos en absoluta ausencia de monitorización continua estricta intubada de la vía aérea en estos infantes.", 
+                source: "GPC IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Fototerapia, Página 51." 
+            },
+            {
+                id: 14, 
+                question: "En Pelagra, ¿cuál es el signo clínico dermatológico característico en el cuello que integra el diagnóstico presuntivo?", 
+                options: ["Signo de mariposa", "Guantes de Pelagra", "Collar de Casal", "Ampollas por fotoexposición"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Pelagra en Edad Pediátrica, la manifestación cutánea en zonas expuestas al sol es el dato cardinal y patognomónico de la enfermedad. El eritema y posterior hiperpigmentación simétrica descamativa en la región cervical anterior y escote recibe el epónimo clásico que permite la identificación visual rápida de la deficiencia de niacina.<br><br>Perla ENARM: \"Los signos que se pueden encontrar en pacientes con Pelagra son: Lesiones dérmicas en zonas expuestas al sol... En orden de frecuencia se presentan en - Dorso de brazos - Cuello 'Collar de Casal' - Manos 'Guantes de Pelagra' - Cara 'Signo de mariposa'\".<br><br>Análisis de Distractores: El \"Signo de mariposa\" (A) y los \"Guantes de Pelagra\" o botas (B) también son manifestaciones clásicas de fotoexposición, pero se ubican anatómicamente en la cara y las manos respectivamente, no en el cuello. Las ampollas o vesículas (D) pueden ser una complicación secundaria rara (Pelagra húmeda), pero no son el signo primario presuntivo con epónimo en cuello.", 
+                source: "GPC IMSS-430-10, Diagnóstico y Tratamiento de la Pelagra en Edad Pediátrica, 2017, Signos y Síntomas, Página 12." 
+            },
+            {
+                id: 15, 
+                question: "En Otitis Media Aguda, ¿Cuál factor de riesgo obliga invariablemente a prolongar el curso inicial de Amoxicilina por un período mínimo de 10 a 14 días para asegurar un pronóstico favorable y erradicación bacteriana?", 
+                options: ["Ausencia de lactancia materna", "Fiebre mayor a 39°C", "Hiperemia timpánica severa bilateral", "Edad menor a 2 años"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, los menores de 24 meses poseen una inmadurez del sistema inmune frente a patógenos capsulados que eleva significativamente la tasa de falla en regímenes cortos (5 a 7 días).<br><br>Perla ENARM: \"La duración del tratamiento con amoxicilina o amoxicilina— ácido clavulánico debe ser 10 a 14 días en niños con factores de riesgo (menores de dos años de edad y/o otorrea espontánea)\".<br><br>Análisis de Distractores: La opción A es un factor de riesgo para desarrollar la patología, mas no para ajustar la dosis. Las opciones B y C demuestran severidad clínica que obliga al inicio temprano de antibióticos (en mayores de 2 años), pero si es mayor a 2 años y evoluciona bien, la duración puede mantenerse en 7 días.", 
+                source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Tratamiento, Página 29." 
+            },
+            {
+                id: 16, 
+                question: "Según la epidemiología del Estreñimiento Funcional, ¿cuál es uno de los factores de riesgo psicosociales y sociodemográficos con mayor asociación estadística documentada para el desarrollo de esta patología en escolares?", 
+                options: ["Pertenecer a una clase social baja", "Antecedente de prematurez extrema", "Llevar una dieta vegana estricta", "Padecer infecciones virales recurrentes"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Estreñimiento Funcional en escolares, existen fuertes determinantes ambientales y socioeconómicos que favorecen y perpetúan la aparición del padecimiento al limitar económicamente el acceso a una dieta rica en fibra (frutas/verduras) y promover dinámicas familiares de alto estrés (violencia, falta de rutinas) que alteran psicológicamente los reflejos y hábitos naturales de defecación del niño.<br><br>Perla ENARM: \"El estreñimiento funcional se reportó en un 27% y este se asoció significativamente con la clase social baja. Así mismo, la exposición a eventos estresantes de la vida (pérdida de trabajo, acoso escolar) se asocia con el desarrollo del problema\".<br><br>Análisis de Distractores: La prematurez extrema (B), las dietas veganas estrictas (C) (las cuales de hecho son altísimas en fibra protectora) y las infecciones virales recurrentes (D) no son reportados en esta guía normativa como los factores predisponentes con mayor peso epidemiológico poblacional directo para desarrollar el síndrome de retención fecal funcional en la infancia.", 
+                source: "GPC IMSS-643-18, Tratamiento médico del estreñimiento funcional en el escolar y adolescente, 2018, Introducción, Página 18 y 63." 
+            },
+            {
+                id: 17, 
+                question: "¿Cuál es el biomarcador paraclínico que permite confirmar o evaluar la inflamación del fenotipo predominantemente eosinofílico en el asma en edad pediátrica?", 
+                options: ["Fracción exhalada óxido nítrico", "Tomografía axial computarizada", "Gasometría arterial basal", "Nivel de interleucina dos"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Asma en Edad Pediátrica, el epitelio respiratorio produce mayor cantidad de óxido nítrico (FeNO) como respuesta a la estimulación proinflamatoria Th2/eosinofílica, siendo útil para evidenciar fenotipos alérgicos.<br><br>Perla ENARM: \"La fracción espiratoria de óxido nítrico (FeNO) se relaciona con la presencia de inflamación eosinofílica en la vía aérea (inflamación tipo 2; eosinofílica, alérgica y no alérgica), la cual se encuentra elevada en el asma...\"<br><br>Análisis de Distractores: La tomografía (B) es solo para evaluación anatómica (remodelación/bronquiectasias). La gasometría (C) mide oxigenación, no fenotipo inflamatorio. La interleucina 2 (D) corresponde a marcadores tipo Th1, mientras que el asma eosinofílica depende de citocinas Th2 (como IL-4 o IL-5).", 
+                source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Evidencias y Recomendaciones: Diagnóstico, Página 17." 
+            },
+            {
+                id: 18, 
+                question: "¿Cuál es el factor de riesgo ambiental o poblacional con mayor porcentaje de asociación (77%) para el desarrollo de Neumonía Bacteriana Adquirida en la Comunidad (NBAC) reportado por la GPC?", 
+                options: ["Hacinamiento familiar", "Tabaquismo pasivo", "Asistencia a guarderías", "Madre adolescente"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Neumonía Bacteriana en pediatría, la convivencia estrecha en espacios cerrados y mal ventilados facilita la diseminación de patógenos respiratorios a través de gotas de Flügge, representando la carga epidemiológica más alta documentada en el texto.<br><br>Perla ENARM: \"Entre los factores de riesgo relacionados con el ambiente están: estacionalidad, bajo nivel socioeconómico... tabaquismo pasivo y/o la exposición a contaminantes ambientales y hacinamiento (77%)\".<br><br>Análisis de Distractores: El tabaquismo pasivo, la asistencia a guarderías y tener madre adolescente son factores de riesgo ambientales reales y citados en la guía, pero la estadística específica y de mayor peso recae puntualmente en el hacinamiento.", 
+                source: "GPC SS-120-21, Diagnóstico y tratamiento de la neumonía bacteriana adquirida en la comunidad en población menor a 18 años, 2021, Introducción, Página 9." 
+            },
+            {
+                id: 19, 
+                question: "¿Cuál es el marcador laboratorial que predice letalidad inminente por falla de oxigenación tisular en un paciente con Desnutrición en Menores de Cinco Años grave?", 
+                options: ["Glucosa menor a 54 mg/dl", "Hemoglobina menor a 4 g/dl", "Leucocitos menores a 4000", "Plaquetas menores a 50 000"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Desnutrición en Menores, una anemia tan profunda rompe la capacidad del miocardio (ya debilitado por consunción) para compensar la hipoxia celular, precipitando insuficiencia cardiaca de alto gasto fatal.<br><br>Perla ENARM: \"Signos que aumentan el riesgo de muerte... Hemoglobina <4 g/dl\".<br><br>Análisis de Distractores: La glucemia baja (<54 mg/dl) (A) es riesgo de coma hipoglucémico, pero la guía textualmente agrupa la cifra puntual de Hb <4 g/dl (o <6 g/dl con dificultad respiratoria) como el marcador sanguíneo explícito de mortalidad.", 
+                source: "GPC-SS-119-18, Diagnóstico y tratamiento de la desnutrición en menores de cinco años de edad en el primer nivel de atención, 2018, Cuadros o Figuras, 28." 
+            },
+            {
+                id: 20, 
+                question: "¿Cuál es el patógeno viral con mayor asociación a cuadros graves y mortalidad en pacientes pediátricos con Diarrea Aguda reportado por la Guía de Práctica Clínica?", 
+                options: ["Infección por el astrovirus", "Infección por el rotavirus", "Infección por adenovirus entérico", "Infección por el norovirus"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la Guía de Práctica Clínica de Diarrea Aguda Infantil, aunque existen múltiples etiologías virales que desencadenan cuadros autolimitados, el rotavirus destaca por su capacidad de inducir diarrea secretora severa, fiebre elevada y letargo, siendo la principal causa de deshidratación fatal en menores de cinco años a nivel mundial previo a la era vacunal.<br><br>Perla ENARM: \"La diarrea debida a infección por rotavirus es considerada la más grave en niños menores de cinco años, en la cual se presenta fiebre, deshidratación grave y letargo\".<br><br>Análisis de Distractores: Las opciones A, C y D corresponden a virus entéricos genuinos que causan gastroenteritis en pediatría; sin embargo, producen episodios caracterizados por menor compromiso sistémico y menor tasa de hospitalizaciones por estado de choque en comparación directa con el rotavirus.", 
+                source: "GPC SS-156-18, Prevención, diagnóstico y tratamiento de diarrea aguda en pacientes de 2 meses a 5 años de edad, en el primer y segundo nivel de atención, 2018, Pronóstico, Página 27." 
+            },
+            {
+                id: 21, 
+                question: "Según la GPC de Linfoma No Hodgkin en Pediatría, ¿qué marcador enzimático sérico representa un factor pronóstico determinante en la estadificación de riesgo del grupo BFM?", 
+                options: ["Velocidad de sedimentación globular", "Deshidrogenasa láctica (DHL)", "Proteína C reactiva ultrasensible", "Beta-2 microglobulina sérica"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Linfoma No Hodgkin Pediátrico, la liberación intracelular de esta enzima es directamente proporcional a la agresividad de la fracción de crecimiento celular; por lo tanto, rige la agresividad del esquema a prescribir, escalando el nivel de riesgo en las tablas oficiales del BFM.<br><br>Perla ENARM: \"El grupo BFM demostró que los niveles de deshidrogenasa láctica (DHL) al diagnóstico, así como la respuesta al tratamiento durante la primera semana son factores pronósticos que determinan la intensidad del tratamiento\".<br><br>Análisis de Distractores: Las opciones A y C son reactantes de fase aguda inespecíficos. La opción D es un marcador pronóstico vital en Mieloma Múltiple en adultos, pero no rige la estadificación oficial de BFM en Linfomas Pediátricos.", 
+                source: "GPC-SS-290-18, Tratamiento de Linfoma No Hodgkin en Pediatría, 2018, Evidencias, Página 14." 
+            },
+            {
+                id: 22, 
+                question: "¿Cuál es el factor de riesgo antropométrico con mayor asociación etiológica para el desarrollo de Diabetes Mellitus Tipo 2 en la población pediátrica reportado por la GPC?", 
+                options: ["Obesidad.", "Infección por enterovirus.", "Anticuerpos GAD65 positivos.", "Alelo HLA DR3."], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Diagnóstico y Tratamiento de la Diabetes, el principal detonante fisiopatológico de la resistencia a la insulina periférica que fatiga a las células beta en los adolescentes es el grave exceso de tejido adiposo y sedentarismo, que frecuentemente se acompaña de oscuros marcadores cutáneos de hiperinsulinemia (acantosis nigricans).<br><br>Perla ENARM: \"Los niños en riesgo de DMT2 incluyen aquellos con sobrepeso (Índice de Masa Corporal > percentil 85 para la edad y el sexo o peso para la altura > percentil 85) y que tienen 2 de los siguientes elementos: Antecedentes familiares... Signos de resistencia a la insulina (ej. acantosis nigricans, hipertensión...)\".<br><br>Análisis de Distractores: La discutida infección por enterovirus (B), la destructiva positividad a autoanticuerpos séricos como el GAD65 (C) y los predisponentes alelos de susceptibilidad genética como el HLA DR3/DR4 (D), son factores desencadenantes ambientales y marcadores patognomónicos asociados exclusiva y únicamente a la autoinmunidad de la variante Tipo 1.", 
+                source: "GPC SS-302-21, Diagnóstico y tratamiento de la diabetes mellitus tipo 1 y tipo 2 en paciente pediátrico, 2021, Diagnóstico (Factores de riesgo DMT2), Página 14." 
+            },
+            {
+                id: 23, 
+                question: "Ante la sospecha clínica de Hemofilia en un recién nacido por historia familiar, ¿cuál es la primera muestra o abordaje inicial que debe solicitarse al nacer según la GPC?", 
+                options: ["Sangre de vena periférica", "Sangre de cordón umbilical", "Sangre de talón directa", "Punción de arteria radial"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Hemofilia Hereditaria Pediátrica, la obtención cuidadosa de sangre del cordón umbilical al momento del alumbramiento es crucial para evitar procedimientos invasivos dolorosos o traumáticos (como la venopunción periférica inicial repetida) en un neonato que potencialmente tiene un altísimo riesgo de desarrollar un hematoma disecante masivo o hemorragia grave por falta de factor.<br><br>Perla ENARM: \"En el RN hijo de madre con historia familiar de hemofilia se debe obtener una muestra de sangre de cordón umbilical para realizar: Biometría Hemática Completa (BHC), Tiempo de Protrombina (TP), Tiempo de Tromboplastina Parcial activada (TTPa) y fibrinógeno\".<br><br>Análisis de Distractores: La opción A se reserva como último recurso solo si la valiosa muestra de cordón se contamina o coagula en el tubo. La opción C (tamiz metabólico) debe hacerse con máxima compresión posterior, pero no sirve para medir tiempos de coagulación en plasma. La opción D es un procedimiento de altísimo riesgo isquémico y hemorrágico totalmente innecesario en este contexto.", 
+                source: "GPC IMSS-141-18, Diagnóstico y Tratamiento de Hemofilia Hereditaria en Menores de 16 Años, 2018, Prevención Primaria, Página 13." 
+            },
+            {
+                id: 24,
+                question: "¿Cuál es uno de los factores de riesgo patogénicos con mayor asociación para desarrollar Síndrome de Dificultad Respiratoria en el recién nacido prematuro reportado por la guía?",
+                options: ["Uso de esteroides prenatales", "Trabajo de parto prolongado", "Hijo de madre diabética", "Sexo femenino del neonato"],
+                answer: 2,
+                justification: "Justificación: De acuerdo a la GPC de Síndrome de Dificultad Respiratoria, el hiperinsulinismo fetal derivado de la diabetes materna retrasa la maduración pulmonar y la síntesis de surfactante. El uso de esteroides y el sexo femenino son factores protectores, no de riesgo. El trabajo de parto per se ayuda a la reabsorción de líquido pulmonar, protegiendo contra taquipnea transitoria.<br><br>Perla ENARM: \"Los factores de riesgo que aumentan la incidencia de SDR son: Prematurez, Asfixia perinatal, Menor edad gestacional, Sexo masculino, Segundo gemelo, Hijo de madre diabética, Nacimiento por cesárea sin trabajo de parto, Infección materna, No administración de esteroides prenatales a la madre.\"",
+                source: "GPC IMSS-137-21, Diagnóstico y Tratamiento del Síndrome de Dificultad Respiratoria en el Recién Nacido Prematuro, 2021, Factores de Riesgo, Página 16."
+            },
+            {
+                id: 25, 
+                question: "En un paciente mayor de dos años con Otitis Media Aguda leve unilateral sin factores de riesgo adicionales, ¿cuál es la meta de tiempo recomendada para la revaloración si se decide aplicar la estrategia expectante (\"wait-and-see\")?", 
+                options: ["5 a 7 días", "24 a 48 horas", "10 a 14 días", "48 a 72 horas"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, prescribir de forma diferida o mantener estricta vigilancia clínica, usando solo analgésicos, evita el sobreuso de antibióticos permitiendo la autolimitación del cuadro.<br><br>Perla ENARM: \"La estrategia de espera-vigilancia involucra la observación del curso clínico de las primeras 48-72 horas, sin iniciar tratamiento antibiótico\".<br><br>Análisis de Distractores: La opción A refleja la duración de la terapia antibiótica en este mismo grupo etario (bajo riesgo). La opción B es un tiempo insuficiente para determinar falla resolutiva o progresión. La opción C es la duración del antibiótico en pacientes de alto riesgo.", 
+                source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Tratamiento, Página 26." 
+            },
+            {
+                id: 26, 
+                question: "En la Hipoglucemia Neonatal Transitoria, ¿cuál es el signo clínico neurológico que presenta una probabilidad de ocurrencia del 100 % e integra el diagnóstico clínico presuntivo en lactantes sintomáticos?", 
+                options: ["Agitación", "Letargo", "Estupor leve a moderado", "Convulsiones"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Hipoglucemia Neonatal Transitoria, las manifestaciones clínicas en los recién nacidos suelen ser sumamente inespecíficas y sutiles; sin embargo, al analizar estadísticamente la probabilidad de presentación de los signos neuroglucopénicos y disautonómicos, el estupor (leve a moderado) se presenta en la totalidad de los casos documentados clínicamente, seguido de la agitación y las convulsiones.<br><br>Perla ENARM: \"Las manifestaciones clínicas que se presentan con más frecuencia en los recién nacidos con hipoglucemia son: Estupor (leve a moderado) 100 %, Agitación 81 %, Convulsiones 58 %\".<br><br>Análisis de Distractores: La agitación (A) tiene una alta probabilidad de presentación del 81 % pero no alcanza la totalidad. El letargo (B) tiene una probabilidad de presentación del 26 %. Las convulsiones neonatales (D) se presentan frecuentemente en el 58 % de los casos, indicando un grado de severidad neuroglucopénica importante, pero no son el signo inicial más frecuente ni constante.", 
+                source: "GPC IMSS-442-18, Diagnóstico y Tratamiento de la Hipoglucemia Neonatal Transitoria, 2018, Diagnóstico Clínico, Página 48." 
+            },
+            {
+                id: 27, 
+                question: "A pesar de que la guía no recomienda solicitar estudios radiológicos rutinarios en el primer nivel, ¿cuál es el método clínico que funciona actualmente como el definitivo \"Estándar de Oro\" diagnóstico confirmatorio para el Estreñimiento Funcional idiopático pediátrico?", 
+                options: ["Manometría anorrectal seriada", "Cumplimiento de los Criterios clínicos Roma III", "Tránsito colónico con múltiples marcadores opacos", "Biopsia de succión de la mucosa rectal"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Estreñimiento Funcional en escolares, esta frecuente patología de exclusión carece de un marcador serológico o de imagen definitivo patognomónico que la confirme en una placa, por lo que el diagnóstico médico y científico de certeza recae mundialmente en la recolección exhaustiva y sistematizada de los síntomas referidos por la madre, validados internacionalmente por consenso de expertos.<br><br>Perla ENARM: \"Para llegar al diagnóstico de estreñimiento funcional o idiopático es necesario descartar datos clínicos que sugieran un problema orgánico. Los pacientes que cumplen con los criterios clínicos Roma III, para estreñimiento funcional o idiopático, no requieren de pruebas diagnósticas\" (haciendo del interrogatorio de Roma III el estándar clínico de oro).<br><br>Análisis de Distractores: La invasiva manometría (A), el largo y radiante tránsito colónico (C) y la dolorosa biopsia de succión (D) son, de hecho, los sofisticados \"Estándares de Oro\" indicados, pero para padecimientos gravemente orgánicos (Ej. Enfermedad de Hirschsprung agangliónico o inercia colónica muscular severa), no para la benigna etiología funcional idiopática en pediatría de primera intención.", 
+                source: "GPC IMSS-643-18, Tratamiento médico del estreñimiento funcional en el escolar y adolescente, 2018, Introducción y Diagnóstico, Página 15." 
+            },
+            {
+                id: 28, 
+                question: "En un paciente pediátrico con quemaduras, ¿cuál es la escala clínica de elección que integra el diagnóstico presuntivo de la extensión y profundidad de la lesión?", 
+                options: ["Regla de los nueves", "Escala de Lund y Browder", "Índice de severidad", "Fórmula de Parkland"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, una subestimación o sobrestimación del área quemada conduce a una reanimación hídrica inadecuada. En la edad pediátrica, las proporciones corporales varían según la edad (ej. predominio cefálico en lactantes), por lo que la regla de los nueves resulta inexacta. La evaluación clínica estandarizada exige el uso de diagramas anatómicos dinámicos.<br><br>Perla ENARM: \"Se recomienda realizar énfasis en la adecuada evaluación de la extensión y profundidad de las quemaduras en niños menores de 5 años, los cuales son más vulnerables a las pérdidas de líquidos, utilizando escalas de evaluación clínica para valorar la extensión y profundidad como Lund y Browder\".<br><br>Análisis de Distractores: La Regla de los nueves (A) es poco precisa en pediatría por la desproporción anatómica, aplicándose idealmente solo en adultos. La Fórmula de Parkland (D) se usa para el cálculo del volumen de líquidos a reponer, pero no para medir la extensión. El Índice de severidad (C) es un distractor general sin utilidad para el cálculo topográfico inicial.", 
+                source: "GPC SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Evidencias y Recomendaciones: Diagnóstico, Página 21 y 138." 
+            },
+            {
+                id: 29, 
+                question: "Más allá del abordaje clínico inicial, ¿cuál es el estudio con mayor sensibilidad y especificidad (Estándar de Oro) para confirmar el proceso reversible del asma en edad pediátrica en mayores de seis años?", 
+                options: ["Radiografía torácica en inspiración", "Espirometría con prueba broncodilatadora", "Tomografía computarizada de tórax", "Pletismografía pulmonar completa"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Asma en Edad Pediátrica, documentar el cambio volumétrico del aire exhalado antes y después de administrar un agonista beta-2 es el pilar para confirmar el proceso de hiperreactividad y obstrucción.<br><br>Perla ENARM: \"La confirmación del diagnóstico requiere demostrar el proceso obstructivo reversible, lo que en niños a partir de seis años de edad puede realizarse por espirometría... Se considerará reversibilidad positiva si el VEF1 post-broncodilatador se modifica >12%.\"<br><br>Análisis de Distractores: Los estudios radiológicos (A y C) no evalúan dinámicamente el componente bronquial espástico. La pletismografía (D) evalúa volúmenes estáticos de forma muy especializada, pero la espirometría simple sigue siendo el estándar universal.", 
+                source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Aspectos Generales: Introducción, Página 9." 
+            },
+            {
+                id: 30, 
+                question: "En la sospecha de Sepsis Neonatal, ¿cuál es el signo clínico o patrón que justifica la toma de hemocultivos e inicio empírico de antibióticos según la GPC?", 
+                options: ["2 signos respiratorios leves", "Únicamente fiebre neonatal aislada", "3 o más signos clínicos", "1 signo clínico aislado"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Sepsis Neonatal, la presentación de la enfermedad es inespecífica e inicialmente sutil. Por lo tanto, el diagnóstico presuntivo requiere de la sumatoria de signos como dificultad para alimentarse, convulsiones, temperatura axilar inestable, taquipnea, quejido o cianosis para evitar sobretratamiento ante hallazgos aislados fisiológicos. La presencia de 3 o más de estos hallazgos clínicos integra la sospecha fuerte y justifica comenzar abordaje invasivo.<br><br>Perla ENARM: \"Considerar como indicador de sepsis neonatal, que justifica la toma de hemocultivos e inicio de antibiótico empírico, a la presencia de tres o más signos clínicos en un RN con sospecha de infección\".<br><br>Análisis de Distractores: Presentar únicamente fiebre o signos aislados no es suficiente por su alta frecuencia como eventos adaptativos o transitorios en el recién nacido, evitando así punciones y exposición innecesaria a antibióticos.", 
+                source: "GPC-SS-283-19, Diagnóstico, tratamiento y pronóstico de la sepsis neonatal, 2019, 1. Diagnóstico, Página 15." 
+            }
+        ];
+
+        // ==========================================
+        // LÓGICA DE LA APLICACIÓN 
+        // ==========================================
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('Exapedia30LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('Exapedia30Progress');
+                localStorage.removeItem('Exapedia30LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-blue-500 shadow-md z-10 border-blue-500 dark:border-blue-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-cyan-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "PREPARACIÓN ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "PEDIATRÍA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "Preguntas diseñadas para fortalecer tus conocimientos con reactivos de alta exigencia y enfoque clínico tipo ENARM basadas en las GPC mexicanas.";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="Ex_PEDIA50.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-blue-100 dark:border-blue-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 dark:has-[:checked]:bg-blue-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('Exapedia30Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('Exapedia30LastQId', currentQuestionId);
+                else localStorage.removeItem('Exapedia30LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('Exapedia30Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+    <!-- SCRIPT GUARDIÁN DE SEGURIDAD -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // 1. Tu misma configuración de Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0",
+        authDomain: "enarm-lite.firebaseapp.com",
+        projectId: "enarm-lite",
+        storageBucket: "enarm-lite.firebasestorage.app",
+        messagingSenderId: "767032952477",
+        appId: "1:767032952477:web:84347320ed3d376f7e7674",
+        measurementId: "G-PVR3RBVNSV"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // 2. Ocultamos la página por 1 segundo para que no vean el contenido si no tienen sesión
+    // document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.5s ease';
+
+    // 3. Revisamos quién entra
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            // Está logueado, pero ¿sigue en la lista blanca?
+            const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            
+            if(userDocSnap.exists()) {
+                // ¡Todo en orden! Mostramos el contenido
+                document.body.style.opacity = '1';
+            } else {
+                // Está logueado pero no en la lista blanca -> Al inicio
+                // window.location.href = "index.html"; 
+            }
+        } else {
+            // No tiene sesión abierta -> Al inicio
+            // window.location.href = "index.html";
+        }
+    });
+</script>
+</body>
+</html>
