@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-purple-500 to-fuchsia-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+            {
+                id: 1, 
+                question: "Para calcular el riesgo de transmisión y la aparición de síntomas en contactos cercanos, ¿cuál es el periodo de incubación de la Rubéola?", 
+                options: ["1 a 7 días", "7 a 14 días", "14 a 23 días", "30 a 50 días"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención de la Rubéola, el periodo de incubación es prolongado, lo que hace que los brotes familiares o escolares sean difusos y la cadena de contagio difícil de bloquear una vez iniciado el exantema en el caso índice.<br><br>Perla ENARM: \"El tiempo de incubación varía de 12 a 23 días (tabulado en el cuadro de exantemáticas como 14-23 días), el periodo infeccioso comprende desde 7 días previos a la erupción\".<br><br>Análisis de Distractores: 1 a 7 días (A) es típico de Escarlatina. 7 a 14 días (B) empata con Exantema Súbito. 30 a 50 días (D) corresponde a la Mononucleosis Infecciosa.", 
+                source: "IMSS-469-11, Prevención, Diagnóstico y Tratamiento de la Rubéola en Primer Nivel de Atención, 2017, Sección 3.4 Definición / Cuadro 2, Páginas 11 y 29." 
+            },
+            {
+                id: 2, 
+                question: "En el Síndrome de Realimentación asociado a Nutrición Parenteral, ¿cuál es el hallazgo de laboratorio que integra el diagnóstico presuntivo según la GPC?", 
+                options: ["Potasio, Fósforo y Magnesio bajos", "Calcio y Sodio séricos bajos", "Glucosa capilar >180 mg/dL", "Triglicéridos séricos >400 mg/dL"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Nutrición Parenteral, el hallazgo patognomónico que define al Síndrome de Realimentación es la caída abrupta de electrolitos intracelulares producto del hiperinsulinismo al reiniciar el aporte calórico. La hipofosfatemia subsecuente es la causante del colapso cardiopulmonar.<br><br>Perla ENARM: \"Bajos niveles de potasio, fósforo y magnesio previo al inicio de la terapia nutricional\".<br><br>Análisis de Distractores: El Calcio y Sodio (B) no son el pilar del escrutinio inicial de este síndrome. La hiperglucemia (C) y la hipertrigliceridemia (D) son complicaciones independientes del sobreaporte de macronutrientes, pero no definen el Síndrome de Realimentación clásico.", 
+                source: "GPC-IMSS-556-18, Nutrición Parenteral: Prevención de complicaciones, 2018, Evidencias y Recomendaciones, Página 20." 
+            },
+            {
+                id: 3, 
+                question: "En un paciente con falla orgánica que cursa con Insuficiencia Renal Aguda temprana (sin alteraciones de potasio/fósforo aún), ¿cuál es la fórmula enteral que debe elegirse inicialmente?", 
+                options: ["Fórmula baja en proteínas", "Fórmula enteral estándar", "Fórmula alta en grasas", "Dieta monomérica elemental"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Nutrición Enteral, la falla renal no dicta per se una fórmula modificada a menos que el paciente haya perdido la homeostasis hidroelectrolítica o requiera restricción hídrica drástica.<br><br>Perla ENARM: \"En el paciente críticamente enfermo con insuficiencia renal aguda (IRA) e insuficiencia renal crónica se recomienda dar una fórmula enteral estándar, cuando exista una alteración de electrolitos indicar una fórmula modificada\".<br><br>Análisis de Distractores: La fórmula baja en proteínas (A) no está justificada y agrava el balance nitrogenado. Las altas en grasas (C) son respiratorias. Las dietas elementales (D) son para TGI comprometido, no renal puramente.", 
+                source: "IMSS-563-12, Nutrición enteral: Fórmulas, métodos de infusión e interacción fármaco-nutriente, 2018, Sección 2.1, Página 14." 
+            },
+            {
+                id: 4, 
+                question: "En un paciente adulto con Insuficiencia Hepática Crónica candidato a trasplante hepático, ¿cuál es la herramienta clínica recomendada para el tamizaje inicial de riesgo de desnutrición en la evaluación de cabecera?", 
+                options: ["Nivel de Albúmina Sérica", "Índice de Masa Corporal", "Ángulo de Fase", "Valoración Global Subjetiva"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento nutricional del paciente adulto pretrasplante hepático, la evaluación inicial del estado nutricional es primordial porque casi el 75% de estos pacientes presentan desnutrición. Instrumentos como la albúmina se ven alterados por la disfunción de síntesis hepática, por lo que las herramientas clínicas sistematizadas son preferidas.<br><br>Perla ENARM: \"Utilizar la valoración global subjetiva para identificar a los pacientes cirróticos con riesgo de desnutrición\".<br><br>Análisis de Distractores: El Índice de Masa Corporal (B) no es útil debido a que se falsea por la retención hídrica (ascitis/edema). La Albúmina (A) está alterada de base por la falla hepática sintética y la hemodilución. El Ángulo de Fase (C) es útil y pronóstico, pero se considera un parámetro derivado de gabinete (bioimpedancia), no una herramienta de tamizaje clínico inicial al lado de la cama.", 
+                source: "GPC IMSS-594-18, Tratamiento nutricional del paciente adulto pretrasplante hepático, 2018, Evidencias y Recomendaciones, p. 39." 
+            },
+            {
+                id: 5, 
+                question: "¿Cuál es el diagnóstico diferencial clave para distinguir a un paciente con cáncer en riesgo de conductas negativas o falta de apego a quimioterapia secundaria a distrés?", 
+                options: ["Aplicar Escala Edmonton (ESAS)", "Inventario de Distrés (DIC 2)", "Evaluación con Escala MAC-SCALE", "Inventario Multidimensional MFI-20"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Evaluación y Abordaje Psicooncológico, distinguir el distrés profundo de la tristeza reactiva normal permite identificar oportunamente al paciente que abandonará la terapia médica. El DIC 2 explora 6 subescalas precisas para catalogar al paciente en riesgo.<br><br>Perla ENARM: \"Aplicar DIC 2 para determinar el distrés de la persona con cáncer, ya que puede identificar los casos en riesgo de presentar conductas no saludables o negativas como la falta de apego a su tratamiento o seguimiento\".<br><br>Análisis de Distractores: La ESAS es aplicable primariamente a cuidados paliativos terminales y bienestar físico. La MAC-SCALE aborda cómo el paciente \"se ajusta\" (ej. espíritu de lucha), pero el DIC 2 es explícito para la alerta de abandono de terapia y conductas de riesgo por distrés agudo.", 
+                source: "IMSS-805-17, Evaluación y Abordaje Psicooncológico en Personas Adultas con Cáncer, 2017, Herramientas de evaluación, Página 21." 
+            },
+            {
+                id: 6, 
+                question: "En la Anemia Aplásica Adquirida, ¿cuál es el hallazgo histopatológico clave en la biopsia de hueso que integra el diagnóstico definitivo según la Guía de Práctica Clínica?", 
+                options: ["Celularidad residual mayor al 50%.", "Infiltración por blastos sin fibrosis.", "Esclerosis con ausencia de osteoclastos.", "Hipocelularidad menor al 25%."], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la Guía de Práctica Clínica de Indicaciones de trasplante de células tronco hematopoyéticas, el diagnóstico de la falla medular en la anemia aplásica se basa en evidenciar la carencia y el vacío del espacio medular, por lo que el hallazgo clásico microscópico es una hipocelularidad grave. La perla ENARM dicta: \"El AMO muestra marcada hipocelularidad, sin datos de infiltración ni infección. En la biopsia de hueso se aprecia: celularidad < de 25% (o entre 25 y 50%) y < 30% de células hematopoyéticas residual.\"<br><br>Análisis de Distractores: La celularidad mayor al 50% (opción A) descarta un síndrome de falla medular como la anemia aplásica grave. La infiltración por blastos (opción B) orienta a un diagnóstico de leucemia aguda. La esclerosis con ausencia de osteoclastos (opción C) es el hallazgo clásico de la osteopetrosis.", 
+                source: "IMSS-814-17, Indicaciones de trasplante de células tronco hematopoyéticas, 2017, Sección: Anemia Aplásica Adquirida, Página 13." 
+            },
+            {
+                id: 7, 
+                question: "Al enfrentar a un paciente con fiebre severa y alteración neurológica, ¿qué cuadro clínico establece la GPC como un síndrome diferencial crítico del golpe de calor?", 
+                options: ["Síndrome neuroléptico maligno", "Tormenta tiroidea atípica", "Hipertermia maligna por anestesia", "Encefalopatía hepática aguda"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la Guía de Práctica Clínica de Prevención, diagnóstico y tratamiento de golpe de calor en adultos, ambas entidades comparten la triada de hipertermia severa, alteración de alerta e inestabilidad autonómica; sin embargo, uno tiene como detonante un fármaco bloqueador dopaminérgico y el otro la exposición ambiental.<br><br>Perla ENARM: \"Cuando se sospecha de golpe de calor se recomienda hacer diagnóstico diferencial con síndrome neuroléptico maligno, malaria y meningitis\".<br><br>Análisis de Distractores: Aunque la tormenta tiroidea y la hipertermia maligna anestésica cursan con fiebre extrema, la guía normativa hace explícito hincapié en el Síndrome Neuroléptico Maligno (y en patologías infecciosas como malaria y meningitis) como sus diagnósticos diferenciales directos para orientar el interrogatorio dirigido en urgencias.", 
+                source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Diagnóstico, p. 21." 
+            },
+            {
+                id: 8, 
+                question: "En el abordaje del pie diabético, ¿cuál es el hallazgo clínico explorado con el monofilamento de Semmes-Weinstein que integra el diagnóstico presuntivo de neuropatía?", 
+                options: ["Ausencia del reflejo rotuliano", "Pérdida de sensibilidad protectora", "Disminución de sensibilidad vibratoria", "Ausencia de pulsos pedios"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de prevención de pie diabético, la exploración neurológica prioriza evaluar la sensibilidad táctil y de presión mediante el monofilamento, ya que el déficit temprano a este nivel traduce la pérdida de la sensibilidad protectora, permitiendo que un trauma local progrese a úlcera inadvertida. Las otras opciones son erróneas en este contexto porque el reflejo rotuliano y la vibración evalúan nervios y cordones más profundos o diferentes, mientras que la ausencia de pulsos indica un daño netamente vascular, no neuropático.<br><br>Perla ENARM: \"Se recomienda que el personal de salud realice detección de cambios en la sensibilidad en extremidades inferiores, en cada consulta independientemente del motivo de atención en todo paciente con diabetes.\"", 
+                source: "GPC SS-005-20, Prevención, diagnóstico, tratamiento y rehabilitación del pie diabético, 2020, Sección Diagnóstico, Página 65." 
+            },
+            {
+                id: 9, 
+                question: "¿Cuál es la prueba de laboratorio con fuerte recomendación en contra para utilizarse como método de diagnóstico temprano de Cáncer de Pulmón en asintomáticos?", 
+                options: ["Citología de esputo", "Biometría hemática completa", "Marcador tumoral sérico", "Gasometría arterial"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Cáncer de Pulmón, de manera equivalente a la radiografía simple, analizar expectoración de asintomáticos en el primer nivel retrasa manejos reales y presenta rendimientos diagnósticos nulos.<br><br>Perla ENARM: \"No se recomienda realizar citología de esputo como prueba de cribado para CP.\"<br><br>Análisis de Distractores: Ninguna prueba de sangre u oxigenación (biometría, gasometría o marcadores) funge como tamizaje avalado en primer nivel, pero la citología de esputo es penalizada directamente en las Recomendaciones (R) de la GPC por ser una práctica empírica obsoleta y frecuente.", 
+                source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Diagnóstico, Página 23." 
+            },
+            {
+                id: 10, 
+                question: "En el abordaje inicial de un paciente en urgencias con antecedente de exposición y sospecha de Infección por VIH, ¿cuál es el estudio de tamizaje inmediato recomendado por la Guía de Práctica Clínica?", 
+                options: ["Western blot confirmatorio", "Prueba rápida en sangre", "ELISA de cuarta generación", "Carga viral plasmática"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la Guía de Práctica Clínica de Infección por VIH en el primer nivel de atención, ante un paciente con exposición potencial, la prioridad diagnóstica es conocer el estatus basal de inmediato para guiar las acciones profilácticas en urgencias, sin retrasar el abordaje esperando pruebas de laboratorio complejas.<br><br>Perla ENARM: \"Realizar detección con prueba rápida para detección de VIH e implementar tratamiento inicial Post exposición (PEP) de manera inmediata\".<br><br>Análisis de Distractores: El ensayo ELISA de cuarta generación y la carga viral son estudios que toman días en procesarse y no se recomiendan como abordaje inmediato o inicial en el primer nivel ante una urgencia de exposición. El Western Blot es una prueba confirmatoria, no de tamizaje inicial.", 
+                source: "SS-067-08, Prevención, diagnóstico y referencia oportuna del paciente con infección por VIH en el primer nivel de atención, 2017, Diagramas de flujo (Algoritmo 1), Página 26." 
+            },
+            {
+                id: 11, 
+                question: "En el diagnóstico diferencial de Muerte Encefálica, ¿cuál es el hallazgo clínico o motor que NO excluye el diagnóstico y puede estar presente en el paciente de acuerdo con la GPC?", 
+                options: ["Reflejo oculo-vestibular asimétrico", "Reflejo nauseoso al estímulo", "Presencia de reflejos espinales", "Apertura ocular al dolor"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Muerte Encefálica, el choque medular es una entidad clínica separada. La desconexión superior de las vías descendentes inhibitorias en ocasiones permite la presencia exacerbada de automatismos a nivel medular, lo cual genera un falso positivo para la ignorancia del clínico pero confirma el diagnóstico para el especialista.<br><br>Perla ENARM: \"El estímulo nociceptivo no debe producir respuesta motora, con excepción de los reflejos espinales. La diferenciación clínica de las respuestas espinales y las respuestas motoras asociadas a actividad cerebral requiere de experiencia.\"<br><br>Análisis de Distractores: Cualquier esbozo de reactividad proveniente de los pares craneales (Opciones A y B) o respuesta nociceptiva superior como la apertura ocular (Opción D) evidencian viabilidad encefálica y anulan de manera inmediata la declaratoria de la defunción biológica del tallo y corteza.", 
+                source: "GPC-SS-488-19, Diagnóstico de muerte encefálica y manejo del potencial donante de órganos, 2019, Sección: Criterios diagnósticos de muerte encefálica AAN 2010, Página 47." 
+            },
+            {
+                id: 12, 
+                question: "Ante un paciente con factores de riesgo, en quien la prueba de tamizaje reporta hiperglucemia intermedia, ¿cuál es el tiempo que establece la GPC de Diabetes Mellitus tipo 2 para repetir la prueba tras modificar su estilo de vida?", 
+                options: ["1 a 3 años", "3 a 6 meses", "Iniciar metformina inmediatamente", "Considerar insulina NPH"], 
+                answer: 1, 
+                justification: "Justificación: El hallazgo de hiperglucemia intermedia no establece el diagnóstico definitivo, pero indica un alto riesgo metabólico. En esta etapa, el manejo se basa exclusivamente en intervenciones no farmacológicas para revertir la resistencia a la insulina. De acuerdo a la GPC de Diabetes Mellitus tipo 2, se debe dar un margen fisiológico para evaluar el impacto de los cambios higiénico-dietéticos antes de reevaluar.<br><br>Perla ENARM: \"Hiperglicemia intermedia o intolerancia a la glucosa: modificaciones al estilo y repetición de prueba en 3-6 meses\".<br><br>Análisis de Distractores: La opción A corresponde al tiempo de repetición cuando la prueba de tamizaje es totalmente negativa. Las opciones C y D son prematuras, ya que la metformina y la insulina NPH se reservan para el diagnóstico confirmado de DM2 o descontrol severo.", 
+                source: "SS-093-19, Prevención, diagnóstico, metas de control ambulatorio y referencia oportuna de la diabetes mellitus tipo 2 en el primer nivel de atención, 2019, Algoritmo 2, Página 39." 
+            },
+            {
+                id: 13, 
+                question: "¿Cuál es la principal diferencia funcional y profiláctica en el manejo de carbohidratos que requiere obligatoriamente una dieta en la Diabetes Mellitus tipo 1 respecto a la tipo 2?", 
+                options: ["Suspensión total pre entrenamiento", "Ingesta profiláctica independiente de glucosa", "Aporte profiláctico estricto adicional", "Supresión obligada de grasas saturadas"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de ejercicio en diabetes, el paciente con DM1 carece totalmente de insulina endógena y capacidad autorreguladora hepática, volviéndolo drásticamente más propenso a requerir \"carga externa\" obligada previa frente a la estabilidad basal de la DM2.<br><br>Perla ENARM: \"El aporte de carbohidratos en pacientes con DM2, por lo general no se requiere a diferencia de los pacientes con DM1; a menos que realicen ejercicio de mediano o alto rendimiento\".<br><br>Análisis de Distractores: Suspender los carbohidratos o hacer el aporte independientemente de la glucosa son malas praxis que generan crisis (hipo e hiperglucemias). La restricción de grasas mejora la absorción general pero no es el pilar fisiológico diferencial inmediato en el contexto de prevenir daño neurológico en la sesión.", 
+                source: "GPC SS-804-17, Prescripción de ejercicio físico en pacientes con diabetes mellitus en los tres niveles de atención, 2017, Cambios metabólicos durante el ejercicio, Página 14." 
+            },
+            {
+                id: 14, 
+                question: "En el abordaje del Herpes Zóster en adultos, ¿cuál es el hallazgo clínico exploratorio que integra el diagnóstico presuntivo y orienta al inicio de tratamiento tópico según la GPC?", 
+                options: ["Fiebre > 38 °C", "Alodinia mecánica", "Prurito generalizado", "Anestesia local"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Herpes Zóster, el diagnóstico es eminentemente clínico y la alodinia es el hallazgo distintivo en la zona afectada. La presencia de dolor desproporcionado al roce orienta la necesidad de coadyuvantes locales.<br><br>Perla ENARM: \"Se recomienda utilizar la lidocaína tópica, especialmente la aplicación de un parche de lidocaína al 5 %, ya que alivia la alodinia mecánica o el dolor provocado por el tacto\".<br><br>Análisis de Distractores: La anestesia local y el prurito generalizado no son los síntomas cardinales del daño nervioso por este virus. La fiebre > 38 °C es propia de la primoinfección (varicela), no de la reactivación ganglionar típica de esta patología.", 
+                source: "GPC-SS-217-21, Prevención y tratamiento del herpes zóster en el adulto, 2021, Tratamiento, Página 15." 
+            },
+            {
+                id: 15, 
+                question: "¿Cuál es el dato clínico clave durante la anamnesis y exploración física que permite distinguir las lesiones intencionadas por violencia contra las mujeres de un origen accidental?", 
+                options: ["Presencia de dolor neuropático crónico.", "Incongruencia con el mecanismo descrito.", "Cicatrización queloide o hipertrófica.", "Distribución simétrica del daño tisular."], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de violencia contra las mujeres, el diagnóstico diferencial del maltrato físico requiere un alto índice de sospecha por parte del médico cuando la historia relatada por la paciente (o su acompañante) no coincide con el patrón anatómico y la evolución de la lesión evidenciada.<br><br>Perla ENARM: \"Indicadores de violencia física: signos y síntomas... congruentes o incongruentes con la descripción del mecanismo de la lesión, recientes o antiguos...\"<br><br>Análisis de Distractores: El dolor crónico (A) es un síntoma general pero no diferencia el origen del trauma agudo. La cicatrización (C) depende de la genética del paciente. Las lesiones accidentales suelen ser asimétricas y en zonas expuestas, mientras que las lesiones en zonas cubiertas (tronco, cuello, genitales) de manera repetida sugieren alta probabilidad de intencionalidad, no necesariamente una distribución simétrica (D).", 
+                source: "GPC-SS-294-18, Prevención, detección y atención de la violencia contra las mujeres de 12 a 59 años de edad con énfasis en la violencia sexual, 2018, Glosario, p. 73." 
+            },
+        ];
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('ExMI15LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('ExMI15Progress');
+                localStorage.removeItem('ExMI15LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-purple-500 shadow-md z-10 border-purple-500 dark:border-purple-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-fuchsia-500 to-purple-600 hover:from-purple-600 hover:to-fuchsia-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-purple-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-fuchsia-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "PREPARACIÓN ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "MEDICINA INTERNA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "Preguntas diseñadas para fortalecer tus conocimientos con reactivos de alta exigencia y enfoque clínico tipo ENARM basadas en las GPC mexicanas.";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-purple-600 dark:text-slate-400 dark:hover:text-purple-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="Ex_MI25.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-purple-100 dark:border-purple-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-purple-50 has-[:checked]:border-purple-400 dark:has-[:checked]:bg-purple-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-purple-600 focus:ring-purple-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-purple-600 dark:hover:bg-purple-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-fuchsia-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('ExMI15Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('ExMI15LastQId', currentQuestionId);
+                else localStorage.removeItem('ExMI15LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('ExMI15Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0",
+        authDomain: "enarm-lite.firebaseapp.com",
+        projectId: "enarm-lite",
+        storageBucket: "enarm-lite.firebasestorage.app",
+        messagingSenderId: "767032952477",
+        appId: "1:767032952477:web:84347320ed3d376f7e7674",
+        measurementId: "G-PVR3RBVNSV"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.5s ease';
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            
+            if(userDocSnap.exists()) {
+                document.body.style.opacity = '1';
+            } else {
+                window.location.href = "index.html"; 
+            }
+        } else {
+            window.location.href = "index.html";
+        }
+    });
+</script>
+</body>
+</html>

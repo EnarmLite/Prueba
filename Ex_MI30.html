@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-purple-500 to-fuchsia-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+            {
+                id: 1, 
+                question: "Ante la evaluación clínica inicial de un adulto con sobrepeso y obesidad, ¿cuál es el estudio o panel bioquímico indispensable que debe solicitarse para identificar comorbilidades metabólicas según la GPC?", 
+                options: ["Insulina sérica y cortisol", "Glucosa y perfil lipídico", "Pruebas de función tiroidea", "Curva de tolerancia oral"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Diagnóstico y Tratamiento del Sobrepeso y Obesidad, el abordaje clínico exige descartar alteraciones en el metabolismo de los carbohidratos y las grasas, las cuales justifican el inicio de tratamiento farmacológico temprano si se asocian a un Índice de Masa Corporal > 27.<br><br>Perla ENARM: \"Datos clínicos y de laboratorio para la evaluación del paciente con sobrepeso y obesidad: Triglicéridos séricos mg/dl, Colesterol HDL sérico mg/dl, Glucosa sérica mg/dl.\"<br><br>Análisis de Distractores: Las pruebas tiroideas (C) y el cortisol (A) están indicadas únicamente ante sospecha de obesidad endocrina secundaria (hipotiroidismo o Cushing), no de forma universal. La curva de tolerancia oral (D) es de segunda línea.", 
+                source: "GPC-IMSS-046-18, Diagnóstico y Tratamiento del Sobrepeso y Obesidad Exógena, 2018, Anexos (Cuadro 2), p. 37." 
+            },
+            {
+                id: 2, 
+                question: "¿Cuál es una de las herramientas recomendadas que predice el riesgo de mortalidad y morbilidad cardiovascular en un paciente con Hipertensión Arterial Sistémica?", 
+                options: ["Gráficas de riesgo SCORE", "Escala pronóstica de Balthazar", "Criterios de severidad Ranson", "Escala de Rockall"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial en el Primer Nivel, el manejo antihipertensivo debe ser guiado no solo por los niveles de PA, sino por el riesgo cardiovascular absoluto calculado con validadores validados poblacionalmente.<br><br>Perla ENARM: \"Se recomienda utilizar herramientas pronóstica de riesgo cardiovascular como la escala de riesgo de Framingham... las gráficas de evaluación sistemática de riesgo coronario (SCORE), de la sociedad europea de cardiología, entre otras.\"<br><br>Análisis de Distractores: Balthazar (B) evalúa severidad tomográfica en pancreatitis. Ranson (C) evalúa mortalidad clínica en pancreatitis aguda. Rockall (D) predice resangrado y mortalidad en hemorragia digestiva alta.", 
+                source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento de la Hipertensión Arterial en el Primer Nivel de Atención, 2021, Diagnóstico, Página 33." 
+            },
+            {
+                id: 3, 
+                question: "¿Cuál es el factor de riesgo genético o patrón de herencia con mayor asociación a la Enfermedad de Fabry reportado por la guía?", 
+                options: ["Autosómico recesivo", "Ligado al cromosoma X", "Autosómico dominante", "Mutación mitocondrial"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Enfermedad de Fabry, esta patología se transmite ligada al cromosoma X, lo que explica por qué los hombres (hemicigotos) presentan la variante clásica y más severa de la enfermedad, mientras que las mujeres (heterocigotas) presentan cuadros variables debido a la inactivación aleatoria del cromosoma X (efecto de lyonización).<br><br>Perla ENARM: \"La EF es una enfermedad hereditaria ligada al cromosoma X recesiva, producida por la deficiencia de la enzima lisosomal AGLA, que afecta de forma predominante a los varones.\"<br><br>Análisis de Distractores: Los patrones autosómicos dominante (Opción C) y recesivo (Opción A) no corresponden al gen GLA (Xq22.1). Las mutaciones mitocondriales (Opción D) se transmiten exclusivamente por vía materna a toda la descendencia, lo cual difiere de la herencia ligada al X.", 
+                source: "IMSS-165-09, Diagnóstico, Tratamiento y Seguimiento multidisciplinario en enfermedad de Fabry, 2017, Fenotipo, genotipo y consejo genético, Página 16." 
+            },
+            {
+                id: 4, 
+                question: "¿Cuál es la patología que debe buscarse anualmente en un paciente de 40 años con Hemofilia por el riesgo asociado a la inactividad y hemartrosis?", 
+                options: ["Enfermedad cardiovascular isquémica", "Fibrilación auricular no valvular", "Osteopenia u osteoporosis", "Hemorragia del tracto urinario"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Hemofilia A y B, las comorbilidades ligadas al envejecimiento impactan profundamente. El dolor crónico y la limitación funcional por la artropatía hemofílica reducen drásticamente la actividad física y el soporte de peso (\"weight-bearing\"), lo que agota la matriz ósea precipitando descalcificación.<br><br>Perla ENARM: \"A partir de los 40 años dar seguimiento para detección de osteopenia u osteoporosis y tomar las medidas correspondiente; sí se detecta osteopenia enviarlo a Medicina Física y rehabilitación.\"<br><br>Análisis de Distractores: A (Enfermedad cardiovascular isquémica): Incorrecto, aunque los FRCV deben evaluarse, la hemofilia tiene un perfil \"protector\" biológico parcial, y no hay indicación de un tamizaje específico a los 40 años más allá del escrutinio normal. B (Fibrilación auricular no valvular): Incorrecto, aunque ocurre en población geriátrica y dificulta el manejo anticoagulante, no es una consecuencia directa de la inactividad articular. D (Hemorragia del tracto urinario): Incorrecto, la hematuria espontánea es episódica, manejada con hidratación, no una patología de tamizaje anual crónico.", 
+                source: "IMSS-178-09, Diagnóstico y Tratamiento Hemofilia A y B, 2017, Evidencias y Recomendaciones, p. 43." 
+            },
+            {
+                id: 5, 
+                question: "Epidemiológicamente, ¿cuál es el material o factor de riesgo asociado con la transmisión percutánea más eficiente en la Exposición Laboral al VIH?", 
+                options: ["Aguja maciza de sutura", "Bisturí con sangre visible", "Salpicadura en piel intacta", "Aguja hueca con sangre"], 
+                answer: 3, 
+                justification: "Justificación: El inóculo necesario para lograr la seroconversión depende fuertemente del volumen de sangre al que se expone el tejido. Los dispositivos canaliculares albergan mayor cantidad de sangre fresca en su interior que los macizos. De acuerdo a la GPC de Exposición Laboral al VIH, la profundidad y el tipo de instrumento determinan el grado de riesgo, siendo máximo con agujas utilizadas en accesos vasculares.<br><br>Perla ENARM: \"La exposición percutánea es más eficiente en la transmisión del VIH que las mucosas, por lo que se deberá evaluar: Tipo de material: Aguja hueca (mayor riesgo).\"<br><br>Análisis de Distractores: La aguja maciza de sutura transmite menor inóculo al ser sólida y limpiarse parcialmente al atravesar los tejidos o guantes. El bisturí produce un corte cortante, pero alberga menos sangre estancada que un lumen hueco. La salpicadura en piel intacta está catalogada como de riesgo nulo (no alto), ya que la barrera epidérmica sana impide la penetración viral.", 
+                source: "IMSS-241-12, Prevención, Diagnóstico y Tratamiento de la Exposición Laboral al VIH en Trabajadores de la Salud, 2017, Sección: Diagnóstico de la infección por el VIH, Página 24." 
+            },
+            {
+                id: 6, 
+                question: "¿Cuál es el marcador laboratorial utilizado como principal indicador de eficacia y pronóstico de mortalidad en el tratamiento de Infección por el VIH?", 
+                options: ["Conteo de linfocitos CD4", "Carga Viral RNA-VIH", "Proteína C Reactiva sérica", "Niveles de Interleucina-6"], 
+                answer: 1, 
+                justification: "Justificación: El cese de la destrucción inmunológica depende de frenar la replicación del patógeno. De acuerdo a la GPC de Infección por el VIH, observar la caída logarítmica de las copias virales en plasma es el predictor más exacto del futuro éxito o fracaso del manejo instaurado.<br><br>Perla ENARM: \"La cuantificación del RNA del VIH en plasma (carga viral), es el indicador más importante de respuesta al tratamiento ARV y de su eficacia virológica.\"<br><br>Análisis de Distractores: El conteo de CD4 evalúa el grado de inmunosupresión y riesgo de oportunistas, pero su recuperación es lenta y errática, sin reflejar el éxito del fármaco de forma inmediata. La Proteína C Reactiva y la Interleucina-6 son marcadores de inflamación sistémica (\"riesgo no tradicional\"), pero no son el indicador directriz del control de la patología.", 
+                source: "IMSS-245-09, Tratamiento Antirretroviral del Paciente Adulto con Infección por el VIH, 2017, Estudios de Laboratorio, Página 50." 
+            },
+            {
+                id: 7, 
+                question: "¿Cuál es el factor de riesgo ambiental con mayor asociación para el desarrollo del carcinoma basocelular reportado por la guía clínica?", 
+                options: ["Tabaquismo crónico intenso", "Infección por virus papiloma", "Exposición a luz solar", "Inmunosupresión farmacológica prolongada"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Carcinoma Basocelular, aunque el desarrollo del cáncer de piel es multifactorial (incluyendo antecedente genético o inmunosupresión), el factor detonante principal es la radiación ultravioleta.<br><br>Perla ENARM: \"El mayor factor de riesgo de cáncer cutáneo es la exposición a la luz del sol y los antecedentes de quemaduras solares.\"<br><br>Análisis de Distractores: La inmunosupresión farmacológica (D) es un factor de mal pronóstico, pero no el factor de riesgo primario de mayor asociación global. El tabaquismo (A) y el virus papiloma (B) tienen mayor asociación con otras neoplasias como el carcinoma epidermoide.", 
+                source: "GPC-IMSS-360-19, Diagnóstico y Tratamiento del Carcinoma Basocelular, 2019, Sección: Introducción, Página 7." 
+            },
+            {
+                id: 8, 
+                question: "En la exploración fundoscópica de un paciente que experimenta toxicidad ocular por hidroxicloroquina, ¿cuál es el hallazgo patognomónico indicativo de una atrofia extensa e irreversible del epitelio pigmentado?", 
+                options: ["Despigmentación en sal y pimienta", "Hemorragias intrarretinianas difusas", "Maculopatía en ojo de buey", "Membrana neovascular subretiniana"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención de toxicidad ocular por antimaláricos, una vez que el daño del epitelio excede las capacidades celulares de resistencia, el colapso anatómico central se vuelve evidenciable con el oftalmoscopio directo en el consultorio de atención primaria, implicando un punto de no retorno terapéutico para la visión del paciente.<br><br>Perla ENARM: \"Maculopatía del ojo de buey indica toxicidad avanzada: escaso pigmento en la fóvea y despigmentación del epitelio pigmentario de la retina de la mácula. Irreversible en esta etapa.\"<br><br>Análisis de Distractores: El fondo en sal y pimienta (A) alude típicamente a rubéola congénita o sífilis. Las hemorragias intrarretinianas (B) apuntan hacia oclusión venosa o retinopatía diabética de base vascular. Una membrana neovascular (D) obedece al patrón exudativo de la degeneración macular asociada a la edad, no al fenotipo clásico atrófico-tóxico de los derivados de cloroquina.", 
+                source: "IMSS-431-11, Prevención de toxicidad ocular por cloroquina e hidroxicloroquina, 2017, Evidencias y Recomendaciones (Diagnóstico), p. 39." 
+            },
+            {
+                id: 9, 
+                question: "¿Cuál es el factor de riesgo con mayor asociación con raquitismo carencial en lactantes reportado por la GPC?", 
+                options: ["Lactancia sin suplementación", "Uso de fórmulas", "Exposición solar excesiva", "Peso alto al nacer"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Raquitismo Carencial, la leche materna tiene un pobre aporte de Vitamina D (5 a 80 UI/L), insuficiente para los requerimientos del lactante. Por ello, la falta de suplementación exógena es la causa directa más común.<br><br>Perla ENARM: \"Lactancia materna exclusiva sin exposición adecuada al sol, ni suplementación con vitamina D son factores de riesgo para presentar deficiencia de vitamina D\".<br><br>Análisis de Distractores: Las fórmulas lácteas (opción B) suelen estar fortificadas, protegiendo contra la deficiencia. La exposición solar adecuada previene la enfermedad (opción C). El bajo peso al nacer o la prematurez, no el peso alto (opción D), son factores de riesgo por las menores reservas maternas transferidas y falta de exposición solar hospitalaria.", 
+                source: "GPC-IMSS-459-19, Prevención, diagnóstico y tratamiento del Raquitismo Carencial, 2019, Prevención, p. 13." 
+            },
+            {
+                id: 10, 
+                question: "¿Cuál es el dato clínico clave que permite distinguir la Hipertrigliceridemia por déficit oxidativo de la causada por exceso de carbohidratos en la Nutrición Parenteral?", 
+                options: ["Aporte de glucosa >3 g/kg/día", "Presencia de acidosis o insuficiencia renal", "Niveles de Fósforo sérico <2 mEq/L", "Elevación de Bilirrubina Total >3 mg/dL"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Nutrición Parenteral, la hipertrigliceridemia por déficit oxidativo obedece a un defecto en el metabolismo de los lípidos (común en falla renal o acidosis metabólica grave) a causa de un déficit de L-Carnitina adquirida.<br><br>Perla ENARM: \"La hipertrigliceridemia por déficit oxidativo es secundaria a deficiencias enzimáticas o de carnitina... como lo son aquellos con acidosis metabólica e insuficiencia renal\".<br><br>Análisis de Distractores: El aporte excesivo de carbohidratos (>3 g/kg/día) (A) genera hipertrigliceridemia por lipogénesis de novo (\"por exceso\", no \"por déficit\"). La hipofosfatemia (C) señala síndrome de realimentación. La bilirrubina >3 mg/dL (D) habla de colestasis.", 
+                source: "GPC-IMSS-556-18, Nutrición Parenteral: Prevención de complicaciones, 2018, Evidencias y Recomendaciones, Página 20." 
+            },
+            {
+                id: 11, 
+                question: "En un paciente con requerimiento de apoyo nutricio especializado, ¿cuál es el criterio clínico o hemodinámico que indica el inicio de la nutrición enteral como abordaje principal?", 
+                options: ["Inestabilidad hemodinámica severa", "Tracto gastrointestinal funcional", "Falla intestinal aguda", "Hemorragia digestiva activa"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Nutrición Enteral, la vía enteral se debe priorizar siempre que la función anatómica y absortiva del tubo digestivo lo permita, garantizando un efecto trófico sobre el enterocito.<br><br>Perla ENARM: \"En los pacientes hemodinámicamente estables y cuyo tracto gastrointestinal esté funcional hay que utilizar la vía enteral\".<br><br>Análisis de Distractores: La inestabilidad hemodinámica severa (A), la falla intestinal aguda (C) y la hemorragia digestiva activa (D) son contraindicaciones absolutas o relativas para el inicio de la vía enteral, requiriendo reanimación hídrica o en su defecto, nutrición parenteral.", 
+                source: "IMSS-563-12, Nutrición enteral: Fórmulas, métodos de infusión e interacción fármaco-nutriente, 2018, Sección 2.1, Página 11." 
+            },
+            {
+                id: 12, 
+                question: "¿Cuál es el manejo dietético diferencial o fuente proteica de elección en un paciente con Insuficiencia Hepática Crónica pretrasplante que desarrolla intolerancia al nitrógeno, evidenciada por episodios de encefalopatía persistente?", 
+                options: ["Carne roja magra", "Proteína vegetal y lácteos", "Pescados y mariscos", "Proteína de aves"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento nutricional del paciente adulto pretrasplante hepático, para mantener el balance nitrogenado sin exacerbar neurotoxicidad, se debe modificar la calidad (no solo la cantidad) de la proteína. Las opciones de origen vegetal y lácteo contienen menos aminoácidos aromáticos, se toleran de forma excelente y su alto contenido en fibra acelera el tránsito intestinal, barriendo las toxinas.<br><br>Perla ENARM: \"En caso de intolerancia a la proteína animal se recomienda proteína vegetal y de lácteos, así como la suplementación con aminoácidos de cadena ramificada\".<br><br>Análisis de Distractores: La carne roja magra (A), la proteína de aves (D) y los pescados y mariscos (C) son fuentes ricas en proteínas de alto valor biológico, pero también en aminoácidos aromáticos (tirosina, fenilalanina, triptófano), los cuales actúan como falsos neurotransmisores al cruzar la barrera hematoencefálica, perpetuando o agravando el cuadro de encefalopatía.", 
+                source: "GPC IMSS-594-18, Tratamiento nutricional del paciente adulto pretrasplante hepático, 2018, Evidencias y Recomendaciones, p. 54-55." 
+            },
+            {
+                id: 13, 
+                question: "En el paciente oncológico, ¿cuál es el síntoma o alteración psicológica que integra el diagnóstico presuntivo primario de mayor prevalencia a descartar según la GPC?", 
+                options: ["Trastorno de estrés postraumático", "Trastornos de ansiedad generalizada", "Trastornos psicóticos y bipolares", "Trastornos adaptativos y depresivos"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Evaluación y Abordaje Psicooncológico, la asimilación del cáncer genera una alta carga afectiva, siendo las alteraciones adaptativas la principal causa de comorbilidad psiquiátrica. Abordar estos cuadros disminuye la progresión hacia un deterioro funcional severo.<br><br>Perla ENARM: \"Investigar trastornos adaptativos y depresivos en la persona con cáncer que requiere de atención psicológica y psiquiátrica\".<br><br>Análisis de Distractores: El trastorno de estrés postraumático puede verse tras la supervivencia, y la ansiedad generalizada es una presentación clínica frecuente; sin embargo, no son los principales de escrutinio primario global. Los cuadros psicóticos son raros y no representan el volumen crítico de la comorbilidad del paciente con cáncer.", 
+                source: "IMSS-805-17, Evaluación y Abordaje Psicooncológico en Personas Adultas con Cáncer, 2017, Diagnóstico de alteraciones psicooncológicas, Página 13." 
+            },
+            {
+                id: 14, 
+                question: "¿Cuál es el estudio diferencial clave pre-trasplante que permite distinguir clínicamente a la Anemia Aplásica Adquirida de la Hemoglobinuria Paroxística Nocturna?", 
+                options: ["Inmunofenotipo de sangre periférica.", "Prueba con diepoxibutano.", "Cuantificación de longitud telomérica.", "Detección de mutación GATA2."], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la Guía de Práctica Clínica de Indicaciones de trasplante de células tronco hematopoyéticas, es fundamental hacer un diagnóstico definitivo de la causa real del fallo medular para escoger el abordaje profiláctico y terapéutico idóneo. Descartar una expansión de clonas eritrocitarias que carezcan de anclajes protectores en su membrana celular con la citometría de flujo es un pilar básico antes del acondicionamiento. La perla ENARM dicta: \"Previo al trasplante es necesario hacer diagnóstico diferencial con anemia de Fanconi... Así como con Hemoglobinuria Paroxística Nocturna (HPN) por inmunofenotipo.\"<br><br>Análisis de Distractores: La prueba con diepoxibutano (opción B) se emplea en el diagnóstico diferencial pero con el objetivo de distinguir la Anemia de Fanconi, no la Hemoglobinuria Paroxística Nocturna. La longitud telomérica (opción C) descartaría una disqueratosis congénita. La mutación de GATA2 (opción D) orientaría el origen del daño hacia mielodisplasias familiares.", 
+                source: "IMSS-814-17, Indicaciones de trasplante de células tronco hematopoyéticas, 2017, Sección: Anemia Aplásica Adquirida, Página 13." 
+            },
+            {
+                id: 15, 
+                question: "En el abordaje del paciente con sospecha de golpe de calor, ¿cuál es el signo clínico o hallazgo neurológico que integra el diagnóstico presuntivo y lo diferencia del agotamiento por calor?", 
+                options: ["Cefalea severa y vómito", "Alteración del estado mental", "Piel fría y sudorosa profusa", "Taquicardia mayor a 120 latidos"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la Guía de Práctica Clínica de Prevención, diagnóstico y tratamiento de golpe de calor en adultos, el daño al sistema nervioso central (delirium, convulsiones o coma) marca el punto de inflexión fisiopatológico entre un cuadro leve y una verdadera emergencia que pone en riesgo la vida.<br><br>Perla ENARM: \"Se recomienda utilizar los criterios de Bouchama para el diagnóstico clínico de golpe de calor. En todos los pacientes con antecedentes de estar expuesto a temperaturas ambientales mayores a 32ºC y que presenten temperatura corporal central mayor de 40ºC, alteraciones en el sistema nervioso o disfunciones orgánicas\".<br><br>Análisis de Distractores: La cefalea, el vómito y la taquicardia son síntomas presentes en los estadios I y II de la enfermedad por calor (agotamiento), pero por sí solos no integran el diagnóstico de golpe de calor sin disfunción cerebral. La piel fría y sudorosa es el mecanismo compensatorio que habitualmente ya está abolido (piel seca y caliente) en el golpe de calor instaurado.", 
+                source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Diagnóstico, p. 19." 
+            },
+            {
+                id: 16, 
+                question: "¿Cuál es el dato clínico clave que permite distinguir tempranamente la neuroartropatía de Charcot aguda de una infección local en el pie diabético?", 
+                options: ["Secreción purulenta de mal olor", "Fiebre sistémica de 39°C", "Presión plantar normal y conservada", "Eritema agudo sin úlcera previa"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de diagnóstico de pie diabético, el pie de Charcot activo se presenta fisiopatológicamente con un cuadro catastrófico e inflamatorio intenso en la extremidad y gran deformidad, cursando con rubor y calor severo. A diferencia de una celulitis abscedada o infecciosa real, el Charcot se inicia con la piel intacta, careciendo de una úlcera que actúe de puerta de entrada microbiana. La presencia de pus o fiebre sistémica sugeriría que, de hecho, sí hay infección bacteriana formal.<br><br>Perla ENARM: \"Se sugiere que pacientes con neuroartropatía de Charcot sean valorados por el servicio de ortopedia. Este inicia como eritema intenso simulando infección pero con integridad cutánea en fase aguda.\"", 
+                source: "GPC SS-005-20, Prevención, diagnóstico, tratamiento y rehabilitación del pie diabético, 2020, Sección Detección, Página 65." 
+            },
+            {
+                id: 17, 
+                question: "En la evaluación clínica del Cáncer de Pulmón, ¿cuál es el signo clínico que integra el envío directo para protocolo diagnóstico presuntivo según la GPC?", 
+                options: ["Tos seca esporádica", "Disnea de medianos esfuerzos", "Presencia de hemoptisis", "Sibilancias espiratorias"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Cáncer de Pulmón, la presencia de síntomas de alarma cambia radicalmente el algoritmo; no se debe tamizar a un paciente sintomático, sino iniciar el abordaje diagnóstico formal.<br><br>Perla ENARM: \"Se sugiere referir a personas con factores de riesgo para CP asociado a síntomas respiratorios y hemoptisis, con o sin pérdida de peso, a la instancia de salud pertinente para que se lleve a cabo el protocolo diagnóstico.\"<br><br>Análisis de Distractores: La tos seca y disnea son síntomas muy inespecíficos en fumadores (sugestivos de EPOC). Las sibilancias orientan a hiperreactividad bronquial. La hemoptisis es el dato \"bandera roja\" oncológico.", 
+                source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Diagnóstico, Página 24." 
+            },
+            {
+                id: 18, 
+                question: "En las estrategias de educación para prevención de Infección por VIH en el primer nivel, ¿cuál es el enfoque metodológico que dictamina la GPC para promover el uso del condón?", 
+                options: ["Enfoque puramente punitivo", "Enfoque cognitivo conductual exclusivo", "Enfoque constructivista", "Enfoque farmacológico preventivo"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la Guía de Práctica Clínica de Infección por VIH, el abordaje preventivo debe superar la simple entrega de información (modelo tradicional) y buscar la participación activa del individuo, elaborando modelos mentales que estructuren el autocuidado significativo en su entorno sociocultural.<br><br>Perla ENARM: \"Se recomienda que el equipo multidisciplinario de primer nivel de atención fomente el uso sistemático del condón en las prácticas sexuales consideradas de alto riesgo... mediante la implementación de estrategias bajo un enfoque constructivista.\"<br><br>Análisis de Distractores: Un enfoque \"punitivo\" (basado en miedo o castigo) genera estigmatización y aleja a los pacientes del tamizaje. El \"enfoque cognitivo conductual\" sí se recomienda en trabajadoras sexuales, pero para la población general el mandato es la estrategia constructivista.", 
+                source: "SS-067-08, Prevención, diagnóstico y referencia oportuna del paciente con infección por VIH en el primer nivel de atención, 2017, Prevención, Página 22." 
+            },
+            {
+                id: 19, 
+                question: "En el abordaje de la Muerte Encefálica, ¿cuál es el hallazgo gasométrico durante la prueba de apnea que integra el diagnóstico clínico confirmatorio según la GPC?", 
+                options: ["Incremento de pCO2 mayor 10", "pCO2 mayor o igual 60", "pO2 menor a 60 mmHg", "Descenso de pH menor 7.20"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Muerte Encefálica, la prueba de apnea busca evaluar la incapacidad del centro respiratorio para responder al estímulo fisiológico máximo, que es la hipercapnia. Se establece que, si al desconectar al paciente del ventilador se alcanza el umbral de pCO2 mayor o igual a 60 mmHg sin originar movimientos respiratorios, se comprueba la pérdida irreversible de la función bulbar.<br><br>Perla ENARM: \"Si no hay movimientos respiratorios y la pCO2 es mayor o igual a 60 mm Hg (o hay incremento de 20 mm Hg en la pCO2 basal) la prueba de apnea es positiva y soporta el diagnóstico de muerte encefálica.\"<br><br>Análisis de Distractores: El incremento requerido en pacientes con retención crónica basal es de 20 mmHg, no de 10 mmHg (Opción A). La pO2 no es el parámetro de fallo primario a medir para la apnea (Opción C). Las variaciones de pH ocurren por la hipercapnia, pero no son el criterio diagnóstico que dicta la norma (Opción D).", 
+                source: "GPC-SS-488-19, Diagnóstico de muerte encefálica y manejo del potencial donante de órganos, 2019, Sección: Criterios diagnósticos de muerte encefálica AAN 2010, Página 48." 
+            },
+            {
+                id: 20, 
+                question: "De acuerdo al manejo integral de la Diabetes Mellitus tipo 2, si se logran las metas terapéuticas iniciales, ¿qué medida preventiva fundamental indica la GPC para el mantenimiento a largo plazo?", 
+                options: ["Inclusión a programas de educación", "Envío a segundo nivel", "Suspender terapia farmacológica", "Uso temprano de insulina"], 
+                answer: 0, 
+                justification: "Justificación: El éxito sostenido en el control de una enfermedad crónica degenerativa depende primordialmente del empoderamiento y comprensión de la patología por parte del paciente. De acuerdo a la GPC de Diabetes Mellitus tipo 2, una vez estabilizado el paciente, la educación estructurada es una recomendación ineludible.<br><br>Perla ENARM: \"Se logran metas... Inclusión a programas de educación en diabetes. Continuar con terapia farmacológica y no farmacológica\".<br><br>Análisis de Distractores: La opción B es incorrecta porque el paciente controlado debe continuar su seguimiento en el primer nivel. Las opciones C y D son perjudiciales; alcanzar metas indica que el tratamiento actual funciona y debe sostenerse, no suspenderse ni cambiarse radicalmente a insulina.", 
+                source: "SS-093-19, Prevención, diagnóstico, metas de control ambulatorio y referencia oportuna de la diabetes mellitus tipo 2 en el primer nivel de atención, 2019, Algoritmo 2, Página 39." 
+            },
+            {
+                id: 21, 
+                question: "En un paciente asintomático con Diabetes Mellitus tipo 2, ¿cuál es el primer estudio de tamizaje que debe solicitarse para evaluar el riesgo cardiovascular previo al inicio de ejercicio?", 
+                options: ["Ecocardiograma transtorácico", "Electrocardiograma en reposo", "Monitoreo Holter 24 horas", "Prueba de esfuerzo físico"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de ejercicio en diabetes, la estratificación inicial del riesgo isquémico para prescribir acondicionamiento físico se fundamenta en detectar alteraciones eléctricas basales. Si existen anormalidades, el paciente requiere abordaje especializado antes de continuar.<br><br>Perla ENARM: \"Los pacientes con DM que reportan cambios en el electrocardiograma, en respuesta a cambios inespecíficos en el segmento ST o en la onda T en reposo... se les puede solicitar prueba de esfuerzo\".<br><br>Análisis de Distractores: El ecocardiograma y el monitoreo Holter son estudios de extensión no indicados en el tamizaje universal. La prueba de esfuerzo físico es el segundo paso lógico, pero solo se solicita si hay factores de riesgo y el electrocardiograma inicial ya fue evaluado.", 
+                source: "GPC SS-804-17, Prescripción de ejercicio físico en pacientes con diabetes mellitus en los tres niveles de atención, 2017, Evaluación previa al ejercicio, Página 25." 
+            },
+            {
+                id: 22, 
+                question: "En pacientes > 65 años con polifarmacia y diagnóstico clínico de Herpes Zóster con dolor mecánico superficial, ¿cuál es el adyuvante tópico recomendado?", 
+                options: ["Parche lidocaína 5 %", "Crema aciclovir 5 %", "Analgésico opioide parche", "Fomentos bicarbonato 10 %"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Herpes Zóster, en adultos frágiles o intolerantes a fármacos enterales, el bloqueo periférico de canales de sodio mitiga la alodinia con nula toxicidad sistémica.<br><br>Perla ENARM: \"La lidocaína tópica es un fármaco de primera línea para pacientes de edad avanzada en los que existe polifarmacia o contraindicaciones para los analgésicos sistémicos... Los efectos secundarios de los parches de lidocaína son bien tolerados y sin efectos adversos sistémicos\".<br><br>Análisis de Distractores: La crema de aciclovir es un placebo inefectivo para el dolor. Los parches de opioides o vía sistémica se evitan de primera intención en polifarmacia geriátrica por neurotoxicidad.", 
+                source: "GPC-SS-217-21, Prevención y tratamiento del herpes zóster en el adulto, 2021, Tratamiento, Páginas 14 y 15." 
+            },
+            {
+                id: 23, 
+                question: "En la atención de la violencia contra las mujeres, ¿cuál es la indicación de la Organización Mundial de la Salud (OMS) sobre el tamizaje en la consulta médica?", 
+                options: ["Realizar en toda paciente.", "No realizar de manera indiscriminada.", "Solo en mujeres casadas.", "Aplicar cuestionario de autodiagnóstico."], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de violencia contra las mujeres, no existen pruebas suficientes para optar por el tamizaje universal, ya que esto puede ser revictimizante o iatrogénico si no se cuenta con los recursos de apoyo adecuados. Se prefiere la indagación clínica ante indicadores de riesgo.<br><br>Perla ENARM: \"La OMS recomienda que el personal profesional de la salud no realice tamizaje universal de violencia, es decir, de manera indiscriminada a toda la población.\"<br><br>Análisis de Distractores: Realizar el tamizaje en toda paciente (A) o aplicar cuestionarios a todas (D) contradice la norma que sugiere una búsqueda dirigida basada en factores de riesgo. Limitarlo a mujeres casadas (C) es incorrecto, ya que la violencia de pareja o sexual ocurre en cualquier estado civil.", 
+                source: "GPC-SS-294-18, Prevención, detección y atención de la violencia contra las mujeres de 12 a 59 años de edad con énfasis en la violencia sexual, 2018, Detección, p. 22." 
+            },
+            {
+                id: 24, 
+                question: "Según la GPC de Hipertensión Arterial Sistémica, ¿cuál es un hallazgo clínico que indica una urgencia mayor con daño a órgano blanco inminente?", 
+                options: ["Retinopatía sin exudados", "Disección de aorta torácica", "Cefalea y mareo ocasional", "Presión de 160/100 mmHg"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial en el Primer Nivel, una cifra tensional extrema solo se cataloga como \"emergencia o urgencia mayor\" si existe un deterioro agudo y letal de un tejido blanco, requiriendo descenso intravenoso rápido.<br><br>Perla ENARM: \"Urgencia hipertensiva mayor: Isquemia coronaria aguda, edema agudo de pulmón, Evento vascular cerebral, Encefalopatía, Aneurisma o disección de aorta, Eclampsia o Síndrome de HELLP.\"<br><br>Análisis de Distractores: Una PA de 160/100 (D) o cefalea asilada (C) es una hipertensión descontrolada sin peligro inminente de vida. La retinopatía crónica leve (A) señala daño crónico, pero no un evento agudo que clasifique como emergencia mayor per se.", 
+                source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento de la Hipertensión Arterial en el Primer Nivel de Atención, 2021, Anexos, Página 74." 
+            },
+            {
+                id: 25, 
+                question: "Ante la sospecha clínica de alteraciones neurológicas en un paciente con Enfermedad de Fabry, ¿cuál es el primer estudio de imagen que debe solicitarse según la guía?", 
+                options: ["Tomografía axial computarizada", "Ultrasonido Doppler transcraneal", "Resonancia magnética cerebral", "Tomografía por emisión"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Enfermedad de Fabry, la resonancia magnética permite identificar tempranamente manifestaciones cerebrovasculares asintomáticas y la afectación isquémica de la sustancia blanca (leucoaraiosis), típicas de la acumulación lisosomal endotelial, siendo el abordaje de primera elección en consulta.<br><br>Perla ENARM: \"De acuerdo a los recursos disponibles en la unidad se sugiere realizar RM cerebral en forma inicial; en caso de resultados normales valorar de acuerdo a seguimiento neurológico\".<br><br>Análisis de Distractores: La Tomografía axial computarizada (Opción A) se reserva únicamente como estudio de urgencia ante un déficit focal agudo. El Ultrasonido Doppler (Opción B) y la Tomografía por emisión (Opción D) pueden formar parte del protocolo secundario de extensión vascular o auditiva, no del escrutinio cerebral inicial primario.", 
+                source: "IMSS-165-09, Diagnóstico, Tratamiento y Seguimiento multidisciplinario en enfermedad de Fabry, 2017, Manifestaciones neurológicas, Página 26." 
+            },
+            {
+                id: 26, 
+                question: "¿Cuál es el factor reportado por la GPC que predice el fracaso pronóstico de la profilaxis (mayor tasa de seroconversión) en un trabajador sometido a Exposición Laboral al VIH?", 
+                options: ["Fuente con carga viral indetectable", "Inicio después de 45 horas", "Ausencia de sangrado activo", "Exposición a líquido cefalorraquídeo"], 
+                answer: 1, 
+                justification: "Justificación: El margen de oportunidad para el abordaje del ciclo lítico retroviral es extremadamente estrecho. El virus infecta y destruye células dendríticas primarias y macrófagos en horas, viajando rápidamente hacia los acúmulos linfáticos. De acuerdo a la GPC de Exposición Laboral al VIH, retrasar la impregnación sistémica de la terapia triple propicia una viremia que la profilaxis ya no puede revertir.<br><br>Perla ENARM: \"Son factores asociados con la seroconversión a pesar de la PPE-VIH: inicio tardío de fármacos (>45 horas después de la exposición).\"<br><br>Análisis de Distractores: Una fuente con carga viral indetectable es un factor de bajo riesgo (no nulo, pero bajo), no un predictor de fracaso o mortalidad. La ausencia de sangrado (como en una punción superficial o piel intacta) dismiuye la probabilidad biológica de inocular el virus, marcando buen pronóstico. El LCR tiene riesgo biológico teórico, pero su infectividad es mucho menor en la práctica clínica que la sangre directa.", 
+                source: "IMSS-241-12, Prevención, Diagnóstico y Tratamiento de la Exposición Laboral al VIH en Trabajadores de la Salud, 2017, Sección: Profilaxis Post-Exposición Laboral al VIH, Página 29." 
+            },
+            {
+                id: 27, 
+                question: "¿Cuál es el factor de riesgo con mayor asociación para el desarrollo de enfermedad renal crónica en un paciente con Infección por el VIH reportado por la GPC?", 
+                options: ["Raza caucásica", "Edad menor a 40", "Diabetes Mellitus coexistente", "Uso de Efavirenz"], 
+                answer: 2, 
+                justification: "Justificación: La nefrotoxicidad puede ser mediada por el propio virus, fármacos o comorbilidades crónico-degenerativas. De acuerdo a la GPC de Infección por el VIH, las condiciones metabólicas crónicas aceleran exponencialmente el daño glomerular y tubular en estos pacientes.<br><br>Perla ENARM: \"En pacientes con infección por el VIH sin experiencia a tratamiento ARV, investigar los siguientes factores de riesgo para desarrollo de enfermedad renal: Comorbilidades: DM y HAS, Edad >55 años, Raza negra.\"<br><br>Análisis de Distractores: La raza caucásica no es factor de riesgo; la guía señala específicamente a la raza negra. La edad avanzada (mayor a 55 años) confiere el riesgo, no la edad joven. El Efavirenz se asocia a toxicidad del Sistema Nervioso Central, mientras que el fármaco asociado clásicamente a daño tubular proximal es el Tenofovir Disoproxil Fumarato.", 
+                source: "IMSS-245-09, Tratamiento Antirretroviral del Paciente Adulto con Infección por el VIH, 2017, Función Renal, Página 75." 
+            },
+            {
+                id: 28, 
+                question: "¿Cuál es el esquema pronóstico de vigilancia secuencial que predice y detecta el mayor número de recurrencias tras el tratamiento de un carcinoma basocelular?", 
+                options: ["Mensual el primer año", "3, 6 y 12 meses", "Cada 5 años", "Ante sospecha de recurrencia"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Carcinoma Basocelular, hasta un 40% de los pacientes desarrollarán otro tumor a los 5 años, exigiendo un protocolo cronológico para captar lesiones sincrónicas o recaídas en la fase inicial de máxima probabilidad.<br><br>Perla ENARM: \"El seguimiento algoritmo indica vigilancia a los 3, 6 y 12 meses; posteriormente anual hasta los primeros 5 años para la detección de recurrencias.\"<br><br>Análisis de Distractores: La vigilancia mensual (A) satura los servicios innecesariamente. Vigilarlos cada 5 años (C) o sólo ante sospechas (D) promueve la progresión de recurrencias localmente avanzadas, elevando la morbilidad reconstructiva facial.", 
+                source: "GPC-IMSS-360-19, Diagnóstico y Tratamiento del Carcinoma Basocelular, 2019, Sección: Diagrama de Flujo 2, Página 33." 
+            },
+            {
+                id: 29, 
+                question: "¿Cuál es el factor de riesgo farmacológico que presenta la asociación más fuerte y directa con el desarrollo de toxicidad ocular por hidroxicloroquina?", 
+                options: ["Uso menor a cinco años", "Dosis diaria mayor 6.5 mg/kg", "Ausencia de enfermedad renal", "Edad menor de 40 años"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención de toxicidad ocular por antimaláricos, la dosis de prescripción es el principal factor de riesgo modificable. Dosis elevadas por kilogramo de peso predisponen rápidamente a la acumulación en el epitelio pigmentario.<br><br>Perla ENARM: \"Existe una asociación de toxicidad con dosis diarias de hidroxicloroquina de 6.5 mg/kg de peso corporal (equivalente a cloroquina 3.0 mg/kg).\"<br><br>Análisis de Distractores: El \"Uso menor a cinco años\" (A) es considerado un escenario de bajo riesgo, ya que la toxicidad se asocia típicamente a un uso mayor a 5 a 7 años. La \"Ausencia de enfermedad renal\" (C) es un factor protector; la nefropatía disminuye la depuración del fármaco. La \"Edad menor de 40 años\" (D) no es factor de riesgo; por el contrario, los adultos mayores de 60 años presentan mayor susceptibilidad al daño retiniano tóxico.", 
+                source: "IMSS-431-11, Prevención de toxicidad ocular por cloroquina e hidroxicloroquina, 2017, Evidencias y Recomendaciones (Promoción a la salud), p. 25." 
+            },
+            {
+                id: 30, 
+                question: "¿Cuál es una contraindicación absoluta para iniciar el tratamiento farmacológico estándar en raquitismo carencial?", 
+                options: ["Hipocalcemia", "Hipercalcemia", "Hipofosfatemia", "Paratohormona elevada"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Raquitismo Carencial, administrar precursores activos o calcio a un paciente con concentraciones elevadas de calcio agrava el cuadro y predispone a nefrocalcinosis, arritmias y daño orgánico severo.<br><br>Perla ENARM: \"Contraindicaciones (Calcitriol / Carbonato de calcio): Hipersensibilidad al fármaco o a la vitamina D e hipercalcemia\".<br><br>Análisis de Distractores: La hipocalcemia (A), hipofosfatemia (C) y la Paratohormona elevada (D) son, de hecho, parte de las indicaciones y hallazgos esperados en la deficiencia, por lo que motivan el inicio urgente del tratamiento, no lo contraindican.", 
+                source: "GPC-IMSS-459-19, Prevención, diagnóstico y tratamiento del Raquitismo Carencial, 2019, Tabla de Medicamentos, p. 48." 
+            }
+        ];
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('ExMI30LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('ExMI30Progress');
+                localStorage.removeItem('ExMI30LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-purple-500 shadow-md z-10 border-purple-500 dark:border-purple-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-fuchsia-500 to-purple-600 hover:from-purple-600 hover:to-fuchsia-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-purple-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-fuchsia-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "PREPARACIÓN ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "MEDICINA INTERNA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "Preguntas diseñadas para fortalecer tus conocimientos con reactivos de alta exigencia y enfoque clínico tipo ENARM basadas en las GPC mexicanas.";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-purple-600 dark:text-slate-400 dark:hover:text-purple-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="Ex_GYO1.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-purple-100 dark:border-purple-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-purple-50 has-[:checked]:border-purple-400 dark:has-[:checked]:bg-purple-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-purple-600 focus:ring-purple-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-purple-600 dark:hover:bg-purple-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-fuchsia-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('ExMI30Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('ExMI30LastQId', currentQuestionId);
+                else localStorage.removeItem('ExMI30LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('ExMI30Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0",
+        authDomain: "enarm-lite.firebaseapp.com",
+        projectId: "enarm-lite",
+        storageBucket: "enarm-lite.firebasestorage.app",
+        messagingSenderId: "767032952477",
+        appId: "1:767032952477:web:84347320ed3d376f7e7674",
+        measurementId: "G-PVR3RBVNSV"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.5s ease';
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            
+            if(userDocSnap.exists()) {
+                document.body.style.opacity = '1';
+            } else {
+                window.location.href = "index.html"; 
+            }
+        } else {
+            window.location.href = "index.html";
+        }
+    });
+</script>
+</body>
+</html>
