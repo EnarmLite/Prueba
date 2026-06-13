@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================
+        // =========================================================
+        const questionsData = [
+            {
+                id: 1, 
+                question: "¿Cuál es un criterio clínico que justifica prescribir rutinariamente dosis altas de ácido fólico (5 mg/día) durante la etapa preconcepcional y el primer trimestre?", 
+                options: ["Nuliparidad", "Obesidad grado I", "Embarazo gemelar", "Uso de fármacos anticonvulsivantes"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal, el uso de medicamentos con efecto anti-folato reduce críticamente la biodisponibilidad de esta vitamina, incrementando drásticamente el riesgo de defectos del tubo neural. La suplementación intensiva compensa este déficit competitivo.<br><br>Perla ENARM: \"Dosis altas de ácido fólico (5 mg/día) se sugiere administrar en casos de: Uso de fármacos con efecto anti-folato (anticonvulsivos)\".<br><br>Análisis de Distractores: La nuliparidad (A) requiere la profilaxis universal de 400 µg/día. La obesidad (B) en grado I no justifica primariamente la dosis de 5 mg, se indica en obesidad mórbida o severa combinada con otros factores. El embarazo gemelar (C) requiere suplementación multivitamínica general, no de manera aislada 5 mg de ácido fólico.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Promoción a la salud, Página 18." 
+            },
+            {
+                id: 2, 
+                question: "¿En qué periodo estricto de la gestación debe realizarse el tamizaje universal de bacteriuria asintomática mediante examen general de orina?", 
+                options: ["12 a 16 semanas", "8 a 10 semanas", "18 a 20 semanas", "24 a 28 semanas"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal, el tamizaje temprano mediante examen general de orina previene la progresión a pielonefritis, la cual tiene su pico de incidencia al final del segundo trimestre debido a la estasis urinaria máxima provocada por progesterona.<br><br>Perla ENARM: \"Realizar tamizaje para bacteriuria asintomática con Examen General de Orina (EGO) entre las 12 y las 16 semanas de la gestación\".<br><br>Análisis de Distractores: Las semanas 8 a 10 (B) son prematuras para el tamizaje poblacional de mayor rendimiento. Las semanas 18 a 20 (C) y 32 a 34 representan los periodos de re-evaluación en seguimiento, no el tamizaje inicial. Las semanas 24 a 28 (D) corresponden al tamizaje universal de diabetes gestacional.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Tamizaje de patologías, Página 32." 
+            },
+            {
+                id: 3, 
+                question: "¿Cuál es el umbral mínimo aceptado de movimientos fetales para considerar actividad y bienestar fetal normales en una prueba de conteo clínico autogestionada?", 
+                options: ["5 movimientos en 1 hora", "15 movimientos en 3 horas", "10 movimientos en 2 horas", "20 movimientos en 12 horas"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal, no existen consensos absolutos globales, pero la validación fisiológica dicta que un feto sano completa sus ciclos de sueño-vigilia máximo en 90 minutos, asegurando actividad franca en un margen de 120 minutos.<br><br>Perla ENARM: \"Se aconseja un umbral mínimo de 10 movimientos fetales por período de 2 horas\".<br><br>Análisis de Distractores: 5 movimientos en 1 hora (A) no compensa los periodos fisiológicos de sueño fetal profundo. 15 movimientos en 3 horas (B) y 20 movimientos en 12 horas (D) extienden peligrosamente el tiempo de vigilancia domiciliaria, retrasando el diagnóstico clínico de hipoxia inminente.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Evaluación clínica, Página 49." 
+            },
+            {
+                id: 4, 
+                question: "En pacientes con antecedentes de riesgo, ¿qué hallazgo ultrasonográfico detectado entre las semanas 13 y 15 de gestación establece la indicación absoluta de cerclaje cervical?", 
+                options: ["Longitud cervical ≤ 20 mm", "Longitud cervical < 15 mm", "Longitud cervical < 25 mm", "Longitud cervical ≤ 10 mm"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal, la incompetencia ístmico-cervical severa temprana expone el saco amniótico y precipita pérdida fetal inminente. Un acortamiento tan extremo exige soporte anatómico mecánico primario.<br><br>Perla ENARM: \"¿Medición <15 mm a la 13-15 semanas? SI -> Colocación de Cerclaje\".<br><br>Análisis de Distractores: El corte de longitud cervical < 25 mm (C) se utiliza para tamizaje de alto riesgo en la semana 20 a 24, cuya conducta inicial es progesterona vaginal, no cerclaje. Los valores de ≤ 20 mm (A) y ≤ 10 mm (D) no son los puntos de corte universales de la normativa.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Algoritmo 6, Página 64." 
+            },
+            {
+                id: 5, 
+                question: "¿Cuál es la meta terapéutica de presión arterial diastólica recomendada durante el primer trimestre de la gestación para la paciente normotensa sana?", 
+                options: ["80 a 90 mmHg", "70 a 90 mmHg", "< 60 mmHg", "65 a 80 mmHg"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal, la caída de las resistencias vasculares periféricas inducida por la placentación es máxima en el primer trimestre. Tolerar diastólicas cercanas a 90 mmHg tempranamente significa pasar por alto una respuesta vascular anómala ligada a preeclampsia futura.<br><br>Perla ENARM: \"Es recomendable mantener cifras de presión arterial durante el primer trimestre: Sistólica: 115 a 120mmHg, Diastólicas: 65 a 80 mmHg\".<br><br>Análisis de Distractores: Mantener la presión diastólica entre 80 a 90 mmHg (A) o 70 a 90 mmHg (B) en el primer trimestre enmascara un tono vascular anormalmente elevado. Cifras < 60 mmHg (C) se asocian a hipoperfusión placentaria precoz y lipotimia materna.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Tamizaje de patologías, Página 29." 
+            },
+            {
+                id: 6, 
+                question: "¿Cuál es el parámetro ultrasonográfico más exacto para establecer o confirmar la edad gestacional cuando el estudio se realiza antes de la semana 13.6?", 
+                options: ["Longitud craneocaudal", "Diámetro biparietal", "Circunferencia abdominal", "Longitud del fémur"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal, durante el primer trimestre, el crecimiento biológico embrionario obedece a un patrón genético inamovible, libre de las alteraciones metabólicas maternas (ej. hiperglucemia o desnutrición) que sí modifican los diámetros tardíos.<br><br>Perla ENARM: \"Hasta la semana 13.6 la evaluación de la edad gestacional es a través de la medición de la longitud craneo-caudal que tiene una variación de + 5-7 días en relación a la edad por FUM\".<br><br>Análisis de Distractores: El diámetro biparietal (B), la circunferencia abdominal (C) y la longitud del fémur (D) son los indicadores estándar indispensables, pero sólo a partir del segundo trimestre (después de la semana 14), con un margen de error temporal mucho más amplio.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Evaluación clínica, Página 43." 
+            },
+            {
+                id: 7, 
+                question: "¿Cuál es la dosis de suplementación de calcio recomendada para la prevención de preeclampsia en mujeres embarazadas con ingesta dietética baja documentada?", 
+                options: ["400 a 600 mg/día", "2.5 a 3 g/día", "1 a 2 g/día", "500 a 800 mg/día"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal, la hipocalcemia incrementa la secreción de paratohormona y el tono del músculo liso vascular. Suplementar calcio satura estos canales y reduce la incidencia de preeclampsia en mujeres carenciales hasta en un 64%.<br><br>Perla ENARM: \"Se recomienda la suplementación de calcio en pacientes con baja ingesta dietética, definida como ≤600 mg/día, con dosis de 1 gr/ día\" (el apartado previo en GPC establece de 1.5 a 2g).<br><br>Análisis de Distractores: Las dosis de 400 a 600 mg/día (A) y 500 a 800 mg/día (D) son insuficientes para alcanzar concentraciones séricas preventivas ante ingestas carenciales. Dosis de 2.5 a 3 g/día (B) exceden el límite de seguridad y precipitan hipercalciuria y nefrolitiasis.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Promoción a la salud, Página 20." 
+            },
+            {
+                id: 8, 
+                question: "En una paciente con grupo Rh negativo no sensibilizada, ¿en qué momento exacto del control prenatal debe aplicarse la profilaxis universal con inmunoglobulina anti-D?", 
+                options: ["A las 20 semanas", "A las 24 semanas", "A las 32 semanas", "A las 28 semanas"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal, la mayor transferencia oculta de eritrocitos fetales hacia el torrente materno inicia exponencialmente al tercer trimestre. Cubrir profilácticamente a la paciente en la semana 28 otorga anticuerpos bloqueadores hasta el nacimiento.<br><br>Perla ENARM: \"La persona embarazada Rh negativa que no está isoinmunizada debe recibir inmunoglobulina anti D antenatal a la semana 28 de gestación\".<br><br>Análisis de Distractores: A las 20 (A) o 24 semanas (B), la barrera placentaria rara vez permite escapes antigénicos significativos sin trauma directo. A las 32 semanas (C), se sobrepasa la ventana de máxima protección profiláctica y podría existir ya sensibilización subclínica.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Prevención de enfermedades, Página 25." 
+            },
+            {
+                id: 9, 
+                question: "¿Qué parámetro hemodinámico medido por ultrasonido Doppler entre las semanas 11 y 13.6 es el principal predictor patológico para el desarrollo de preeclampsia precoz?", 
+                options: ["Índice de pulsatilidad uterina", "Velocidad de arteria cerebral", "Flujo del conducto venoso", "Resistencia de arteria umbilical"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal, la falta de invasión trofoblástica en las arterias espirales mantiene un lecho de alta presión limitando el flujo a la placenta. Esto se refleja ecográficamente de manera precoz en los vasos maternos pélvicos.<br><br>Perla ENARM: \"Se recomienda la medición del índice de pulsatilidad de las arterias uterinas y cálculo del índice de pulsatilidad medio entre la semana 11-13.6... para la predicción de riesgo de desarrollo de preeclampsia\".<br><br>Análisis de Distractores: La arteria cerebral media (B) es para el tamizaje de anemia y centralización fetal. El conducto venoso (C) evalúa falla cardiaca fetal inminente. La arteria umbilical (D) monitoriza la resistencia terminal de la placenta en la insuficiencia placentaria establecida.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Tamizaje de patologías, Página 30." 
+            },
+            {
+                id: 10, 
+                question: "De acuerdo a los criterios diagnósticos IADPSG de un solo paso, ¿qué valor plasmático de glucosa en ayuno confirma el diagnóstico absoluto de Diabetes Mellitus Gestacional?", 
+                options: ["> 126 mg/dl", "> 95 mg/dl", "> 92 mg/dl", "> 105 mg/dl"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal, el consenso internacional modernizó los límites a un espectro más estricto, dado que valores por arriba de esta cifra ya se asocian directamente con macrosomía e hiperinsulinemia fetal.<br><br>Perla ENARM: \"Glucosa plasmática en ayuno >92mg/dl. El diagnóstico de Diabetes gestacional se establece con 1 valor alterado\".<br><br>Análisis de Distractores: Cifras > 126 mg/dl (A) determinan diabetes mellitus pregestacional tipo 2. Valores de > 95 mg/dl (B) y > 105 mg/dl (D) eran los parámetros del modelo clásico de dos pasos de Carpenter-Coustan y NDDG, respectivamente, actualmente en desuso para estrategia universal de un paso.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Cuadro 6, Página 67." 
+            },
+            {
+                id: 11, 
+                question: "En una paciente portadora de Síndrome de Ovario Poliquístico manejada con metformina que resulta embarazada, ¿cuál es la instrucción clínica correcta respecto a su fármaco?", 
+                options: ["Suspender de inmediato", "Continuar durante el embarazo", "Cambiar a insulina NPH", "Cambiar a glibenclamida"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal, la metformina modula los marcadores de estrés endotelial y detiene la impedancia de la arteria uterina en mujeres con resistencia a la insulina pregestacional, bajando a la mitad el riesgo de preeclampsia severa.<br><br>Perla ENARM: \"En aquellas paciente con diagnóstico de SOP previo a la gestación y/ o resistencia a insulina que tomaban metformina como parte del tratamiento, es recomendable continuarlo durante la gestación\".<br><br>Análisis de Distractores: Suspenderla de inmediato (A) expone a un rebote metabólico en el primer trimestre. Cambiar a insulina (C) o glibenclamida (D) es un escalón terapéutico usado sólo si la metformina es insuficiente para controlar la glucemia, no una medida preventiva en pacientes ya estables.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Evaluación clínica, Página 53." 
+            },
+            {
+                id: 12, 
+                question: "Además del tamizaje habitual para virus de la Hepatitis, ¿cuáles son los dos laboratorios infecciosos que obligatoriamente deben solicitarse en la primera consulta prenatal?", 
+                options: ["Cultivo vaginal y urocultivo", "PCR para citomegalovirus", "Serología para toxoplasma", "VDRL y prueba rápida VIH"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal, la alta prevalencia de transmisión vertical y la devastación de la sífilis congénita y el Síndrome de Inmunodeficiencia Adquirida hacen imperativo iniciar la cascada diagnóstica en cuanto se confirma el embarazo.<br><br>Perla ENARM: \"En la primer consulta de atención prenatal los laboratorios que se deben solicitar son... V.D.R.L., prueba rapida voluntaria (VIH)\".<br><br>Análisis de Distractores: El urocultivo se solicita si hay bacteriuria en EGO o antecedente clínico, el cultivo vaginal (A) es selectivo. PCR para Citomegalovirus (B) y serología para toxoplasma (C) no integran la rutina universal básica de primera intención (TORCH es obsoleto sin indicación de riesgo dirigida).", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Tamizaje de patologías, Página 27." 
+            },
+            {
+                id: 13, 
+                question: "Con el objetivo de minimizar el riesgo comprobado de bajo peso al nacimiento fetal, ¿cuál es el límite máximo recomendado para la ingesta de cafeína durante la gestación?", 
+                options: ["< 182 mg/día", "< 100 mg/día", "< 250 mg/día", "< 300 mg/día"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal, la inmadurez citocromo-hepática fetal impide el aclaramiento enzimático, permitiendo que la molécula actúe como un potente vasoconstrictor placentario permanente si la madre excede la dosis de tolerancia.<br><br>Perla ENARM: \"Es recomendable la reducción de la ingesta de cafeína a menos de 2 tazas diarias (<182mg/día)\".<br><br>Análisis de Distractores: Los rangos < 250 mg/día (C) y < 300 mg/día (D) exceden francamente el límite de vasoconstricción tolerado para la unidad fetoplacentaria. La indicación < 100 mg/día (B) es innecesariamente restrictiva; menos de dos tazas es el balance de seguridad.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Promoción a la salud, Página 18." 
+            },
+            {
+                id: 14, 
+                question: "¿Cuál es el rango de duración óptimo que ha demostrado erradicar efectivamente la bacteriuria asintomática previniendo la pielonefritis durante el embarazo?", 
+                options: ["10 a 14 días", "4 a 7 días", "Dosis única", "14 a 21 días"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal, periodos prolongados propician disbiosis y colonización micótica vaginal sin aportar mayor beneficio en tasas de curación urinaria, mientras que la exposición corta es el estándar resolutivo sin toxicidad fetal.<br><br>Perla ENARM: \"El tratamiento con antibiótico para la bacteriuria asintomática durante el embarazo en un régimen de 4 a 7 días, es considerado como el período más recomendado\".<br><br>Análisis de Distractores: La dosis única (C) tiene tasas elevadas de falla terapéutica por el aumento de filtrado glomerular gestacional. Regímenes de 10 a 14 días (A) o mayores a 14 días (D) están indicados en infecciones complicadas altas (pielonefritis), no en fase asintomática.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Tamizaje de patologías, Página 32." 
+            },
+            {
+                id: 15, 
+                question: "Por su relación directa documentada con letalidad fetal al inducir anuria y oligohidramnios, ¿qué grupo de fármacos antihipertensivos está proscrito en toda etapa del embarazo?", 
+                options: ["Bloqueadores de canales de calcio", "Vasodilatadores arteriales directos", "Inhibidores de enzima convertidora", "Bloqueadores beta adrenérgicos"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal, la interrupción del eje renina-angiotensina bloquea críticamente la nefrogénesis y la perfusión tubular fetal, dando como resultado un síndrome letal de hipoplasia pulmonar y falla renal.<br><br>Perla ENARM: \"Los inhibidores de la enzima convertidora de angiotensina y los bloqueadores del receptor de angiotensina no son recomendados utilizarlos durante el embarazo\".<br><br>Análisis de Distractores: Bloqueadores de canales de calcio (A) (ej. Nifedipino) son primera línea segura. Vasodilatadores arteriales (B) (hidralazina) son de rescate seguro. Los bloqueadores beta (D) deben usarse con cautela por restricción de crecimiento (especialmente atenolol), pero no causan anuria letal directa.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Evaluación clínica, Página 54." 
+            },
+            {
+                id: 16, 
+                question: "¿Cuál es el rango numérico de latidos por minuto que define la frecuencia cardíaca fetal normal y reactiva al evaluar clínicamente a un feto estructuralmente sano?", 
+                options: ["120 a 160 lpm", "110 a 150 lpm", "100 a 140 lpm", "130 a 170 lpm"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal, la maduración progresiva del sistema nervioso autónomo simpático y parasimpático estabiliza el marcapasos sinusal del miocardio fetal a partir del segundo trimestre dentro de parámetros fijos de eutermia.<br><br>Perla ENARM: \"Analizó 78,852 registroa cardiotográficos y demostró que los rangos estadísticamente normales de frecuencia cardiaca fetal son de 120-160 latidos por minuto\".<br><br>Análisis de Distractores: Rangos base de 110 a 150 lpm (B) u 100 a 140 lpm (C) reflejan el límite bajo donde ya se requiere investigar hipoglucemia o beta-bloqueo. El rango 130 a 170 lpm (D) abarca una franca taquicardia sostenida (alarma de corioamnionitis fetal).", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Evaluación clínica, Página 49." 
+            },
+            {
+                id: 17, 
+                question: "Según los criterios internacionales validados en la GPC para la expansión plasmática gestacional, ¿cuál es el nivel de hemoglobina sérica que diagnostica anemia en el primer trimestre?", 
+                options: ["< 10 g/dl", "< 11 g/dl", "< 10.5 g/dl", "< 12 g/dl"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal, el volumen plasmático materno se incrementa de forma desproporcionada en un 50% frente a la masa eritrocitaria (hemodilución dilucional), haciendo que el valor fisiológico de la no gestante sea re-ajustado.<br><br>Perla ENARM: \"La persona embarazada con niveles de hemoglobina por debajo de 11 gr/dl son candidatas a recibir terapia con suplemento de hierro\".<br><br>Análisis de Distractores: El corte de < 12 g/dl (D) define la anemia general en la mujer sana no embarazada. Valores de < 10.5 g/dl (C) son el límite crítico tolerado para los trimestres intermedios. Valores < 10 g/dl (A) marcan anemia franca de todos los trimestres.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Evaluación clínica, Página 57." 
+            },
+            {
+                id: 18, 
+                question: "¿A partir de qué edad gestacional exacta, documentada preferentemente por ultrasonido precoz o fecha de última regla confiable, se cataloga la condición de un embarazo postérmino?", 
+                options: ["≥ 41.0 semanas", "≥ 42.6 semanas", "≥ 41.6 semanas", "≥ 42.0 semanas"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal, el uso de clasificaciones de madurez exacta dicta el pronóstico de morbilidad por insuficiencia placentaria e hipoxia ligada a senectud. A este punto, el riesgo de muerte súbita incrementa drásticamente.<br><br>Perla ENARM: \"Clasificación de la gestación... Postérmino: 42.0 en adelante\".<br><br>Análisis de Distractores: Las semanas 41.0 a 41.6 (C y A) son catalogadas bajo el término específico de \"Término tardío\". Semanas 42.6 (B) exceden el límite basal de diagnóstico.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Cuadro 12, Página 69." 
+            },
+            {
+                id: 19, 
+                question: "Ante el escrutinio de higiene mental de una mujer gestante en su segundo trimestre que arroja 11 puntos en la Escala de Depresión de Edimburgo, ¿cuál es la conducta recomendada?", 
+                options: ["Repetir escala en 2 a 4 semanas", "Enviar urgente a psiquiatría", "Iniciar inhibidores de recaptura", "Dar de alta sin seguimiento"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal, los cambios neurohormonales pueden alterar momentáneamente la cognición afectiva sin instaurar un síndrome depresivo crónico. El periodo de ventana evita medicalizar falsos positivos por estrés transitorio.<br><br>Perla ENARM: \"En el caso de la persona embarazada que presenten entre 10 a 12 puntos, repetir la aplicación de la escala de Edimburgo entre 2 a 4 semanas después\".<br><br>Análisis de Distractores: El envío urgente a psiquiatría o psicología (B) se reserva ante una segunda prueba consecutiva que mantenga o supere los 12 puntos. El uso de inhibidores de recaptura (C) en primer nivel es negligencia diagnóstica, y dar de alta (D) ignoraría el riesgo moderado encontrado.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Promoción a la salud, Página 26." 
+            },
+            {
+                id: 20, 
+                question: "En el diagnóstico ecográfico enfocado a predecir anemia hemolítica fetal severa por isoinmunización, ¿qué valor de velocidad sistólica máxima (VSM) indica realizar transfusión intrauterina?", 
+                options: ["> 2.5 MoM", "> 2.0 MoM", "> 1.5 MoM", "> 1.0 MoM"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal, la destrucción de eritrocitos en la sangre fetal diluye la viscosidad y eleva el gasto cardiaco para mantener el flujo de oxígeno. Ese hiperflujo es detectado infaliblemente en los grandes vasos encefálicos.<br><br>Perla ENARM: \"La medición de la velocidad sistólica máxima de la arteria cerebral media... Un valor mayor a 1.5 MoM, detecta los casos de anemia modereda a severa\".<br><br>Análisis de Distractores: Valores de > 1.0 MoM (D) son los normales biológicos. Umbrales inventados o más altos como > 2.0 MoM (B) o > 2.5 MoM (A) retrasarían severamente el abordaje transfusional del feto provocando hidrops letal.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Evaluación clínica, Página 56." 
+            },
+            {
+                id: 21, 
+                question: "¿Cuál es la ganancia de peso total recomendada durante todo el embarazo para una paciente que inicia la gestación con un Índice de Masa Corporal normal (19.9 a 24.8)?", 
+                options: ["5 a 9 kg", "7 a 11.5 kg", "11 a 16.5 kg", "12.5 a 18 kg"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal con atención centrada, las metas de peso dependen directamente del estado nutricional basal para minimizar el riesgo de macrosomía y trastornos hipertensivos sin afectar el crecimiento. Para un IMC normopeso, la ventana de seguridad permite un incremento moderado.<br><br>Perla ENARM: \"Peso normal (IMC 19.9-24.8), ganancia de peso recomendado: 11-16.5 kg\".<br><br>Análisis de Distractores: La opción 5 a 9 kg (A) es la meta estricta para obesidad (IMC > 30). La opción 7 a 11.5 kg (B) corresponde a la meta para sobrepeso (IMC 24.9-29.9). La opción 12.5 a 18 kg (D) se permite exclusivamente en pacientes con bajo peso inicial (IMC < 19.8).", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Cuadro 1, Página 65." 
+            },
+            {
+                id: 22, 
+                question: "¿En qué periodo exacto de la gestación está indicado realizar el ultrasonido estructural para la detección oportuna de anomalías anatómicas fetales?", 
+                options: ["11 a 13.6 semanas", "14 a 17 semanas", "18 a 22 semanas", "24 a 28 semanas"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal con atención centrada, este es el periodo de mayor rentabilidad ecográfica, ya que la organogénesis está completa, el volumen de líquido amniótico es óptimo para brindar ventana acústica y el tamaño fetal permite la visualización detallada del corazón y sistema nervioso.<br><br>Perla ENARM: \"En todas las embarazadas, entre las 18 y 22 SDG se debe efectuar un ultrasonido para determinar anomalías estructurales\".<br><br>Análisis de Distractores: De 11 a 13.6 semanas (A) es la ventana para tamizaje genético (translucencia nucal y hueso nasal) y datación temprana, no para exploración estructural fina. Los cortes de 14 a 17 semanas (B) y 24 a 28 semanas (D) carecen de los indicadores normativos para considerarse los escaneos anatómicos de oro y tienen limitantes de tamaño u osificación, respectivamente.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Evaluación Clínica, Página 51." 
+            },
+            {
+                id: 23, 
+                question: "¿Cuál es la posición física recomendada para la paciente embarazada en el sillón dental con el fin de evitar el síndrome de hipotensión supina?", 
+                options: ["Decúbito supino estricto", "Inclinación lateral derecha", "Inclinación lateral izquierda", "Elevación de cadera izquierda"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal con atención centrada, el peso del útero grávido en decúbito supino comprime la vena cava inferior disminuyendo el retorno venoso, el gasto cardíaco materno y el flujo útero-placentario. Las adecuaciones posicionales de la silla dental son obligatorias.<br><br>Perla ENARM: \"Es recomendable que la persona embarazada adopte una posición adecuada y cómoda en el sillón dental, es decir, sentada y elevando su cadera derecha 10 a 12 cm, o colocarse en una posición inclinada entre 5 a 15 grados sobre su lado izquierdo\".<br><br>Análisis de Distractores: El decúbito supino (A) es la maniobra que causa la compresión hemodinámica y precipita el choque. La inclinación lateral derecha (B) acentúa la compresión sobre la vena cava (ubicada a la derecha de la línea media). La elevación de la cadera izquierda (D) arroja el útero hacia el lado derecho, comprimiendo la vena cava.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Promoción a la salud, Página 28." 
+            },
+            {
+                id: 24, 
+                question: "¿A partir de qué edad gestacional está recomendada preferentemente la aplicación de la vacuna Tdpa para asegurar la máxima protección pasiva neonatal contra la tosferina?", 
+                options: ["Antes de 12 semanas", "12 a 16 semanas", "Después de 20 semanas", "Posparto inmediato"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal con atención centrada, la aplicación tardía de antígenos maternos produce un pico sérico de anticuerpos IgG que cruzan activamente la barrera placentaria al feto antes del nacimiento, otorgándole protección en sus primeros meses de vida vulnerables.<br><br>Perla ENARM: \"La persona embarazada que tiene antecedente de haber recibido vacuna con toxoide tetánico y toxoide diftérico (vacuna Td) puede recibir la vacuna Tdpa... Preferentemente despues de la semana 20 de gestación\".<br><br>Análisis de Distractores: Aplicaciones antes de 12 semanas (A) o 12 a 16 semanas (B) conllevan a un pico de anticuerpos maternos precoz y decaimiento de los mismos para el momento del tercer trimestre, limitando la transferencia transplacentaria. La aplicación posparto (D) ya no ofrece inmunidad pasiva intrauterina al recién nacido.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Prevención de enfermedades, Página 20." 
+            },
+            {
+                id: 25, 
+                question: "¿A partir de qué semana de gestación está indicado iniciar rutinariamente la profilaxis con hierro (30 a 60 mg) para prevenir la anemia materna?", 
+                options: ["Semana 12", "Semana 16", "Semana 20", "Semana 28"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal con atención centrada, la expansión de la masa eritrocitaria exige reservas férricas que la dieta sola no puede suplir de manera eficaz al alcanzar la segunda mitad del embarazo. Iniciar antes exacerba la hiperémesis gravídica; iniciar en este punto equilibra tolerancia y prevención.<br><br>Perla ENARM: \"La suplementación con hierro (30-60 mg) para la persona embarazada puede ser recomendada como una estrategia preventiva para evitar la anemia materna, iniciando idealmente a las 20 semanas de gestación\".<br><br>Análisis de Distractores: En la semana 12 (A) o 16 (B) las demandas fetales de hierro aún son bajas, y la suplementación se reserva solo si hay anemia preexistente documentada. Esperar hasta la semana 28 (D) permite el desarrollo franco de una anemia por hemodilución.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Promoción a la salud, Página 16." 
+            },
+            {
+                id: 26, 
+                question: "En una paciente evaluada entre las semanas 20 y 24, se reporta una longitud cervical por ultrasonido endovaginal < 25 mm. ¿Cuál es el tratamiento de primera línea indicado para prevenir la prematurez en este escenario?", 
+                options: ["Reposo absoluto en cama", "Indometacina vía oral", "Cerclaje cervical de urgencia", "Progesterona vaginal"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal con atención centrada, el acortamiento cervical del segundo trimestre denota maduración bioquímica anticipada del tejido conectivo, la cual puede ser detenida exitosamente mediante el efecto inmunomodulador local y relajante del músculo liso de este gestágeno hasta la semana 34.<br><br>Perla ENARM: \"Mujeres con embarazo único y longitud cervical menor de 25 mm por ecografía transvaginal entre las 20 a 24 semanas... Progesterona vaginal hasta la semanas 34\".<br><br>Análisis de Distractores: El reposo absoluto (A) aumenta el riesgo trombótico materno sin prevenir el trabajo de parto prematuro. La indometacina (B) es un tocolítico para APP instaurada, no de mantenimiento profiláctico. El cerclaje (C) es de elección exclusiva temprana si < 15 mm entre las semanas 13 a 15, no es primera línea de rescate si el cérvix está <25 mm a las 24 semanas sin pérdida previa documentada.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Algoritmo 6, Página 64." 
+            },
+            {
+                id: 27, 
+                question: "Para la prevención de preeclampsia en pacientes con factores de riesgo, ¿cuál es la dosis diaria y el horario de administración recomendados del ácido acetilsalicílico?", 
+                options: ["50 mg cada 12 horas", "100 mg por la mañana", "80 a 150 mg antes de dormir", "300 mg cada 24 horas"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal con atención centrada, la aspirina altera selectivamente el balance tromboxano-prostaciclina hacia la vasodilatación y el ritmo circadiano demuestra que su efecto sobre la relajación endotelial de la arteria uterina y perfil tensional es superior cuando se administra de noche.<br><br>Perla ENARM: \"Ácido acetilsalicílico: Dosis de 80 a 150 mg/día administrada antes de dormir, obligatoria para riesgo de trastornos hipertensivos\".<br><br>Análisis de Distractores: La dosis de 300 mg (D) es excesiva y antiinflamatoria, superando el bloqueo plaquetario. Dividir la dosis (A) es innecesario por la inhibición plaquetaria irreversible de la COX. Tomarla por la mañana (B) no maximiza la disminución de la resistencia de la arteria uterina en perfiles nocturnos fisiológicos.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Tamizaje de Patologías, Página 21." 
+            },
+            {
+                id: 28, 
+                question: "Según la clasificación actual de la edad gestacional, ¿qué periodo comprende específicamente la definición de embarazo de \"Término temprano\"?", 
+                options: ["36.0 a 36.6 semanas", "37.0 a 38.6 semanas", "39.0 a 40.6 semanas", "41.0 a 41.6 semanas"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal con atención centrada, clasificar al producto más allá del simple \"de término\" optimiza la estimación de maduración pulmonar y resultados perinatales; aquellos nacidos en este lapso tienen mayores tasas de morbilidad respiratoria e hipoglucemia que aquellos alcanzando la semana 39.<br><br>Perla ENARM: \"Termino temprano: 37.0 hasta 38.6 semanas\".<br><br>Análisis de Distractores: De 36.0 a 36.6 semanas (A) es Pretérmino Tardío. De 39.0 a 40.6 semanas (C) es \"A Término\" clásico completo. De 41.0 a 41.6 semanas (D) se define bajo nomenclatura exclusiva como \"Término Tardío\".", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Cuadro 12, Página 69." 
+            },
+            {
+                id: 29, 
+                question: "Durante la evaluación con tira reactiva de orina en la consulta, se reporta un resultado de 1+ de proteínas. ¿Cuál es el siguiente paso diagnóstico obligatorio para confirmar la severidad?", 
+                options: ["Iniciar tratamiento antibiótico empírico", "Recolección de orina de 24 horas", "Solicitar urocultivo con antibiograma", "Repetir tira reactiva en 1 mes"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal con atención centrada, las tiras reactivas tamizan proteínas en rangos semi-cuantitativos que sufren gran sesgo por el estado de hidratación o concentración del filtrado; toda traza de 1+ obliga a cuantificar su valor real debido a la alta asociación de daño de órgano blanco con niveles > 300 mg.<br><br>Perla ENARM: \"Un resultado por tira reactiva de 1+ requiere confirmación a través de recolección de orina de 24 horas para cuantificar la cantidad de proteinuria, debido a que se correlaciona con 0.3 g o más de proteinuria\".<br><br>Análisis de Distractores: El inicio de antibióticos (A) o solicitud de urocultivo (C) sería si el tamizaje detectara nitritos o leucocituria confirmando bacteriuria, no proteinuria aislada. Repetir la tira en un mes (D) retrasa el abordaje potencial de una preeclampsia en instauración.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Evaluación clínica, Página 34." 
+            },
+            {
+                id: 30, 
+                question: "En embarazos clasificados de alto riesgo, ¿cuál es la edad gestacional de inicio recomendada para la evaluación del bienestar fetal mediante prueba sin estrés (PSS)?", 
+                options: ["24 a 28 semanas", "28 a 30 semanas", "32 a 34 semanas", "36 a 38 semanas"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal con atención centrada, la respuesta cardiovascular a los movimientos inducidos depende enteramente de la madurez de integración de los centros autonómicos pontinos, los cuales alcanzan su desarrollo óptimo para dar un falso positivo mínimo recién entrado el tercer trimestre avanzado.<br><br>Perla ENARM: \"Se recomienda el inicio de pruebas de bienestar fetal a partir de las 32-34 semanas, y se puede considerar realizarlas a edades gestacionales menores si existen condiciones de muy alto riesgo para la madre y el feto\".<br><br>Análisis de Distractores: Antes de la semana 32 (A y B), el sistema neurocardíaco inmaduro frecuentemente genera trazos falsamente no reactivos, derivando intervenciones fútiles. Retrasarlo a 36-38 semanas (D) ignora la ventana de insuficiencia placentaria e incremento en muerte súbita para un embarazo de alto riesgo.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Evaluación clínica, Página 53." 
+            },
+            {
+                id: 31, 
+                question: "¿Qué tipo de placentación en un embarazo gemelar detectado durante el primer trimestre exige la referencia absoluta y directa al tercer nivel de atención médica?", 
+                options: ["Bicorial biamniótico", "Monocorial", "Bicorial fusionado", "Dicigótico"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal con atención centrada, al compartir una misma masa placentaria, la existencia de anastomosis vasculares profundas pone a estos fetos en inminente riesgo de síndrome de transfusión feto-fetal, requiriendo vigilancia ecográfica experta y eventual fotocoagulación láser.<br><br>Perla ENARM: \"Se sugiere referir de segundo a tercer nivel: Primer trimestre: Embarazo gemelar monocorial\".<br><br>Análisis de Distractores: Los embarazos gemelares bicoriales (A y C) (cada feto tiene su placenta) y los dicigóticos (D) (siempre bicoriales) tienen riesgos relativos de prematurez que pueden ser vigilados eficazmente en un segundo nivel de atención.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Criterios de Referencia, Página 58." 
+            },
+            {
+                id: 32, 
+                question: "¿Cuál es el volumen total diario de ingesta de líquidos recomendada para optimizar la hidratación materna durante la gestación?", 
+                options: ["1.5 litros diarios", "2.0 litros diarios", "3.1 litros diarios", "4.5 litros diarios"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal con atención centrada, la paciente expande masivamente su volumen plasmático y debe incrementar la hidratación basal, la cual asiste en mejorar el líquido amniótico y disminuir episodios de contractilidad por liberación de ADH central cruzada con oxitocina.<br><br>Perla ENARM: \"Es recomendable que todas persona embarazada tenga un consumo total agua en promedio de 3.1 litros por día (alimentos y líquidos de la dieta), donde aproximadamente 2.3 litros (9 tazas por día) corresponda a agua\".<br><br>Análisis de Distractores: Ingestas de 1.5 L o 2.0 L diarios (A y B) son volúmenes recomendados para el adulto no gestante, propiciando deshidratación y bacteriuria. Un volumen de 4.5 L (D) sin indicación excede las metas habituales y precipitaría poliuria inmanejable por compresión vesical fisiológica.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Promoción a la salud, Página 17." 
+            },
+            {
+                id: 33, 
+                question: "La presencia de enfermedad periodontal no tratada durante el embarazo eleva 1.6 veces la probabilidad de desarrollar directamente:", 
+                options: ["Diabetes gestacional", "Parto pretérmino", "Preeclampsia severa", "Ruptura prematura de membranas"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal con atención centrada, la infección crónica de los tejidos de sostén dental genera diseminación hematógena silente de microorganismos anaerobios y una descarga sostenida de prostaglandinas y citocinas proinflamatorias sistémicas que activan la decidua.<br><br>Perla ENARM: \"La enfermedad periodontal está asociada con 1.6 veces la probabilidad de riesgo de presentar parto pretérmino (IC95% 1.1-2.3) y el riesgo aumenta si la enfermedad progresa durante el embarazo\".<br><br>Análisis de Distractores: Aunque puede existir microinflamación sistémica, la asociación fuerte y directa calculada en la GPC no es para el endotelio sistémico (preeclampsia - C) ni falla metabólica pura (diabetes - A). El riesgo estadístico primario establecido es desencadenar actividad uterina prematura.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Promoción a la salud, Página 26." 
+            },
+            {
+                id: 34, 
+                question: "Al reajustar el esquema antihipertensivo en una gestante con hipertensión crónica, ¿qué betabloqueador específico se recomienda suspender por incrementar el riesgo de fetos pequeños para la edad gestacional?", 
+                options: ["Metoprolol", "Labetalol", "Propranolol", "Atenolol"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal con atención centrada, no todos los betabloqueadores son iguales; el atenolol altera drásticamente el flujo hemodinámico fetal y frena de manera tóxica la mitosis y desarrollo de peso fetal cuando se usa como control a largo plazo en la pregestacional.<br><br>Perla ENARM: \"El atenolol, el prazosín y los diuréticos no están recomendados durante el embarazo, ya que incrementan el riesgo de muerte fetal y bajo peso para la edad gestacional\".<br><br>Análisis de Distractores: El labetalol (B) es uno de los antihipertensivos de primera elección internacional por excelencia en el embarazo. El metoprolol (A) y propranolol (C) son betabloqueadores catalogados como seguros como fármacos alternativos o para la modulación de arritmias, sin el efecto restrictivo letal del atenolol.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Evaluación clínica, Página 54." 
+            },
+            {
+                id: 35, 
+                question: "¿A partir de qué semana de gestación se considera un signo de alarma obstétrica inminente la ausencia de movimientos fetales por más de 2 horas?", 
+                options: ["20 semanas", "24 semanas", "28 semanas", "32 semanas"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal con atención centrada, al iniciar el tercer trimestre el patrón neurológico fetal y la cantidad de líquido amniótico establecen una cinemática que debe ser constante. El letargo es el último mecanismo de ahorro energético antes de la asfixia letal.<br><br>Perla ENARM: \"Los signos y síntomas de alarma por los que una gestante... debe acudir inmediatamente... Disminución o ausencia de movimientos fetales por más de 2 horas, después de la semanas 28\".<br><br>Análisis de Distractores: A las 20 y 24 semanas (A y B) los movimientos apenas se vuelven lo suficientemente francos para ser percibidos por primigestas sin establecer un patrón temporal rígido constante. A las 32 semanas (D) ya se exige incluso PSS, pero la alarma de conteo basal inicia en el punto de inflexión fisiológico viabilista a las 28.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Evaluación Clínica, Página 19." 
+            },
+            {
+                id: 36, 
+                question: "En una paciente con glucosa de ayuno normal en el primer trimestre pero clasificada de alto riesgo, ¿en qué periodo se debe realizar la curva de tolerancia a la glucosa oral para tamizaje de diabetes gestacional?", 
+                options: ["18 a 22 semanas", "24 a 28 semanas", "28 a 32 semanas", "32 a 36 semanas"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal con atención centrada, las hormonas con efecto contrainsular y resistencia lipolítica secretadas por el sincitiotrofoblasto (principalmente el lactógeno placentario) logran su umbral de choque máximo exclusivamente a inicios del tercer trimestre biológico, desenmascarando el fracaso pancreático.<br><br>Perla ENARM: \"Se debe realizar el tamiz o CTGO entre la semana 24 y 28 de gestación en la persona embarazada de moderado y alto riesgo que tuvieron resultado de glucosa de ayuno normal en la primera visita prenatal\".<br><br>Análisis de Distractores: Realizarla a las 18-22 semanas (A) generará falsos negativos al no estar presente aún el pico lactogénico. Semanas 28 a 32 (C) o 32 a 36 (D) son diagnósticos tardíos donde la macrosomía y el hiperinsulinismo fetal ya sufrieron un daño intrauterino prolongado irreversible.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Tamizaje de patologías, Página 29." 
+            },
+            {
+                id: 37, 
+                question: "Durante el ultrasonido estructural obstétrico, la GPC exige que la valoración del corazón fetal no solo visualice 4 cámaras, sino obligatoriamente:", 
+                options: ["Tractos de salida y tres vasos", "Ductus venoso e índice de Tei", "Tabique interventricular exclusivo", "Vena cava inferior e istmo aórtico"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal con atención centrada, visualizar únicamente los ventrículos pasa por alto grandes cardiopatías congénitas conotruncales que son incompatibles con la transición de vida extrauterina al pinzar el cordón, como la tetralogía de Fallot y transposición de grandes arterias.<br><br>Perla ENARM: \"La ecografía obstétrica básica debe incluir la evaluación de las cuatro cámaras, tracto de salida derecho e izquierdo y tres vasos\".<br><br>Análisis de Distractores: El ductus venoso y el índice Tei (B) son mediciones Doppler para evaluar hemodinamia en falla cardiaca derecha o isoinmunización, no marcadores anatómicos primarios. El tabique interventricular solo (C) es incompleto de manera flagrante.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Evaluación clínica, Página 56." 
+            },
+            {
+                id: 38, 
+                question: "¿Cuál es la conducta indicada respecto a la inmunoglobulina anti-D si se tiene la certeza clínica y laboratorial de que la pareja de la gestante Rh negativa también es Rh negativo?", 
+                options: ["Aplicar profilaxis a las 28 semanas", "No requiere administración de anti-D", "Aplicar dosis única a las 20 semanas", "Realizar Coombs indirecto mensual"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal con atención centrada, por herencia mendeliana estricta, la cruza de dos fenotipos recesivos carentes del antígeno D asegurará un feto invariablemente negativo para el antígeno, siendo imposible la disonancia hemolítica.<br><br>Perla ENARM: \"La persona embarazada con grupo Rh negativo y cuya pareja sea del mismo grupo sanguíneo (Rh negativo) no requiere administración de anti-D para evitar aloinmunización\".<br><br>Análisis de Distractores: Aplicar la inmunoglobulina a las 28 semanas (A) o 20 semanas (C) supondría un desperdicio del biológico y una intervención médica innecesaria. El Coombs mensual (D) también es inútil al no existir antígeno desencadenante en la circulación. Solo se procedería si hubiere duda de paternidad.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Prevención de enfermedades, Página 24." 
+            },
+            {
+                id: 39, 
+                question: "¿Cuál es la ganancia de peso materno súbita que constituye un signo clínico de alarma para canalización a urgencias por sospecha de trastorno hipertensivo?", 
+                options: ["> 0.5 kg por semana", "> 1 kg por semana", "> 2 kg por semana", "> 3 kg por semana"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal con atención centrada, ningún incremento fisiológico hipercalórico justifica retener esta masa abrupta en 7 días; una expansión hídrica tan voraz traduce disfunción y fuga capilar endotelial masiva, síntoma ominoso de la cascada preeclámptica.<br><br>Perla ENARM: \"Los signos y síntomas de alarma por los que una gestante... debe acudir inmediatamente a un hospital... Aumento de peso mayor a dos kilos por semana\".<br><br>Análisis de Distractores: Aumentar 0.5 kg a la semana (A) es el incremento fisiológico normal tolerado en el tercer trimestre de las mujeres sanas. Aumentos de 1 kg (B) sugieren sobrealimentación aguda pero no determinan un estado de choque inminente de urgencia hospitalaria absoluta como lo hace el corte exacto de la guía.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Promoción a la salud, Página 19." 
+            },
+            {
+                id: 40, 
+                question: "Al interpretar una prueba sin estrés (PSS) en un feto menor a 32 semanas de gestación, ¿qué parámetros de ascenso definen una aceleración de la frecuencia cardíaca fetal normal?", 
+                options: ["≥ 15 lpm con duración de 15 segundos", "≥ 10 lpm con duración de 10 segundos", "≥ 5 lpm con duración de 5 segundos", "≥ 20 lpm con duración de 20 segundos"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Control Prenatal con atención centrada, antes de la semana 32 de la gestación, el grado de mielinización y madurez del nervio vago y cadena simpática simpática impiden montar aceleraciones amplias, disminuyendo el umbral normativo que garantiza una correcta fisiología neurológica intacta sin hipoxia.<br><br>Perla ENARM: \"Clasificación Anteparto de la prueba... Feto pretermino (<32 semanas): ≥ 2 aceleraciones con acme de ≥ 10 latidos por minuto con duraciones de 10 segundos\".<br><br>Análisis de Distractores: El parámetro de ≥ 15 lpm por 15 segundos (A) es el criterio obligatorio exigido después de la semana 32. Los parámetros (C) y (D) son criterios ecográficos y de viabilidad inventados para la variabilidad de base, no pautas definitorias de aceleración.", 
+                source: "IMSS-028-08, Control prenatal con atención centrada en la paciente, 2017, Cuadro 16, Página 75." 
+            }
+        ];
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('gyoAMLastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('gyoAMProgress');
+                localStorage.removeItem('gyoAMLastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-pink-500 shadow-md z-10 border-pink-500 dark:border-pink-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-rose-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "GINECOLOGÍA Y OBSTETRICIA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "GPC IMSS-028-08 • Control Prenatal Centrado en la Paciente";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="BM05219GYOE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-pink-100 dark:border-pink-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-pink-50 has-[:checked]:border-pink-400 dark:has-[:checked]:bg-pink-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-pink-600 dark:hover:bg-pink-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('gyoAMProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('gyoAMLastQId', currentQuestionId);
+                else localStorage.removeItem('gyoAMLastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('gyoAMProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

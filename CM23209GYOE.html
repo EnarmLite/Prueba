@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================
+        // =========================================================
+        const questionsData = [
+            {
+                id: 1, 
+                question: "¿Cuál es el método de elección para establecer el diagnóstico histopatológico definitivo en sospecha de Cáncer de Mama?", 
+                options: ["Citología por impronta", "Biopsia con aguja de corte", "Biopsia por aspiración", "Biopsia escisional quirúrgica"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, el estudio histopatológico es la piedra angular del manejo oncológico, y la obtención de tejido cilíndrico (trucut) de forma manual o guiada por imagen permite no solo ver la morfología celular sino determinar la infiltración y los receptores hormonales.<br><br>Perla ENARM: El diagnóstico de cáncer de mama se establece con estudio histopatológico. El método más recomendable para obtener el diagnóstico histológico es a través de las biopsias con aguja de corte de forma manual, ya sea por estereotaxia guiada por ultrasonido, por mastografía o de manera clínica.<br><br>Análisis de Distractores: La citología por impronta se utiliza para valorar márgenes transoperatorios. La biopsia por aspiración no establece diagnóstico primario, solo se indica para metástasis ganglionares. La biopsia escisional queda relegada exclusivamente para cuando no se cuenta con los recursos de aguja de corte.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Abordaje inicial de pacientes, Página 36." 
+            },
+            {
+                id: 2, 
+                question: "¿Qué puntaje en el Índice Pronóstico de Van Nuys indica la realización de escisión local amplia exclusiva para el Carcinoma Ductal In Situ?", 
+                options: ["4 a 6 puntos", "7 a 9 puntos", "10 a 12 puntos", "≥ 13 puntos"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, esta escala permite estratificar el riesgo de recaída local considerando tamaño, edad, márgenes y grado nuclear. Las lesiones muy pequeñas y bien delimitadas tienen bajo riesgo y se benefician de la cirugía conservadora sin necesidad de terapia adyuvante con radiación.<br><br>Perla ENARM: El Índice de Van Nuys contempla un rango numérico de 4 a 12 con las siguientes recomendaciones para el tratamiento: 4, 5 y 6 puntos: Escisión local amplia (lumpectomía).<br><br>Análisis de Distractores: Los 7 a 9 puntos exigen agregar radioterapia postoperatoria. Los 10 a 12 puntos indican mastectomía total por el alto riesgo de falla local. Un puntaje de 13 no existe dentro del diseño de la escala clínica.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Tratamiento Carcinoma ductal In Situ, Página 40." 
+            },
+            {
+                id: 3, 
+                question: "¿Cuál es la técnica ideal para la identificación transoperatoria del ganglio centinela en estadios tempranos?", 
+                options: ["Tinta china y fluoresceína", "Azul de metileno exclusivo", "Radioisótopo y colorante", "Marcador magnético guiado"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, el uso combinado de un radiotrazador detectado con sonda gamma y un tinte visual aumenta significativamente la tasa de identificación del primer relevo linfático, disminuyendo la curva de falsos negativos en la estadificación axilar.<br><br>Perla ENARM: En relación con la técnica para ganglio centinela, varios estudios demostraron una elevada concordancia independientemente del sitio de inyección. La técnica ideal es con doble marcador utilizando radioisótopo y colorante.<br><br>Análisis de Distractores: La tinta china y marcadores magnéticos no son el estándar recomendado por la evidencia mexicana. El uso de colorante vital exclusivo se considera solo como segunda línea si no se cuenta con el departamento de medicina nuclear en el hospital.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Alternativas de tratamiento quirúrgico de la axila, Página 58." 
+            },
+            {
+                id: 4, 
+                question: "¿Qué modalidad de imagen está formalmente contraindicada para la evaluación de la paciente embarazada con Cáncer de Mama?", 
+                options: ["Tomografía por emisión", "Radiografía de tórax", "Resonancia magnética contrastada", "Ultrasonido Doppler mamario"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, los metales pesados utilizados como contraste venoso atraviesan libremente la placenta hacia la circulación fetal y su toxicidad o efectos teratogénicos sobre el desarrollo del sistema nervioso embrionario no están descartados.<br><br>Perla ENARM: El gadolinio que se utiliza en la resonancia magnética (RM) de mama cruza la barrera placentaria y sus efectos en el feto se desconocen. La RM de mama no se recomienda durante el embarazo.<br><br>Análisis de Distractores: El ultrasonido es el estudio primario de elección. La radiografía de tórax se puede realizar con protección abdominal de plomo. La tomografía por emisión se engloba en contraindicación de radiación junto con TC, pero el uso de gadolinio es la contraindicación clínica puntual preguntada frecuentemente.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Cáncer de mama y Embarazo, Página 102." 
+            },
+            {
+                id: 5, 
+                question: "¿Cuál es el fármaco de primera línea para la adyuvancia en pacientes premenopáusicas con receptores hormonales positivos?", 
+                options: ["Trastuzumab", "Anastrozol", "Doxorrubicina", "Tamoxifeno"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, al existir tejido ovárico funcional, la inhibición de la aromatasa periférica es ineficaz. Se requiere un modulador selectivo del receptor estrogénico que bloquee competitivamente la unión de la hormona en el tejido mamario para evitar recidivas a largo plazo.<br><br>Perla ENARM: En la persona con cáncer de mama que cursa con premenopausia y receptores hormonales positivos se considera como primera opción el tamoxifeno por 5 años.<br><br>Análisis de Distractores: El anastrozol está indicado únicamente en la postmenopausia o falla ovárica. El trastuzumab bloquea la vía HER-2, no la vía estrogénica. La doxorrubicina es un agente citotóxico de quimioterapia, no hormonoterapia.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Terapia Endócrina Adyuvancia, Página 93." 
+            },
+            {
+                id: 6, 
+                question: "¿Cuál es el paso terapéutico inicial obligatorio en el algoritmo clínico del Cáncer de Mama Inflamatorio?", 
+                options: ["Cuadrantectomía superior externa", "Quimioterapia sistémica neoadyuvante", "Mastectomía radical modificada", "Radioterapia de consolidación"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, esta variedad (T4d) presenta una permeación linfática dérmica diseminada que imposibilita los márgenes quirúrgicos limpios de inicio. La citotoxicidad sistémica induce la disminución del volumen celular y desinflama la piel permitiendo un posterior abordaje local seguro.<br><br>Perla ENARM: Cáncer de Mama Inflamatorio. Tratamiento: Quimioterapia neoadyuvante. Si presenta respuesta clínica: Mastectomía radical modificada.<br><br>Análisis de Distractores: La mastectomía radical o cuadrantectomía de inicio garantizan bordes positivos y recaída inminente. La radioterapia puede estar indicada si hay nula respuesta a quimioterapia o después de la cirugía, pero nunca sustituye la urgencia del manejo sistémico primario.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Algoritmo 4, Página 146." 
+            },
+            {
+                id: 7, 
+                question: "¿En qué momento debe solicitarse el primer estudio mastográfico de vigilancia tras una cirugía conservadora complementada con radioterapia?", 
+                options: ["A las 4 semanas", "A los 3 meses", "A los 6 meses", "A los 12 meses"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, la toxicidad lumínica sobre el tejido mamario genera edema, engrosamiento trabecular y distorsión de la arquitectura que simulan falsos positivos. Se requiere un periodo mínimo de resolución de los efectos agudos para lograr un escrutinio basal interpretable.<br><br>Perla ENARM: En la persona con cáncer de mama tratada con cirugía conservadora iniciarán su control mastográfico al menos 6 meses después de haber concluido la radioterapia; las mastografías subsecuentes es recomendable realizarse anualmente.<br><br>Análisis de Distractores: Los plazos tempranos como 4 semanas o 3 meses cursarán con inflamación post-radiación severa. Esperar hasta los 12 meses para el primer rastreo basal pospone la detección temprana de posibles fallas locorregionales en tejido preservado.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Seguimiento y Vigilancia, Página 83." 
+            },
+            {
+                id: 8, 
+                question: "¿Con qué periodicidad se debe monitorizar la densidad mineral ósea en pacientes manejadas con inhibidores de aromatasa?", 
+                options: ["Cada 6 meses", "Anual por 3 años", "Bienal por 5 años", "Mensual con calcio"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, la supresión profunda y sostenida de estrógenos acelera la resorción osteoclástica elevando el riesgo de osteopenia y fracturas patológicas, requiriendo un monitoreo estricto de la columna y cadera a corto plazo para decidir la suplementación farmacológica con bifosfonatos.<br><br>Perla ENARM: En la persona con cáncer de mama y que recibe inhibidores de aromatasa, y presenta falla ovárica secundaria al tratamiento, se sugiere realizar densitometría ósea de columna y cadera anual los primeros 3 años, teniendo como comparativa la densitometría basal.<br><br>Análisis de Distractores: Las densitometrías cada 6 meses o mensuales superan la tasa metabólica del recambio óseo medible. La revisión cada 2 años está reservada para pacientes con menopausia prematura o un T-score basal menor a -1 DE sin uso de IA.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Seguimiento y Vigilancia, Página 85." 
+            },
+            {
+                id: 9, 
+                question: "¿Qué tratamiento farmacológico está categóricamente contraindicado en la adyuvancia del Cáncer de Mama masculino?", 
+                options: ["Tamoxifeno", "Trastuzumab", "Inhibidores de aromatasa", "Ciclofosfamida"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, en los varones gran parte del estrógeno proviene de la conversión testicular independiente de la aromatasa y su uso paradójicamente eleva la retroalimentación androgénica sistémica, provocando un fallo terapéutico oncológico.<br><br>Perla ENARM: En el tratamiento adyuvante se siguen los mismos lineamientos que para la mujer. En el hombre se encuentran contraindicados los inhibidores de aromatasa.<br><br>Análisis de Distractores: El tamoxifeno es el tratamiento de oro por excelencia en hombres, demostrando aumento claro en la supervivencia. El trastuzumab y la ciclofosfamida se utilizan con normalidad cuando la biología tumoral lo exige.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Cáncer de Mama en Hombres, Página 112." 
+            },
+            {
+                id: 10, 
+                question: "¿A partir de qué edad gestacional se avala la interrupción del embarazo por vía vaginal en pacientes oncológicas para continuar su manejo sistémico?", 
+                options: ["≥ 32 semanas", "≥ 34 semanas", "≥ 36 semanas", "≥ 38 semanas"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, a pesar de la neoplasia de fondo, se debe garantizar la madurez pulmonar fetal para prevenir morbimortalidad neonatal, favoreciendo siempre el parto eutócico en gestaciones de término si las condiciones maternas lo permiten sin precipitar una cesárea injustificada.<br><br>Perla ENARM: La resolución del embarazo puede considerarse por vía vaginal en gestaciones mayores de 38 semanas de gestación.<br><br>Análisis de Distractores: Finalizar la gestación a las 32, 34 o 36 semanas incurre en riesgos de prematuridad, indicándose únicamente ante toxicidad materna letal o preeclampsia, no como regla oncológica programada.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Cáncer de mama y Embarazo, Página 106." 
+            },
+            {
+                id: 11, 
+                question: "¿Cuál es el intervalo temporal límite normado para iniciar la radioterapia adyuvante tras la conclusión de la quimioterapia?", 
+                options: ["8 semanas", "12 semanas", "16 semanas", "24 semanas"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, retrasar los fotones sobre el lecho mamario permite la repoblación de las clonas neoplásicas microscópicas locales y aumenta exponencialmente la falla de control regional, perdiendo la ventana de curación en pacientes con tumores invasores.<br><br>Perla ENARM: Se recomienda en persona con cáncer de mama, candidata a quimioterapia y RT, otorgar primero quimioterapia. La radioterapia no se deberá de retrasar más de 24 semanas.<br><br>Análisis de Distractores: Las pautas de 8, 12 o 16 semanas son óptimas y preferibles, pero el límite clínico de eficacia donde la supervivencia libre de enfermedad cae drásticamente se sitúa en el umbral de los seis meses posquimioterapia.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Tratamiento adyuvante con radioterapia, Página 72." 
+            },
+            {
+                id: 12, 
+                question: "Según el inmunofenotipo pronóstico, ¿qué porcentaje de proliferación Ki67 clasifica a un tumor luminal como de alto grado replicativo (Luminal B)?", 
+                options: ["> 5%", "> 10%", "> 14%", "> 25%"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, el antígeno marcador de proliferación celular es el divisor pronóstico fundamental entre los tumores estrógeno-dependientes de curso indolente y aquellos biológicamente agresivos que requerirán quimioterapia obligatoria para frenar la mitosis acelerada.<br><br>Perla ENARM: Luminal B: Receptores hormonales -/+, Receptores de progesterona +, HER-2 + o Ki67 >14%. Pronóstico intermedio.<br><br>Análisis de Distractores: Valores menores al 14% tipifican al subtipo Luminal A (buen pronóstico). Un corte de 25% es francamente elevado y definitivamente Luminal B, pero la GPC dicta el límite operativo exacto en el catorce por ciento.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Subtipos moleculares, Página 144." 
+            },
+            {
+                id: 13, 
+                question: "¿Cuál es la principal indicación diagnóstica para emplear la biopsia por aspiración con aguja fina en esta patología?", 
+                options: ["Sospecha de microcalcificaciones", "Estudio de metástasis ganglionares", "Medición de receptores estrogénicos", "Tumor primario mayor a 5 cm"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, la citología exfoliativa carece de arquitectura tisular, por lo que no puede distinguir invasión estromal mamaria. No obstante, si se recuperan células atípicas desde un ganglio axilar, es concluyente para documentar estadificación locorregional sin recurrir al bisturí.<br><br>Perla ENARM: No se recomienda establecer diagnóstico de cáncer de mama para ningún tipo histológico con el reporte de biopsia por aspiración con aguja fina (BAAF). El mejor valor diagnóstico de la BAAF es para establecer diagnóstico de metástasis ganglionares.<br><br>Análisis de Distractores: El diagnóstico del tumor primario y la toma de receptores hormonales exigen un cilindro de trucut. Las microcalcificaciones se biopsian por aguja de corte o sistema de vacío estereotáctico (Mammotome).", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Abordaje inicial, Página 36." 
+            },
+            {
+                id: 14, 
+                question: "De los subtipos moleculares sistémicos, ¿cuál registra la más alta tasa de Respuesta Patológica Completa con quimioterapia neoadyuvante?", 
+                options: ["Luminal A puro", "Inmunotipo Triple Negativo", "Inmunotipo HER-2 positivo", "Carcinoma lobulillar pleomórfico"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, los tumores con amplificación del receptor epidérmico responden agresivamente a los citotóxicos asociados al bloqueo biológico con Trastuzumab, erradicando por completo el nido tumoral primario hasta en dos terceras partes de las pacientes en quirófano.<br><br>Perla ENARM: De acuerdo al inmunofenotipo la respuesta patológica completa (RPC) es mayor en los casos de enfermedad HER-2 positivo (45 a 65%).<br><br>Análisis de Distractores: El Triple negativo responde bien, pero ronda solo el 30%. El Luminal A y los carcinomas lobulillares clásicos son los menos quimiosensibles de todos, alcanzando escasamente un 7% de esterilización tumoral completa.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Cuadro 7 Respuesta Patológica, Página 143." 
+            },
+            {
+                id: 15, 
+                question: "Ante una Enfermedad de Paget mamaria sin evidencia clínica o radiológica de tumor profundo, ¿cuál tratamiento quirúrgico es la primera opción?", 
+                options: ["Escisión local más radioterapia", "Disección ganglionar exclusiva", "Mastectomía radical de urgencia", "Resección de piel superficial"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, la afectación tumoral intraepitelial del complejo areola-pezón puede tratarse erradicando únicamente el cilindro retroareolar afectado, siempre y cuando se complemente el lecho quirúrgico y el remanente glandular con radioterapia para impedir recurrencias.<br><br>Perla ENARM: Los tratamientos recomendados para la enfermedad de Paget sola son: Cirugía conservadora que incluye el complejo areola pezón y radioterapia al resto de la mama, o Mastectomía total ± BGC.<br><br>Análisis de Distractores: La mastectomía radical es agresiva e innecesaria si la paciente prefiere conservación. La resección superficial de piel deja enfermedad ducal profunda. La disección ganglionar no trata el sitio oncológico primario.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Tratamiento Enfermedad de Paget, Página 111." 
+            },
+            {
+                id: 16, 
+                question: "Con base en el estudio ACOSOG Z11, ¿en qué condición se puede evitar la disección radical de axila en una cirugía conservadora con radioterapia?", 
+                options: ["Presencia de necrosis peritumoral", "Infiltración de ganglio centinela < 3 mm", "Menos de 2 ganglios positivos", "Metástasis palpables preoperatorias"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, la morbilidad por linfedema puede ahorrarse en tumores T1/T2 si el compromiso linfático es mínimo, dado que la radioterapia tangencial adyuvante erradicará eficientemente la enfermedad microscópica axilar remanente sin comprometer la sobrevida de la paciente.<br><br>Perla ENARM: En el seguimiento de pacientes con cáncer de mama T1 y T2 tratadas con cirugía conservadora, quimio y radioterapia, en las que se encontró 1 a 2 ganglios centinela positivos sin disección radical de axila, no mostró diferencias en supervivencia ni recurrencia locorregional comparado con quienes sí tuvieron disección.<br><br>Análisis de Distractores: La necrosis afecta el Van Nuys, no rige la axila. Si hay enfermedad macroscópica de > 2 mm, ya se recomienda fuertemente disección, y si es palpable clínicamente la indicación de limpieza de niveles I/II es irrefutable de entrada.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Tratamiento quirúrgico de la axila, Página 63." 
+            },
+            {
+                id: 17, 
+                question: "¿Cuál es la distancia mínima requerida de tejido sano (margen quirúrgico) para un tratamiento conservador óptimo en Carcinoma Ductal In Situ?", 
+                options: ["> 1 mm", "> 2 mm", "> 5 mm", "> 10 mm"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, preservar el seno requiere certeza absoluta de que los conductos neoplásicos in situ fueron removidos totalmente. Un espacio de estroma sano de dos milímetros en la periferia de la pieza operatoria evita recaídas e impacta directamente sobre la morbilidad de re-intervenciones.<br><br>Perla ENARM: El margen quirúrgico adecuado debe ser > 2 mm.<br><br>Análisis de Distractores: Un margen menor o igual a 1 mm se asocia con márgenes estrechos y requiere ampliación obligatoria. Las distancias de 5 mm o 10 mm superan la recomendación operativa de conservación tisular sana sin beneficio añadido para el In Situ.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Tratamiento Quirúrgico, Página 42." 
+            },
+            {
+                id: 18, 
+                question: "¿Qué implicación patológica asume el hallazgo exclusivo de un Carcinoma Lobulillar In Situ en un reporte de escisión percutánea?", 
+                options: ["Cáncer de mama bilateral", "Transformación a sarcoma", "Diseminación a pleura", "Metástasis pulmonar temprana"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, esta entidad histológica se distingue por no considerarse una lesión precursora directa de infiltración, sino que representa un patrón biológico que incrementa drásticamente el riesgo basal a largo plazo de desarrollar una neoplasia de novo en cualquier mama.<br><br>Perla ENARM: El cáncer lobulillar in situ es considerado como un marcador de riesgo (RR 5.4 cáncer de mama bilateral), y no un cáncer que evolucione de manera directa.<br><br>Análisis de Distractores: Al ser 'In situ' carece de invasión a la membrana basal y, por ende, es biológicamente incapaz de diseminarse a pleura o causar metástasis pulmonares. La transformación sarcomatosa es fisiopatológicamente ajena a la línea lobulillar mamaria.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Abordaje inicial, Página 32." 
+            },
+            {
+                id: 19, 
+                question: "Durante los primeros 5 años de vigilancia postratamiento, ¿cada cuánto tiempo debe someterse a exploración física oncológica la paciente en remisión?", 
+                options: ["Cada 3 meses", "Cada 6 meses", "Cada 12 meses", "Cada 24 meses"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, el seguimiento integral evalúa la aparición de nódulos satélites de pared torácica, recidiva glandular o adenopatías supraclaviculares incipientes. La palpación semestral detecta eventos de recaída antes de la traducción sintomática, maximizando las posibilidades de un rescate oportuno.<br><br>Perla ENARM: Recomienda y realiza la vigilancia de la persona con cáncer de mama de la siguiente forma: Historia clínica y exploración física cada 6 meses los primeros 5 años.<br><br>Análisis de Distractores: Citas cada 3 meses saturan los servicios sin proveer beneficio extra en sobrevida. La exploración anual y bienal están reservadas y escalonadas para el seguimiento a largo plazo (posterior a los 5 años de la remisión).", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Seguimiento y Vigilancia, Página 154." 
+            },
+            {
+                id: 20, 
+                question: "¿Qué sustancia trazadora se encuentra totalmente contraindicada durante el mapeo de ganglio centinela en una gestante?", 
+                options: ["Tecnecio-99 coloidal", "Suero glucosado estéril", "Colorante azul vital", "Lidocaína subcutánea tópica"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, los tintes químicos patentados y de metileno penetran la placenta con efectos fetales inciertos. Además, inducen con relativa frecuencia respuestas alérgicas sistémicas maternas cuyo manejo de reanimación puede comprometer drásticamente la perfusión y bienestar uterino.<br><br>Perla ENARM: El uso de colorantes vitales como el azul patente y de metileno no se recomienda utilizar, debido a que estos cruzan la barrera placentaria y se desconocen los efectos en el feto, además por el riesgo de causar reacciones anafilácticas en la madre.<br><br>Análisis de Distractores: El trazador radiactivo como el Tecnecio-99 está avalado (dosis mínima) y es el insumo preferido en la paciente gestante. La lidocaína local o el suero fisiológico no impactan en la migración transplacentaria del trazador oncológico.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Cáncer de Mama y Embarazo, Página 105." 
+            },
+            {
+                id: 21, 
+                question: "Utilizando el Índice Pronóstico de Van Nuys, ¿cuál es la conducta terapéutica indicada para una paciente con Carcinoma Ductal In Situ que suma 8 puntos?", 
+                options: ["Escisión local amplia exclusiva", "Escisión amplia más radioterapia", "Mastectomía total de urgencia", "Quimioterapia sistémica neoadyuvante"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, las pacientes con un puntaje intermedio tienen un riesgo moderado de recaída local. Conservar la mama es seguro, pero el lecho tumoral requiere consolidación obligatoria con radiación para erradicar focos microscópicos periféricos residuales.<br><br>Perla ENARM: El Índice de Van Nuys contempla un rango numérico de 4 a 12 con las siguientes recomendaciones para el tratamiento: 7, 8 y 9 puntos: Escisión local amplia más radioterapia.<br><br>Análisis de Distractores: La escisión exclusiva (A) solo es válida en muy bajo riesgo (4 a 6 puntos). La mastectomía total (C) se reserva para alto riesgo (10 a 12 puntos). La quimioterapia neoadyuvante (D) no tiene indicación en tumores in situ al carecer de capacidad invasiva.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Tratamiento Carcinoma ductal In Situ, Página 40." 
+            },
+            {
+                id: 22, 
+                question: "En una paciente con un tumor invasor de 4 cm candidata a quimioterapia neoadyuvante para buscar conservación posterior, ¿qué intervención técnica es obligatoria antes de iniciar los citotóxicos?", 
+                options: ["Tatuaje del pliegue inframamario", "Marcaje tumoral con clip metálico", "Disección de ganglios supraclaviculares", "Cateterización de la mamaria interna"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, la terapia preoperatoria puede inducir una Respuesta Patológica Completa, desapareciendo clínica y radiológicamente el tumor original. El clip asegura que el cirujano localice exactamente el lecho tumoral para realizar una escisión dirigida adecuada meses después.<br><br>Perla ENARM: Es recomendable la colocación de un marcado metálico en el centro del tumor primario (si se cuenta con el recurso) para guiar el tratamiento quirúrgico en casos de respuesta completa tras quimioterapia neoadyuvante.<br><br>Análisis de Distractores: Tatuar la piel (A) pierde precisión ante la retracción mamaria post-tratamiento. La disección supraclavicular (C) profiláctica no existe. La quimioterapia se da por catéter venoso central, no intraarterial mamario (D).", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Quimioterapia y terapia blanco neoadyuvante, Página 74." 
+            },
+            {
+                id: 23, 
+                question: "Durante la realización de una linfadenectomía radical en una paciente con axila clínicamente positiva, ¿cuál es el número mínimo de ganglios que el patólogo debe analizar para una estadificación confiable?", 
+                options: ["4 ganglios", "6 ganglios", "10 ganglios", "15 ganglios"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, una limpieza quirúrgica de los niveles de Berg inferiores necesita certificar un muestreo anatómico extenso. Una cifra menor infraestima el número de metástasis verdaderas (pN) y afecta directamente la decisión sobre radioterapia regional.<br><br>Perla ENARM: Para considerar a la axila adecuadamente estudiada se recomienda analizar al menos 10 ganglios.<br><br>Análisis de Distractores: Los valores de 4 o 6 ganglios (A y B) se consideran vaciamientos incompletos o subóptimos que exigen revisión del caso. Extraer 15 ganglios (D) es un excelente resultado quirúrgico, pero la norma establece el límite basal estricto en la decena.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Alternativas de tratamiento quirúrgico de la axila, Página 52." 
+            },
+            {
+                id: 24, 
+                question: "Tras concluir la radioterapia de toda la glándula mamaria en una paciente de 45 años con tumor de alto grado, ¿cuál es la dosis recomendada para el incremento (boost) dirigido al lecho tumoral?", 
+                options: ["2 a 5 Gy", "10 a 16 Gy", "25 a 30 Gy", "40 a 50 Gy"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, las mujeres jóvenes y aquellas con biología tumoral agresiva tienen el mayor índice de recaída local en el sitio exacto de la lumpectomía. Una sobreimpresión lumínica concentrada elimina clonas residuales radiorresistentes.<br><br>Perla ENARM: Se recomienda administrar incremento (boost) a lecho quirúrgico 10-16 Gy en menores de 50 años y tumores de alto grado.<br><br>Análisis de Distractores: La dosis de 40 a 50 Gy (D) es la dosis total estándar impartida a toda la mama, no el boost. Cantidades de 2 a 5 Gy (A) son subterapéuticas frente a clonas de alto grado, y 25 a 30 Gy (C) generarían necrosis tisular severa al sumarse a la dosis base mamaria.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Radioterapia Adyuvante, Página 57." 
+            },
+            {
+                id: 25, 
+                question: "En el abordaje diagnóstico inicial que clásicamente emplea mastografía y ultrasonido, ¿en qué escenario clínico puntual está justificada la adición de una resonancia magnética mamaria?", 
+                options: ["Edad mayor a 65 años", "Búsqueda de tumor primario oculto", "Tumor palpable con retracción dérmica", "Clasificación BI-RADS 3 mamográfica"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, cuando una paciente debuta con adenocarcinoma metastásico en los ganglios axilares sin una masa palpable o visible en las imágenes convencionales, la alta sensibilidad tisular del gadolinio permite desenmascarar focos tumorales intraparenquimatosos diminutos.<br><br>Perla ENARM: Se sugiere realizar resonancia magnética a pacientes ante la búsqueda de cáncer primario oculto en mama con ganglios axilares positivos, pacientes con implantes mamarios o histología lobulillar.<br><br>Análisis de Distractores: La retracción dérmica (C) y la edad avanzada (A) se evalúan perfectamente con los estudios convencionales. Un BI-RADS 3 (D) requiere seguimiento ecográfico semestral, no amerita escalar a un estudio de alto costo y falsos positivos como la resonancia magnética.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Abordaje Inicial, Página 26." 
+            },
+            {
+                id: 26, 
+                question: "En una paciente con cáncer localmente avanzado y sobreexpresión de HER-2, ¿cuál es la duración mínima recomendada del esquema neoadyuvante con trastuzumab para maximizar la citorreducción?", 
+                options: ["3 a 6 semanas", "9 a 12 semanas", "20 a 24 semanas", "36 a 48 semanas"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, la terapia blanco biológica requiere una ventana de exposición sinérgica con la quimioterapia (taxanos) para saturar los receptores tirosina-cinasa y lograr paralizar la mitosis tisular en el lecho local antes del abordaje quirúrgico.<br><br>Perla ENARM: En la persona con cáncer de mama HER-2 positivo, se recomienda el uso de trastuzumab neoadyuvante por lo menos 9 a 12 semanas concomitantemente con algún taxano.<br><br>Análisis de Distractores: Un periodo de 3 a 6 semanas (A) es inmaduro para documentar respuesta histopatológica. Mantener la neoadyuvancia por 20, 24 o 48 semanas (C y D) retrasa el control local quirúrgico excesivamente y eleva la miocardiotoxicidad materna.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Quimioterapia y terapia blanco neoadyuvante, Página 76." 
+            },
+            {
+                id: 27, 
+                question: "En el paciente asintomático bajo estricta vigilancia oncológica post-tratamiento curativo, ¿qué examen está desaconsejado de forma rutinaria para detectar metástasis?", 
+                options: ["Exploración física oncológica semestral", "Mastografía bilateral de periodicidad anual", "Tomografía por emisión de positrones", "Densitometría ósea por falla ovárica"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, rastrear la anatomía con isótopos metabólicos o marcadores séricos sin justificación clínica genera 'incidentalomas', ansiedad severa y sobretratamiento, sin haber demostrado extender en absoluto la supervivencia global frente a las pacientes que se evalúan solo por síntomas dirigidos.<br><br>Perla ENARM: En la persona con cáncer de mama que se encuentra sin sospecha clínica de actividad tumoral, el uso de estudios de laboratorio, gammagrama óseo, radiografía de tórax, TAC, PET CT, y marcadores tumorales, no se recomiendan como estudios de seguimiento periódico.<br><br>Análisis de Distractores: La exploración clínica cada 6 meses (A) y la mastografía anual (B) son los verdaderos pilares de la vigilancia obligatoria. La densitometría ósea (D) protege contra fracturas patológicas en perfiles seleccionados, no busca metástasis activas.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Seguimiento y Vigilancia, Página 70." 
+            },
+            {
+                id: 28, 
+                question: "Durante el abordaje quirúrgico axilar en Cáncer de Mama, ¿cuál es el hallazgo anatómico transoperatorio que justifica la limpieza del tercer nivel de Berg?", 
+                options: ["Metástasis subcapsulares en el nivel I", "Inflamación del músculo pectoral menor", "Enfermedad voluminosa en el nivel II", "Permeación vascular del tumor primario"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, adentrarse medialmente al borde interno del pectoral menor (Nivel III) eleva drásticamente las tasas de linfedema y daño nervioso; esta morbilidad solo se asume cuando el cirujano documenta una carga tumoral macroscópica masiva o 'conglomerada' que ha colapsado el nivel previo inmediato.<br><br>Perla ENARM: La disección del tercer nivel ganglionar es recomendable realizarla únicamente cuando exista enfermedad voluminosa en el segundo nivel y/o macroscópica en el tercero.<br><br>Análisis de Distractores: Las metástasis focales en nivel I (A) y los datos patológicos propios de la mama como permeación capilar (D) dictan manejo adyuvante pero no limpieza radical extendida aguda. El pectoral menor (B) es el hito anatómico, su inflamación simple no traduce obligatoriedad metastásica del nivel III.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Alternativas quirúrgicas de axila, Página 54." 
+            },
+            {
+                id: 29, 
+                question: "Tras mastectomía radical modificada, el reporte de patología informa invasión en 5 ganglios linfáticos axilares. ¿Qué territorio debe recibir radioterapia adyuvante regional obligatoria?", 
+                options: ["Pared torácica exclusivamente", "Pared torácica y lecho axilar", "Fosa supraclavicular y lecho axilar", "Pared torácica, axila y región supraclavicular"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, superar el umbral de los 4 ganglios invadidos es sinónimo de enfermedad locorregional diseminada con alto riesgo de falla supraclavicular inminente; las clonas neoplásicas ya colonizaron las cadenas de drenaje superior.<br><br>Perla ENARM: Las indicaciones actuales de radioterapia incluyen: 4 ó > ganglios positivos: RT a la pared torácica, axila y supraclavicular. Considerar fuertemente RT a la cadena mamaria interna.<br><br>Análisis de Distractores: Radiar solo la pared (A) o pared con axila (B) dejaría expuesto el escalón supraclavicular, conduciendo a una recaída a nivel de cuello inminente. La supraclavicular y axila (C) omite la zona de la amputación primaria (tórax), donde está el mayor índice recaída cutánea.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Radioterapia Adyuvante, Página 80." 
+            },
+            {
+                id: 30, 
+                question: "En el paciente masculino diagnosticado con Cáncer de Mama, ¿cuál es el rasgo histopatológico fuertemente correlacionado con un peor pronóstico de supervivencia global?", 
+                options: ["Grado histológico nuclear tipo III", "Disminución de linfocitos infiltrantes", "Índice de Van Nuys elevado", "Ausencia de patrón lobulillar puro"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, la fisiopatología en varones exhibe una tolerancia biológica distinta. Mientras que en mujeres el grado de diferenciación celular rige la supervivencia, en hombres, la incapacidad inmunológica local del tejido (ausencia de respuesta linfocitaria) permite un escape metastásico agresivo, confiriendo la mortalidad.<br><br>Perla ENARM: En el hombre con cáncer de mama, el pronóstico peor se encuentra fuertemente correlacionado con focos de tejido conectivo fibroso y una disminución en la cantidad de linfocitos infiltrantes de tumor, mostrando diferencias del comportamiento tumoral con las mujeres.<br><br>Análisis de Distractores: El grado histológico nuclear (A) rige clínicamente en la mujer, no en el hombre. El Van Nuys (C) es para estadios In Situ. La anatomía masculina carece de acinos glandulares reales, por lo que la 'ausencia de patrón lobulillar' (D) es un rasgo anatómico normal, no pronóstico.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Cáncer de Mama en Hombres, Página 92." 
+            },
+            {
+                id: 31, 
+                question: "En una paciente de 55 años con diagnóstico clínico de cáncer mamario estadio IIIA (tumor 6 cm y adenopatía fija), ¿cuáles estudios de extensión son los indicados antes del tratamiento sistémico?", 
+                options: ["Resonancia cerebral y radiografía pélvica", "Tomografía de tórax y gammagrama óseo", "Mastografía de emisión y marcadores CA 15-3", "Ultrasonido tiroideo y densitometría basal"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, la probabilidad de enfermedad microscópica o macroscópica a distancia en las etapas localmente avanzadas es crítica. El escrutinio sistémico exige revisar el pulmón, el hígado y el esqueleto axial antes de intentar un rescate curativo local.<br><br>Perla ENARM: En etapa IIIA considerar estudio de tórax (Tomografía), evaluación de abdomen superior y rastreo óseo (gamagrafía o PET/CT).<br><br>Análisis de Distractores: La resonancia craneal (A) solo se pide si existen focalizaciones neurológicas de sospecha aguda. Los marcadores séricos (C) no están avalados para el estadiaje basal por falta de sensibilidad. El tejido tiroideo (D) no es sitio blanco metastásico primario mamario.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Etapa IIIA, Página 44." 
+            },
+            {
+                id: 32, 
+                question: "En el contexto de la decisión terapéutica por estirpe patológica, ¿qué par de histologías invasoras se clasifican como biológicamente de pronóstico 'favorable'?", 
+                options: ["Infiltrante de patrón medular y apocrino", "Ductal y de células en anillo de sello", "Carcinoma tipo tubular y mucinoso", "Carcinoma tipo lobulillar y pleomórfico"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, estas variantes celulares bien diferenciadas, debido a su lenta tasa mitótica y mínima permeación capilar subyacente, desescalan el uso de quimioterapia adyuvante en nódulos pequeños, tratándose habitualmente solo con manipulación hormonal.<br><br>Perla ENARM: Tratamiento sistémico adyuvante de acuerdo al inmunotipo en histologías favorables (Tubular y Mucinoso). Si tumor es menor a 1 cm no requiere adyuvancia, si es de 1 a 2.9 cm considerar hormonoterapia.<br><br>Análisis de Distractores: Las variantes lobulillares clásicas o ductales (D y B) son el componente invasor estándar habitual que define la morbilidad por sí misma. El apocrino y el de anillo de sello (A y B) tienen peor grado de diferenciación estructural.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Tratamiento Adyuvante Histología, Página 66." 
+            },
+            {
+                id: 33, 
+                question: "Una paciente presenta un carcinoma ductal infiltrante de 1.5 cm sin ganglios clínicos, Inmunotipo Basal (Triple Negativo). ¿Cuál es la conducta sistémica adyuvante primaria recomendada?", 
+                options: ["Vigilancia activa semestral exclusiva", "Radioterapia sistémica fraccionada en 5x", "Inhibidor de aromatasa temporal precoz", "Quimioterapia sistémica adyuvante directa"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, los tumores que carecen de receptores de estrógenos, progesterona y HER-2 representan el grupo biológico más agresivo y letal; no existe terapia blanco (ni hormonal ni inmunológica) posible. El rescate frente a la micrometástasis se fía estrictamente al manejo citotóxico citocida.<br><br>Perla ENARM: Basal receptor hormonal negativo y HER-2 negativo: Grupo de Alto Riesgo. En tumor mayor a 1.0 cm, tratar con Quimioterapia adyuvante obligatoria.<br><br>Análisis de Distractores: La vigilancia sin fármacos (A) asegura la recaída metabólica a corto plazo. La radioterapia (B) no viaja en el torrente sanguíneo sistémico. Los inhibidores de aromatasa (C) carecen de receptor diana en la fisiología de las células basales.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Tratamiento Sistémico Alto Riesgo, Página 65." 
+            },
+            {
+                id: 34, 
+                question: "Una paciente entra en menopausia prematura a los 42 años secundaria a ciclofosfamida oncológica. Si presenta un T-score basal de -1.5 DE, ¿cada qué tiempo debe repetirse la densitometría ósea?", 
+                options: ["A los seis meses obligatoriamente", "De forma anual por tres años", "Cada dos años en su vigilancia", "Nunca, solo si sufre fracturas"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, la disfunción ovárica temprana no farmacológica (o por citotóxicos) disminuye la matriz de colágeno óseo de forma lineal progresiva, a diferencia de los inhibidores de aromatasa que la desintegran vertiginosamente. Su control permite una medición bianual segura.<br><br>Perla ENARM: En la persona con cáncer de mama y que cursa con menopausia precoz (<45 años) y un T score basal menor a -1 desviación estándar se sugiere realizar densitometría ósea cada 2 años.<br><br>Análisis de Distractores: El control anual por 3 años (B) se aplica solo cuando el origen osteopénico es la toxicidad directa por inhibidores de aromatasa. Evaluar cada 6 meses (A) supera la capacidad del equipo de notar recambios óseos trabeculares reales.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Seguimiento y Vigilancia Ósea, Página 72." 
+            },
+            {
+                id: 35, 
+                question: "¿Qué medida no farmacológica implementada estrictamente por la paciente en remisión incide sobre el riesgo estadístico de recurrencia sistémica en Cáncer de Mama?", 
+                options: ["Modulación del fotoperiodo diario a 12 horas", "Terapia cognitivo conductual psiquiátrica", "Fomento del ejercicio físico y control de peso", "Sustitución de grasas por fitoestrógenos"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, el adipocito es la principal fábrica de estrógenos periféricos en la mujer post-tratamiento por la vía de la enzima aromatasa. Mantener un índice de masa corporal magro y la actividad aeróbica desploman la estimulación hormonal extrínseca hacia receptores microscópicos dormidos.<br><br>Perla ENARM: Se recomienda fomentar en la persona con cáncer de mama el ejercicio físico regular. El aumento de peso y la obesidad pueden afectar adversamente el pronóstico disminuyendo el periodo de recurrencia.<br><br>Análisis de Distractores: Los fitoestrógenos (D) pueden simular ocupación de receptores y generar un entorno de inseguridad en tumores hormonodependientes. La terapia psicológica (B) mejora adherencia y calidad de vida, pero no inhibe fisiológicamente la vía oncogénica en recaídas metabólicas.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Seguimiento y Vigilancia, Página 73." 
+            },
+            {
+                id: 36, 
+                question: "Al reportar un ganglio centinela evaluado por Hematoxilina y Eosina rutinaria, ¿cuál es el escenario normado que avala solicitar un estudio de Inmunohistoquímica especial?", 
+                options: ["Pacientes menores de treinta y cinco años", "Tumores con infiltración vascular documentada", "Sospecha del patólogo o histología lobulillar", "Todos los casos con cirugía conservadora planificada"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, el carcinoma lobulillar clásico es famoso por esparcir sus células infiltrantes 'en fila india', escapando microscópicamente a las tinciones tintoriales básicas, requiriendo que se resalten las membranas con marcadores AE1/AE3 para evitar reportar falsos negativos axilares.<br><br>Perla ENARM: Se recomienda realizar estudios de inmunohistoquímica (IHQ) citoqueratinas AE1/AE3 en el ganglio centinela, sólo en casos seleccionados (duda diagnóstica) o con carcinoma lobulillar.<br><br>Análisis de Distractores: La norma establece claramente que 'No se debe realizar rutinariamente' (A y D) debido al excesivo costo y al bajo rendimiento en tumores ductales clásicos bien teñidos. La invasión vascular (B) alerta pronóstico pero no vuelve invisibles a las células glandulares.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Ganglio Centinela, Página 37." 
+            },
+            {
+                id: 37, 
+                question: "¿Cuál es el límite inferior en milímetros aceptado para considerar un margen quirúrgico libre y seguro tras extirpar un Carcinoma In Situ con cirugía conservadora?", 
+                options: ["≥ 1 milímetro", "> 2 milímetros", "> 5 milímetros", "≥ 10 milímetros"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, a nivel histológico se necesita corroborar un halo estromal no neoplásico perimetral sin infiltración celular contigua; el hallazgo de dos milímetros garantiza que el tejido residual mamario no albergará conductos tumorales residuales listos para recidivar a nivel local.<br><br>Perla ENARM: El margen quirúrgico adecuado debe ser > 2 mm en los procedimientos para el tratamiento de Carcinoma Ductal in Situ.<br><br>Análisis de Distractores: Distancias de 1 mm (A) se clasifican como 'estrechas' obligando a planear una re-excisión. Las distancias de 5 a 10 mm (C y D) son márgenes excelentes biológicamente pero sacrificarían estética glandular sana, por lo que el umbral terapéutico de corte no las exige estrictamente.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Tratamiento Quirúrgico In Situ, Página 32." 
+            },
+            {
+                id: 38, 
+                question: "Una paciente de 52 años manejada previamente con Tamoxifeno acude urgencias por hemorragia uterina disfuncional franca. ¿Cuál es la principal modalidad diagnóstica por imagen indicada en esta complicación medicamentosa?", 
+                options: ["Tomografía axial abdominopélvica trifásica", "Ultrasonido pélvico ginecológico rastreador", "Resonancia magnética pélvica supresión grasa", "Histerosalpingografía por radioscopia fluida"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, el Tamoxifeno bloquea la mama pero se comporta como un agonista parcial a nivel del útero, induciendo frecuentemente hiperplasia endometrial, engrosamiento severo y elevando el riesgo basal de cáncer uterino. El espesor del endometrio se mide primariamente por ecosonografía endovaginal en consultorio.<br><br>Perla ENARM: En la paciente en tratamiento con tamoxifeno se recomienda realizar examen ginecológico anual, y en caso de sangrado transvaginal es recomendable solicitar ultrasonido pélvico.<br><br>Análisis de Distractores: La histerosalpingografía (D) se usa en fertilidad para ver permeabilidad de trompas de Falopio. La tomografía y resonancia pélvicas (A y C) conllevan costos desproporcionados o radiación innecesaria en el triaje agudo primario de un sangrado sin evaluar el endometrio dinámicamente.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Terapia Endócrina Complicaciones, Página 40." 
+            },
+            {
+                id: 39, 
+                question: "En una laminilla patológica definitiva que reporta coexistencia de Carcinoma Lobulillar In Situ mezclado íntimamente con un Carcinoma Ductal In Situ masivo, ¿con base a cuál diagnóstico debe regirse la terapia integral?", 
+                options: ["Pronóstico regido por el componente lobulillar", "Lineamientos de Carcinoma Ductal In Situ", "Criterios de Carcinoma Inflamatorio Agresivo", "Algoritmo de Quimioterapia Pélvica Sistémica"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, cuando se encuentran histologías combinadas, la conducta terapéutica (escisión local amplia o mastectomía) y el índice pronóstico se dictarán forzosamente por la entidad celular con la mayor agresividad clínica local in situ demostrada, sobrepasando al riesgo meramente genético del lobulillar.<br><br>Perla ENARM: En caso de carcinoma lobulillar in situ más carcinoma ductal in situ deberá tratarse con criterios de manejo de carcinoma ductal in situ.<br><br>Análisis de Distractores: Normarse por el lobulillar puro (A) dejaría el ductal diseminarse libremente. Considerarlo 'Inflamatorio' (C) es un error categórico pues la enfermedad descrita no ha roto la membrana epitelial base ni permea linfa dérmica.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Tratamiento In Situ, Página 29." 
+            },
+            {
+                id: 40, 
+                question: "Para poder omitir de forma segura una linfadenectomía radical de axila en casos de ganglio centinela con metástasis microscópicas, ¿cuál es el tamaño clínico máximo (Etapa T) que avala esta conducta?", 
+                options: ["Tumores T1 y T2 exclusivamente", "Tumores tipo T3 y mayores biológicamente", "Solo adenocarcinomas de grado In Situ (Tis)", "Carcinomas inflamatorios en estadio T4"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Tratamiento del Cáncer de Mama, la evidencia del seguimiento en protocolos de desescalada (Estudio ACOSOG Z11) confirma que en lesiones pequeñas (hasta 5 centímetros) la radioterapia adyuvante suple a la disección quirúrgica completa sin modificar un milímetro la sobrevida global a más de seis años, previniendo al paciente de un brazo secuelado.<br><br>Perla ENARM: La disección de ganglios linfáticos axilares y la radioterapia proporcionan un control comparable para pacientes con cáncer de mama primario T1-2 sin linfadenopatía palpable y 1 a 2 ganglios centinela positivos.<br><br>Análisis de Distractores: Evitar la limpieza linfática en tumores gigantes T3 o avanzados de tipo inflamatorio T4 (B y D) condena a la falla locorregional y metástasis diseminada letal. El tumor In Situ (C) por defecto anatómico no disemina a ganglios, la disección nunca tuvo cabida en su algoritmo principal.", 
+                source: "IMSS-232-09, Tratamiento del Cáncer de Mama en Segundo y Tercer Nivel de Atención, 2017, Tratamiento quirúrgico de la axila, Página 58." 
+            }
+        ];
+
+        // ==========================================
+        // ==========================================
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('gyoCMLastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('gyoCMProgress');
+                localStorage.removeItem('gyoCMLastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-pink-500 shadow-md z-10 border-pink-500 dark:border-pink-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-rose-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "GINECOLOGÍA Y OBSTETRICIA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "GPC IMSS-232-09 • Tratamiento del cáncer de mama en segundo y tercer nivel de atención";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="DM33309GYOE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-pink-100 dark:border-pink-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-pink-50 has-[:checked]:border-pink-400 dark:has-[:checked]:bg-pink-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-pink-600 dark:hover:bg-pink-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('gyoCMProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('gyoCMLastQId', currentQuestionId);
+                else localStorage.removeItem('gyoCMLastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('gyoCMProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

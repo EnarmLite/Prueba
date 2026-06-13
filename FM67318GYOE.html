@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================
+        // =========================================================
+        const questionsData = [
+            {
+                id: 1, 
+                question: "¿Cuál es el punto de corte densitométrico mediante absorciometría de rayos X dual para establecer el diagnóstico de osteoporosis?", 
+                options: ["Índice T ≤ -1.0", "Índice T ≤ -2.0", "Índice T ≤ -2.5", "Índice T ≤ -3.0"], 
+                answer: 2, 
+                justification: "Justificación: El diagnóstico densitométrico evalúa la falla en la resistencia ósea y el riesgo de fractura. De acuerdo a la GPC de Osteoporosis Posmenopáusica, se establece el umbral diagnóstico formal en una pérdida mineral significativa que corresponde a 2.5 desviaciones estándar por debajo de la media poblacional joven.<br><br>Perla ENARM: \"Osteoporosis: índice T -2.5 DE o menor.\"<br><br>Análisis de Distractores: La opción A corresponde al límite para diagnosticar osteopenia (-1.0 a -2.5). Las opciones B y D son valores numéricos arbitrarios que no definen un punto de corte internacional en la densitometría ósea.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Diagnóstico, Página 35." 
+            },
+            {
+                id: 2, 
+                question: "¿A partir de qué edad cronológica se recomienda el tamizaje universal con absorciometría de rayos X dual en mujeres posmenopáusicas?", 
+                options: ["50 años", "55 años", "60 años", "65 años"], 
+                answer: 3, 
+                justification: "Justificación: La edad avanzada es un factor de riesgo independiente y progresivo para la pérdida ósea. De acuerdo a la GPC de Osteoporosis Posmenopáusica, el escrutinio primario mediante el estudio de imagen estándar de oro se universaliza en esta cohorte etaria sin necesidad de justificar factores de riesgo adicionales.<br><br>Perla ENARM: \"Se recomienda medir la DMO por DXA: En mujeres de 65 años y más.\"<br><br>Análisis de Distractores: Las opciones A, B y C son edades en las que el tamizaje solo está justificado si la paciente presenta factores de riesgo clínicos concomitantes (como uso de glucocorticoides, bajo peso o fracturas previas).", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Diagnóstico, Página 34." 
+            },
+            {
+                id: 3, 
+                question: "En la evaluación del riesgo absoluto mediante FRAX, ¿qué probabilidad a 10 años para fractura osteoporótica mayor clasifica a la paciente en alto riesgo?", 
+                options: ["≥ 3%", "≥ 10%", "≥ 15%", "≥ 20%"], 
+                answer: 3, 
+                justification: "Justificación: La herramienta FRAX estratifica la probabilidad de fracturas a una década para guiar intervenciones farmacológicas tempranas. De acuerdo a la GPC de Osteoporosis Posmenopáusica, el límite umbral validado para intervenir ante una fractura mayor (vertebral, húmero, antebrazo o pelvis) requiere una predicción probabilística alta.<br><br>Perla ENARM: \"La probabilidad a 10 años de fractura de cadera es ≥ 3% y/o de fractura osteoporótica mayor es ≥ 20%.\"<br><br>Análisis de Distractores: La opción A (3%) es el límite específico pero para fractura de cadera. Las opciones B y C son porcentajes que clasifican a las pacientes en riesgo bajo o moderado, requiriendo solo medidas preventivas.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Evaluación, Página 30." 
+            },
+            {
+                id: 4, 
+                question: "¿Qué magnitud de pérdida de estatura histórica documentada obliga a solicitar una radiografía lateral de columna para descartar fracturas vertebrales?", 
+                options: ["≥ 4 cm", "≥ 3 cm", "≥ 2 cm", "≥ 1 cm"], 
+                answer: 0, 
+                justification: "Justificación: La pérdida de talla refleja el colapso y acuñamiento de los cuerpos vertebrales secundario a la resorción trabecular. De acuerdo a la GPC de Osteoporosis Posmenopáusica, la discrepancia entre la talla máxima recordada en la juventud y la medición actual es un indicador clínico mandatorio para escrutinio radiográfico.<br><br>Perla ENARM: \"Antecedente de pérdida de estatura de ≥ 4 cm de la talla más alta recordada.\"<br><br>Análisis de Distractores: La opción C (2 cm) es indicación válida pero en el escenario de pérdida de estatura prospectiva (durante el seguimiento clínico continuado). Las opciones B y D no cumplen el umbral de significancia diagnóstica establecido.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Diagnóstico, Página 44." 
+            },
+            {
+                id: 5, 
+                question: "¿Cuál es el tratamiento farmacológico de primera línea recomendado para reducir de forma integral el riesgo de fractura de cadera y columna?", 
+                options: ["Moduladores selectivos de estrógenos", "Bifosfonatos por vía oral", "Análogos de hormona paratiroidea", "Anticuerpos monoclonales subcutáneos"], 
+                answer: 1, 
+                justification: "Justificación: El manejo inicial exige una inhibición potente y sostenida de la actividad osteoclástica. De acuerdo a la GPC de Osteoporosis Posmenopáusica, este grupo farmacológico ha demostrado la mejor relación costo-efectividad para la reducción integral de fracturas vertebrales y no vertebrales en la mayoría de las pacientes.<br><br>Perla ENARM: \"Los medicamentos recomendados para reducir el riesgo de fractura de cadera, de columna vertebral y no vertebral de primera línea para la mayoría de las personas con osteoporosis posmenopáusica son los bifosfonatos: alendronato, risedronato y ácido zoledrónico.\"<br><br>Análisis de Distractores: La opción A se reserva para prevención de pérdida ósea en pacientes con riesgo concomitante de cáncer de mama. Las opciones C y D son alternativas de segunda línea para fallos terapéuticos o contraindicaciones renales severas.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Tratamiento, Página 69." 
+            },
+            {
+                id: 6, 
+                question: "¿Cuál condición clínica constituye una contraindicación absoluta para la administración de alendronato por vía oral?", 
+                options: ["Antecedente de cáncer de mama", "Incapacidad de bipedestación", "Filtración glomerular de 50 ml/min", "Índice de masa corporal bajo"], 
+                answer: 1, 
+                justification: "Justificación: Los antirresortivos orales de este grupo tienen un efecto altamente erosivo y cáustico sobre la mucosa gastrointestinal. De acuerdo a la GPC de Osteoporosis Posmenopáusica, se exige garantizar el tránsito esofágico rápido hacia el estómago mediante una postura erguida o sentada durante un tiempo mínimo definido.<br><br>Perla ENARM: \"Contraindicaciones: Imposibilidad para mantenerse de pie o sentado por al menos 30 minutos tras administración oral del fármaco.\"<br><br>Análisis de Distractores: La opción A no contraindica el fármaco. La opción C es incorrecta porque la contraindicación se establece con tasas menores a 35 ml/min. La opción D es un factor de riesgo originario para la enfermedad, no una limitante farmacológica.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Anexos, Página 106." 
+            },
+            {
+                id: 7, 
+                question: "Como medida no farmacológica en mujeres posmenopáusicas, ¿cuál es la ingesta diaria de calcio recomendada preventivamente?", 
+                options: ["500 a 800 mg", "800 a 1000 mg", "1000 a 1200 mg", "1500 a 2000 mg"], 
+                answer: 2, 
+                justification: "Justificación: Mantener la homeostasis mineral evita la estimulación secundaria de la paratohormona y la subsecuente resorción esquelética. De acuerdo a la GPC de Osteoporosis Posmenopáusica, se debe asegurar este aporte, priorizando vigorosamente las fuentes dietéticas (como los lácteos) antes de recurrir a la suplementación exógena.<br><br>Perla ENARM: \"Ingesta adecuada de calcio (1000-1200mg diarios).\"<br><br>Análisis de Distractores: Las opciones A y B reflejan cantidades insuficientes para cubrir los requerimientos acelerados de la cohorte senil. La opción D sobrepasa el umbral de seguridad e incrementa el riesgo de nefrolitiasis y calcificación cardiovascular.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Tratamiento preventivo, Página 47." 
+            },
+            {
+                id: 8, 
+                question: "¿Cuál es el aporte proteico dietético diario sugerido para mitigar la aparición de sarcopenia en pacientes con osteoporosis?", 
+                options: ["0.8 a 1.0 g/kg", "0.4 a 0.6 g/kg", "1.2 a 1.5 g/kg", "1.5 a 2.0 g/kg"], 
+                answer: 0, 
+                justification: "Justificación: El mantenimiento de la masa muscular es vital para conservar el equilibrio y la dinámica biomecánica que previene las caídas. De acuerdo a la GPC de Osteoporosis Posmenopáusica, un consumo moderado y constante de macronutrientes estructurales garantiza la función locomotora sin sobrecargar la fisiología renal en el adulto mayor.<br><br>Perla ENARM: \"Se recomienda que las mujeres posmenopáusicas con osteoporosis tengan una ingesta promedio diaria de 0.8 a 1g/kg/día de aporte proteico para reducir la presencia de sarcopenia.\"<br><br>Análisis de Distractores: La opción B representa una dieta hipoproteica restrictiva, común en la enfermedad renal crónica severa. Las opciones C y D son ingestas hiperproteicas aptas para atletas de alto rendimiento o desnutrición clínica severa, no para tamizaje general.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Tratamiento preventivo, Página 53." 
+            },
+            {
+                id: 9, 
+                question: "¿Después de cuánto tiempo de estabilidad densitométrica se sugiere evaluar el periodo de descanso terapéutico en usuarias de bifosfonatos orales?", 
+                options: ["1 a 2 años", "3 a 5 años", "10 a 15 años", "5 a 10 años"], 
+                answer: 3, 
+                justification: "Justificación: Los fármacos antirresortivos se incorporan profundamente en la matriz de hidroxiapatita y mantienen un efecto farmacológico residual prolongado. De acuerdo a la GPC de Osteoporosis Posmenopáusica, prolongar innecesariamente la vía oral incrementa exponencialmente los riesgos de fracturas atípicas y osteonecrosis maxilar.<br><br>Perla ENARM: \"Debido a que los bifosfonatos se quedan depositados en el hueso por largo tiempo... evaluar periodo de descanso al término del periodo (5-10 años) para bifosfonato oral.\"<br><br>Análisis de Distractores: La opción A es tiempo insuficiente para alcanzar la meseta de regeneración ósea. La option B corresponde al límite de descanso pero dictado para la terapia de infusión intravenosa. La opción C representa un uso crónico peligroso y no normado.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Anexos, Página 91." 
+            },
+            {
+                id: 10, 
+                question: "¿Cuál es la temporalidad establecida para someter a descanso farmacológico a las pacientes tratadas con ácido zoledrónico endovenoso?", 
+                options: ["1 a 2 años", "Mayor a 10 años", "3 a 6 años", "6 a 10 años"], 
+                answer: 2, 
+                justification: "Justificación: Las formulaciones intravenosas tienen una biodisponibilidad tisular inmediata y un impacto supresor osteoclástico más severo que las vías orales. De acuerdo a la GPC de Osteoporosis Posmenopáusica, el límite de seguridad de esta infusión anual se alcanza mucho más rápido, requiriendo un cese temporal programado y estricto.<br><br>Perla ENARM: \"Bifosfonato intravenoso (ácido zoledrónico) 3-6 años.\"<br><br>Análisis de Distractores: La opción D corresponde a los tiempos aplicables a la medicación oral de absorción deficiente (alendronato/risedronato). La opción B describe usos prolongados totalmente contraindicados. La opción A no permite la consolidación de la ganancia mineral.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Anexos, Página 91." 
+            },
+            {
+                id: 11, 
+                question: "¿En qué contexto clínico particular se considera idónea la elección del raloxifeno como terapia osteológica inicial?", 
+                options: ["Factores de riesgo de cáncer mamario", "Presencia de síntomas vasomotores", "Antecedente tromboembólico venoso", "Tasa de filtración glomerular baja"], 
+                answer: 0, 
+                justification: "Justificación: Este modulador selectivo tiene la capacidad dual de actuar como agonista en el tejido óseo y antagonista en el tejido mamario y uterino. De acuerdo a la GPC de Osteoporosis Posmenopáusica, esto permite tratar la fragilidad vertebral al tiempo que se ofrece quimioprevención oncológica sistémica en el mismo esquema.<br><br>Perla ENARM: \"Considerar el tratamiento con raloxifeno con: Factores de riesgo de cáncer de mama.\"<br><br>Análisis de Distractores: La opción B es incorrecta porque este fármaco empeora los bochornos menopáusicos. La opción C es una contraindicación absoluta, ya que eleva el riesgo de trombosis venosa. La opción D aplica para guiar el uso seguro de denosumab.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Tratamiento, Página 71." 
+            },
+            {
+                id: 12, 
+                question: "¿Cuál es el tiempo máximo de seguridad permitido para la administración continua de terapia anabólica con teriparatida?", 
+                options: ["6 meses", "2 años", "1 año", "5 años"], 
+                answer: 1, 
+                justification: "Justificación: Los análogos de la paratohormona estimulan drásticamente la proliferación de osteoblastos, promoviendo neoformación cortical y trabecular profunda. De acuerdo a la GPC de Osteoporosis Posmenopáusica, la estimulación descontrolada y crónica del hueso se ha vinculado con la génesis de malignidad ósea y osteosarcoma en modelos médicos experimentales.<br><br>Perla ENARM: \"La duración del tratamiento con teriparatide está limitado a 2 años.\"<br><br>Análisis de Distractores: Las opciones A y C son periodos subóptimos que no logran el impacto estructural deseado de reversión tisular contra el riesgo de fracturas. La opción D excede el margen terapéutico e incrementa inaceptablemente el riesgo oncológico primario.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Tratamiento, Página 72." 
+            },
+            {
+                id: 13, 
+                question: "En la evaluación metabólica avanzada, ¿qué marcador bioquímico se recomienda solicitar para documentar tempranamente la formación ósea?", 
+                options: ["Telopéptido C-terminal sérico", "Fosfatasa alcalina total sérica", "Propéptido N-terminal de procolágeno", "Hidroxiprolina en orina de 24 horas"], 
+                answer: 2, 
+                justification: "Justificación: La actividad celular formadora sintetiza y libera fracciones procolágenas durante la consolidación de la nueva matriz osteoide inmadura. De acuerdo a la GPC de Osteoporosis Posmenopáusica, su detección rápida en sangre refleja la eficacia anabólica antes de que los cambios anatómicos tarden meses en ser perceptibles densitométricamente.<br><br>Perla ENARM: \"Se han propuesto el propéptido de colágeno tipo I (s-PINP), como marcador de formación.\"<br><br>Análisis de Distractores: La opción A es el marcador empleado cardinalmente para evaluar la actividad destructiva de los osteoclastos (resorción). Las opciones B y D son paraclínicos inespecíficos y obsoletos en el monitoreo fino de la dinámica osteológica moderna.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Diagnóstico, Página 46." 
+            },
+            {
+                id: 14, 
+                question: "Durante el seguimiento de una paciente tratada con antirresortivos, ¿cuál es un criterio mandatario para la referencia inmediata a endocrinología?", 
+                options: ["Índice T de -2.5 inicial", "Edad cronológica avanzada", "Intolerancia gástrica leve", "Aparición de nueva fractura"], 
+                answer: 3, 
+                justification: "Justificación: Presentar un evento traumático de fragilidad estando bajo cobertura farmacológica y posológica plena demuestra una falla catastrófica en la microarquitectura central. De acuerdo a la GPC de Osteoporosis Posmenopáusica, esto exige descartar causas infiltrativas ocultas o escalar de urgencia a esquemas de terapias anabólicas superiores.<br><br>Perla ENARM: \"Se recomienda referir al especialista en endocrinología a mujeres posmenopáusicas en los siguientes casos: Presencia de nueva fractura de bajo impacto.\"<br><br>Análisis de Distractores: Las opciones A y B son criterios de cribado estándar manejados y diagnosticados cabalmente con destreza en el primer nivel. La opción C se resuelve clínicamente sustituyendo el fármaco a la vía de administración endovenosa.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Criterios de Referencia, Página 87." 
+            },
+            {
+                id: 15, 
+                question: "Dentro de la evaluación laboratorial de escrutinio, ¿cuál es la meta sérica mínima de la 25-hidroxivitamina D para asegurar protección clínica?", 
+                options: ["> 30 ng/ml", "> 20 ng/ml", "> 50 ng/ml", "> 10 ng/ml"], 
+                answer: 0, 
+                justification: "Justificación: El metabolito activo del calciferol es biológicamente indispensable para el transporte de calcio activo en la mucosa duodenal basal. De acuerdo a la GPC de Osteoporosis Posmenopáusica, asegurar este umbral en sangre previene la paratohormona compensatoria exacerbada y optimiza la capacidad y eficacia curativa del fármaco fijador prescrito.<br><br>Perla ENARM: \"Niveles de 25-hidroxivitamina D: ... meta terapéutica de > 30 ng/mL.\"<br><br>Análisis de Distractores: La opción D refleja deficiencia osteomalácica absoluta y la opción B refleja el estado de insuficiencia metabólica primaria. La opción C es una concentración excesiva infundada que no reporta beneficios mecánicos clínicos adicionales documentados.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Diagnóstico, Página 41." 
+            },
+            {
+                id: 16, 
+                question: "¿Cuál es el mecanismo fisiopatológico primario que desencadena el deterioro de la microarquitectura en la osteoporosis Tipo I?", 
+                options: ["Hiperparatiroidismo primario", "Disminución en absorción cálcica", "Incremento de osteoclastos", "Deficiencia de estrógenos"], 
+                answer: 3, 
+                justification: "Justificación: El declive de la función ovárica elimina el freno natural metabólico que modula en su origen la actividad destructiva basal celular. De acuerdo a la GPC de Osteoporosis Posmenopáusica, este retiro hormonal cardinal afecta con extraordinaria rapidez y severidad preferencialmente a los delgados tabiques del tejido óseo trabecular proximal.<br><br>Perla ENARM: \"Tipo I: también conocida como posmenopáusica, causada por deficiencia de estrógenos, afectando predominantemente al hueso trabecular.\"<br><br>Análisis de Distractores: La opción C es una alteración efectora consecuente, no la causa desencadenante principal original. Las opciones A y B son entidades fisiopatológicas subyacentes típicas del envejecimiento intrínseco posterior (Osteoporosis Tipo II) u otras noxas secundarias.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Evidencias, Página 22." 
+            },
+            {
+                id: 17, 
+                question: "¿Cuáles son las regiones anatómicas estandarizadas de elección para la confirmación de la densidad mineral ósea por absorciometría dual?", 
+                options: ["Columna lumbar y cadera", "Columna cervical y fémur", "Radio distal y calcáneo", "Columna dorsal y pelvis"], 
+                answer: 0, 
+                justification: "Justificación: Las áreas que soportan la carga gravitacional principal del eje central exhiben sin sesgos el impacto absoluto de la deficiencia estructural progresiva. De acuerdo a la GPC de Osteoporosis Posmenopáusica, el dictamen de estratificación universal se emite valorando primordialmente la fragilidad de estas dos zonas que confieren máxima morbilidad y letalidad.<br><br>Perla ENARM: \"Para medir la DMO el método de elección es la absorciometría de rayos X dual (DXA) central... de cadera y columna.\"<br><br>Análisis de Distractores: Las opciones B y D no poseen estandarización ni validación pronóstica en las cohortes normativas de control densitométrico actual. La opción C (sitios óseos periféricos) se emplea estrictamente ante alteraciones masivas inoperables o extremas en la columna lumbar.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Diagnóstico, Página 34." 
+            },
+            {
+                id: 18, 
+                question: "¿Ante qué patología subyacente identificada se encuentra justificada la medición densitométrica aislada en la región del tercio distal del radio?", 
+                options: ["Artritis reumatoide", "Hiperparatiroidismo primario", "Índice de masa corporal bajo", "Antecedente severo de fractura"], 
+                answer: 1, 
+                justification: "Justificación: La secreción autónoma de la hormona encargada del fósforo y calcio ataca predominantemente, y de forma casi exclusiva, a los compartimentos del tejido óseo cortical perimetral. De acuerdo a la GPC de Osteoporosis Posmenopáusica, debido a la anatomía radial prevalentemente diafisiaria, resulta ser la zona esquelética ideal y predilecta para documentar dicha alteración endocrina pura.<br><br>Perla ENARM: \"La medición de la DMO de antebrazo (1/3 distal de radio), solo se recomienda en los siguientes casos: ... Hiperparatiroidismo.\"<br><br>Análisis de Distractores: Las opciones A y C generan descalcificación universal y exigen obligatoriamente cuantificación axial estándar (central). La opción D dictamina per se el inicio automático profiláctico sin mediar exigencia topográfica extra de las extremidades superiores evaluadas.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Diagnóstico, Página 37." 
+            },
+            {
+                id: 19, 
+                question: "Durante el cribado de factores de riesgo yatrogénicos, ¿qué dosis diaria equivalente de prednisona durante 3 meses incrementa notablemente el riesgo fracturario?", 
+                options: ["≥ 2.5 miligramos", "≥ 10.0 miligramos", "≥ 5.0 miligramos", "≥ 15.0 miligramos"], 
+                answer: 2, 
+                justification: "Justificación: El efecto farmacológico del corticoesteroide sistémico paraliza directamente la génesis osteoblástica madura e inhibe significativamente la captación intestinal de precursores minerales cálcicos. De acuerdo a la GPC de Osteoporosis Posmenopáusica, superando este umbral mínimo específico y sostenido en el tiempo predeterminado, la aceleración de pérdida ósea es estadísticamente crítica e irreversible poblacionalmente.<br><br>Perla ENARM: \"Uso de medicamentos: Esteroides (>5 mg/día por más de 3 meses).\"<br><br>Análisis de Distractores: La opción A alude a posologías ínfimas que estadísticamente carecen de correlación patológica severa demostrable. Las opciones B y D indican dosis tóxicas e inmunosupresoras intensas que superan holgadamente el punto mínimo básico requerido para la estratificación obligatoria inmediata.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Prevención, Página 51." 
+            },
+            {
+                id: 20, 
+                question: "¿En qué rango estadístico exacto de desviaciones estándar en la escala T se encuadra la entidad metabólica diagnosticada como osteopenia?", 
+                options: ["Entre -0.1 y -1.0", "Menos de -2.5 a -3.0", "Menos de -3.0 en adelante", "Entre -1.0 y -2.5"], 
+                answer: 3, 
+                justification: "Justificación: Esta zona de riesgo fronteriza demuestra clínicamente un vaciamiento del contenido endosteal que debilita el armazón antes de una inminente fisura o falla mayor sintomática. De acuerdo a la GPC de Osteoporosis Posmenopáusica, al ubicarse una paciente en este margen semicrítico de mineralización es mandatorio usar la escala FRAX para dictaminar oportunamente si procede tratamiento higiénico exclusivo o terapia de fijación celular total.<br><br>Perla ENARM: \"Osteopenia: índice T entre -1.0 a -2.5 DE.\"<br><br>Análisis de Distractores: La opción A tipifica los parámetros fisiológicos considerados normales respecto a las comparativas poblacionales sanas adultas-jóvenes. Las opciones B y C marcan valores numéricos descendentes que rebasan de plano el umbral clínico definitorio dictado para el estadío crónico pleno de osteoporosis irreversible.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Diagnóstico, Página 35." 
+            },
+            {
+                id: 21, 
+                question: "Como parte del manejo preventivo no farmacológico en la mujer posmenopáusica, ¿cuál es la ingesta diaria máxima recomendada de vitamina D en caso de no documentarse una deficiencia severa?", 
+                options: ["200 a 400 UI", "600 a 800 UI", "1000 a 1200 UI", "1500 a 2000 UI"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Osteoporosis posmenopáusica, asegurar los sustratos básicos para el metabolismo fosfocálcico reduce el riesgo global de fragilidad estructural. La vitamina D es indispensable para que el calcio dietético logre absorberse a nivel intestinal. El aporte dictaminado como óptimo no requiere dosis de impregnación agresivas (como la opción D) en población de riesgo estándar sin osteomalacia comprobada.<br><br>Perla ENARM: \"Ingesta adecuada de vitamina D (600 a 800 UI diarias).\"<br><br>Análisis de Distractores: Las opciones A y C se encuentran por debajo o por arriba del margen homeostático recomendado.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Tratamiento preventivo, Página 40." 
+            },
+            {
+                id: 22, 
+                question: "Se evalúa a una paciente con índice T de -2.2 en columna lumbar sin factores de riesgo adicionales de pérdida ósea acelerada. ¿En qué intervalo de tiempo clínico se debe solicitar la próxima densitometría ósea de control?", 
+                options: ["Cada año", "En 10 a 15 años", "En 3 a 5 años", "Aproximadamente cada 2 años"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Osteoporosis posmenopáusica, una paciente con osteopenia avanzada se encuentra en un umbral donde hasta el 10% puede migrar al rango de osteoporosis franca en un periodo corto, requiriendo monitorización estrecha para intervenir a tiempo.<br><br>Perla ENARM: \"En presencia de baja masa ósea (índice T -2.00 a -2.49) en cualquier sitio o factores de riesgo que pueden causar pérdida ósea continua, se recomienda realizar mediciones de seguimiento aproximadamente cada dos años.\"<br><br>Análisis de Distractores: Un periodo anual (opción A) no refleja cambios significativos por las limitaciones técnicas del equipo. Las opciones B y C se reservan para fenotipos de osteopenia leve o nula progresión de riesgo.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Seguimiento, Página 78." 
+            },
+            {
+                id: 23, 
+                question: "Una paciente presenta un índice T de -1.6 en cuello femoral, encontrándose asintomática y sin consumo crónico de esteroides u otros factores adicionales. ¿Cuándo está normado repetir el estudio densitométrico?", 
+                options: ["En 1 a 2 años", "Cada 12 meses", "En 3 a 5 años", "En 10 a 15 años"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Osteoporosis posmenopáusica, el estrato de osteopenia moderada presenta una tasa de conversión a osteoporosis a mediano plazo (estimada en 5 años), lo que vuelve poco costo-efectivo solicitar pruebas a corto plazo (opciones A y B).<br><br>Perla ENARM: \"En presencia de baja masa ósea (índice T -1.50 a -1.99) en cualquier sitio y sin factores de riesgo para la pérdida ósea acelerada se recomienda realizar DXA de seguimiento en tres a cinco años.\"<br><br>Análisis de Distractores: Sin embargo, posponer la medición una década (opción D) pierde la ventana terapéutica de prevención oportuna.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Seguimiento, Página 78." 
+            },
+            {
+                id: 24, 
+                question: "Se decide iniciar terapia con un anticuerpo monoclonal específico contra el ligando de RANK en una paciente con osteodistrofia. ¿Cuál es la posología indicada para el denosumab?", 
+                options: ["60 miligramos subcutáneos cada 6 meses", "20 microgramos diarios subcutáneos", "5 miligramos intravenosos anualmente", "150 miligramos orales mensualmente"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Osteoporosis posmenopáusica, el mecanismo de acción de esta molécula biológica bloquea la activación de los osteoclastos de forma profunda y sostenida, permitiendo dosis semestrales.<br><br>Perla ENARM: \"Denosumab 60 mg SC cada 6 meses.\"<br><br>Análisis de Distractores: La opción B corresponde a la teriparatida, la opción C al ácido zoledrónico y la opción D al ibandronato, por lo que confundir estas rutas retrasa el control efectivo y expone a sobredosis de otras familias medicamentosas.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Tratamiento, Página 56." 
+            },
+            {
+                id: 25, 
+                question: "A pesar del amplio beneficio que otorga el denosumab en pacientes con deterioro de la función nefronal, ¿en qué condición patológica renal se prohíbe por completo su uso?", 
+                options: ["Enfermedad renal terminal", "Tasa de filtración de 60 ml/min", "Presencia de microalbuminuria", "Síndrome nefrótico estable"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Osteoporosis posmenopáusica, el freno masivo sobre los osteoclastos desencadena un flujo intracelular de calcio hacia el hueso (síndrome de hueso hambriento). Si el riñón no puede compensar este secuestro mediante hidroxilación de vitamina D y retención tubular, se produce una hipocalcemia aguda y potencialmente letal.<br><br>Perla ENARM: \"Es útil en pacientes con insuficiencia renal, sin embargo, no se recomienda en pacientes con enfermedad renal terminal debido al alto riesgo de hipocalcemia.\"<br><br>Análisis de Distractores: Las opciones B, C y D corresponden a nefropatías que aún conservan capacidad metabólica paratiroidea de rescate.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Tratamiento, Página 63." 
+            },
+            {
+                id: 26, 
+                question: "¿En qué escenario fisiopatológico o clínico específico el ácido zoledrónico está indicado imperativamente como primera opción de manejo farmacológico?", 
+                options: ["Riesgo elevado de cáncer mamario", "Tasa de filtración menor a 30 ml/min", "Intolerancia a bifosfonatos orales", "Enfermedad esofágica resuelta"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Osteoporosis posmenopáusica, la principal barrera de éxito para el tratamiento en el adulto mayor es la acidez severa y el reflujo inducidos por la tableta, lo que condiciona abandono de la terapia. La ruta parenteral sortea la cámara gástrica garantizando adherencia y eficacia.<br><br>Perla ENARM: \"El ácido zoledrónico debería considerarse para personas con alto riesgo de fractura y que no toleren o este contraindicada la vía oral.\"<br><br>Análisis de Distractores: La opción A indicaría uso de raloxifeno, y la opción B es la contraindicación metabólica de todos los fármacos de esta clase.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Tratamiento, Página 59." 
+            },
+            {
+                id: 27, 
+                question: "En una paciente catalogada con muy alto riesgo de evento fracturario sometida a infusiones de ácido zoledrónico, ¿qué cantidad de dosis logradas obligan a dictaminar un reposo terapéutico?", 
+                options: ["Tras 2 dosis anuales", "Tras 3 dosis anuales", "Tras 6 dosis anuales", "Tras 10 dosis anuales"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Osteoporosis posmenopáusica, este fármaco tiene una potencia superior que 'congela' el hueso tras varios años de supresión de la resorción. Si el riesgo absoluto de la paciente era máximo desde el diagnóstico, la guía tolera la extensión de la vía intravenosa al doble de tiempo estándar (la opción B, de 3 dosis, se utiliza sólo en perfiles de riesgo moderado) para no desproteger el esqueleto abruptamente.<br><br>Perla ENARM: \"Para ácido zoledrónico, considerar un periodo de descanso después de 3 dosis anuales en personas con riesgo moderado y después de 6 dosis anuales en aquellos con riesgo alto.\"<br><br>Análisis de Distractores: Otras opciones no son correctas.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Seguimiento, Página 67." 
+            },
+            {
+                id: 28, 
+                question: "Durante la atención de primer nivel, usted aborda a una paciente que lleva tiempo prolongado en consumo de alendronato y calcio. ¿A partir de qué temporalidad continua de uso se justifica su referencia directa al nivel de subespecialidad?", 
+                options: ["Mayor a 1 año", "Mayor a 2 años", "Mayor a 10 años", "Mayor a 3 años"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Osteoporosis posmenopáusica, rebasado este lapso empírico de exposición, un endocrinólogo debe balancear la tasa de remodelado actual contra el beneficio de mantener la prescripción o migrar de manera electiva a terapias inyectables o estimuladoras del parénquima antes de presentarse necrosis avascular.<br><br>Perla ENARM: \"Se recomienda referir al especialista en endocrinología a mujeres posmenopáusicas con uso de bifosfonatos por más de 3 años.\"<br><br>Análisis de Distractores: Las opciones A y B corresponden a tiempos mínimos de latencia para evaluar ganancia densitométrica.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Criterios de Referencia, Página 81." 
+            },
+            {
+                id: 29, 
+                question: "Para fines estrictos del escrutinio de riesgo y prevención primaria, ¿cómo se define el concepto de fractura originada por un traumatismo de bajo impacto o fragilidad tisular?", 
+                options: ["Caída desde su propia altura o menor", "Impacto secundario a lesión por fricción", "Traumatismo originado en accidente vehicular", "Colapso originado por síncope prolongado"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Osteoporosis posmenopáusica, un hueso competente debe soportar el estrés cinético del cuerpo en bipedestación si colisiona a ras de suelo. Cualquier claudicación del tejido cortical o trabecular bajo una inercia tan precaria evidencia desmineralización patológica automática, saltándose la necesidad del T-score para decidir un abordaje de fijación ósea.<br><br>Perla ENARM: \"Las fracturas de bajo impacto o por fragilidad se definen como aquellas que ocurren después de una caída de su propia altura o menor o sin traumatismo.\"<br><br>Análisis de Distractores: Las opciones B, C y D implican factores externos y mecánicas de alta absorción de energía.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Evaluación, Página 21." 
+            },
+            {
+                id: 30, 
+                question: "Al revisar la placa densitométrica anual de una paciente medicada con risedronato, ¿qué porcentaje de aumento en la masa medida se requiere para pronosticar un éxito contra el riesgo de nuevas fracturas?", 
+                options: ["≥ 3%", "≥ 5%", "≥ 10%", "≥ 1%"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Osteoporosis posmenopáusica, aunque el cambio absoluto en gramos de calcio parezca marginal en el escaneo radiológico numérico, una leve mejoría en el consolidado general refleja la microarquitectura trabecular reconectada. El fármaco bloquea el daño pero incrementa mínimamente la cantidad real del tejido; por ende, exigir variaciones drásticas como las opciones B o C es fisiológicamente inalcanzable.<br><br>Perla ENARM: \"Aquellas que tuvieron un incremento ≥ 3% de la DMO durante el primer y segundo año de tratamiento con bifosfonato, tuvieron una baja incidencia de fracturas vertebrales.\"<br><br>Análisis de Distractores: Otras opciones no son correctas.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Seguimiento, Página 69." 
+            },
+            {
+                id: 31, 
+                question: "En la exploración ortopédica de una columna con dolor, se procede a realizar morfometría estructural evaluando la placa simple mediante la graduación de Genant. ¿Qué disminución segmentaria indica un estadio 3 de colapso patológico?", 
+                options: ["Reducción aislada del 15%", "Reducción del 20 al 25%", "Reducción del 26 al 40%", "Reducción de más del 40%"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Osteoporosis posmenopáusica, la escala clasifica matemáticamente el acuñamiento y deformidad de la estructura de soporte. Superar esta barrera porcentual correlaciona visualmente con un riesgo inminente de inestabilidad neurológica o cifosis limitante severa.<br><br>Perla ENARM: \"Se ha utilizado la escala Genant, para definir fractura vertebral: Grado 3 (grave) con una reducción de más del 40%.\"<br><br>Análisis de Distractores: Las opciones B y C engloban parámetros de fractura grado 1 (leve) y grado 2 (moderada) respectivamente, en las que aún persiste anatomía conservada.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Diagnóstico, Página 37." 
+            },
+            {
+                id: 32, 
+                question: "Usted considera rescatar la masa mineral de una adulta mayor mediante el inicio de la hormona paratiroidea recombinante humana. ¿En cuál de los siguientes escenarios dicho anabólico representa un peligro formal para la vida?", 
+                options: ["Falla hepática crónica Child B", "Tabaquismo activo empedernido", "Radiación previa al esqueleto", "Disminución leve en vitamina D"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Osteoporosis posmenopáusica, el mecanismo osteoblástico desencadenado por este medicamento no diferencia la génesis de tejido sano de la diseminación mitótica desorganizada. Al inyectarse en lechos óseos que sufrieron daños en su ADN por haces de energía, se precipita el desarrollo de un osteosarcoma fulminante.<br><br>Perla ENARM: \"Está contraindicada en personas con hipercalcemia... o historia previa de radiación al esqueleto y enfermedades malignas que afecten hueso.\"<br><br>Análisis de Distractores: Las condiciones en las opciones A, B y D requieren corrección general pero no impiden totalmente la infusión celular.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Tratamiento, Página 61." 
+            },
+            {
+                id: 33, 
+                question: "En la práctica de atención secundaria, llega una prescripción que sugiere el bloqueo osteoclástico dual uniendo denosumab con moduladores de estrógenos simultáneamente. ¿Qué estatuto avala la guía clínica respecto a la asociación cruzada de varios antirresortivos?", 
+                options: ["Potencia la matriz a largo plazo", "No está recomendado", "Acorta la terapia en meses", "Previene caídas intrahospitalarias"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Osteoporosis posmenopáusica, a pesar de que la patología debilita severamente el hueso, usar dobles esquemas eleva logarítmicamente la probabilidad biológica de la necrosis de maxilar o supresión paralizante letal del tejido y sus defensas inmunitarias celulares, además de impactar la economía en salud al no sumar eficacia en supervivencia.<br><br>Perla ENARM: \"El empleo concomitante de agentes para la prevención y tratamiento de osteoporosis posmenopáusica no está recomendado.\"<br><br>Análisis de Distractores: Las opciones A, C y D representan suposiciones clínicas inexactas y peligrosas carentes de nivel de evidencia a favor.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Tratamiento, Página 69." 
+            },
+            {
+                id: 34, 
+                question: "Para valorar el cese farmacológico durante el control paraclínico y afinar el seguimiento en situaciones dudosa, ¿cuál marcador bioquímico sanguíneo aísla en sangre las etapas netas de la resorción estructural?", 
+                options: ["Fosfatasa alcalina específica", "Hidroxiprolina en orina nocturna", "Propéptido amino terminal", "Telopéptido sérico C terminal (s-CTX)"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Osteoporosis posmenopáusica, el colágeno óseo, tras ser digerido enzimáticamente por el osteoclasto hiperactivo, suelta al torrente circulatorio fracciones moleculares de su región C. Estos fragmentos señalan exclusivamente la degradación y no la formación.<br><br>Perla ENARM: \"Se han propuesto el propéptido de colágeno tipo I (s-PINP), como marcador de formación, y el telopéptido de colágeno tipo I (s-CTX), como marcador de resorción.\"<br><br>Análisis de Distractores: La opción C (s-PINP) es, por el contrario, un remanente inmaduro liberado al construir matriz de neoformación. La opción A y B son abordajes antiguos que detectan alteraciones sistémicas nulas en precisión fisiológica actual.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Seguimiento, Página 38." 
+            },
+            {
+                id: 35, 
+                question: "¿A qué dosis umbral debe aconsejarse reducir el consumo dietético de cafeína, dada su interferencia leve pero progresiva con el secuestro iónico del cuerpo en la edad posmenopáusica?", 
+                options: ["Menos de 1 a 2 porciones", "Menos de 3 a 4 porciones", "Prohibición absoluta alimentaria", "Reducción al 50% de tolerancia"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Osteoporosis posmenopáusica, la metilxantina contenida en el líquido favorece la diuresis iónica obligada, afectando silente y progresivamente la resorción tubular. El recorte a un máximo de entre 250 y 500 mililitros resguarda un balance en el que la dieta habitual todavía logra recuperar lo perdido sin suprimir por entero (opción C) los hábitos socioculturales de las usuarias mayores.<br><br>Perla ENARM: \"Se debe recomendar a las mujeres posmenopáusicas que limiten la ingesta de cafeína a menos de 1 a 2 porciones (cada porción equivale a 250ml) de bebidas con cafeína por día.\"<br><br>Análisis de Distractores: Otras opciones no son correctas.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Tratamiento preventivo, Página 46." 
+            },
+            {
+                id: 36, 
+                question: "Durante la evaluación del perfil densitométrico de escrutinio, ¿qué criterio numérico en la escala estandarizada determina contundentemente una estructura ósea saludable?", 
+                options: ["Índice T entre -1.5 y -2.0", "Mayor o igual a -1.0", "Mayor o igual a +2.0", "Menor a -2.5 sostenido"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Osteoporosis posmenopáusica, el valor obtenido refleja una desviación que se encuentra a una distancia estadísticamente imperceptible de la media de referencia internacional.<br><br>Perla ENARM: \"Se recomienda interpretar los resultados de la densitometría ósea por DXA en mujeres posmenopáusicas de la siguiente manera: Normal: índice T -1.0 DE o mayor.\"<br><br>Análisis de Distractores: La opción A clasifica osteopenia y la opción D osteoporosis; por otro lado, un índice T de +2.0 (opción C) indica una hipertrofia no correspondiente a esta cohorte demográfica estandarizada por absorciometría radiológica dual.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Diagnóstico, Página 31." 
+            },
+            {
+                id: 37, 
+                question: "En el protocolo laboratorial extenso para filiar un colapso esquelético atípico, la nefropatía de base dificulta la retención y activación de medicamentos de soporte celular. ¿Qué límite en la función obligará al envío de tercer nivel por alta complejidad terapéutica?", 
+                options: ["Tasa de filtración de 60 ml/min/m2", "Depuración de orina en 45 ml/min", "Tasa de filtración menor a 35 ml/min/m2", "Presencia asintomática de glucosuria"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Osteoporosis posmenopáusica, al cruzar esta barrera de depuración, el aclaramiento deficiente paraliza la viabilidad general de prescribir fijadores vía oral como el alendronato (contraindicado) y aumenta potencialmente las calcificaciones en tejidos blandos por los altos volúmenes de calcio inerte flotante, volviéndose la valoración nefrológica y endocrinológica imperativas sobre la conducta simple del médico adscrito original.<br><br>Perla ENARM: \"Se recomienda referir al especialista en endocrinología a mujeres posmenopáusicas... En presencia de una afección que complica el tratamiento (p. ej., enfermedad renal crónica (tasa de filtración glomerular < 35 ml/min/m2)...\".<br><br>Análisis de Distractores: Otras opciones no son correctas.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Criterios de Referencia, Página 81." 
+            },
+            {
+                id: 38, 
+                question: "Tras alimentar la base de datos computacional del FRAX, ¿qué pronóstico probabilístico matemático en el lapso de una década exige la reclasificación forzosa al nicho del alto riesgo enfocado en la fractura del fémur proximal?", 
+                options: ["≥ 3%", "≥ 15%", "≥ 20%", "≥ 50%"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Osteoporosis posmenopáusica, la morbilidad quirúrgica letal e invalidante ligada a la destrucción biomecánica de la cadera exige dictaminar un margen de prevención enérgico pero con umbrales estrechos.<br><br>Perla ENARM: \"La probabilidad a 10 años de fractura de cadera es ≥ 3% y/o de fractura osteoporótica mayor es ≥ 20%.\"<br><br>Análisis de Distractores: Las opciones B, C y D corresponden a los niveles de alerta manejados para una 'fractura osteoporótica mayor' conjunta, por lo que este pequeño porcentaje resulta suficiente en fémur por las secuelas hospitalarias permanentes generadas.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Evaluación FRAX, Página 26." 
+            },
+            {
+                id: 39, 
+                question: "Durante la sesión de entrega e indicación del manejo oral principal, ¿qué recomendación técnica inquebrantable debe seguir el paciente diariamente con la toma para garantizar la biodisponibilidad luminal de la pauta farmacológica elegida?", 
+                options: ["Ingerirlo tras la cena con lácteos", "Ingerirlo masticado con alcalinos", "Ingerirlo al acostarse para el mareo", "Ingerirlo en ayuno con abundante agua"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Osteoporosis posmenopáusica, el componente activo de los bifosfonatos cuenta con un índice de absorción natural precario (menor al 1%) que se inactiva por completo en contacto con alimentos, suplementos cálcicos, minerales de jugos e incluso bebidas enriquecidas, de modo que combinarlo con la comida o decúbito (opciones A y C) erradica su utilidad e incrementa la esofagitis.<br><br>Perla ENARM: \"Los bifosfonatos orales se deben ingerir en ayuno y con abundante agua, al menos 30 minutos antes de la ingesta de otros medicamentos, alimentos o bebidas distintas al agua.\"<br><br>Análisis de Distractores: La opción B erosiona gravemente el esmalte dental y bucal.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Tratamiento, Página 58." 
+            },
+            {
+                id: 40, 
+                question: "Al documentarse talla prospectivamente en el expediente clínico, ¿qué magnitud de pérdida antropométrica continuada durante un trienio de consulta demanda una radiografía dorso-lumbar que acredite la existencia de destrucción oculta?", 
+                options: ["Disminución de 1 cm", "Disminución de 5 cm", "Disminución de 2 cm", "Disminución de 3 cm"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Osteoporosis posmenopáusica, esta disminución detectada de forma evolutiva y sistemática a lo largo de las revisiones acusa el aplastamiento vertebral en el mismo instante en el que avanza. Mientras que los 4 centímetros se buscan en la discrepancia 'histórica', en el cuidado subsecuente y presente la merma detectada requerida (opción C) obliga al rastreo de imagen antes de que el grado 3 estructure la curvatura de la espalda limitante en el eje mecánico local posterior.<br><br>Perla ENARM: \"La disminución de 4 cm (talla más alta recordada – talla actual) o la disminución de 2 cm en dos o más visitas de consultorio en 3 años, se asocian con la presencia de fracturas vertebrales.\"<br><br>Análisis de Distractores: Otras opciones no son correctas.", 
+                source: "GPC-IMSS-673-18, Diagnóstico y tratamiento de osteoporosis en mujeres posmenopáusicas, 2018, Seguimiento, Página 74." 
+            }
+        ];
+
+        // ==========================================
+        // ==========================================
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('gyoFMLastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('gyoFMProgress');
+                localStorage.removeItem('gyoFMLastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-pink-500 shadow-md z-10 border-pink-500 dark:border-pink-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-rose-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "GINECOLOGÍA Y OBSTETRICIA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "GPC IMSS-673-18 • Diagnóstico y tratamiento de osteoporosis en mujeres posmenopaúsicas";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="GM02620GYOE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-pink-100 dark:border-pink-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-pink-50 has-[:checked]:border-pink-400 dark:has-[:checked]:bg-pink-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-pink-600 dark:hover:bg-pink-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('gyoFMProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('gyoFMLastQId', currentQuestionId);
+                else localStorage.removeItem('gyoFMLastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('gyoFMProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

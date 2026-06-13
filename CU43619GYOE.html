@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================
+        // =========================================================
+        const questionsData = [
+    {
+        id: 1,
+        question: "¿Cuál es el trimestre de la gestación que presenta la mayor incidencia para el desarrollo de apendicitis aguda?",
+        options: ["Primer trimestre", "Segundo trimestre", "Tercer trimestre", "Puerperio inmediato"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Emergencias Obstétricas, los cambios de adaptación anatómica y el volumen uterino influyen en la patología apendicular, haciendo que este periodo concentre la mayoría de los casos.<br><br>Perla ENARM: \"La apendicitis aguda, es más común en el segundo trimestre del embarazo.\"<br><br>Análisis de Distractores: El primer trimestre se asocia fuertemente al embarazo ectópico roto. El tercer trimestre es el de mayor riesgo para infarto agudo del miocardio y complicaciones de crisis hipertensiva. El puerperio inmediato se asocia al colapso por embolia de líquido amniótico y hemorragia.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Apendicitis y embarazo, Página 13."
+    },
+    {
+        id: 2,
+        question: "Debido a los cambios anatómicos por el aumento del volumen uterino, ¿hacia qué región anatómica migra y se localiza característicamente el dolor de apendicitis aguda en el tercer trimestre?",
+        options: ["Hipogastrio", "Fosa iliaca izquierda", "Hipocondrio derecho", "Epigastrio"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Emergencias Obstétricas, el útero grávido desplaza el ciego y el apéndice en dirección cefálica, modificando el punto clásico de dolor y requiriendo un alto índice de sospecha por parte del médico.<br><br>Perla ENARM: \"El aumento del volumen uterino en el segundo y tercer trimestre de la gestación puede causar la migración caudal del apéndice, por lo que el dolor en caso de apendicitis puede presentarse en la fosa iliaca o hipocondrio derechos.\"<br><br>Análisis de Distractores: El epigastrio puede doler en presentaciones atípicas o crisis hipertensivas graves (epigastralgia). El hipogastrio y la fosa iliaca izquierda no corresponden al eje de migración anatómica de la estructura apendicular durante la gestación.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Apendicitis y embarazo, Página 13."
+    },
+    {
+        id: 3,
+        question: "Ante una paciente embarazada con sospecha clínica de apendicitis aguda, ¿cuál es el primer estudio de imagen que debe solicitarse para abordar el diagnóstico?",
+        options: ["Resonancia magnética", "Tomografía computarizada", "Radiografía de abdomen", "Ultrasonido abdominal"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Emergencias Obstétricas, es el método más seguro por su carencia de radiación ionizante, permitiendo evaluar la estructura tubular apendicular inicial.<br><br>Perla ENARM: \"En mujeres embarazadas con dolor abdominal, se recomienda utilizar el ultrasonido como primer estudio de imagen diagnóstica.\"<br><br>Análisis de Distractores: La resonancia magnética es el estándar de oro si el ultrasonido inicial resulta no concluyente. La tomografía computarizada se restringe a casos donde la resonancia no está disponible. La radiografía de abdomen no tiene utilidad para este cuadro agudo en el embarazo.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Apendicitis y embarazo, Página 14."
+    },
+    {
+        id: 4,
+        question: "Para integrar de forma objetiva el diagnóstico de hiperémesis gravídica junto con la presencia de náuseas y vómitos incoercibles, ¿qué porcentaje de pérdida del peso pregestacional debe documentarse?",
+        options: [">2%", ">5%", ">10%", ">15%"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Emergencias Obstétricas, el escrutinio de esta entidad demanda una medición física tangible que compruebe la severidad metabólica y la intolerancia oral franca de la gestante.<br><br>Perla ENARM: \"Se recomienda realizar el diagnóstico de hiperémesis gravídica ante la presencia de náuseas y vómitos incoercibles en el embarazo, acompañado de pérdida mayor al 5% del peso pregestacional, deshidratación y/o alteraciones electrolíticas.\"<br><br>Análisis de Distractores: Las opciones >2%, >10% y >15% son valores inventados clínicamente como distractores para el límite de pérdida ponderal. Solo el >5% obliga a iniciar el protocolo de corrección metabólica de urgencia intrahospitalario.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Hiperémesis gravídica, Página 25."
+    },
+    {
+        id: 5,
+        question: "¿Cuál es el grupo farmacológico de primera línea recomendado para el manejo sintomático de la náusea y el vómito en una paciente con hiperémesis gravídica?",
+        options: ["Antagonistas 5-HT3", "Corticoesteroides", "Antihistamínicos", "Fenotiazinas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Emergencias Obstétricas, los inhibidores de los receptores H1 poseen el perfil de seguridad y eficacia más alto para iniciar el abordaje farmacológico materno sin exponer al feto a mayores riesgos en la embriogénesis.<br><br>Perla ENARM: \"Para el manejo de la náusea y vómito, se sugiere emplear como fármaco de primera línea, los antihistamínicos (inhibidores de receptores H1).\"<br><br>Análisis de Distractores: Los antagonistas 5-HT3 como el ondansetrón o procinéticos como metoclopramida son el segundo escalón en caso de falla a primera línea. Los corticoesteroides se reservan para fracaso farmacológico total. Las fenotiazinas no figuran en las opciones directas del algoritmo primario.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Hiperémesis gravídica, Página 27."
+    },
+    {
+        id: 6,
+        question: "En una paciente ingresada por hiperémesis gravídica grave, ¿qué fármaco preventivo debe administrarse obligatoriamente previo a la infusión de soluciones intravenosas con dextrosa?",
+        options: ["Ondansetrón", "Metoclopramida", "Hidrocortisona", "Tiamina"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Emergencias Obstétricas, el metabolismo agudo de los carbohidratos aportados en la dextrosa consume las reservas críticas de vitamina B1, precipitando el daño neurológico irreversible conocido como encefalopatía de Wernicke.<br><br>Perla ENARM: \"Se recomienda la suplementación con tiamina (oral o intravenosa) a todas las mujeres con hiperémesis gravídica grave, en el momento de su hospitalización y previo a la administración de dextrosa o nutrición parenteral.\"<br><br>Análisis de Distractores: Ondansetrón y metoclopramida actúan en los síntomas digestivos pero no detienen la neurotoxicidad metabólica. La hidrocortisona es para vómitos refractarios, no protege contra la encefalopatía secundaria a glucosa rápida.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Hiperémesis gravídica, Página 27."
+    },
+    {
+        id: 7,
+        question: "¿Qué cifras tensionales y durante qué periodo mínimo de tiempo confirman la instauración clínica de una crisis hipertensiva en el embarazo?",
+        options: ["≥140/90 mmHg por ≥10 minutos", "≥150/100 mmHg por ≥20 minutos", "≥160/110 mmHg por ≥15 minutos", "≥180/120 mmHg por ≥30 minutos"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Emergencias Obstétricas, este punto de corte sostenido sobrepasa la autorregulación cerebral fisiológica de la mujer embarazada, marcando la frontera de daño a órgano blanco inminente.<br><br>Perla ENARM: \"En mujeres gestantes o puérperas, se recomienda establecer el diagnóstico de crisis hipertensiva ante la presencia de dos cifras tensionales iguales o mayores de 160/110 mmHg en un lapso igual o mayor a 15 minutos.\"<br><br>Análisis de Distractores: ≥140/90 es diagnóstico de hipertensión sin criterios de severidad (no es crisis). Los cortes de ≥150/100 y ≥180/120 son opciones distractivas que no se ajustan a la normativa cronométrica y de presión de la guía.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Crisis hipertensiva en el embarazo, Página 17."
+    },
+    {
+        id: 8,
+        question: "¿Cuál es el fármaco de primera línea administrado por vía oral que se recomienda para el tratamiento inmediato de la crisis hipertensiva en la paciente gestante?",
+        options: ["Alfametildopa", "Nifedipino", "Labetalol", "Hidralazina"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Emergencias Obstétricas, este calcioantagonista de liberación inmediata genera un control rápido y efectivo de la tensión arterial previniendo las hemorragias cerebrovasculares.<br><br>Perla ENARM: \"Para el tratamiento inicial de la crisis hipertensiva en el embarazo se podrá considerar como fármacos de primera línea al nifedipino de liberación inmediata vía oral o hidralazina intravenosa.\"<br><br>Análisis de Distractores: La hidralazina es de primera línea pero su vía principal aguda es intravenosa, no oral. La alfametildopa es para control crónico ambulatorio. El labetalol requiere administración intravenosa continua y monitorización estrecha como alternativa.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Crisis hipertensiva en el embarazo, Página 18."
+    },
+    {
+        id: 9,
+        question: "En una paciente cursando con crisis hipertensiva ya estabilizada y con pruebas de bienestar fetal normales, ¿por debajo de qué edad gestacional indica la GPC considerar el manejo expectante?",
+        options: ["<32 semanas", "<34 semanas", "<36 semanas", "<37 semanas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Emergencias Obstétricas, si no hay compromiso orgánico inminente ni sufrimiento fetal, prolongar el embarazo hasta esta barrera permite la maduración pulmonar y mejora los desenlaces perinatales en cuidados intensivos neonatales.<br><br>Perla ENARM: \"Se recomienda considerar el manejo expectante en mujeres con embarazo menor de 34 semanas con diagnóstico de crisis hipertensiva, siempre y cuando la paciente cuente con los criterios de selección necesarios.\"<br><br>Análisis de Distractores: Una vez superadas las 34 semanas, la guía ordena el nacimiento inmediato ante crisis estabilizada (opciones C y D son erróneas). Las 32 semanas indican prematurez, pero el corte oficial que sopesa los riesgos y dicta la interrupción protocolaria es a las 34 semanas.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Crisis hipertensiva en el embarazo, Página 20."
+    },
+    {
+        id: 10,
+        question: "En la evaluación del área de urgencias de una paciente con cuadro de dolor abdominal agudo en fosa iliaca y prueba de embarazo positiva, ¿cuál es el estudio de imagen de elección inicial para confirmar un embarazo ectópico tubárico?",
+        options: ["Tomografía computarizada", "Resonancia magnética", "Ultrasonido abdominal", "Ultrasonido endovaginal"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Emergencias Obstétricas, esta modalidad permite una visualización temprana y directa de los anexos, identificando sacos gestacionales con o sin embrión fuera del endometrio, así como líquido libre en saco de Douglas.<br><br>Perla ENARM: \"Se recomienda el uso del ultrasonido endovaginal como la herramienta diagnóstica de elección para el diagnóstico de embarazo ectópico tubárico.\"<br><br>Análisis de Distractores: El ultrasonido abdominal se prefiere para apendicitis aguda obstétrica. La resonancia magnética confirma apéndices de difícil visualización o etiologías pélvicas dudosas no urgentes. La tomografía computarizada implica radiación severa no justificada.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Embarazo ectópico roto, Página 21."
+    },
+    {
+        id: 11,
+        question: "Durante el tratamiento quirúrgico urgente de un embarazo ectópico roto con inestabilidad, si se observa que la salpinge contralateral se encuentra macroscópicamente sana, ¿qué intervención resolutiva recomienda el documento?",
+        options: ["Salpingostomía", "Salpingectomía", "Histerectomía", "Ooforectomía"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Emergencias Obstétricas, la remoción completa de la trompa fallida protege a la paciente del riesgo de trofoblasto persistente y hemorragia recurrente, preservando íntegra la fertilidad en el anexo funcional opuesto.<br><br>Perla ENARM: \"En presencia de una salpinge contralateral sana se recomienda realizar salpingectomía en vez de salpingostomía.\"<br><br>Análisis de Distractores: La salpingostomía (conservadora) está proscrita ante el anexo roto si la otra trompa sirve, ya que incrementa la recurrencia local. Ooforectomía y la histerectomía resultan mutilantes y desproporcionadas para esta patología exclusiva de la trompa de Falopio.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Embarazo ectópico roto, Página 22."
+    },
+    {
+        id: 12,
+        question: "¿Cuáles son los tres signos clínicos que en conjunto integran la tríada clásica de presentación sospechosa ante un embarazo ectópico roto?",
+        options: ["Fiebre, leucocitosis y dolor pélvico", "Hipertensión, proteinuria y edema", "Náuseas, vómitos e intolerancia", "Amenorrea, dolor abdominal y sangrado"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Emergencias Obstétricas, la irrupción en edad reproductiva de cese menstrual junto con disrupción peritoneal y hemorragia vaginal activan instantáneamente el algoritmo de manejo en choque hipovolémico obstétrico.<br><br>Perla ENARM: \"Los signos y síntomas más comunes de embarazo ectópico roto son la triada clásica de amenorrea, dolor abdominal y sangrado transvaginal, en presencia de una prueba de embarazo positiva.\"<br><br>Análisis de Distractores: Fiebre y leucocitosis sugieren enfermedad pélvica inflamatoria o apendicitis. Hipertensión y proteinuria son la antigua tríada de la preeclampsia. Las náuseas severas son el pivote de la hiperémesis gravídica.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Embarazo ectópico roto, Página 20."
+    },
+    {
+        id: 13,
+        question: "Al evaluar un colapso materno súbito catalogado como embolia de líquido amniótico, ¿qué complicación de orden hematológico temprana es un criterio estricto e indispensable para el diagnóstico?",
+        options: ["Trombocitopenia gestacional", "Hemólisis microangiopática", "Coagulación intravascular diseminada", "Trombosis venosa profunda"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Emergencias Obstétricas, la intrusión del tejido y células fetales provoca una tormenta anafilactoide y activación masiva de la cascada de coagulación que agota los factores maternos velozmente.<br><br>Perla ENARM: \"Los criterios para establecer el diagnóstico de embolia de líquido amniótico [...] son: 1. Paro cardiorrespiratorio o hipotensión súbita y compromiso respiratorio. 2. Presencia de coagulación intravascular diseminada (CID).\"<br><br>Análisis de Distractores: Hemólisis microangiopática forma parte del Síndrome de HELLP. Trombocitopenia gestacional es un hallazgo crónico incidental y benigno. La trombosis venosa profunda no explica el consumo sistémico fulminante masivo.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Embolia de líquido amniótico, Página 22."
+    },
+    {
+        id: 14,
+        question: "En el algoritmo de escrutinio diagnóstico de exclusión para clasificar el colapso por embolia de líquido amniótico, ¿cuál de los siguientes hallazgos clínicos representa un criterio negativo absoluto (exclusión)?",
+        options: ["Presencia de hipotensión", "Presencia de taquicardia", "Presencia de fiebre", "Presencia de bradicardia"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Emergencias Obstétricas, detectar hipertermia indica un foco infeccioso bacteriano subyacente que reorienta inmediatamente el choque hacia una sepsis fulminante u otro evento séptico obstétrico, no un evento inmunológico amniótico.<br><br>Perla ENARM: \"Los criterios para establecer el diagnóstico de embolia de líquido amniótico [...] son: [...] 4. Ausencia de fiebre (temperatura mayor de 38 °C) durante el trabajo de parto.\"<br><br>Análisis de Distractores: La hipotensión es parte definitoria (menor a 90 mmHg). La taquicardia materna es una respuesta refleja simpática al choque distributivo. La bradicardia fetal severa y sostenida está presente en más de la mitad de estos trágicos casos.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Embolia de líquido amniótico, Página 22."
+    },
+    {
+        id: 15,
+        question: "Ante una paciente con embolia de líquido amniótico que progresa a un paro cardiorrespiratorio intratable, ¿a partir de qué edad gestacional indica la directriz forzar el nacimiento inmediato?",
+        options: [">20 semanas", ">23 semanas", ">28 semanas", ">32 semanas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Emergencias Obstétricas, este límite marca el punto de viabilidad extrauterina en la reanimación perimortem que, además, descompresiona la circulación venosa aortocava materna, facilitando las maniobras torácicas de sobrevida.<br><br>Perla ENARM: \"En caso de presentarse paro cardiorrespiratorio, se recomienda el nacimiento inmediato si la edad gestacional es mayor a 23 semanas.\"<br><br>Análisis de Distractores: A las 20 semanas no se ha garantizado un peso y madurez mínimas para viabilidad (es considerada pérdida fetal). Los tiempos de >28 y >32 semanas omiten valiosos periodos de rescate neonatal ya estipulados a nivel global en cesáreas perimortem a partir de las 23 semanas.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Embolia de líquido amniótico, Página 24."
+    },
+    {
+        id: 16,
+        question: "Al abordar a una paciente embarazada con disnea, sudoración y dolor torácico sugestivo de isquemia aguda, ¿cuál es el biomarcador sérico recomendado que posee la mayor especificidad diagnóstica?",
+        options: ["Mioglobina", "Creatinin cinasa", "Troponina", "Deshidrogenasa láctica"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Emergencias Obstétricas, el reconocimiento del daño de miocitos cardíacos amerita excluir marcadores inespecíficos para evitar diagnósticos invasivos innecesarios que arriesguen a la unidad feto-placentaria.<br><br>Perla ENARM: \"Ante la paciente con sospecha de infarto agudo del miocardio, se prefiere la medición de la troponina (c-Tn) sobre la creatinin kinasa (CK), pues esta última puede elevarse debido a las contracciones uterinas.\"<br><br>Análisis de Distractores: La creatinin cinasa resulta un falso positivo obstétrico recurrente debido a la contracción del útero. Mioglobina y Deshidrogenasa láctica son sumamente inespecíficas debido a su liberación universal por esfuerzo y daño muscular musculoesquelético.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Infarto agudo del miocardio en el embarazo, Página 29."
+    },
+    {
+        id: 17,
+        question: "Según la ruta terapéutica para el infarto agudo del miocardio con elevación del segmento ST (IAMCEST) que surge durante el periodo gestacional, ¿cuál es el tratamiento de reperfusión preferido?",
+        options: ["Trombólisis sistémica", "Angioplastia coronaria", "Bypass aortocoronario", "Manejo conservador"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Emergencias Obstétricas, reperfundir mediante intervencionismo hemodinámico local salva el tejido isquémico sin desencadenar las terribles consecuencias de sangrados catastróficos placentarios o uterinos inducidos farmacológicamente.<br><br>Perla ENARM: \"Durante el embarazo, la angioplastia coronaria es el tratamiento de reperfusión preferido para el infarto agudo del miocardio con elevación del ST.\"<br><br>Análisis de Distractores: La trombólisis sistémica acarrea un riesgo hemorrágico letal contraindicado si hay opciones mecánicas. El Bypass abierto implica circulación extracorpórea muy riesgosa. El ST elevado dicta necrosis isquémica transmural donde el manejo médico conservador fracasará.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Infarto agudo del miocardio en el embarazo, Página 30."
+    },
+    {
+        id: 18,
+        question: "¿Cuál es el primer signo obstétrico evaluable en el registro cardiotocográfico que alerta tempranamente al clínico de la presencia de un prolapso de cordón umbilical?",
+        options: ["Taquicardia fetal sostenida", "Disminución de la variabilidad", "Desaceleraciones tempranas", "Desaceleraciones variables súbitas"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Emergencias Obstétricas, la pinza fisiológica producida por la presentación fetal sobre el cordón interrumpe el flujo sanguíneo detonando una respuesta vagal inmediata y severa que precede al diagnóstico tactado.<br><br>Perla ENARM: \"Las alteraciones en la frecuencia cardiaca fetal (deceleraciones variables, recurrentes, súbitas y con duración mayor a un minuto), por lo general son el primer signo de prolapso de cordón umbilical.\"<br><br>Análisis de Distractores: Las desaceleraciones tempranas reflejan compresión cefálica inocua. La variabilidad disminuida es marcador de asfixia o hipoxia crónica, no compresión aguda. Taquicardia orienta a respuesta infecciosa o fiebre materna.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Prolapso de cordón umbilical, Página 32."
+    },
+    {
+        id: 19,
+        question: "Como medida temporal indispensable para aliviar la compresión obstétrica en un prolapso de cordón umbilical mientras el equipo quirúrgico alista la cesárea, ¿qué técnica se recomienda si se decide utilizar sonda?",
+        options: ["Llenado vesical con 250 ml", "Llenado vesical con 500 ml", "Llenado vesical con 750 ml", "Llenado vesical con 1000 ml"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Emergencias Obstétricas, crear un globo vesical con líquido estéril a través de catéter folley permite rechazar la cabeza fetal hacia arriba mecánicamente resguardando el paso de oxígeno por la vena umbilical.<br><br>Perla ENARM: \"El llenado vesical con 500ml de solución salina puede aliviar la compresión del cordón al elevar la presentación fetal y disminuir la intensidad de las contracciones uterinas.\"<br><br>Análisis de Distractores: Volúmenes menores a 500 ml son insuficientes para vencer la fuerza compresiva o empujar el segmento fetal. Volúmenes de 750 o 1000 ml sobrepasan la distensión segura agudamente sin aportar un beneficio adicional para el rechazo.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Prolapso de cordón umbilical, Página 33."
+    },
+    {
+        id: 20,
+        question: "En el marco preventivo prequirúrgico de una gestante diagnosticada con apendicitis aguda sin signos francos de dinámica uterina asociada, ¿cuál es la conducta farmacológica indicada sobre el útero?",
+        options: ["Uso de nifedipino rutinario", "Uso de indometacina profiláctica", "No recomienda uso profiláctico", "Uso de sulfato de magnesio"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Emergencias Obstétricas, saturar a la paciente con inhibidores uterinos ante una cirugía extrauterina abdominal implica añadir riesgos metabólicos y hemodinámicos sin evidencia concluyente de prevención de nacimiento inmaduro.<br><br>Perla ENARM: \"No se recomienda el uso profiláctico de tocolíticos en mujeres embarazadas sin datos clínicos de amenaza de parto pretérmino.\"<br><br>Análisis de Distractores: Opciones como la indometacina (riesgo de cierre ductal prematuro), sulfato o nifedipino están descartadas ya que la indicación es precisamente la abstención de terapia farmacológica preventiva de este tipo de eventos, salvo que inicie el cuadro de amenaza establecido.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Apendicitis y embarazo, Página 16."
+    },
+    {
+        id: 21,
+        question: "Mujer de 32 años, cursando 35 semanas de gestación, es ingresada a la Unidad Coronaria por Infarto Agudo del Miocardio. Durante la angiografía de urgencia, el cardiólogo documenta disección espontánea de la arteria coronaria. ¿Qué fármaco del manejo inicial del síndrome coronario debe suspenderse de manera absoluta y urgente?",
+        options: ["Ácido acetilsalicílico", "Heparina no fraccionada", "Nitroglicerina intravenosa", "Metoprolol oral"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Emergencias Obstétricas, el uso de anticoagulantes en presencia de una separación de las capas de la pared arterial empeora la hemorragia intramural y propaga la disección de forma catastrófica.<br><br>Perla ENARM: \"La heparina debe suspenderse si se identifica disección espontánea de la arteria coronaria.\"<br><br>Análisis de Distractores: El ácido acetilsalicílico a dosis bajas es seguro en el embarazo y no está contraindicado en la disección de entrada. La nitroglicerina y los betabloqueadores (metoprolol) son pilares del control de frecuencia y presión de cizallamiento en la pared vascular, por lo que se mantienen como soporte médico.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Infarto agudo del miocardio en el embarazo, Página 30."
+    },
+    {
+        id: 22,
+        question: "Una gestante de 12 semanas se encuentra hospitalizada por Hiperémesis Gravídica. A pesar de 72 horas con reposición hídrica estricta, uso de inhibidores de los receptores H1, metoclopramida y ondansetrón a dosis tope, persiste con vómitos incoercibles y deterioro nutricional. ¿Cuál es el siguiente escalón farmacológico indicado previo a medidas invasivas parenterales?",
+        options: ["Terapia electroconvulsiva", "Uso de corticoesteroides", "Uso de fenotiazinas", "Nutrición parenteral total"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Emergencias Obstétricas, la persistencia severa de los síntomas frente a líneas primarias y secundarias exige una terapia inmunomoduladora y antiinflamatoria de rescate que suprima el centro del vómito antes de recurrir a soporte nutricional exclusivo por catéter.<br><br>Perla ENARM: \"En caso de que el manejo estándar de la hiperémesis gravídica haya fracasado, se recomienda el uso de corticoesteroides.\"<br><br>Análisis de Distractores: Las fenotiazinas son opciones históricas o de rescate para náuseas no obstétricas, pero la guía no las jerarquiza por encima de los esteroides. La nutrición parenteral total se reserva si fracasan absolutamente todas las líneas farmacológicas. La terapia electroconvulsiva no tiene indicación ginecológica en este cuadro.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Hiperémesis gravídica, Página 27."
+    },
+    {
+        id: 23,
+        question: "Una puerpera en su tercer día de alojamiento conjunto refiere antecedente de haber sufrido un Infarto Agudo del Miocardio durante el tercer trimestre. Actualmente se encuentra bajo tratamiento antiagregante. Desea lactar a su recién nacido pero teme por la excreción de medicamentos. ¿Qué agente antiplaquetario es el único considerado seguro por la guía para mantener la lactancia?",
+        options: ["Clopidogrel", "Prasugrel", "Ticagrelor", "Ácido acetilsalicílico"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Emergencias Obstétricas, los inhibidores del receptor P2Y12 carecen de datos robustos de seguridad sobre la excreción en leche materna y su efecto en la agregación plaquetaria del neonato, por lo que se desaconsejan.<br><br>Perla ENARM: \"No se recomienda la lactancia de las madres que reciben algún tratamiento antiplaquetario, con excepción del ácido acetil salicílico a dosis bajas.\"<br><br>Análisis de Distractores: Clopidogrel, prasugrel y ticagrelor son inhibidores del P2Y12 proscritos o de uso muy restringido ante lactancia debido al riesgo latente de discrasias sanguíneas o hemorragias microscópicas en el tubo digestivo del lactante.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Infarto agudo del miocardio en el embarazo, Página 31."
+    },
+    {
+        id: 24,
+        question: "Paciente en fase activa de trabajo de parto sufre cianosis, hipotensión súbita (60/30 mmHg) y alteración del estado de alerta, confirmándose diagnóstico de Embolia de Líquido Amniótico. Durante el protocolo de reanimación avanzada, ¿qué medida iatrogénica en la reposición debe evitarse estrictamente para no empeorar la supervivencia materna?",
+        options: ["Intubación endotraqueal temprana", "Administración de vasopresores", "Administración excesiva de líquidos", "Uso de fármacos inotrópicos"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Emergencias Obstétricas, el cor-pulmonale agudo secundario a la vasoconstricción pulmonar y falla del ventrículo derecho hace que el corazón materno sea incapaz de manejar cargas de volumen, precipitando edema agudo de pulmón letal.<br><br>Perla ENARM: \"Se recomienda que el manejo inicial de las pacientes con diagnóstico de embolia de líquido amniótico sea con [...] vasopresores e inotrópicos. Además, se debe evitar la administración excesiva de líquidos parenterales.\"<br><br>Análisis de Distractores: La intubación endotraqueal temprana es prioritaria (vía aérea). Los vasopresores y los inotrópicos son la piedra angular farmacológica para restablecer el gasto cardíaco fallido del ventrículo derecho sin sobrecargar las cavidades de solución fisiológica.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Embolia de líquido amniótico, Página 24."
+    },
+    {
+        id: 25,
+        question: "Femenina de 25 años con embarazo de 6 semanas por amenorrea. Presenta abdomen en madera, rebote positivo, TA 80/50 mmHg y palidez de tegumentos. El ultrasonido muestra útero vacío con líquido libre pélvico abundante. ¿Qué conducta de abordaje está contraindicada y es considerada una mala práctica clínica en este escenario agudo?",
+        options: ["Laparotomía exploradora urgente", "Considerar el manejo expectante", "Salpingectomía del lado afectado", "Transfusión de paquetes globulares"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Emergencias Obstétricas, la inestabilidad hemodinámica combinada con clínica de abdomen agudo dicta una intervención de salvamento inmediata, haciendo inaceptable y letal la espera de resolución espontánea o médica.<br><br>Perla ENARM: \"No deberá considerarse la posibilidad de manejo expectante o médico en pacientes con sospecha de embarazo ectópico roto.\"<br><br>Análisis de Distractores: La laparotomía de urgencia es el estándar cuando hay choque hipovolémico severo (o laparoscopía si hay recursos inmediatos). La salpingectomía es el tratamiento definitivo intrabdominal. La transfusión sanguínea es vital para corregir la pérdida circulante masiva.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Embarazo ectópico roto, Página 22."
+    },
+    {
+        id: 26,
+        question: "Paciente de 39 semanas de gestación, en sala de labor, sufre amniorrexis espontánea e instantes después bradicardia fetal extrema. Se diagnostica prolapso de cordón umbilical al tacto vaginal. Mientras se coordina la extracción quirúrgica de urgencia, ¿qué posición física debe adoptar la paciente de forma inmediata para reducir la compresión?",
+        options: ["Decúbito supino absoluto", "Posición de Trendelenburg", "Decúbito lateral derecho", "Rodillas y cara al pecho"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Emergencias Obstétricas, adoptar la postura genupectoral (posición fetal con elevación pélvica indirecta) aleja pasivamente el segmento feto-placentario del cérvix por gravedad, restaurando flujo venoso umbilical transitorio.<br><br>Perla ENARM: \"Las mujeres con diagnóstico de prolapso de cordón deben adoptar la postura de decúbito lateral con rodillas y cara pegadas al pecho (posición fetal), en lo que son ingresadas a sala de quirófano.\"<br><br>Análisis de Distractores: El decúbito supino empeora la compresión por el peso directo del útero grávido sobre los grandes vasos. El Trendelenburg aísla la cabeza materna pero no es tan efectiva como la genupectoral. El decúbito lateral derecho no descompresiona la cavidad pélvica central de forma óptima.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Prolapso de cordón umbilical, Página 33."
+    },
+    {
+        id: 27,
+        question: "En el algoritmo diagnóstico para Apendicitis Aguda durante el embarazo, si el ultrasonido abdominal inicial es técnicamente ineficaz por interposición de gas o miometrio, ¿cuál es el estándar de imagen subsecuente con la máxima sensibilidad y especificidad libre de radiación?",
+        options: ["Tomografía axial contrastada", "Radiografía simple abdominal", "Resonancia magnética sin gadolinio", "Gammagrafía biliar pélvica"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Emergencias Obstétricas, cuando el ecosonograma falla, se requiere una prueba morfológica detallada sin comprometer la organogénesis ni exponer al feto a radiación ionizante (rayos X), siendo la RMN el estudio ideal.<br><br>Perla ENARM: \"Se recomienda el uso de la resonancia magnética (sin gadolinio intravenoso), por encima de la tomografía computarizada, para establecer el diagnóstico de apendicitis aguda en cualquier momento del embarazo.\"<br><br>Análisis de Distractores: La tomografía axial emite radiación y solo se permite si la RMN no está disponible. La radiografía simple no visualiza adecuadamente procesos inflamatorios periapendiculares. La gammagrafía es inviable y riesgosa para una urgencia quirúrgica de este tipo.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Apendicitis y embarazo, Página 14."
+    },
+    {
+        id: 28,
+        question: "Durante la inducción anestésica para una cesárea electiva en una paciente sana a término, el monitor refleja un desnivel negativo del segmento ST y ondas T invertidas de forma transitoria, sin descompensación hemodinámica. ¿A qué factor subyacente benigno asocia la norma este cambio eléctrico aparente?",
+        options: ["Infarto agudo miocárdico silente", "Ansiedad e hiperventilación", "Tromboembolismo pulmonar menor", "Desprendimiento prematuro agudo"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Emergencias Obstétricas, los cambios de tono autonómico, la respiración acelerada y el estrés catecolaminérgico propios del inicio anestésico simulan isquemia eléctrica transitoria sin reflejar una oclusión real coronaria.<br><br>Perla ENARM: \"Lo más común es observar la depresión o desnivel del segmento ST y es probable que sea el resultado de la administración de anestesia, por ansiedad, hiperventilación, cambios en el tono autonómico durante el parto.\"<br><br>Análisis de Distractores: Un infarto subendocárdico (silente) o un TEP producirían deterioro clínico, elevación de biomarcadores (Troponinas) e inestabilidad que acompañarían al trazo. El desprendimiento prematuro genera choque hipovolémico y dolor, no cambios aislados del ST como efecto primario.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Infarto agudo del miocardio en el embarazo, Página 29."
+    },
+    {
+        id: 29,
+        question: "En la sala de expulsión, tras el diagnóstico inminente de prolapso de cordón umbilical, el médico general a cargo inicia maniobras de rescate. ¿Cuál de las siguientes acciones táctiles está formalmente proscrita por incrementar el vasoespasmo y la muerte asfíctica fetal?",
+        options: ["Elevación manual de presentación", "Llenado vesical con sonda", "Reacomodo manual del cordón", "Tacto vaginal cuidadoso"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Emergencias Obstétricas, la manipulación directa e intento de reintroducción de las asas umbilicales hacia el canal endocervical estimula la capa muscular de las arterias del cordón, cerrando la circulación en milisegundos.<br><br>Perla ENARM: \"No se aconseja intentar el reacomodo manual del cordón umbilical, una vez que este ha protruido.\"<br><br>Análisis de Distractores: Elevar la presentación con los dedos (maniobra manual) es una técnica vital correcta temporal. El llenado vesical (500 ml) es la alternativa hídrica para rechazar el útero. El tacto diagnóstico es obligado para identificar la urgencia; lo prohibido es empujar el cordón expuesto.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Prolapso de cordón umbilical, Página 33."
+    },
+    {
+        id: 30,
+        question: "En una paciente con Hiperémesis Gravídica refractaria, el vómito persistente y la malnutrición han agotado los depósitos de vitamina B1. En la evaluación por psiquiatría de enlace, ¿cuál es la tríada sindromática clásica que confirma el desarrollo de Encefalopatía de Wernicke?",
+        options: ["Convulsiones, ceguera e hiperreflexia", "Anomalías oculomotoras, disfunción cerebelosa y alteración mental", "Afasia motora, hemiplejia y vértigo", "Fotofobia, ptosis y debilidad muscular"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Emergencias Obstétricas, la neurotoxicidad metabólica afecta áreas vulnerables del tronco encefálico y cerebelo, detonando nistagmo/oftalmoplejía, ataxia en la marcha y estados confusionales profundos potencialmente letales si no se suplementa tiamina.<br><br>Perla ENARM: \"El tratamiento inadecuado de la deficiencia a menudo resulta en características adicionales de la tríada clásica que consiste en anomalías oculo-motoras, disfunción cerebelosa y alteración del estado mental.\"<br><br>Análisis de Distractores: Convulsiones e hiperreflexia definen a la eclampsia hipertensiva. Afasia y hemiplejia corresponden a eventos cerebrovasculares isquémicos focales. Fotofobia y ptosis son típicos de miastenia gravis o síndromes toxínicos tipo botulismo.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Hiperémesis gravídica, Página 27."
+    },
+    {
+        id: 31,
+        question: "Gestante de 35 semanas ingresa con cifras tensionales de 170/115 mmHg y visión borrosa. Tras administrar infusiones de Nifedipino y Sulfato de Magnesio se logra estabilizar la presión arterial a 140/90 mmHg. ¿Cuál es el paso resolutivo recomendado al superar el umbral de las 34 semanas de gestación?",
+        options: ["Nacimiento inmediato", "Manejo expectante domiciliario", "Esperar inicio de labor", "Inducción de maduración pulmonar"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Emergencias Obstétricas, superada la barrera de madurez fetal (semana 34), el riesgo materno de progresión a eclampsia o HELLP supera cualquier beneficio de retener al neonato en el útero, siendo la interrupción la única cura de la enfermedad.<br><br>Perla ENARM: \"Se recomienda procurar el nacimiento inmediatamente después de la estabilización hemodinámica en mujeres con embarazo igual o mayor de 34 semanas con diagnóstico de crisis hipertensiva.\"<br><br>Análisis de Distractores: El manejo expectante solo se permite estrictamente en embarazos MENORES a 34 semanas bajo estricta vigilancia en UCI. Esperar trabajo de parto condena a la paciente a recurrencia aguda hemorrágica. La maduración pulmonar ya no aporta beneficio vital significativo pasado este corte gestacional.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Crisis hipertensiva en el embarazo, Página 19."
+    },
+    {
+        id: 32,
+        question: "Durante la atención de un abdomen agudo confirmado por apendicitis perforada en una gestante de 37 semanas, el cirujano tratante decide realizar una laparotomía media en vez del abordaje por puertos. Según la guía, ¿qué factor justifica técnicamente descartar la laparoscopía en este trimestre avanzado?",
+        options: ["Riesgo agudo de neumoperitoneo fetal", "Dificultades técnicas por volumen uterino", "Incremento de amenaza de parto pretérmino", "Imposibilidad de lavado peritoneal profundo"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Emergencias Obstétricas, el fondo uterino alcanza el apéndice xifoides, colapsando el espacio peritoneal libre para insuflación de trócares, lo que eleva el riesgo de perforación uterina ciega y limita la maniobrabilidad de los instrumentos de forma severa.<br><br>Perla ENARM: \"En caso de ser necesario realizar apendicectomía en el tercer trimestre de la gestación, el abordaje laparoscópico podría tener dificultades técnicas debido al volumen del útero grávido, por lo que deberá considerarse el abordaje por laparotomía.\"<br><br>Análisis de Distractores: El gas carbónico (neumoperitoneo) es seguro en todo el embarazo con presiones controladas (10-12 mmHg). La cirugía abierta de hecho es más dolorosa y proinflamatoria para el inicio de labor pretérmino que la invasión mínima. El lavado pélvico es igual de efectivo por ambos métodos.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Apendicitis y embarazo, Página 16."
+    },
+    {
+        id: 33,
+        question: "Paciente de 23 años ingresa por choque hipovolémico leve y dolor pélvico. Prueba de embarazo cualitativa positiva. El ultrasonido pélvico muestra ausencia de saco gestacional intrauterino y la fosa anexial es de difícil visualización. ¿Qué par de datos indirectos a la ecosonografía auxilian fuertemente al diagnóstico de un Ectópico Roto?",
+        options: ["Saco vitelino de gran tamaño e hidrosálpinx", "Endometrio trilaminar y líquido libre perihepático", "Miomas fúndicos y derrame pleural derecho", "Cuerpo lúteo hemorrágico y líquido amniótico"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Emergencias Obstétricas, un endometrio secretor (trilaminar) sin feto visible, sumado a sangrado activo ascendente (líquido perihepático en el espacio de Morrison), establece una fortísima probabilidad de ruptura anexial tubárica, incluso sin observar la trompa propiamente.<br><br>Perla ENARM: \"En ausencia de datos ultrasonográficos definitivos de embarazo ectópico, la presencia de un endometrio trilaminar y el líquido libre en el área perihepática, periesplénica y pélvica, pueden considerarse elementos auxiliares en el diagnóstico de embarazo ectópico roto.\"<br><br>Análisis de Distractores: El hidrosálpinx es crónico, no indica ruptura aguda. Derrame pleural es patología cardiopulmonar independiente. El cuerpo lúteo es fisiológico en gestación temprana y el líquido libre no es líquido amniótico en este estadio embrionario ínfimo.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Embarazo ectópico roto, Página 21."
+    },
+    {
+        id: 34,
+        question: "Una gestante de 36 semanas sobrevive a un Infarto Agudo del Miocardio exitosamente reperfundido. Se encuentra en piso de Cardiología estable, sin dolor y con adecuada perfusión tisular. Para disminuir la carga de demanda metabólica aguda del parto y proteger la remodelación, ¿por cuánto tiempo aconseja la guía posponer idealmente el nacimiento?",
+        options: ["Al menos por setenta y dos horas", "Al menos durante una semana", "Al menos durante dos semanas", "Al menos durante cuatro semanas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Emergencias Obstétricas, el estrés hemodinámico colosal del trabajo de parto o cesárea (aumento de precarga y gasto por contracciones) amenaza la cicatriz miocárdica inmadura y el stent reciente, requiriendo un periodo de gracia vital si el feto no corre peligro inminente.<br><br>Perla ENARM: \"Por lo anterior, cuando sea posible y posterior a un análisis integral e individualizado, el nacimiento se puede posponer por lo menos dos semanas en caso de que la madre haya presentado un síndrome coronario agudo.\"<br><br>Análisis de Distractores: Periodos menores (48h o 1 semana) exponen a una injuria de estrés sobre un endotelio hiperagudo e inestable. Esperar hasta 4 semanas podría comprometer la viabilidad obstétrica y pasar el término o madurez placentaria al límite sin justificación extrema si a las 2 semanas hay margen de seguridad tolerado.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Infarto agudo del miocardio en el embarazo, Página 31."
+    },
+    {
+        id: 35,
+        question: "¿Cuál es el impacto epidemiológico documentado en porcentaje sobre la reducción del riesgo de presentar crisis convulsivas (eclampsia) al utilizar sulfato de magnesio en pacientes con preeclampsia con datos de severidad?",
+        options: ["Reducción del riesgo al 30%", "Reducción del riesgo al 50%", "Reducción del riesgo al 66%", "Reducción del riesgo al 90%"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Emergencias Obstétricas, el metal magnesio bloquea fuertemente la hiperexcitabilidad cortical central de forma tan eficiente que su administración protocolaria universal ha desterrado casi 7 de cada 10 desenlaces mortales por actividad motora incontrolable secundaria al edema cerebral vasogénico.<br><br>Perla ENARM: \"Entre los principales hallazgos se observó que el uso de sulfato de magnesio en mujeres con preeclampsia con datos de severidad se asoció con un 66% de menor riesgo de desarrollar eclampsia en comparación con el grupo control.\"<br><br>Análisis de Distractores: Las opciones 30%, 50% y 90% son cortes estadísticos incorrectos para la fuerza de asociación calculada en metaanálisis específicos citados por la normativa oficial obstétrica.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Crisis hipertensiva en el embarazo, Página 18-19."
+    },
+    {
+        id: 36,
+        question: "En una mujer cursando el primer trimestre con vómitos incoercibles (Hiperémesis Gravídica) que desarrolla deshidratación y pérdida ponderal masiva, ¿qué estudios de laboratorio adicionales de gabinete hormonal y bioquímico se consideran mandatorios de escrutinio para descartar diagnósticos concomitantes?",
+        options: ["Prolactina sérica y amilasa pancreática", "Cortisol matutino y lipasa sérica", "Perfil tiroideo y pruebas de función hepática", "Gasometría arterial y dímero D"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Emergencias Obstétricas, la estimulación por hormona gonadotropina coriónica alta induce hipertiroidismo transitorio autolimitado (tirotoxicosis gestacional) que agrava el vómito, y el daño de hepatocitos produce elevación de transaminasas. Conocer la basal descarta una verdadera hepatopatía o enfermedad de Graves.<br><br>Perla ENARM: \"En mujeres con sospecha clínica de hiperémesis gravídica se sugiere solicitar: biometría hemática completa, pruebas de función hepática, pruebas de coagulación, perfil tiroideo, electrólitos séricos, urea...\"<br><br>Análisis de Distractores: La amilasa y lipasa evalúan pancreatitis aguda, que cursa con dolor en banda severo abdominal. El cortisol no es un factor causal primario ni mandatorio. La gasometría arterial se usa para patología respiratoria, aunque sí se evalúa el equilibrio ácido base, suele bastar gasometría venosa combinada.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Hiperémesis gravídica, Página 26."
+    },
+    {
+        id: 37,
+        question: "En el abordaje crítico e interdisciplinario postparo de una mujer con Embolia de Líquido Amniótico que empieza a presentar sangrado incoercible por mucosas y sitios de canalización, ¿cuál es el protocolo agresivo estandarizado de restitución que debe activarse?",
+        options: ["Protocolo de transfusión masiva", "Infusión de heparina fraccionada", "Administración de ácido tranexámico", "Terapia fibrinolítica con alteplasa"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Emergencias Obstétricas, el factor tisular amniótico induce un consumo inmediato de todos los elementos sanguíneos; por tanto, se requiere reponer equitativamente plaquetas, plasma (factores) y eritrocitos antes de que la coagulopatía desencadene exanguinación fulminante irreversible.<br><br>Perla ENARM: \"Debido a que la coagulopatía puede presentarse después del paro cardiorrespiratorio, se recomienda el manejo temprano con el uso de protocolos de transfusión masiva.\"<br><br>Análisis de Distractores: El ácido tranexámico detiene fibrinólisis tardía pero no aporta los factores consumidos de base. La heparina fraccionada y la alteplasa están absurdamente proscritos (aumentan la hemorragia letal en CID descompensado materno).",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Embolia de líquido amniótico, Página 24."
+    },
+    {
+        id: 38,
+        question: "Paciente de 38 semanas con ruptura prematura de membranas en trabajo de parto activo. Se palpa Prolapso de Cordón Umbilical en canal vaginal y se indica pase de urgencias a quirófano para cesárea. Hay demora de 30 minutos debido a recambio de turnos quirúrgicos. ¿Qué intervención farmacológica puente es lícita emplear en la madre?",
+        options: ["Inducción con sulfato de magnesio", "Aplicación de fármacos tocolíticos", "Infusión continua de Nifedipino", "Bolo de dexametasona intramuscular"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Emergencias Obstétricas, paralizar la dinámica uterina disminuye la fuerza con la que la cabeza aprieta el asa fúnica contra la pelvis materna, ofreciendo unos valiosos minutos de perfusión intermitente para el neonato previo a la extracción definitiva de emergencia.<br><br>Perla ENARM: \"Puede considerarse la tocolísis, como medida temporal, en caso de persistencia en las alteraciones de la frecuencia cardiaca fetal o en caso de que se presente alguna demora en el nacimiento.\"<br><br>Análisis de Distractores: El sulfato de magnesio es lento y profiláctico neurológico. El nifedipino frena la presión alta más que el trabajo activo súbito, y una infusión bajaría peligrosamente la perfusión placentaria. Dexametasona solo madura pulmones prematuros tardíamente, no detiene contracciones inmediatas.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Prolapso de cordón umbilical, Página 34."
+    },
+    {
+        id: 39,
+        question: "Una paciente en su segundo trimestre acude con sospecha altísima de Apendicitis Aguda basada en historia clínica y examen de rebote en flanco derecho. El hospital comunitario rural carece de Ultrasonografía experta y Tomografía disponibles en ese turno. ¿Cuál es el paso alternativo de certeza propuesto para no demorar la resolución quirúrgica de peritonitis?",
+        options: ["Realizar laparoscopia diagnóstica", "Iniciar terapia antibiótica empírica", "Lavado peritoneal con incisión", "Punción guiada en punto de McBurney"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Emergencias Obstétricas, si los hallazgos semiológicos claman \"abdomen agudo\", las herramientas de invasión mínima de cavidad ofrecen una visión directa de la víscera y permiten extirparla en el mismo acto, evitando sepsis generalizada y muerte fetal.<br><br>Perla ENARM: \"En caso de no contar con estudios de imagen, se recomienda considerar la laparoscopia diagnóstica ante la sospecha clínica de apendicitis y embarazo.\"<br><br>Análisis de Distractores: El abordaje empírico ciego antibiótico fracasará al no cerrar la fuente anatómica de infección (apéndice supurativo). El lavado peritoneal y la punción directa en fosa iliaca conllevan peligro irracional de picar el útero grávido subyacente sin tener capacidad de explorar ni corregir el cuadro localmente de forma controlada.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Apendicitis y embarazo, Página 15."
+    },
+    {
+        id: 40,
+        question: "Durante la evaluación de un dolor abdominal bajo no obstétrico en una embarazada, se decide realizar una intervención quirúrgica resolutiva confirmada. ¿A qué condición infraestructural supedita la guía la realización de la apendicectomía programada para asegurar el entorno?",
+        options: ["Disponibilidad de terapia intensiva adulta", "Acompañamiento de banco de sangre nivel 2", "Institución con servicio de pediatría o neonatología", "Realización exclusiva en hospitales de tercer nivel"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Emergencias Obstétricas, al someter a anestesia general y estrés parietal a un útero con feto in útero, existe siempre el riesgo latente de desencadenar labor pretérmino o inestabilidad del producto, debiendo tener un especialista en reanimación del neonato para soporte inminente.<br><br>Perla ENARM: \"Una vez realizado el diagnóstico de apendicitis aguda se deberá programar la apendicetomía lo más pronto posible, independientemente de la edad gestacional y deberá realizarse en una institución con servicio de pediatría o neonatología.\"<br><br>Análisis de Distractores: La terapia intensiva materna y los hospitales de tercer nivel no son requisitos absolutos, la apendicectomía es una cirugía resolutiva de segundo nivel primario. El banco de sangre avanzado tampoco es excluyente fundamental como sí lo es tener neonatólogos para un recién nacido inestable transquirúrgico.",
+        source: "GPC-IMSS-436-19, Diagnóstico y tratamiento inicial de las emergencias obstétricas, 2019, Apendicitis y embarazo, Página 16."
+    }
+        ];
+
+        // ==========================================
+        // ==========================================
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('gyoCULastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('gyoCUProgress');
+                localStorage.removeItem('gyoCULastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-pink-500 shadow-md z-10 border-pink-500 dark:border-pink-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-rose-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "GINECOLOGÍA Y OBSTETRICIA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "GPC-IMSS-436-19 • Diagnóstico y tratamiento inicial de las emergencias obstétricas";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="DU02008GYOE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-pink-100 dark:border-pink-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-pink-50 has-[:checked]:border-pink-400 dark:has-[:checked]:bg-pink-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-pink-600 dark:hover:bg-pink-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('gyoCUProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('gyoCULastQId', currentQuestionId);
+                else localStorage.removeItem('gyoCULastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('gyoCUProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

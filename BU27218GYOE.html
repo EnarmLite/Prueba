@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================
+        // =========================================================
+        const questionsData = [
+    {
+        id: 1,
+        question: "¿Cuál es el factor de riesgo independiente de mayor impacto para el desarrollo de Sepsis Materna?",
+        options: ["Anemia materna severa", "Cesárea de urgencia", "Obesidad grado III", "Ruptura de membranas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Sepsis Materna, las intervenciones obstétricas no planificadas exponen a la paciente a un entorno de urgencia donde las barreras de esterilidad pueden comprometerse, lo que eleva significativamente la morbilidad infecciosa con un OR de 8.06. La prevención y profilaxis en estos escenarios es un punto crítico de evaluación clínica.<br><br>Perla ENARM: \"La cesárea no programada (de urgencia) es el factor de riesgo independiente más importante para sepsis materna.\"<br><br>Análisis de Distractores: La opción A (anemia) y la opción C (obesidad) son factores de riesgo documentados, pero tienen un impacto estadístico menor (OR de 3.4 y 1.85, respectivamente). La opción D (ruptura de membranas) contribuye al riesgo intraparto pero no supera el peso independiente de la intervención quirúrgica de urgencia.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Evidencias y Recomendaciones, p. 30."
+    },
+    {
+        id: 2,
+        question: "¿Cuál es el punto de corte para la presión arterial sistólica en la escala omqSOFA para el tamizaje de Sepsis Materna?",
+        options: ["≤ 90 mmHg", "≤ 100 mmHg", "< 110 mmHg", "< 120 mmHg"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Sepsis Materna, la fisiología del embarazo demanda ajustes en las escalas de tamizaje clínico. Mientras que el qSOFA para la población general utiliza una presión arterial sistólica ≤ 100 mmHg, la escala modificada para obstetricia requiere un descenso mayor (≤ 90 mmHg) para encender la alarma clínica por hipoperfusión.<br><br>Perla ENARM: \"Se recomienda emplear la escala de omqSOFA (puntaje modificado en obstetricia, para la evaluación rápida de la falla orgánica) para el tamizaje de la sepsis materna.\"<br><br>Análisis de Distractores: La opción B corresponde al valor del qSOFA no modificado, utilizado en población general. Las opciones C y D son presiones arteriales normales durante la gestación y no indican compromiso orgánico.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Evidencias y Recomendaciones, p. 34."
+    },
+    {
+        id: 3,
+        question: "En la escala omSOFA, ¿qué relación de gases arteriales otorga 2 puntos de severidad respiratoria?",
+        options: ["PaO2/FiO2 < 300", "PaO2/FiO2 < 400", "PaO2/FiO2 ≤ 200", "PaO2/FiO2 ≤ 250"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Sepsis Materna, la disfunción orgánica respiratoria en la mujer embarazada se clasifica mediante la escala omSOFA, la cual es abreviada para calificar de 0 a 2 puntos. El puntaje máximo de 2 puntos en el rubro respiratorio se alcanza de forma temprana cuando el índice de Kirby (PaO2/FiO2) cae por debajo de 300.<br><br>Perla ENARM: \"La escala de omSOFA es una herramienta útil para la evaluación de la disfunción orgánica en la mujer embarazada o puérpera.\"<br><br>Análisis de Distractores: La opción B (PaO2/FiO2 < 400) pero mayor a 300 solo otorga 1 punto de severidad. Las opciones C y D son valores de la escala SOFA clásica completa (que evalúa hasta 4 puntos), la cual no está validada de forma prioritaria para los cambios fisiológicos del embarazo según la evidencia actual.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Cuadros o figuras, p. 74."
+    },
+    {
+        id: 4,
+        question: "¿Cuál es el volumen y tipo de solución intravenosa inicial recomendado para la reanimación hídrica en las primeras 3 horas?",
+        options: ["20 ml/kg de coloides", "30 ml/kg de coloides", "20 ml/kg de cristaloides", "30 ml/kg de cristaloides"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Sepsis Materna, la reanimación temprana mediante expansión volumétrica es indispensable para revertir la isquemia tisular. Los estudios demuestran que los cristaloides administrados agresivamente en esta ventana de tiempo mejoran la sobrevida sin el riesgo de complicaciones asociadas a otros expansores plasmáticos.<br><br>Perla ENARM: \"Dentro de las primeras tres horas, se recomienda iniciar la reanimación con 30 ml/kg de soluciones cristaloides por vía intravenosa.\"<br><br>Análisis de Distractores: Las opciones A y B incluyen coloides, los cuales no han demostrado superioridad clínica, incrementan los costos y elevan la necesidad de terapia de reemplazo renal. La opción C propone un volumen insuficiente para revertir el choque distributivo característico de la sepsis.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Evidencias y Recomendaciones, p. 41."
+    },
+    {
+        id: 5,
+        question: "¿Cuál es el tiempo máximo recomendado para iniciar el tratamiento antibiótico intravenoso empírico ante la sospecha de Sepsis Materna?",
+        options: ["30 minutos", "1 hora", "3 horas", "6 horas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Sepsis Materna, el riesgo de mortalidad se incrementa de forma exponencial por cada hora de retraso en la administración del antimicrobiano. Establecer el esquema empírico en la primera hora (\"Hora Dorada\") es la intervención terapéutica con mayor impacto en la supervivencia.<br><br>Perla ENARM: \"Se recomienda iniciar el tratamiento antibiótico intravenoso empírico en cuanto se establezca la sospecha de sepsis o choque séptico en el plazo máximo de una hora.\"<br><br>Análisis de Distractores: La opción A es ideal pero clínicamente menos realista como estándar absoluto establecido en protocolos. Las opciones C y D permitían un margen de tiempo que actualmente es obsoleto debido a que condena a la paciente a un daño tisular irreversible.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Evidencias y Recomendaciones, p. 40."
+    },
+    {
+        id: 6,
+        question: "¿Cuál es el nivel sérico de ácido láctico que define la presencia de choque séptico tras una reanimación hídrica adecuada?",
+        options: ["> 1.5 mmol/L", "> 1.8 mmol/L", "> 2.0 mmol/L", "> 4.0 mmol/L"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Sepsis Materna, la definición hemodinámica de choque séptico se acompaña de evidencia bioquímica de metabolismo anaerobio celular. El umbral para establecer este nivel de hipoperfusión grave se fija en niveles de lactato por encima de 2.0 mmol/L, junto con la necesidad de vasopresores.<br><br>Perla ENARM: \"El diagnóstico de choque séptico... se establece al presentarse hipotensión persistente... y niveles de ácido láctico mayores de 2 mmol/L (18 mg/dl).\"<br><br>Análisis de Distractores: La opción B (1.8 mmol/L) es el límite superior esperado por los propios cambios fisiológicos del embarazo. La opción D (4.0 mmol/L) fue un parámetro de severidad en guías antiguas, pero la evidencia actual (Sepsis-3) sitúa la alarma desde los 2.0 mmol/L.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Evidencias y Recomendaciones, p. 38."
+    },
+    {
+        id: 7,
+        question: "¿Cuál es el vasopresor de primera elección para alcanzar la meta hemodinámica en el choque séptico?",
+        options: ["Epinefrina", "Dopamina", "Vasopresina", "Norepinefrina"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Sepsis Materna, cuando el lecho vascular pierde su tono y no responde a la carga volumétrica de 30 ml/kg, es imperativo iniciar apoyo vasoactivo. La norepinefrina es el fármaco titular debido a su potente efecto alfa-adrenérgico que incrementa la resistencia vascular periférica con menor incidencia de taquiarritmias secundarias.<br><br>Perla ENARM: \"En caso de ser necesario, se recomienda el uso de norepinefrina como el vasopresor de elección.\"<br><br>Análisis de Distractores: La opción B (dopamina) ha sido desplazada a segunda línea por su alto perfil arritmogénico. Las opciones A y C (epinefrina y vasopresina) actúan únicamente como agentes adjuntos o de rescate cuando falla la norepinefrina, no como inicio.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Evidencias y Recomendaciones, p. 49."
+    },
+    {
+        id: 8,
+        question: "¿Cuál es la meta de presión arterial media a mantener con el uso de vasopresores en el choque séptico?",
+        options: ["≥ 60 mmHg", "≥ 65 mmHg", "≥ 70 mmHg", "≥ 75 mmHg"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Sepsis Materna, sostener una presión de perfusión basal es necesario para evitar la isquemia orgánica. Alcanzar 65 mmHg asegura una presión hidrostática adecuada para la filtración glomerular, la perfusión cerebral y el flujo placentario sin someter a la paciente a dosis tóxicas y excesivas de aminas vasoactivas.<br><br>Perla ENARM: \"En pacientes con choque séptico que requieran vasopresores, se recomienda mantener una presión arterial media (PAM) mayor de 65 mmHg.\"<br><br>Análisis de Distractores: La opción A (60 mmHg) es insuficiente y mantiene un estado de hipoxia tisular silente. Las opciones C y D son metas demasiado altas que incrementan los efectos adversos de los vasopresores sin mostrar beneficios superiores en la mortalidad.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Evidencias y Recomendaciones, p. 49."
+    },
+    {
+        id: 9,
+        question: "¿En qué momento exacto se debe administrar la profilaxis antibiótica intravenosa en pacientes sometidas a cesárea?",
+        options: ["Al pinzamiento del cordón", "Posterior al alumbramiento", "Antes de la incisión cutánea", "Durante el cierre aponeurótico"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Sepsis Materna, la prevención de la endometritis postquirúrgica depende de que los tejidos cuenten con niveles bactericidas del antibiótico al momento de la exposición bacteriana. Esto se logra impregnando a la paciente de forma sistemática previo a iniciar el procedimiento quirúrgico.<br><br>Perla ENARM: \"Se recomienda que la administración del antibiótico profiláctico, en pacientes que serán sometidas a cesárea, se realice antes de la incisión cutánea.\"<br><br>Análisis de Distractores: Las opciones A, B y D son prácticas antiguas que exponen el campo estéril a microorganismos patógenos antes de que el fármaco esté activo en la circulación, elevando drásticamente el porcentaje de infección de herida y corioamnionitis secundaria.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Evidencias y Recomendaciones, p. 66."
+    },
+    {
+        id: 10,
+        question: "¿Qué solución antiséptica se recomienda para el aseo vaginal inmediatamente antes de realizar una cesárea?",
+        options: ["Clorhexidina acuosa", "Yodo-povidona", "Cloruro de benzalconio", "Solución salina isotónica"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Sepsis Materna, el control del inóculo endógeno que reside en el canal cérvicovaginal se traduce en una reducción estadísticamente significativa de la tasa de endometritis (disminución al 3.8%). El antiséptico validado por evidencia clínica directa para la preparación de esta mucosa es la yodo-povidona.<br><br>Perla ENARM: \"Se recomienda el aseo vaginal con yodo-povidona inmediatamente antes de realizar la cesárea.\"<br><br>Análisis de Distractores: Las opciones A y C son antisépticos potentes utilizados en la preparación de la piel abdominal, pero su uso rutinario no está establecido por esta GPC específica para el aseo vaginal. La opción D no tiene propiedades bactericidas.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Evidencias y Recomendaciones, p. 64."
+    },
+    {
+        id: 11,
+        question: "¿En cuál de los siguientes focos infecciosos se recomienda la interrupción urgente del embarazo independientemente de la edad gestacional?",
+        options: ["Pielonefritis aguda", "Neumonía adquirida", "Sepsis intrauterina", "Fascitis necrosante"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Sepsis Materna, el control del foco (Source Control) es un paso básico en la supervivencia. Cuando la cavidad uterina es el sitio primario de la invasión microbiana (como en la corioamnionitis clínica), mantener el embarazo perpetúa la cascada proinflamatoria de forma mortal para la madre y el feto.<br><br>Perla ENARM: \"En caso de sepsis intrauterina se debe considerar la interrupción urgente del embarazo, independientemente de la edad gestacional.\"<br><br>Análisis de Distractores: En las opciones A, B y D el foco infeccioso es sistémico o ajeno a la unidad útero-placentaria. En estos casos se busca primero la estabilización materna con antibióticos y se puede intentar prolongar la gestación para mejorar el pronóstico del neonato pretérmino.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Evidencias y Recomendaciones, p. 51."
+    },
+    {
+        id: 12,
+        question: "¿A partir de qué nivel de glucemia consecutiva se recomienda la administración de insulina intravenosa en Sepsis Materna?",
+        options: ["> 140 mg/dl", "> 150 mg/dl", "> 180 mg/dl", "> 200 mg/dl"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Sepsis Materna, la liberación de catecolaminas y cortisol durante el estrés séptico genera hiperglucemia. Iniciar esquemas con insulina mitiga la inmunosupresión secundaria, pero debe mantenerse un margen de seguridad razonable para evitar las hipoglucemias yatrogénicas graves en la Unidad de Cuidados Intensivos.<br><br>Perla ENARM: \"Se recomienda la administración de insulina cuando los niveles de glucemia consecutivos sean mayores de 180 mg/dl.\"<br><br>Análisis de Distractores: Las opciones A y B son controles metabólicos recomendados para diabéticas estables en piso, pero sumamente peligrosos en pacientes en estado de choque. La opción D es un valor extremadamente elevado que ya causa toxicidad vascular y no se debe tolerar sin tratamiento.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Evidencias y Recomendaciones, p. 54."
+    },
+    {
+        id: 13,
+        question: "¿Cuál es la concentración de hemoglobina por debajo de la cual se recomienda la transfusión de concentrados globulares en ausencia de hemorragia aguda?",
+        options: ["7.0 g/dl", "8.0 g/dl", "9.0 g/dl", "10.0 g/dl"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Sepsis Materna, el suministro de oxígeno a los tejidos es una prioridad de reanimación, sin embargo, las transfusiones innecesarias aumentan la morbilidad inmunológica y respiratoria. Las estrategias restrictivas han demostrado la misma sobrevida evitando este riesgo, reservándose solo para anemia profunda.<br><br>Perla ENARM: \"Se recomienda la administración de transfusión de concentrados globulares cuando la concentración de hemoglobina sea menor de 7.0 g/dl, en ausencia de hemorragia aguda o hipoxemia grave.\"<br><br>Análisis de Distractores: Las opciones B, C y D representan concentraciones que, si la paciente cursa estable hemodinámicamente y sin sangrado activo, pueden tolerarse sin requerir de la infusión de hemocomponentes.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Evidencias y Recomendaciones, p. 54."
+    },
+    {
+        id: 14,
+        question: "¿Cuál es el punto de corte de la frecuencia respiratoria considerado como criterio de sospecha en la escala omqSOFA?",
+        options: ["≥ 20 por minuto", "≥ 22 por minuto", "≥ 25 por minuto", "≥ 30 por minuto"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Sepsis Materna, la fisiología propia de la gestación induce un estado de hiperventilación compensatoria. Por lo tanto, el umbral de detección clínica para clasificar la taquipnea como patológica se eleva en la escala obstétrica frente a la valoración de la población general.<br><br>Perla ENARM: \"Frecuencia respiratoria igual o mayor de 25/minuto... se consideran sugestivos de sepsis (omqSOFA).\"<br><br>Análisis de Distractores: La opción A es el valor normal de la mecánica ventilatoria en piso. La opción B corresponde al límite utilizado por el qSOFA para población general, el cual perdería especificidad originando falsos positivos en el área obstétrica.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Evidencias y Recomendaciones, p. 34."
+    },
+    {
+        id: 15,
+        question: "¿Cuál es el fármaco recomendado de primera línea para la profilaxis farmacológica del tromboembolismo?",
+        options: ["Ácido acetilsalicílico", "Heparina de bajo peso molecular", "Clopidogrel", "Warfarina"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Sepsis Materna, el embarazo en sí mismo es un estado protrombótico que se exacerba durante el choque séptico. Las heparinas fraccionadas logran un perfil de seguridad y eficacia superior, disminuyendo activamente la incidencia de tromboembolia venosa.<br><br>Perla ENARM: \"Se recomienda el uso de la heparina de bajo peso molecular para la profilaxis de tromboembolismo.\"<br><br>Análisis de Distractores: Las opciones A y C son antiagregantes plaquetarios con indicaciones arteriales (cardiológicas), no para la profilaxis venosa profunda en cuidados críticos. La opción D (warfarina) presenta riesgo teratogénico y requiere monitorización complicada.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Evidencias y Recomendaciones, p. 47."
+    },
+    {
+        id: 16,
+        question: "¿Qué hallazgo en el registro cardiotocográfico es sugerente de perfusión uteroplacentaria inadecuada e hipoperfusión materna?",
+        options: ["Trazado no alentador", "Variabilidad moderada", "Ascensos transitorios", "Bradicardia temprana"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Sepsis Materna, ante el descenso crítico de oxígeno sistémico, el organismo grávido prioriza la perfusión de órganos nobles maternos induciendo isquemia en el lecho esplácnico y placentario, lo que el feto expresa rápidamente en el estudio basal.<br><br>Perla ENARM: \"Un RCTG no alentador sugiere perfusión útero placentaria inadecuada y puede reflejar hipoperfusión orgánica materna o sepsis intrauterina.\"<br><br>Análisis de Distractores: Las opciones B y C reflejan el absoluto estado de bienestar, oxigenación y reserva neurológica intacta del feto. La opción D suele acompañar al descenso fisiológico de la cabeza y no a un estado de sufrimiento asfíctico por sepsis.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Cuadros o figuras, p. 79."
+    },
+    {
+        id: 17,
+        question: "¿Cuál es el esquema antibiótico de primera línea sugerido para el tratamiento de mastitis por Staphylococcus aureus meticilino sensible?",
+        options: ["Cefotaxima y Gentamicina", "Vancomicina y Teicoplanina", "Amoxicilina con ácido clavulánico", "Penicilina y Metronidazol"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Sepsis Materna, en los procesos infecciosos de las glándulas mamarias causados por S. aureus que mantiene sensibilidad a los betalactámicos, el uso de inhibidores de betalactamasas asegura la erradicación eficaz sin requerir terapias parenterales agresivas en inicio.<br><br>Perla ENARM: \"Sugerencias para cuadro básico... Mastitis... Amoxicilina con ácido clavulánico 500mg/125mg cada 8 hrs de 10 a 14 días.\"<br><br>Análisis de Distractores: La opción A es el manejo titular inicial para pielonefritis. La opción B está estrictamente reservada para cepas meticilino resistentes (MRSA) o alergias severas. La opción D abarca anaerobios pélvicos, ineficaz para la diana cutánea estafilocócica.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Cuadros o figuras, p. 80-81."
+    },
+    {
+        id: 18,
+        question: "¿Cuál es el factor de riesgo asociado al mayor incremento en la probabilidad de muerte materna por Sepsis Materna?",
+        options: ["Inmunosupresión", "Anemia materna severa", "Preeclampsia", "Ausencia de tratamiento antibiótico"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Sepsis Materna, a pesar de las comorbilidades base del huésped, el fallo clínico en iniciar el tratamiento farmacológico empírico es el determinante fundamental en la evolución fatal, reportando un OR estadístico de 22.7.<br><br>Perla ENARM: \"Los principales factores de riesgo que se asocian a muerte materna por sepsis y choque séptico son: ausencia de tratamiento antibiótico (OR= 22.7)...\"<br><br>Análisis de Distractores: La opción A (inmunosupresión) eleva el riesgo a un OR de 15.01 y la opción B (anemia) a 13.5. La opción C predispone a complicaciones pero en relación con la mortalidad estricta por sepsis, la ausencia del antimicrobiano lidera la tabla.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Evidencias y Recomendaciones, p. 31."
+    },
+    {
+        id: 19,
+        question: "¿Cuántas muestras de hemocultivo de diferentes sitios se deben solicitar como mínimo antes de iniciar el tratamiento antibiótico?",
+        options: ["Una muestra", "Dos muestras", "Tres muestras", "Cuatro muestras"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Sepsis Materna, capturar a los agentes bacterianos circundantes es indispensable para la rotación y ajuste a antibióticos específicos. Para incrementar el rendimiento microbiológico y diferenciar verdaderos patógenos de la contaminación por flora cutánea, se requiere técnica estricta con pluralidad de viales.<br><br>Perla ENARM: \"Solicitar por lo menos 2 muestras de sitios diferentes antes de iniciar el esquema antimicrobiano (sin que esto retrase su administración).\"<br><br>Análisis de Distractores: La opción A disminuye sustancialmente la sensibilidad y no descarta la contaminación. Las opciones C y D pueden elevar costos y retrasar valiosos minutos sin haber probado un beneficio mayor que la indicación estandarizada de un par inicial.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Evidencias y Recomendaciones, p. 14."
+    },
+    {
+        id: 20,
+        question: "En la evaluación de disfunción orgánica mediante la escala omSOFA, ¿qué recuento plaquetario otorga la puntuación máxima de severidad de 2 puntos?",
+        options: ["< 150,000 /mm³", "< 100,000 /mm³", "< 50,000 /mm³", "< 20,000 /mm³"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Sepsis Materna, a diferencia del sistema SOFA que estratifica plaquetas en un nivel de hasta 4 puntos (llegando a evaluar trombocitopenias de 20,000), la escala modificada para obstetricia simplifica la alteración de coagulopatía con un valor de alerta inminente si caen debajo de los cien mil.<br><br>Perla ENARM: \"La escala de omSOFA es una herramienta útil... Plaquetas <100 000/mm³ otorga 2 puntos.\"<br><br>Análisis de Distractores: La opción A califica únicamente con 1 punto indicando disfunción temprana leve. Las opciones C y D son valores de la escala general SOFA de terapia intensiva pero la tabla omSOFA simplificada no las utiliza para elevar el puntaje más allá de 2.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Cuadros o figuras, p. 74."
+    },
+    {
+        id: 21,
+        question: "Ante una paciente con criterios clínicos de sepsis y ausencia de recursos para medir lactato sérico, ¿qué hallazgo hemodinámico establece el diagnóstico definitivo de choque séptico?",
+        options: ["Hipotensión persistente tras líquidos", "Taquicardia mayor a 120 lpm", "Gasto urinario ≤ 0.5 ml/kg/h", "Llenado capilar prolongado"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, la disfunción hemodinámica grave se define por la refractariedad al manejo inicial con volumen. La incapacidad de mantener una presión arterial media ≥ 65 mmHg tras la infusión de cristaloides refleja un colapso del tono vascular que requiere aminas, equiparándose clínicamente a la hipoxia tisular que marca el lactato.<br><br>Perla ENARM: \"En caso de no contar con ácido láctico sérico, se podrá considerar el diagnóstico de choque séptico ante la presencia de criterios clínicos de sepsis e hipotensión persistente (presión arterial media menor de 65 mmHg), a pesar de la reanimación hídrica y uso de vasopresores.\"<br><br>Análisis de Distractores: La opción B (taquicardia) es una respuesta fisiológica compensatoria temprana, no define choque. La opción C (oliguria) y D (llenado capilar) indican hipoperfusión y disfunción orgánica, pero el criterio hemodinámico estricto que sustituye al lactato para clasificar el estado de choque es la hipotensión refractaria.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Diagnóstico, p. 16."
+    },
+    {
+        id: 22,
+        question: "Tras iniciar el esquema antimicrobiano empírico en una paciente con sepsis obstétrica, ¿cuál es la duración total recomendada para el tratamiento farmacológico?",
+        options: ["3 a 5 días", "7 a 10 días", "14 a 21 días", "Hasta el alta hospitalaria"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, limitar la exposición a los antimicrobianos disminuye el riesgo de resistencia bacteriana y toxicidad sistémica. Los ciclos de 7 a 10 días han demostrado erradicar eficazmente los focos pélvicos y sistémicos más comunes sin prolongar estancias o efectos adversos en el embarazo y puerperio.<br><br>Perla ENARM: \"Se recomienda que la duración del tratamiento antibiótico sea de 7 a 10 días.\"<br><br>Análisis de Distractores: La opción A es insuficiente y favorece la recaída infecciosa o falla terapéutica temprana. Las opciones C y D prolongan innecesariamente el uso de fármacos, elevando los costos y el riesgo de sobreinfección por Clostridioides difficile o toxicidad orgánica sin beneficio adicional de sobrevida.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Tratamiento, p. 18."
+    },
+    {
+        id: 23,
+        question: "En una paciente ingresada por sepsis materna que presenta trombocitopenia severa y hemorragia activa, ¿cuál es la medida profiláctica antitrombótica indicada?",
+        options: ["Ácido acetilsalicílico oral", "Filtro de vena cava", "Medios físicos mecánicos", "Heparina no fraccionada"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, la prevención de la tromboembolia venosa es obligatoria por el estado procoagulante. Sin embargo, ante la contraindicación absoluta para el uso de heparinas de bajo peso molecular por coagulopatía o sangrado, la intervención segura son los métodos de compresión mecánica.<br><br>Perla ENARM: \"Se recomienda la combinación de tromboprofilaxis farmacológica y mecánica, siempre que sea posible. En caso de contraindicación para el uso de tromboprofilaxis farmacológica se recomienda el uso de la mecánica.\"<br><br>Análisis de Distractores: Las opciones A y D empeorarán el sangrado letal y están absolutamente contraindicadas en este escenario crítico. La opción B es un recurso de última línea invasivo para trombosis venosa profunda documentada recurrente, no como profilaxis primaria de rutina en piso o UCI.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Tratamiento, p. 18."
+    },
+    {
+        id: 24,
+        question: "Para disminuir el riesgo de morbilidad infecciosa intraparto, ¿cuál es la frecuencia máxima recomendada para realizar exploraciones vaginales en el primer periodo del trabajo de parto?",
+        options: ["Cada hora", "Cada dos horas", "Cada cuatro horas", "Solo en expulsivo"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, limitar el número de tactos vaginales previene la inoculación ascendente de la flora perineal y reduce la incidencia de corioamnionitis. Se ha demostrado que evaluar la progresión cervical cada cuatro horas es seguro y no incrementa el riesgo de distocias inadvertidas frente a valoraciones más frecuentes.<br><br>Perla ENARM: \"Dado que no se encuentra evidencia que apoye o rechace el uso de la exploración vaginal de rutina durante el trabajo de parto, se puede considerar la realización de tacto vaginal cada cuatro horas, durante el primer periodo del trabajo de parto.\"<br><br>Análisis de Distractores: Las opciones A y B incrementan dramáticamente la exposición bacteriana intraamniótica, superando el límite de 5 tactos que se asocia como factor de riesgo independiente. La opción D es subóptima y podría ocasionar la falta de detección de anomalías en el descenso, sufrimiento fetal o prolapso de cordón.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Prevención, p. 24."
+    },
+    {
+        id: 25,
+        question: "¿Cuál intervención preparatoria antes del parto vaginal carece de evidencia clínica y NO debe realizarse de forma rutinaria para prevenir infección?",
+        options: ["Afeitado perineal de rutina", "Enema evacuante previo", "Aseo con agua y jabón", "Amniotomía temprana profiláctica"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, las microabrasiones cutáneas generadas por las hojas de afeitar actúan como nichos para la colonización bacteriana (especialmente de Staphylococcus aureus), lo que anula cualquier intento de asepsia e incrementa la tasa de infecciones locales sin aportar beneficios obstétricos.<br><br>Perla ENARM: \"No hay evidencia suficiente que permita recomendar el afeitado perineal previo al parto vaginal.\"<br><br>Análisis de Distractores: La opción B (enema) también está en desuso por otras razones fisiológicas, pero el afeitado es la maniobra explícitamente señalada como ineficaz y perjudicial para la piel en el contexto estricto de prevención de morbilidad infecciosa de herida (episiotomía). Las opciones C y D no están descritas como perjudiciales en la piel perineal por la norma.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Prevención, p. 24."
+    },
+    {
+        id: 26,
+        question: "¿Cuál es la indicación farmacológica recomendada para disminuir complicaciones infecciosas tras la reparación de un desgarro perineal de tercer o cuarto grado?",
+        options: ["Antibiótico profiláctico rutinario", "Clorhexidina tópica exclusiva", "Baños de asiento diarios", "Cierre por segunda intención"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, la exposición de los planos musculares profundos y del esfínter anal a la flora intestinal conlleva un riesgo altísimo de fascitis o dehiscencia. El uso de un antibiótico intravenoso como dosis única (ej. cefalosporina) reduce drásticamente las complicaciones de la herida en el posparto.<br><br>Perla ENARM: \"Se recomienda la administración rutinaria de antibiótico en mujeres con desgarros perineales de tercer y cuarto grado.\"<br><br>Análisis de Distractores: Las opciones B y C son medidas de higiene locales que no alcanzan las fascias profundas ni previenen la invasión anaerobia sistémica del defecto esfinteriano. La opción D asegura la incontinencia fecal permanente y la infección pélvica crónica, el esfínter debe ser reparado anatómicamente.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Prevención, p. 25."
+    },
+    {
+        id: 27,
+        question: "¿A qué familia farmacológica pertenece el antibiótico de dosis única recomendado por la GPC para la profilaxis en un evento de cesárea?",
+        options: ["Aminoglucósido de segunda generación", "Cefalosporina de primera generación", "Macrólido de tercera generación", "Fluoroquinolona de cuarta generación"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, la principal etiología de la infección de sitio quirúrgico poscesárea involucra la flora dérmica (S. aureus). Una cefalosporina de 1ª (ej. Cefalotina) o 2ª generación tiene una excelente cobertura profiláctica, bajo costo y perfil de seguridad superior sin requerir combinaciones tóxicas.<br><br>Perla ENARM: \"Se recomienda que la profilaxis antibiótica para la cesárea sea una sola dosis de una cefalosporina de primera o segunda generación, o una penicilina.\"<br><br>Análisis de Distractores: Las opciones A y C (aminoglucósidos y macrólidos) carecen de la cobertura tisular quirúrgica estandarizada y no logran la reducción meta-analítica sobre endometritis que sí poseen los betalactámicos. La opción D (fluoroquinolona) está contraindicada por sus efectos adversos musculoesqueléticos y riesgo de daño cartilaginoso en el producto.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Prevención, p. 26."
+    },
+    {
+        id: 28,
+        question: "En pacientes con embarazo pretérmino e integridad de membranas amnio-coriales confirmada, ¿cuál es la conducta recomendada respecto a la profilaxis antibiótica?",
+        options: ["Cefalosporina de primera generación", "No se recomienda profilaxis rutinaria", "Esquema de ampicilina y eritromicina", "Dosis única de clindamicina"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, la administración ciega de antimicrobianos en un útero sin ruptura ni datos de invasión no ha logrado reducir la mortalidad perinatal y, por el contrario, ha reportado un aumento en la incidencia de muerte neonatal estadísticamente significativo (NNT para daño 149).<br><br>Perla ENARM: \"No se recomienda la administración rutinaria de antibióticos en mujeres con parto pretérmino y amnios integro.\"<br><br>Análisis de Distractores: Las opciones A, C y D corresponden a esquemas terapéuticos o de profilaxis comprobada únicamente para pacientes que ya presentan ruptura de membranas (RPM) o para cesáreas. El uso preventivo con amnios intacto carece de evidencia y añade toxicidad fetal.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Prevención, p. 24."
+    },
+    {
+        id: 29,
+        question: "Una vez que el laboratorio reporta el agente causal aislado en los hemocultivos de una paciente estable, ¿cuál es la acción clínica prioritaria con el esquema empírico inicial?",
+        options: ["Mantener espectro amplio de inicio", "Ajuste terapéutico antimicrobiano", "Suspender esquema intravenoso", "Cambiar a vía intramuscular"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, la \"desescalación\" o ajuste de un fármaco de amplio espectro a uno dirigido y selectivo hacia la sensibilidad de la bacteria (una vez superada la emergencia vital) no solo evita la resistencia, sino que actúa como un factor protector que reduce la mortalidad (OR 0.58).<br><br>Perla ENARM: \"Se sugiere el ajuste terapéutico del esquema antibiótico empírico una vez que se ha identificado el patógeno, su sensibilidad antimicrobiana, el origen de la infección y/o se observe la mejoría clínica.\"<br><br>Análisis de Distractores: La opción A favorece la emergencia de patógenos multidrogorresistentes como hongos y prolonga la disbiosis intestinal materna. Las opciones C y D condicionan el fracaso de la cura al disminuir los niveles inhibitorios mínimos (MIC) séricos, arriesgando una recaída fatal.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Tratamiento, p. 20."
+    },
+    {
+        id: 30,
+        question: "¿Cuál es el microorganismo Gram positivo descrito en la GPC como uno de los principales agentes infecciosos causales de la Sepsis Materna a nivel mundial?",
+        options: ["Streptococcus del grupo A", "Streptococcus agalactiae", "Staphylococcus epidermidis", "Enterococcus faecalis"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, la virulencia y capacidad necrosante del Streptococcus pyogenes (Grupo A) lo convierten en uno de los patógenos más letales e históricamente responsables de la fiebre puerperal o sepsis posparto de rápida progresión y alta letalidad hemodinámica.<br><br>Perla ENARM: \"Principales agentes infecciosos responsables de la sepsis materna son Streptococcus del grupo A (pyogenes), Escherichia coli y Staphylococcus aureus.\"<br><br>Análisis de Distractores: La opción B (S. agalactiae o Grupo B) es determinante para sepsis neonatal temprana, pero en la morbimortalidad directa de sepsis de la madre, el Grupo A y el S. aureus cobran prioridad destructiva. Las opciones C y D son causantes de infecciones nosocomiales relacionadas a catéteres y vía urinaria pero de evolución menos agresiva.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Evidencias y Recomendaciones, p. 8."
+    },
+    {
+        id: 31,
+        question: "Epidemiológicamente, ¿cuál es la infección bacteriana más frecuente responsable de Sepsis Materna durante el periodo de gestación (anteparto)?",
+        options: ["Endometritis puerperal", "Infección de herida", "Pielonefritis aguda", "Mastitis supurativa"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, el efecto relajante de la progesterona sobre el músculo liso ureteral y la compresión mecánica uterina provocan hidronefrosis fisiológica, facilitando que la bacteriuria asintomática progrese a pielonefritis, siendo la causa extrauterina número uno de sepsis durante el embarazo.<br><br>Perla ENARM: \"Las causas más frecuentes en el embarazo son la pielonefritis y corioamnioitis, mientras que en el puerperio se incluyen las infecciones del tracto genital y la endometritis.\"<br><br>Análisis de Distractores: Las opciones A, B y D ocurren exclusivamente una vez que el embarazo ha terminado (postparto/puerperio o lactancia), siendo cronológicamente imposibles como la causa principal durante la etapa anteparto.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Evidencias y Recomendaciones, p. 8."
+    },
+    {
+        id: 32,
+        question: "En una paciente con embarazo pretérmino y diagnóstico de Choque Séptico secundario a neumonía adquirida en la comunidad, ¿cuál es la conducta obstétrica prudente avalada por la guía?",
+        options: ["Interrupción inmediata del embarazo", "Considerar prolongar la gestación", "Cesárea de urgencia fúndica", "Inducción con prostaglandinas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, cuando el foco infeccioso es sistémico o extrauterino (neumonía, apendicitis, pielonefritis) y el feto es pretérmino, el esfuerzo terapéutico se centra en la reanimación materna y antibioticoterapia. A diferencia de una corioamnionitis, aquí no se exige vaciar el útero de manera perentoria si la madre responde.<br><br>Perla ENARM: \"En los casos de sepsis de origen extrauterino en pacientes con embarazo pretérmino, se puede considerar prolongar la gestación, en tanto se continúen los esfuerzos por tratar la sepsis materna.\"<br><br>Análisis de Distractores: Las opciones A, C y D corresponden al tratamiento definitivo exclusivo de las infecciones donde el compartimento uterino es la fuente del patógeno (sepsis intraamniótica o corioamnionitis grave), donde sí es obligatoria la extracción del contenido retenido.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Tratamiento, p. 21."
+    },
+    {
+        id: 33,
+        question: "Si el cuadro clínico en un embarazo pretérmino obliga a la interrupción obstétrica urgente, ¿qué intervención farmacológica asociada al estado fetal debe considerarse sin demorar el control del foco infeccioso?",
+        options: ["Tocolíticos intravenosos continuos", "Sulfato de magnesio neuroprotector", "Corticoesteroides para maduración pulmonar", "Cerclaje cervical de emergencia"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, ante la inminencia del nacimiento pretérmino impulsado por la sepsis, la protección del neumocito tipo II fetal mejora la adaptabilidad neonatal extrauterina. Se deben aplicar esteroides valorando el foco, pero bajo la premisa de no retrasar jamás el inicio de los antibióticos o la evacuación si hay choque grave.<br><br>Perla ENARM: \"En caso de requerirse la interrupción urgente del embarazo, debe de considerarse el uso de corticoesteroides para la maduración pulmonar fetal. Esta decisión también debe de tomar en cuenta el origen del foco séptico.\"<br><br>Análisis de Distractores: La opción A (tocolíticos) perpetúa la inflamación si la causa es corioamnionitis y es deletérea. La opción B tiene espacio obstétrico, pero la GPC prioriza y hace explícita mención de la maduración pulmonar. La opción D interfiere mecánicamente con un eventual parto y retiene detritus infectados.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Tratamiento, p. 21."
+    },
+    {
+        id: 34,
+        question: "Para detectar oportunamente la hipoxia y el sufrimiento fetal como consecuencia de la hipoperfusión materna por Sepsis, ¿qué estudio ecográfico recomienda la GPC?",
+        options: ["Doppler de arteria cerebral media", "Doppler de arteria umbilical", "Flujometría de ductus venoso", "Perfil biofísico completo"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, el compromiso del flujo materno sistémico altera las resistencias en el lecho placentario. La evidencia demuestra que medir los índices de pulsatilidad del flujo feto-placentario reduce la muerte perinatal en pacientes inestables, siendo el vaso titular de evaluación temprana la arteria umbilical.<br><br>Perla ENARM: \"La sepsis materna y la subsecuente hipoxia materna afecta el adecuado aporte de oxígeno al feto... por lo que debe establecerse una vigilancia fetal estrecha con ultrasonido de segundo nivel y pruebas de bienestar fetal... y Doppler de arteria umbilical.\"<br><br>Análisis de Distractores: Las opciones A y C evalúan la centralización de flujo y la falla cardíaca derecha inminente en etapas más terminales o en anemia fetal isoinmune, pero la evaluación protocolaria de primer paso que cita la guía es la umbilical. La opción D es observacional e imprecisa en el contexto hemodinámico agudo materno.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Tratamiento, p. 20."
+    },
+    {
+        id: 35,
+        question: "¿Cuál es la terapia empírica inicial intravenosa recomendada para cubrir a los patógenos de una Corioamnionitis intraparto (sin alergia a penicilinas)?",
+        options: ["Ampicilina y gentamicina", "Cefotaxima y metronidazol", "Vancomicina y teicoplanina", "Ceftriaxona y clindamicina"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, las infecciones intraamnióticas albergan una flora aerobia Gram negativa y estreptocócica agresiva. La sinergia del betalactámico que destruye la pared celular con el aminoglucósido inhibidor proteico garantiza una excelente cobertura materno-fetal rápida en piso y sala de labor.<br><br>Perla ENARM: \"Causas comunes de sepsis materna y su manejo antibiótico recomendado... Corioamnioitis intraparto: Ampicilina 2gr IV cada 6hrs + Gentamicina.\"<br><br>Análisis de Distractores: La opción B suele reservarse como triple esquema para endometritis poscesárea o puerperal aguda. La opción C es una bomba ineficaz para Gram negativos pélvicos, reservada solo para MRSA estricto. La opción D omite la penetración sinérgica de los aminoglucósidos avalada en el embarazo.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Cuadros o figuras, p. 84."
+    },
+    {
+        id: 36,
+        question: "Si una paciente desarrolla una grave Endometritis poscesárea y posee alergia documentada a penicilina, ¿qué combinación de fármacos recomienda utilizar la GPC?",
+        options: ["Clindamicina y gentamicina", "Ciprofloxacino y amikacina", "Eritromicina y metronidazol", "Levofloxacino y vancomicina"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, al existir un bloqueo para la administración de betalactámicos por anafilaxia, se debe garantizar la muerte de la potente carga anaerobia del útero (vía lincosamida) sumado a la aniquilación de enterobacterias (vía aminoglucósido), siendo esta la combinación sustituta oro.<br><br>Perla ENARM: \"Causas comunes de sepsis materna... Endometritis... En caso de alergia a penicilina: Clindamicina 900mg cada 8hrs o Gentamicina 80mg IV cada 8hrs.\"<br><br>Análisis de Distractores: La opción B y D incluyen fluoroquinolonas, las cuales no son el rescate de primera línea recomendado en el entorno obstétrico agudo para sustituir a los betalactámicos. La opción C (Eritromicina) falla estrepitosamente en la cobertura sistémica letal para Gram negativos pélvicos requerida.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Cuadros o figuras, p. 83."
+    },
+    {
+        id: 37,
+        question: "En cuanto a prevención de resultados perinatales adversos, ¿qué recomienda la GPC respecto a dar esquemas antibióticos durante el segundo trimestre a pacientes sanas de rutina?",
+        options: ["Dosis única profiláctica mensual", "Esquema oral de 7 días al diagnóstico", "No se recomienda profilaxis rutinaria", "Solo aplicable en pacientes primigestas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, las metarevisiones demostraron que inundar de antibióticos a mujeres sin focalización infecciosa evidente no reduce el parto pretérmino, el bajo peso ni la muerte fetal. Lejos de beneficiar, estas prácticas selectivas seleccionan cepas agresivas multirresistentes en un periodo crítico del desarrollo fetal.<br><br>Perla ENARM: \"No se recomienda realizar profilaxis antibiótica durante el segundo o tercer trimestre del embarazo, con la finalidad de reducir la morbilidad por infecciones.\"<br><br>Análisis de Distractores: Las opciones A, B y D proponen intervenciones yatrogénicas y carentes de utilidad fisiológica que la guía prohíbe explícitamente y que someterían a la paciente a los efectos adversos (como diarrea por C. difficile) sin reducir ninguna complicación.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Prevención, p. 24."
+    },
+    {
+        id: 38,
+        question: "Dentro del componente hepático calificado en la escala obstétrica de disfunción orgánica (omSOFA), ¿cuál parámetro de laboratorio exclusivo mide su grado de afectación?",
+        options: ["Transaminasas hepáticas (ALT/AST)", "Bilirrubinas séricas", "Lactato deshidrogenasa", "Proteína C reactiva"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, la escala omSOFA evalúa el daño celular parenquimatoso a través de la estasis canalicular o alteración del aclaramiento metabólico hepático, utilizando para ello las bilirrubinas séricas, otorgando 2 puntos de fallo si superan los 1.87 mg/dL.<br><br>Perla ENARM: \"Secuencia para la Evaluación de la Falla Orgánica modificada en obstetricia (omSOFA)... Bilirrubinas (mg/dL) >1.87 otorga 2 puntos.\"<br><br>Análisis de Distractores: Aunque las transaminasas (opción A) se piden basalmente ante sospecha de Síndrome HELLP o hepatitis, la tabla algorítmica SOFA únicamente integra las bilirrubinas. La opción C y D son reactantes o marcadores de hemólisis que carecen de impacto clasificatorio en este sistema estandarizado específico de la falla multiorgánica.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Cuadros o figuras, p. 74."
+    },
+    {
+        id: 39,
+        question: "En el rubro que valora el sistema nervioso de la paciente dentro de la escala obstétrica omSOFA, ¿qué hallazgo clínico le asigna un puntaje de severidad grave (2 puntos)?",
+        options: ["Escala de Glasgow ≤ 13", "Despierta solo al estímulo físico", "Confusión de inicio agudo", "Agitación psicomotriz"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, el daño isquémico y edema neurotóxico producido por la tormenta citocínica comprometen el estado de alerta; en la escala modificada para este grupo poblacional, requerir la maniobra invasiva del dolor para despertar se califica automáticamente con la alteración máxima.<br><br>Perla ENARM: \"Secuencia para la Evaluación de la Falla Orgánica modificada en obstetricia (omSOFA)... Estado de conciencia: Despierta solo a estimulo físico o dolor (2 puntos).\"<br><br>Análisis de Distractores: La opción A es el criterio para clasificar en el tamizaje inicial rápido (omqSOFA), pero no la escala de daño orgánico (omSOFA). Las opciones C y D son estados patológicos de neuroinfección, pero el documento utiliza una tabla simplificada de despertar, no variables cualitativas amplias.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Cuadros o figuras, p. 74."
+    },
+    {
+        id: 40,
+        question: "¿Qué condición respiratoria inminente en una paciente obstétrica se contempla en la GPC como un criterio absoluto para su envío inmediato a la Unidad de Cuidados Intensivos?",
+        options: ["Frecuencia respiratoria de 22 rpm", "Requerimiento de oxígeno suplementario", "Saturación de oxígeno > 94 % ambiental", "Presencia de estertores crepitantes"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, el embarazo cursa con un estado hiperdinámico que oculta tempranamente el síndrome de distrés respiratorio agudo por sepsis. Ante la mínima claudicación celular pulmonar manifestada como imposibilidad de mantener el gradiente sin apoyo externo, se requiere vigilancia especializada por su acelerada morbimortalidad.<br><br>Perla ENARM: \"Las indicaciones de referencia o valoración de ingreso a la Unidad de Cuidados Intensivos... Compromiso cardiorrespiratorio: Hipotensión, inestabilidad hemodinámica, taquipnea, hipoxia, requerimiento de oxigeno suplementario.\"<br><br>Análisis de Distractores: La opción A es propia del estado fisiológico gestacional o de un grado muy precoz (tamizaje omqSOFA requiere ≥25 rpm). La opción C indica normalidad tisular y reserva conservada. La opción D amerita abordaje diagnóstico (ej. falla cardíaca o neumonía), pero el criterio algorítmico normado es la insuficiencia respiratoria que exija aporte externo.",
+        source: "GPC-IMSS-272-18, Prevención, Diagnóstico y Tratamiento de la Sepsis Materna, 2018, Cuadros o figuras, p. 87."
+    }
+        ];
+
+        // ==========================================
+        // ==========================================
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('gyoBULastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('gyoBUProgress');
+                localStorage.removeItem('gyoBULastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-pink-500 shadow-md z-10 border-pink-500 dark:border-pink-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-rose-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "GINECOLOGÍA Y OBSTETRICIA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "GPC-IMSS-272-18 • Prevención, diagnóstico y tratamiento de la sepsis materna";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="CU43619GYOE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-pink-100 dark:border-pink-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-pink-50 has-[:checked]:border-pink-400 dark:has-[:checked]:bg-pink-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-pink-600 dark:hover:bg-pink-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('gyoBUProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('gyoBULastQId', currentQuestionId);
+                else localStorage.removeItem('gyoBULastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('gyoBUProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

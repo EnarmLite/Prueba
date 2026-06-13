@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================
+        // =========================================================
+        const questionsData = [
+            {
+                id: 1, 
+                question: "En una paciente con contracciones uterinas regulares, ¿cuál es el hallazgo clínico que establece el diagnóstico de amenaza de parto pretérmino?", 
+                options: ["Borramiento cervical de 80%", "Dilatación cervical de 5 cm", "Dilatación cervical ≤ 3 cm", "Índice de Bishop > 8"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, las modificaciones cervicales tempranas son el pilar para diferenciar una amenaza de un trabajo de parto activo e irreversible, determinando así la utilidad de la tocolisis.<br><br>Perla ENARM: \"Se establece diagnóstico de amenaza de parto pretérmino con presencia de contracción uterinas con una frecuencia de 2 en 10 minutos o 4 en 20 minutos y 8 en 60 minutos acompañadas de cualquiera de los siguientes: Dilatación cervical ≤3 centímetros, borramiento ≤50% o cambios cervicales por medición de longitud cervical.\"<br><br>Análisis de Distractores: Las opciones A y B corresponden a criterios de parto pretérmino establecido o avanzado, contraindicando el uso de tocolíticos. La opción D evalúa favorabilidad cervical para inducción, pero no define el cuadro de amenaza agudo.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Diagnóstico, Página 80." 
+            },
+            {
+                id: 2, 
+                question: "¿Cuál es el factor de riesgo epidemiológico más importante y con mayor peso predictivo para presentar un parto pretérmino recurrente en mujeres multíparas?", 
+                options: ["Antecedente de parto pretérmino", "Vaginosis bacteriana asintomática", "Periodo intergenésico < 18 meses", "Tabaquismo > 10 cigarrillos/día"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la historia reproductiva adversa clasifica inmediatamente a la mujer en la categoría de riesgo alto, aumentando la probabilidad de recurrencia de 1.5 a 2 veces por cada evento previo.<br><br>Perla ENARM: \"En el estudio de Mercer y Goldenberg, el factor de riesgo más importante para parto pretérmino recurrente en mujeres multíparas fue tener historia de PP previo < 37 semanas.\"<br><br>Análisis de Distractores: Las opciones B, C y D son factores documentados en la guía clínica, pero están catalogados estrictamente como factores de \"Riesgo bajo\" en aislamiento.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Prevención, Página 65." 
+            },
+            {
+                id: 3, 
+                question: "¿Cuál es el método de imagen de elección que supera a la exploración digital para evaluar la longitud cervical y predecir el riesgo de parto prematuro?", 
+                options: ["Exploración cervical digital", "Ecografía transabdominal", "Ecografía transvaginal", "Resonancia magnética pélvica"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la evaluación anatómica directa por vía endovaginal permite identificar el acortamiento antes de que ocurra incapacidad esfinteriana franca, superando el error de la estimación manual.<br><br>Perla ENARM: \"Un estudio observacional determinó que la estimación de la longitud cervical por ultrasonido es más confiable para establecer el diagnóstico de parto pretérmino, comparada con la exploración digital. Debido a que se subestima la medida de longitud cervical en aproximadamente 14mm a través de la exploración digital.\"<br><br>Análisis de Distractores: La opción A subestima el daño. La opción B sobreestima la longitud (hasta por 8 mm) dando falsos negativos. La opción D no tiene indicación para tamizaje estructural dinámico del cérvix.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Prevención, Página 68." 
+            },
+            {
+                id: 4, 
+                question: "¿Cuál es el punto de corte ecográfico absoluto que define un cérvix corto a las 22 a 24 semanas de gestación?", 
+                options: ["< 35 mm", "< 15 mm", "< 30 mm", "< 25 mm"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la competencia cervical decrece a medida que avanza la edad gestacional, y alcanzar este límite a la mitad del embarazo duplica exponencialmente el riesgo de nacimiento prematuro.<br><br>Perla ENARM: \"Se recomienda tomar como punto de corte en la medición de la longitud cervical por ecografía de: <15mm a las 14-15 semanas de gestación, <25mm a las 22-24 semanas de gestación.\"<br><br>Análisis de Distractores: La opción B aplica para gestaciones muy tempranas (14-15 semanas) o como umbral de hospitalización inminente. Las opciones A y C se consideran valores protectores (percentiles más altos con alto valor predictivo negativo).", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Prevención, Página 55." 
+            },
+            {
+                id: 5, 
+                question: "¿A partir de qué concentración cuantitativa en secreción cervicovaginal la prueba de fibronectina fetal se considera positiva?", 
+                options: ["> 10 ng/ml", "> 50 ng/ml", "> 100 ng/ml", "> 150 ng/ml"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la detección de niveles masivos de esta glicoproteína adhesiva después de la semana 22 traduce una disrupción patológica de la interfase coriodecidual por fuerza mecánica o inflamatoria.<br><br>Perla ENARM: \"Una prueba de fibronectina positiva (50ng/dl) en una paciente con síntomas de parto pretérmino ha sido asociada con un incremento en el riesgo de nacimiento <34 semanas entre 7 a 14 días posteriores a la prueba.\"<br><br>Análisis de Distractores: Los niveles mostrados en las opciones A, C y D no corresponden al umbral estandarizado mundialmente para categorizar el riesgo en la zona gris clínica.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Diagnóstico, Página 87." 
+            },
+            {
+                id: 6, 
+                question: "¿Cuál es el puntaje del índice tocolítico de Gruber-Baumgarten que indica altas posibilidades de éxito clínico para iniciar la uteroinhibición?", 
+                options: ["< 4 puntos", "> 5 puntos", "≥ 7 puntos", "10 puntos"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, evaluar parámetros como ruptura de membranas, hemorragia y dilatación permite objetivar si el tejido miometrial responderá a fármacos o si el parto es un proceso biológico ya irreversible.<br><br>Perla ENARM: \"La tocolisis puede ser considerada para las mujeres con sospecha de parto prematuro que han tenido un embarazo sin complicaciones... Posibilidades de éxito de uteroinhibición (Índice de Gruber-Baumgarten <4).\"<br><br>Análisis de Distractores: Las opciones B y C reflejan un trabajo de parto muy avanzado donde la tocolisis pierde eficacia y aumenta morbimortalidad. La opción D corresponde a la escala de Papiernik para riesgo epidemiológico, no al índice de manejo de urgencias.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Anexo 5.3 Cuadro 7, Página 149." 
+            },
+            {
+                id: 7, 
+                question: "¿Qué fármaco tocolítico de primera línea se asocia a una reducción significativa del riesgo de enterocolitis necrotizante y hemorragia intraventricular neonatal?", 
+                options: ["Indometacina", "Nifedipino", "Atosiban", "Orciprenalina"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, el antagonismo de los canales de calcio no solo paraliza la fibra miometrial de forma costo-efectiva vía oral, sino que impacta indirectamente en morbilidades clásicas del prematuro, superando el perfil de seguridad de los betamiméticos.<br><br>Perla ENARM: \"En comparación con los β-miméticos, el nifedipino se asocia con una reducción significativa en los riesgos de enterocolitis necrotizante, hemorragia intraventricular y síndrome de dificultad respiratoria aguda.\"<br><br>Análisis de Distractores: La opción D (orciprenalina) causa severa taquicardia fetal e hipokalemia materna. Las opciones A y C son tocolíticos eficaces, pero el beneficio neonatal incidental descrito en la literatura base está etiquetado para el calcioantagonista.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Tratamiento, Página 100." 
+            },
+            {
+                id: 8, 
+                question: "¿Cuál es el límite de edad gestacional máxima que establece la contraindicación absoluta para el uso de indometacina como tocolítico?", 
+                options: ["> 24 semanas", "> 28 semanas", "> 32 semanas", "> 34 semanas"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la sensibilidad de los receptores del conducto arterioso fetal a la caída de prostaglandinas aumenta en el tercer trimestre tardío, ocasionando falla cardíaca derecha fetal si se expone a bloqueadores de la COX.<br><br>Perla ENARM: \"La indometacina es usualmente administrada por vía oral a dosis inicial de 50mg seguida de 25 a 50mg cada 6 horas por 48 horas. Su uso esta limita a gestaciones menores de 32 semanas.\"<br><br>Análisis de Distractores: Antes de las 32 semanas (Opciones A y B), el ductus es refractario a la exposición farmacológica y el riesgo es mínimo, haciéndolo un tocolítico seguro. Después de la semana 34 (Opción D), la tocolisis rara vez está indicada globalmente.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Tratamiento, Página 103." 
+            },
+            {
+                id: 9, 
+                question: "¿Cuál es el objetivo principal y la duración máxima recomendada para mantener la terapia tocolítica farmacológica?", 
+                options: ["Prolongar el embarazo 48 horas", "Detener contracciones por 7 días", "Mantener el embarazo hasta 37 semanas", "Retrasar el parto 24 horas"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, relajar el miometrio no cura la causa etiológica del parto (infección, isquemia, sobredistensión); solo otorga una ventana puente esencial para aplicar el estándar de oro biológico (maduración y traslado).<br><br>Perla ENARM: \"La evidencia apoya el uso de fármacos tocolíticos a corto plazo (48 horas) para prolongar el embarazo durante al menos 48 horas que permita la administración de esteroides prenatales y que pueda permitir el transporte de la madre a un centro de atención terciaria.\"<br><br>Análisis de Distractores: Mantener el fármaco hasta las 37 semanas (Opción C) o por 7 días (Opción B) expone a toxicidad (edema pulmonar) sin mejorar el resultado neonatal. Las 24 horas (Opción D) son insuficientes para la transcripción proteica pulmonar inducida por corticoides.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Tratamiento, Página 105." 
+            },
+            {
+                id: 10, 
+                question: "¿Cuál es el esquema de primera elección estandarizado con betametasona para la inducción de maduración pulmonar fetal?", 
+                options: ["6 mg vía intramuscular cada 12 horas por 4 dosis", "12 mg vía intravenosa cada 24 horas por 2 dosis", "12 mg vía intramuscular cada 24 horas por 2 dosis", "24 mg vía intramuscular en dosis única"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la vía y los intervalos son estrictos para generar niveles séricos meseta que actúen sobre los neumocitos tipo II fetales sin causar picos tóxicos inmediatos.<br><br>Perla ENARM: \"Betametasona. 2 dosis: cada una de 12 miligramos cada 24 horas. Vía Intramuscular.\"<br><br>Análisis de Distractores: La opción A corresponde al esquema de Dexametasona. La opción B indica la vía intravenosa, la cual genera depuración rápida ineficaz para la transcripción. La opción D usa una sobredosis única que no otorga la exposición en el tiempo ideal.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Anexo 5.3 Cuadro 9, Página 151." 
+            },
+            {
+                id: 11, 
+                question: "¿Cuál es el intervalo mínimo de tiempo que debe transcurrir desde el esquema inicial para considerar administrar una dosis de rescate de corticoesteroides?", 
+                options: ["> 7 días", "> 14 días", "> 21 días", "> 28 días"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, se prohibieron los ciclos repetitivos rutinarios por el alto riesgo de falla suprarrenal fetal y parálisis cerebral. Solo se reserva una dosis extra si la labor resurge agudamente semanas después.<br><br>Perla ENARM: \"La terapia antenatal con corticoesteroides de rescate (ciclo de 12 miligramos de betametasona) de forma única... se recomienda limitándolo a embarazo con riesgo elevado de nacimiento en los próximos 7 días y con antecedente de haber recibido terapia antenatal (última dosis en más de 14 días).\"<br><br>Análisis de Distractores: La opción A expone a sobrecarga del neurodesarrollo. Las opciones C y D superan el margen estricto, ya que el descenso del efecto enzimático pulmonar justifica la reintervención a partir del día 14.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Tratamiento, Página 113." 
+            },
+            {
+                id: 12, 
+                question: "¿Qué fármaco intravenoso se debe administrar específicamente para reducir el riesgo de parálisis cerebral en fetos con nacimiento inminente entre las 24 y 31 semanas?", 
+                options: ["Fenobarbital intravenoso", "Atosiban en infusión", "Sulfato de magnesio", "Dexametasona intramuscular"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la inmadurez de la matriz germinal neuronal requiere un bloqueo temporal de receptores NMDA excitatorios para soportar la hipoxia e inflamación propia de la vía de parto prematuro.<br><br>Perla ENARM: \"La administración prenatal de sulfato de magnesio intravenoso antes de las 32 semanas reduce la parálisis cerebral y los trastornos del desarrollo motor en la persona recién nacida prematura.\"<br><br>Análisis de Distractores: La opción A carece de evidencia de neuroprotección preventiva en este contexto. La opción B es un tocolítico y la opción D es primariamente para maduración pulmonar e intraventricular (pero el esquema \"neuroprotector\" directo se etiqueta al magnesio).", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Tratamiento, Página 121." 
+            },
+            {
+                id: 13, 
+                question: "¿Cuál es el manejo farmacológico profiláctico indicado en una paciente asintomática con embarazo único y cérvix corto diagnosticado por ecografía?", 
+                options: ["Indometacina vía oral", "Progesterona micronizada vaginal", "Nifedipino de liberación prolongada", "Antibioticoterapia de amplio espectro"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la reposición exógena hormonal promueve la integridad mecánica y bioquímica en las fibras de colágeno del cuello, suprimiendo la expresión de receptores para estímulos contráctiles.<br><br>Perla ENARM: \"Es recomendable, de contar con el recurso, la prescripción de progesterona micronizada natural administrada vaginalmente diario durante un máximo de 36 semanas para mujeres asintomáticas con embarazo único, sin antecedentes de parto prematuro y una longitud cervical inferior a 20 mm entre las 16-24 semanas.\"<br><br>Análisis de Distractores: La opciones A y C son tocolíticos indicados para crisis en pacientes sintomáticas (amenaza real), no asintomáticas profilácticas. La opción D no tiene aval en membranas íntegras y asintomáticas.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Tratamiento, Página 78." 
+            },
+            {
+                id: 14, 
+                question: "En el seguimiento de una paciente que cursó previamente con síntomas de parto pretérmino y fue tocoinhibida, ¿qué hallazgo es indicación para colocar cerclaje cervical de emergencia?", 
+                options: ["Longitud cervical de 20 mm", "Vaginosis bacteriana asintomática", "Antecedente de cono cervical aislado", "Dilatación cervical > 1 cm y < 3 cm"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la falla mecánica silenciosa (dilatación progresiva asintomática) posterior a un cuadro agudo es evidencia de incompetencia tisular, requiriendo intervención quirúrgica de rescate.<br><br>Perla ENARM: \"Las pacientes que hayan cursado con síntomas de parto pretérmino, que ameritaron tratamiento tocolítico y que en el seguimiento posterior se determine dilatación cervical >1 cm y <3cm o cérvix ≤ 15mm es recomendable la colocación de cerclaje cervical.\"<br><br>Análisis de Distractores: La opción A es indicación de progesterona, no bisturí en primera instancia. Las opciones B y C ameritan vigilancia estrecha pero no avalan introducir cuerpo extraño de emergencia.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Tratamiento, Página 125." 
+            },
+            {
+                id: 15, 
+                question: "En el contexto de un riesgo inminente, ¿qué intervención médica está explícitamente contraindicada por incrementar sustancialmente el riesgo tromboembólico materno sin prevenir el parto?", 
+                options: ["Reposo estricto en cama", "Hidratación intravenosa rápida", "Dieta rica en granos enteros", "Medición seriada transvaginal"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la inmovilización anula el bombeo muscular de extremidades inferiores combinándose fatalmente con el estado fisiológico protrombótico de la mujer embarazada.<br><br>Perla ENARM: \"El reposo estricto en cama incrementa el riesgo tromboembólico y no disminuye el riesgo de parto pretérmino. No se recomienda la hidratación y el reposo estricto en cama como tratamientos específicos.\"<br><br>Análisis de Distractores: La opción B (hidratación) también está contraindicada por riesgo de edema pulmonar y falta de eficacia, pero el riesgo primario de trombosis se vincula al reposo. Las opciones C y D son prácticas avaladas e inocuas.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Tratamiento, Página 93." 
+            },
+            {
+                id: 16, 
+                question: "¿Cuál es la indicación de la guía respecto a la prescripción rutinaria de antibióticos profilácticos en mujeres con trabajo de parto pretérmino y membranas íntegras?", 
+                options: ["Administrar ampicilina profiláctica", "No se recomiendan rutinariamente", "Iniciar clindamicina por 7 días", "Administrar eritromicina intravenosa"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, alterar la ecología vaginal con esquemas ciegos en un entorno cerrado (saco amniótico íntegro) carece de beneficio real sobre el pronóstico obstétrico e incrementa la resistencia bacteriana.<br><br>Perla ENARM: \"Los antibióticos no se deben administrar de forma rutinaria a mujeres con trabajo de parto pretérmino y membranas intactas.\"<br><br>Análisis de Distractores: Las opciones A, C y D corresponden a pautas para otras entidades precisas (como RPM o colonización por EGB demostrada), pero se penalizan drásticamente si se aplican \"de rutina\" en PP sin ruptura de membranas.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Tratamiento, Página 94." 
+            },
+            {
+                id: 17, 
+                question: "¿Cuál es la alteración anatómica de canalización mulleriana que presenta el riesgo estadístico más alto (13 veces) de desarrollar acortamiento cervical y prematurez?", 
+                options: ["Útero didelfo", "Útero septado completo", "Útero arcuato", "Útero unicorne"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la morfología defectuosa limita críticamente la tasa de distensión uterina asimétrica, venciendo la fuerza elástica del segmento inferior antes de alcanzar el tercer trimestre.<br><br>Perla ENARM: \"La presencia de cérvix corto diagnosticado por ecografía transvaginal en mujeres con embarazo y anomalías mullerianas incrementa 13 veces más el riesgo de parto pre-término, de las cuales el útero unicorne es el que más asociación tiene con cérvix corto.\"<br><br>Análisis de Distractores: Las opciones A, B y C representan un riesgo global (de unas 2 veces) de complicaciones del embarazo, pero la literatura es tajante en señalar a la variante unicorne como la protagonista de falla biomecánica cervical severa.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Prevención, Página 74." 
+            },
+            {
+                id: 18, 
+                question: "Según los criterios de estabilización, ¿qué combinación patológica obliga el envío referencial inmediato de una paciente gestante a un hospital de tercer nivel?", 
+                options: ["Embarazo único con bacteriuria", "Sangrado escaso a las 20 semanas", "Embarazo gemelar y cérvix corto", "Antecedente de un aborto espontáneo"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la hiperdistensión de gestaciones múltiples combinada con incompetencia del esfínter cervical predice un desenlace inminente con necesidad crítica de unidades de terapia intensiva neonatal complejas.<br><br>Perla ENARM: \"Se recomienda el envío de segundo a tercer nivel: Mujeres con embarazo y anomalías mullerianas... Mujeres con embarazo gemelar o múltiple y cérvix corto.\"<br><br>Análisis de Distractores: Las opciones A y B deben recibir manejo agudo para estabilizarse en su unidad de atención inicial (1° o 2° nivel). La opción D por sí sola no denota crisis anatómica ni requiere tecnología obstétrica sofisticada preventiva.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Criterios de Referencia, Página 133." 
+            },
+            {
+                id: 19, 
+                question: "En pacientes asintomáticas con antecedente obstétrico adverso y cérvix corto comprobado, ¿con qué frecuencia temporal exige la norma el seguimiento ecográfico de la longitud cervical?", 
+                options: ["Cada 1 a 2 semanas", "Cada 3 a 4 semanas", "Cada 48 a 72 horas", "Al inicio del tercer trimestre"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la cinética de acortamiento es un proceso acelerado en las pacientes de alto riesgo; un monitoreo estricto detecta el momento exacto (zona gris de 15 a 24 mm) en que las terapias profilácticas deben instalarse o escalarse.<br><br>Perla ENARM: \"En las pacientes con cervix corto, es recomendable un seguimiento de la longitud cervical cada 1-2 semanas, en especial en aquellas pacientes con antecedente de parto pretérmino.\"<br><br>Análisis de Distractores: Monitorear cada 3 o 4 semanas (Opción B) propicia que una dilatación silenciosa pase desapercibida. Exámenes diarios (Opción C) o muy tardíos (Opción D) subestiman el riesgo del proceso agudo biológico del segundo trimestre.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Examen clínico de seguimiento, Página 124." 
+            },
+            {
+                id: 20, 
+                question: "En una paciente con diabetes y embarazo que recibe el esquema completo de maduración pulmonar, ¿qué ajuste terapéutico específico en su glucemia se debe instalar inmediatamente?", 
+                options: ["Suspender la vía oral por 48 horas", "Incremento del 20% en insulina", "Iniciar infusión de glucagón", "Disminución del 10% en insulina"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la inducción metabólica generada por el esteroide provoca un repunte brusco de la glucosa circulante a las 12 horas que perdura hasta 7 días, requiriendo un choque insulínico temporal preventivo.<br><br>Perla ENARM: \"Es recomendable en mujeres con diabetes, embarazo y riesgo de parto pretérmino que reciban terapia antenatatal con corticoiesteroides... considerar un incremento del 20% de la dosis de insulina utilizada en los primeros 7 días a partir de la primera aplicación del corticoesteroide.\"<br><br>Análisis de Distractores: Bajar la insulina (Opción D) o administrar glucagón (Opción C) agrava directamente la tormenta hiperglucémica intrauterina. La opción A no suprime el proceso de neoglucogénesis endógeno secundario al corticoide.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Tratamiento, Página 120." 
+            },
+            {
+                id: 21, 
+                question: "De acuerdo a la GPC, ¿cuál es el esquema posológico estandarizado de dexametasona para inducir la maduración pulmonar fetal?", 
+                options: ["12 mg intravenoso cada 24 horas", "6 mg intramuscular cada 12 horas", "24 mg intramuscular dosis única", "6 mg intravenoso cada 8 horas"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la alternativa principal a la betametasona debe cumplir un esquema estricto de dosis fraccionadas para garantizar la biodisponibilidad y transcripción sostenida en el neumocito tipo II del feto sin alcanzar picos tóxicos.<br><br>Perla ENARM: \"Dexametasona 4 dosis: cada una de 6 miligramos cada 12 horas Intramuscular.\"<br><br>Análisis de Distractores: La opción A corresponde a la posología exacta de la Betametasona. La opción C es una sobredosis no avalada. La opción D utiliza la vía intravenosa, la cual tiene una depuración ultrarrápida que fracasa en mantener la exposición genómica prolongada requerida en el tejido pulmonar fetal.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Anexo 5.3 Cuadro 9, Página 151." 
+            },
+            {
+                id: 22, 
+                question: "De acuerdo a la GPC, ¿cuál es una contraindicación obstétrica absoluta para iniciar la terapia tocolítica?", 
+                options: ["Ruptura prematura de membranas", "Dilatación cervical ≥ 5 cm", "Placenta previa sin hemorragia", "Borramiento cervical de 50%"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, cuando el trabajo de parto ha cruzado el umbral de la fase activa avanzada, la inhibición farmacológica de las fibras miometriales es fútil y expone a la madre a efectos cardiovasculares adversos sin lograr retrasar el nacimiento.<br><br>Perla ENARM: \"Contraindicaciones del tratamiento tocolítico... Obstétricas Absolutas: Trabajo de parto avanzado (Dilatación ≥ o igual a 5cm, membranas amnióticas prominentes).\"<br><br>Análisis de Distractores: La opción A es considerada una contraindicación relativa (se valora riesgo-beneficio). La opción C no prohíbe la tocolisis a menos que exista hemorragia activa. La opción D es un criterio diagnóstico de amenaza de parto pretérmino temprano, siendo precisamente la indicación ideal para iniciar el tocolítico.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Anexo 5.3 Cuadro 7, Página 149." 
+            },
+            {
+                id: 23, 
+                question: "En el manejo de neuroprotección, ¿cuál es la indicación de la GPC respecto al uso de fenobarbital materno para prevenir hemorragia periventricular fetal?", 
+                options: ["Dosis única 24 horas previas", "Infusión continua a 2 g/hora", "No se recomienda su uso", "Combinar con sulfato de magnesio"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, el uso de barbitúricos antenatales no ha demostrado disminuir el riesgo de sangrado cerebral y, por el contrario, expone al sistema nervioso central del prematuro a depresión respiratoria y sedación profunda al nacer.<br><br>Perla ENARM: \"El uso de fenobarbital en mujeres con embarazo <36 semanas y síntomas de parto pretérmino no está asociado con ningún beneficio... No se recomienda el uso de fenobarbital en la prevención de hemorragia periventricular en el feto.\"<br><br>Análisis de Distractores: Las opciones A y D sugieren protocolos de uso que están penalizados por la medicina basada en evidencia actual. La opción B corresponde a la dosis de mantenimiento del verdadero neuroprotector (Sulfato de Magnesio).", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Tratamiento, Página 122." 
+            },
+            {
+                id: 24, 
+                question: "En la atención del parto pretérmino, ¿cuál es el tiempo de pinzamiento del cordón umbilical asociado a una menor incidencia de hemorragia intraventricular?", 
+                options: ["Inmediato al nacimiento", "Entre 30 y 60 segundos", "Mayor a 3 minutos", "Al cese del latido funicular"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, permitir la transfusión de volumen placentario al neonato estabiliza su volemia inicial, previniendo los picos de hipotensión/hipertensión que rompen los vasos inmaduros de la matriz germinal cerebral.<br><br>Perla ENARM: \"El pinzamiento del cordón umbilical entre 30 a 60 segundos después del nacimiento, está asociado con menor número de transfusiones sanguíneas... así como menor incidencia de hemorragia interventricular, comparado con el pinzamiento temprano.\"<br><br>Análisis de Distractores: La opción A (inmediato) hipovolemiza al prematuro agravando el riesgo isquémico-hemorrágico. Las opciones C y D superan el tiempo de reanimación crítica en prematuros extremos, siendo pautas usualmente toleradas en recién nacidos de término vigorosos.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Tratamiento, Página 130." 
+            },
+            {
+                id: 25, 
+                question: "Al realizar la evaluación inicial con espéculo en una paciente con sospecha de parto pretérmino, ¿cuál es la indicación técnica estricta de la GPC?", 
+                options: ["Usar clorhexidina profiláctica", "Emplear espéculo no lubricado", "Realizar lavado con yodopovidona", "Aplicar gel de lidocaína"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la introducción de sustancias químicas en el canal vaginal altera la composición de los fluidos e interfiere directamente con la reacción antígeno-anticuerpo de los marcadores predictivos bioquímicos.<br><br>Perla ENARM: \"La exploración física en la paciente con sospecha de parto pretérmino se recomienda que consigne: Examen con espéculo – Utilizando un espéculo húmedo no lubricado. (los lubricantes pueden interferir con las pruebas en muestras vaginales).\"<br><br>Análisis de Distractores: Las opciones A, C y D implican la introducción de antisépticos o geles comerciales, lo cual invalida de forma inmediata la toma de la prueba de fibronectina fetal que debe realizarse en este paso.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Diagnóstico, Página 83." 
+            },
+            {
+                id: 26, 
+                question: "En la exploración de factores de riesgo, ¿cuál es la profundidad de escisión en un cono cervical previo que la GPC asocia con el doble de riesgo de parto pretérmino?", 
+                options: ["Mayor a 5 mm", "Mayor a 10 mm", "Mayor a 15 mm", "Mayor a 20 mm"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la amputación del estroma de colágeno cervical compromete definitivamente la fuerza tensil y el esfínter mecánico del útero; el daño funcional es directamente proporcional al volumen geométrico resecado.<br><br>Perla ENARM: \"Las pacientes con antecedente de cono cervical con un volumen de 2.6 cm3 o escisión >15mm de profundidad de la zona de transformación, está asociado con el doble de riesgo para presentar parto pretérmino.\"<br><br>Análisis de Distractores: Las escisiones de 5 o 10 mm (Opciones A y B) suelen ser superficiales (ej. LEEP o láser) y no alcanzan a desestabilizar la porción fibromuscular profunda que sostiene el embarazo. La opción D es un daño severo, pero el umbral bibliográfico marcado en la guía es 15 mm.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Prevención, Página 40." 
+            },
+            {
+                id: 27, 
+                question: "¿Cuál es la recomendación de la GPC sobre el uso de episiotomía durante la atención vaginal de un recién nacido pretérmino?", 
+                options: ["Episiotomía rutinaria obligatoria", "Episiotomía media profiláctica", "Episiotomía selectiva justificada", "Contraindicación absoluta"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, no existe evidencia fisiológica de que el corte sistemático del periné materno evite la hemorragia intracraneal del feto prematuro; su uso indiscriminado eleva la morbilidad perineal sin cambiar el pronóstico neonatal.<br><br>Perla ENARM: \"Ningún estudio ha analizado la episiotomía de rutina para el parto prematuro por sí sola. Por lo que se recomienda una episiotomía selectiva durante el parto de recién nacidos prematuros.\"<br><br>Análisis de Distractores: Las opciones A y B reflejan un dogma obstétrico obsoleto (creer que \"protege\" la cabeza frágil del feto). La opción D es falsa, ya que sí se permite realizar el procedimiento si el obstetra lo juzga necesario por una distocia de partes blandas o sufrimiento fetal inminente.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Tratamiento, Página 130." 
+            },
+            {
+                id: 28, 
+                question: "De acuerdo a la GPC, ¿cuál es el rango de edad gestacional que define cronológicamente al parto pretérmino?", 
+                options: ["20.0 a 37.0 semanas", "20.1 a 36.6 semanas", "22.1 a 36.0 semanas", "24.0 a 36.6 semanas"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, establecer límites cronológicos milimétricos es legal y médicamente vital para definir la viabilidad perinatal (límite inferior) y evitar uteroinhibiciones yatrogénicas innecesarias cercanas al término (límite superior).<br><br>Perla ENARM: \"El parto pretérmino se caracteriza por la presencia de contracciones uterinas... documentados con membranas amnióticas integras entre las 20.1 a las 36 semanas con 6 dias.\"<br><br>Análisis de Distractores: La opción A incluye las 37.0 semanas, momento en que el feto ya es de término temprano. La opción C marca las 22 semanas (antiguo límite de aborto de la OMS, no usado por esta GPC para PP). La opción D omite a la categoría de prematuros \"muy tempranos\" (20.1-23.6 sdg).", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Introducción, Página 20." 
+            },
+            {
+                id: 29, 
+                question: "En una gestación gemelar asintomática, ¿cuál es el punto de corte de longitud cervical a las 18 semanas que la GPC marca como el mejor predictor de prematurez antes de las 28 semanas?", 
+                options: ["Menor a 20 mm", "Menor a 25 mm", "Menor a 30 mm", "Menor a 35 mm"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la hiperdistensión fisiológica de los embarazos múltiples agota la reserva elástica del cérvix mucho más rápido. Por ello, un valor que sería \"normal\" en embarazo único representa una alarma silenciosa en gemelos.<br><br>Perla ENARM: \"La LC menor a 30mm para tamizaje a las 18 semanas es mejor predictor de parto pretérmino para las pacientes menores a 28 semanas y si el tamizaje se realiza en la semana 22, es mejor predictor para las pacientes entre las 28 a 36 semanas.\"<br><br>Análisis de Distractores: Los cortes menores a 25 mm (Opción B) o 20 mm (Opción A) son altamente patológicos pero corresponden a los umbrales estándar universales para embarazos únicos. La opción D (35 mm) se encuentra en el percentil 50 de normalidad poblacional anatómica.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Prevención, Página 62." 
+            },
+            {
+                id: 30, 
+                question: "¿En cuántas fases secuenciales de infusión se debe administrar el antagonista de oxitocina Atosiban en la paciente con Amenaza de Parto Pretérmino?", 
+                options: ["Dos fases", "Tres fases", "Cuatro fases", "Infusión continua única"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, al ser un inhibidor competitivo de membrana, requiere una saturación brusca inicial del miometrio seguida de dos etapas de titulación descendente para mantener la quiescencia sin efecto rebote.<br><br>Perla ENARM: \"La dosis para la utilización de los bloqueadores del receptor de oxitocina (Atosiban)... son: 1ra fase: 1 ámpula... en bolo. 2da fase: infusión... por 3 horas. 3ra fase: infusión... por 45 horas.\"<br><br>Análisis de Distractores: La opción A describe la farmacodinamia general del Sulfato de Magnesio (carga y mantenimiento). Las opciones C y D fallan en cubrir el esquema tricíclico escalonado específico que marca el laboratorio e instituye la guía clínica.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Tratamiento, Página 101." 
+            },
+            {
+                id: 31, 
+                question: "En mujeres con antecedente de parto pretérmino y cérvix corto ecográfico, ¿cuál es el Número Necesario a Tratar (NNT) documentado con cerclaje para prevenir un evento adverso?", 
+                options: ["4 pacientes", "8 pacientes", "12 pacientes", "20 pacientes"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la colocación de esta sutura en bolsa de tabaco tiene un alto impacto epidemiológico y previene efectivamente el acortamiento dinámico y el prolapso de membranas en este nicho clínico tan selecto.<br><br>Perla ENARM: \"En mujeres con antecedente de parto pretérmino y cervix corto (<25mm hasta 15mm) el número necesario a tratar con cerclaje para prevenir un caso de parto pretérmino es de ocho pacientes.\"<br><br>Análisis de Distractores: Intervenir a 4 (Opción A) es estadísticamente demasiado bajo. Las opciones C y D (12 o 20) restan potencia clínica al procedimiento, cuando la guía señala que intervenir a 8 mujeres garantiza salvar al menos un embarazo del desenlace prematuro.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Tratamiento, Página 125." 
+            },
+            {
+                id: 32, 
+                question: "De acuerdo al sistema de estratificación clínica de Papiernik, modificado por Gonik-Creasy, ¿qué parámetro de peso materno otorga 3 puntos de riesgo para parto pretérmino?", 
+                options: ["Ganancia de peso < 13 kg", "Peso materno < 45 kg", "Pérdida de peso > 2 kg", "Obesidad extrema"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la desnutrición preconcepcional basal incapacita al sistema cardiovascular materno para expandir su volumen plasmático al nivel que exige el feto en el tercer trimestre, derivando en isquemia y contracción prematura.<br><br>Perla ENARM: \"Cuadro 1. Estratificación de Riesgo Papiernik- Berhauer modificado por Gonik- Creasy... Puntaje 3: Muy bajo nivel socioeconómico, Talla < 150 cm, Peso < 45 kg.\"<br><br>Análisis de Distractores: La ganancia deficiente (Opción A) otorga 2 puntos en esta escala específica. La pérdida de peso abrupta (Opción C) representa una desestabilización aguda más severa y otorga 4 puntos. La obesidad (Opción D) es un factor de bajo riesgo individual en la guía, pero no otorga 3 puntos fijos en la clásica tabla de Gonik-Creasy.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Anexo 5.3 Cuadro 1, Página 140." 
+            },
+            {
+                id: 33, 
+                question: "¿Cuál es la duración de tratamiento antibiótico recomendada por la GPC para una bacteriuria asintomática e infección urinaria en la embarazada?", 
+                options: ["Dosis única fosfomicina", "4 a 7 días", "10 a 14 días", "Infusión hasta la resolución"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, se debe erradicar la colonización vesical para evitar la liberación de citoquinas inflamatorias y prostaglandinas que activan el miometrio, evitando ciclos empíricos largos que fomenten la resistencia de la flora.<br><br>Perla ENARM: \"El análisis de orina para detectar infecciones urinarias debe ser rutinario y el tratamiento antibiótico debe proporcionarse durante un período de 4-7 días si es necesario en las mujeres con colonización bacteriana.\"<br><br>Análisis de Distractores: La monodosis (Opción A) tiene altas tasas de recurrencia en el éxtasis urinario de la gestante. Tratamientos de 10 a 14 días (Opción C) o indefinidos (Opción D) someten al feto a mayor exposición farmacológica sin beneficio bacteriológico superior en cistitis simple.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Tratamiento, Página 95." 
+            },
+            {
+                id: 34, 
+                question: "Durante la infusión continua de sulfato de magnesio, ¿cuál es la dosis de mantenimiento máxima por hora tolerada antes de suspender por riesgo tóxico materno?", 
+                options: ["2 g/hora", "4 g/hora", "6 g/hora", "8 g/hora"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, rebasar el umbral máximo en el intento de frenar las contracciones empuja los niveles de magnesio sérico a franjas letales que suprimen los reflejos osteotendinosos y paralizan el diafragma materno.<br><br>Perla ENARM: \"La dosis de carga son 4-6 g en solución al 10% -20% durante 30 minutos, seguida por una solución en infusión continua de 2 g por hora, hasta alcanzar un máximo de 4 g / hora o hasta que la paciente presente menos de una contracción por 10 minutos.\"<br><br>Análisis de Distractores: 2 g/hora (Opción A) es la velocidad de infusión ideal de inicio, no el tope. Valores de 6 u 8 g/hora (Opciones C y D) causarán paro cardiorrespiratorio agudo sin duda en la paciente.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Tratamiento, Página 100." 
+            },
+            {
+                id: 35, 
+                question: "Tras aplicar corticoesteroides antenatales a la madre, ¿cuántos días toma revertir la pérdida de variabilidad transitoria en la frecuencia cardíaca fetal?", 
+                options: ["2 días", "4 días", "7 días", "14 días"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la impregnación de glucocorticoides induce un letargo fisiológico temporal en el sistema nervioso autónomo fetal; ignorar esta ventana expone a cirugías por \"falsos positivos\" de asfixia en el registro cardiotocográfico.<br><br>Perla ENARM: \"La administración de terapia antenatal con corticoesteroides se asocia con cambios transitorios en la frecuencia cardiaca fetal, y cambios en la variabilidad del registro cardiotocográfico los cuales revierten 4 días después de la primera dosis de corticoesteroide.\"<br><br>Análisis de Distractores: El punto de máxima depresión biológica ocurre al día 2 o 3 (Opción A), pero su reversión total exige 96 horas. Los días 7 y 14 (Opciones C y D) son ventanas metabólicas relevantes para la hiperglucemia materna y la aplicación de dosis de rescate, no para el patrón fetal monitorizado.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Tratamiento, Página 114." 
+            },
+            {
+                id: 36, 
+                question: "En la etiopatogenia clínica, ¿cuál es el mecanismo directo por el que el sangrado transvaginal antes de las 28 semanas precipita el parto pretérmino?", 
+                options: ["Ruptura prematura de membranas", "Maduración temprana del cuello uterino", "Infección intraamniótica ascendente", "Depleción de líquido amniótico"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la formación de coágulos en el segmento inferior libera altas dosis de trombina, la cual actúa sobre los receptores del cérvix estimulando la producción de proteasas que degradan el colágeno estructural.<br><br>Perla ENARM: \"El sangrado vaginal (< 28 semanas) probablemente indica una alteración de la circulación uteroplacentaria y por otro lado favorece la maduración temprana del cuello uterino.\"<br><br>Análisis de Distractores: Aunque el sangrado predispone secundariamente a inflamación y ruptura (Opción A e infección Opción C), el vínculo fisiopatológico directo resaltado en la directriz como promotor motor biológico de labor pretérmino es el reblandecimiento (maduración) cervical.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Promoción a la salud, Página 46." 
+            },
+            {
+                id: 37, 
+                question: "Al vigilar a una paciente de alto riesgo, ¿cuál es la tasa promedio de acortamiento de la longitud cervical documentada por la guía clínica?", 
+                options: ["1 mm por semana", "3 mm por semana", "5 mm por semana", "8 mm por semana"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la incompetencia esfinteriana del cuello uterino en el segundo trimestre no es un proceso estático; la pérdida de firmeza avanza a una velocidad que exige ultrasonidos quincenales para no perder la ventana terapéutica.<br><br>Perla ENARM: \"Un estudio de cohortes en 2003 que estudió 144 pacientes, demostró que en promedio la tasa de acortamiento cervical es de 5mm por semana.\"<br><br>Análisis de Distractores: En pacientes sanas el cérvix puede acortarse a razón de 1 mm por semana (Opción A), pero en portadoras de patología el colapso se quintuplica. Opciones de 3 u 8 mm (B y D) carecen de sustento en las cohortes pivotales referenciadas por el documento nacional.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Prevención, Página 73." 
+            },
+            {
+                id: 38, 
+                question: "¿Cuál es el riesgo neurológico catastrófico que incrementa hasta 5 veces en fetos expuestos a ciclos repetidos rutinarios (≥4) de corticoesteroides?", 
+                options: ["Parálisis cerebral", "Hemorragia intraventricular grado IV", "Convulsiones neonatales intratables", "Ceguera por retinopatía aguda"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, la saturación perpetua de receptores esteroideos interrumpe gravemente la arborización dendrítica, la mielinización del SNC en desarrollo y suprime el eje suprarrenal del neonato sin otorgar madurez pulmonar extra.<br><br>Perla ENARM: \"El riesgo de parálisis cerebral en fetos expuestos a múltiples ciclos de corticoesteroides se calcula en 5 veces mayor. (RR 5.7 IC95% 0.7-46.7) así como un incremento en el riesgo de infección y supresión de la función suprarrenal.\"<br><br>Análisis de Distractores: Un solo ciclo inicial correcto de esteroides en realidad prevendrá de forma masiva la hemorragia intraventricular (Opción B). La ceguera (Opción D) es una falla del control en la terapia de oxígeno neonatal.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Tratamiento, Página 115." 
+            },
+            {
+                id: 39, 
+                question: "En consejería de planificación familiar, ¿cuál es el periodo intergenésico mínimo considerado protector contra la recurrencia de un parto pretérmino?", 
+                options: ["Mayor a 6 meses", "Mayor a 12 meses", "Mayor a 18 meses", "Mayor a 36 meses"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, espaciar adecuadamente los nacimientos permite a la madre regenerar sus depósitos de hierro y folato, estabilizar el lecho endometrial y recuperar la capacidad tensil del esfínter cervical.<br><br>Perla ENARM: \"Es recomendable informar a las pacientes esperar entre un año y medio a dos años entre el término de un embarazo y el inicio del siguiente, para disminuir el riesgo de parto pretérmino.\"<br><br>Análisis de Distractores: Las gestaciones con intervalos menores de 6 o 12 meses (Opciones A y B) mantienen a la madre en un estado inflamatorio crónico que detona la prematurez temprana. Esperar 3 años (Opción D) resulta innecesario bajo este criterio predictivo puntual.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Promoción a la salud, Página 48." 
+            },
+            {
+                id: 40, 
+                question: "¿A partir de qué valor negativo se considera el Alto Valor Predictivo Negativo de la prueba de fibronectina fetal para descartar parto inminente a 7 días?", 
+                options: ["Menor a 10 ng/ml", "Menor a 25 ng/ml", "Menor a 50 ng/ml", "Menor a 100 ng/ml"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Pretérmino, los valores indetectables o trazas ínfimas certifican que el \"pegamento\" de la interfase coriodecidual está firme, brindando la seguridad clínica de suspender tocolíticos y autorizar el alta domiciliaria de urgencias.<br><br>Perla ENARM: \"Se considera un excelente predictor (valor predictivo negativo) para la ausencia de parto pretérmino entre 48h y 7 días después de realizada la prueba... Una prueba de fibronectina positiva (>50ng/dl) ha sido asociada con riesgo.\" (Ergo, negativa es <50).<br><br>Análisis de Distractores: Las concentraciones muy bajas (Opciones A y B) forman parte del umbral negativo, pero el punto de inflexión farmacocinético validado mundialmente por la literatura para discriminar positividad de negatividad en tiras reactivas rápidas es estrictamente el límite de 50.", 
+                source: "IMSS-063-08, Prevención, Diagnóstico y Tratamiento del Parto Pretérmino, 2017, Diagnóstico, Página 58." 
+            }        
+        ];
+
+        // ==========================================
+        // ==========================================
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('gyoBLastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('gyoBProgress');
+                localStorage.removeItem('gyoBLastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-pink-500 shadow-md z-10 border-pink-500 dark:border-pink-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-rose-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "GINECOLOGÍA Y OBSTETRICIA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "GPC IMSS-063-08 • Prevención, Diagnóstico y Tratamiento del Parto Pretérmino";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="CS60919GYOE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-pink-100 dark:border-pink-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-pink-50 has-[:checked]:border-pink-400 dark:has-[:checked]:bg-pink-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-pink-600 dark:hover:bg-pink-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('gyoBProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('gyoBLastQId', currentQuestionId);
+                else localStorage.removeItem('gyoBLastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('gyoBProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

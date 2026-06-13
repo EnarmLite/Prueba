@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================
+        // =========================================================
+        const questionsData = [
+            {
+                id: 1, 
+                question: "¿A partir de qué edad y hasta qué límite se debe realizar el tamizaje sistemático para detectar alteraciones celulares cervicales en mujeres asintomáticas?", 
+                options: ["21 a 65 años", "25 a 69 años", "Inicio de vida sexual", "30 a 60 años"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de prevención de lesiones cervicales, el riesgo de detectar alteraciones significativas aumenta en este grupo etario, limitando el tamizaje en menores de 25 años para evitar el sobretratamiento de infecciones virales transitorias. El beneficio preventivo mayor se encuentra acotado a este rango.<br><br>Perla ENARM: \"Citología cervical de primera vez (De 25 a 69 años de edad)\".<br><br>Análisis de Distractores: Iniciar el tamizaje antes de los 25 años (como a los 21 o al inicio de la vida sexual) incrementa falsos positivos y tratamientos innecesarios. A partir de los 30 años se recomienda el uso de biología molecular, no el inicio del tamizaje en sí.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Anexos, Página 45." 
+            },
+            {
+                id: 2, 
+                question: "¿Cuál factor de riesgo modificable incrementa directamente la probabilidad de padecer neoplasia intraepitelial cervical y carcinoma, con un riesgo calculado de 2.82?", 
+                options: ["Tabaquismo activo", "Múltiples parejas sexuales", "Multiparidad", "Consumo de alcohol"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de prevención de lesiones cervicales, existe una asociación directa y estadísticamente significativa entre los componentes del tabaco y la progresión de la infección viral hacia el carcinoma escamoso, calculando un OR de 2.82 en revisiones sistemáticas.<br><br>Perla ENARM: \"Los estudios observacionales muestran asociación directa y estadísticamente significativa con la infección por VPH-AR 16 y 18; el riesgo calculado fue de OR 2.82 (IC 95%: 2.49 a 4.55) para tabaquismo\".<br><br>Análisis de Distractores: Las múltiples parejas sexuales y la multiparidad son factores de riesgo, pero sus razones de momios específicas varían y no definen este valor clásico exacto para el tabaquismo. El consumo de alcohol no está categorizado como factor de riesgo principal en este contexto.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Prevención, Página 13." 
+            },
+            {
+                id: 3, 
+                question: "Para disminuir el riesgo de progresar a una neoplasia invasiva, ¿cuál es el límite de tiempo recomendado para el uso de anticoncepción hormonal oral en pacientes con infección viral persistente?", 
+                options: ["3 años", "4 años", "5 años", "10 años"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de prevención de lesiones cervicales, la estimulación estrogénica y progestágena prolongada sobre la zona de transformación actúa como cofactor promotor de oncogénesis en presencia del virus, observándose un incremento significativo en el riesgo al superar este umbral de tiempo.<br><br>Perla ENARM: \"Se recomienda limitar el uso de anticonceptivos orales, ya sean simples o combinados, como método de planificación familiar por no más de 5 años en mujeres que están infectadas\".<br><br>Análisis de Distractores: Menos de 5 años (opciones A y B) no han demostrado una asociación oncológica estadísticamente significativa. Un límite de 10 años sobrepasa por el doble la ventana de seguridad estipulada.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Prevención, Página 15." 
+            },
+            {
+                id: 4, 
+                question: "¿Cuál es el esquema de inmunización profiláctica indicado en niñas de 9 a 13 años de edad sin inicio de vida sexual?", 
+                options: ["1 dosis única", "2 dosis a los 0 y 6 meses", "3 dosis a los 0, 1 y 6 meses", "3 dosis a los 0, 2 y 6 meses"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de prevención de lesiones cervicales, el sistema inmune en etapas pre-púberes genera una respuesta de anticuerpos robusta y suficiente con solo dos aplicaciones. Este esquema ha demostrado no ser inferior en inmunogenicidad comparado con el esquema clásico.<br><br>Perla ENARM: \"Se recomienda administrar la vacuna bivalente o tetratavalente en dos dosis, con un intervalo de 0 y 6 meses, a todas las mujeres entre 9 a 13 años de edad\".<br><br>Análisis de Distractores: El esquema de 3 dosis (opciones C y D) se reserva estrictamente para mujeres de 15 años en adelante o con patología inmunológica. La dosis única aún no forma parte de la recomendación central de esta edición.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Prevención, Página 18." 
+            },
+            {
+                id: 5, 
+                question: "En una paciente de 18 años con diagnóstico de infección por virus de inmunodeficiencia humana, ¿cuál es el esquema profiláctico de inmunización indicado?", 
+                options: ["2 dosis a los 0 y 6 meses", "2 dosis a los 0 y 12 meses", "3 dosis a los 0, 1 y 6 meses", "1 dosis de refuerzo anual"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de prevención de lesiones cervicales, las pacientes inmunocomprometidas, independientemente de estar bajo terapia antirretroviral, requieren un estímulo antigénico mayor para lograr una seroconversión protectora, justificando la inclusión de una tercera dosis.<br><br>Perla ENARM: \"El esquema de tres dosis (0, 1 a 2 y 6 meses) se recomienda para mujeres de 15 años de edad y más, así como para inmunocomprometidas o infectadas con VIH\".<br><br>Análisis de Distractores: El esquema de 2 dosis (opciones A y B) fallaría en alcanzar títulos protectores de anticuerpos en un huésped inmunocomprometido. Los refuerzos anuales no están indicados en los esquemas vigentes.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Prevención, Página 18." 
+            },
+            {
+                id: 6, 
+                question: "¿Cuál es el estudio de elección para el tamizaje primario de alteraciones anatómicas y celulares en el grupo etario de 25 a 34 años?", 
+                options: ["Citología cervical", "Captura de híbridos", "Inspección visual con ácido acético", "Reacción en cadena de la polimerasa"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de prevención de lesiones cervicales, en este grupo de edad la prevalencia de infección transitoria por el virus es altísima. Utilizar pruebas moleculares resultaría en excesivas referencias y sobretratamiento, por lo que el análisis morfológico celular sigue siendo el método indicado.<br><br>Perla ENARM: \"La citología cervical (convencional o en base líquida) está indicada en el grupo de 25 a 34 años de edad\".<br><br>Análisis de Distractores: La captura de híbridos y la reacción en cadena de la polimerasa son pruebas biomoleculares indicadas a partir de los 35 años. La inspección con ácido acético es una alternativa solo en áreas de extrema marginalidad.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Prevención, Página 23." 
+            },
+            {
+                id: 7, 
+                question: "¿Cuál es el estudio de tamizaje primario de mayor sensibilidad recomendado para mujeres de 35 a 69 años de edad?", 
+                options: ["Citología en base líquida", "Frotis con tinción dual", "Detección biomolecular del virus", "Colposcopia diagnóstica"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de prevención de lesiones cervicales, a partir de los 35 años el riesgo de cronicidad y persistencia viral justifica el cambio de estrategia hacia la detección directa del genoma viral (VPH-AR), debido a su sensibilidad cercana al 100% para evitar el subdiagnóstico.<br><br>Perla ENARM: \"En el grupo de 35 a 69 años, la detección biomolecular de VPH-AR sola o combinada con citología (cotesting) son las pruebas de elección para tamizaje primario\".<br><br>Análisis de Distractores: La citología (A) tiene menor especificidad en este grupo comparada con la biología molecular. La tinción dual (B) y la colposcopia (D) son métodos complementarios o de referencia, jamás de escrutinio primario masivo.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Prevención, Página 23." 
+            },
+            {
+                id: 8, 
+                question: "Ante un reporte de muestra exfoliativa clasificada macroscópicamente como insatisfactoria para evaluación, ¿en qué tiempo límite se debe repetir el procedimiento?", 
+                options: ["10 días hábiles", "21 días hábiles", "30 días hábiles", "6 meses"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de prevención de lesiones cervicales, una muestra inadecuada (por sangre o inflamación severa) imposibilita el tamizaje. Se debe permitir un tiempo mínimo para la reparación del epitelio inflamado, pero no retrasar la detección si existiera patología.<br><br>Perla ENARM: \"La mujer con muestra de citología calificada como inadecuada para el diagnóstico, debe ser localizada para repetir la prueba en un plazo no mayor a 21 días hábiles\".<br><br>Análisis de Distractores: Esperar 6 meses o 30 días retrasa de forma innecesaria un diagnóstico potencialmente oncológico. Plazos menores a 21 días (como 10) pueden resultar en una segunda muestra inadecuada por regeneración epitelial incompleta.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Prevención, Página 29." 
+            },
+            {
+                id: 9, 
+                question: "En una mujer de 28 años cuyo tamizaje reporta células escamosas atípicas de significado indeterminado, ¿cuál es el seguimiento clínico indicado?", 
+                options: ["Enviar a colposcopia", "Prueba de captura de híbridos", "Repetir el estudio en 1 año", "Escisión electroquirúrgica con asa"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de prevención de lesiones cervicales, en mujeres menores de 35 años un resultado de ASC-US tiene alta probabilidad de revertir espontáneamente. La conducta es conservadora para evitar morbilidad quirúrgica en cuellos uterinos jóvenes.<br><br>Perla ENARM: \"Diagrama de flujo 3. Conducta ante citología positiva para ASC-US (25 a 34 años): Citología en un año\".<br><br>Análisis de Distractores: La colposcopia (A) y la captura de híbridos (B) están indicadas para este mismo reporte pero en mujeres mayores de 35 años. Los tratamientos invasivos (D) son inaceptables sin confirmación histológica de lesión mayor.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Anexos, Página 47." 
+            },
+            {
+                id: 10, 
+                question: "Si una mujer de 38 años presenta un reporte inicial de células escamosas atípicas de significado indeterminado, ¿cuál es la conducta subsiguiente indicada?", 
+                options: ["Repetir el estudio en 1 año", "Detección biomolecular del virus", "Conización con bisturí frío", "Observación por 3 años"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de prevención de lesiones cervicales, la edad superior a 35 años modifica completamente el abordaje del ASC-US, ya que el riesgo subyacente de lesión oculta es mayor. Se exige descartar la presencia del factor oncogénico persistente antes de invadir.<br><br>Perla ENARM: \"Diagrama de flujo 4. Conducta ante citología positiva para ASC-US (35 a 69 años): Realizar prueba VPH-AR\".<br><br>Análisis de Distractores: Repetir en 1 año (A) es la conducta exclusiva para menores de 35 años. La observación (D) es inadecuada ante una anormalidad presente. La conización (C) es un tratamiento radical para confirmación de invasión, no para hallazgos indeterminados.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Anexos, Página 48." 
+            },
+            {
+                id: 11, 
+                question: "En una paciente de 30 años cuyo escrutinio reporta una lesión escamosa intraepitelial de bajo grado, ¿cuál es la intervención de primera línea?", 
+                options: ["Envío a colposcopia", "Repetir el estudio en 1 año", "Escisión electroquirúrgica con asa", "Histerectomía total abdominal"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de prevención de lesiones cervicales, una lesión de bajo grado en una paciente joven representa habitualmente la manifestación morfológica de una infección viral transitoria. La tasa de regresión espontánea a los 12 meses es alta, justificando el seguimiento expectante.<br><br>Perla ENARM: \"Diagrama de flujo 5. Conducta ante citología positiva para LEIBG (25 a 34 años): Citología en un año\".<br><br>Análisis de Distractores: La referencia a colposcopia (A) se guarda para la persistencia al año o si la paciente fuera mayor de 35 años. Los métodos invasivos (C y D) incurren en sobretratamiento con riesgo de incompetencia cervical futura.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Anexos, Página 49." 
+            },
+            {
+                id: 12, 
+                question: "¿Cuál es el manejo inicial indicado para una mujer de 45 años con reporte de lesión escamosa intraepitelial de bajo grado en el tamizaje?", 
+                options: ["Envío a colposcopia", "Prueba biomolecular complementaria", "Repetir el estudio en 6 meses", "Ablación con láser"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de prevención de lesiones cervicales, encontrar una lesión de bajo grado en la cuarta o quinta década de la vida asume una falla prolongada del aclaramiento inmunológico viral y ensombrece el pronóstico, ameritando la inspección anatómica inmediata del cérvix bajo aumento.<br><br>Perla ENARM: \"Diagrama de flujo 6. Conducta citología positiva para LEIBG (35 a 69 años): Envío a colposcopia\".<br><br>Análisis de Distractores: Repetir el estudio (C) es permisible solo en menores de 35 años. Realizar pruebas moleculares (B) sobre una lesión ya documentada retrasa la visualización y biopsia. Procedimientos ablativos (D) son tratamientos definitivos, no pasos diagnósticos.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Anexos, Página 50." 
+            },
+            {
+                id: 13, 
+                question: "Ante el hallazgo de una lesión escamosa intraepitelial de alto grado en el escrutinio primario de cualquier paciente, ¿cuál es la acción universal estipulada?", 
+                options: ["Realizar prueba conjunta", "Crioterapia cervical inmediata", "Repetir el estudio en 1 año", "Envío a colposcopia"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de prevención de lesiones cervicales, las atipias de alto grado (NIC 2, NIC 3) presentan un elevado riesgo de progresión rápida a carcinoma invasor verdadero, por lo que la edad deja de ser el pivote de toma de decisión. La referencia debe ser inmediata.<br><br>Perla ENARM: \"Diagrama de flujo 7 y 8. Conducta ante citología positiva para LEIAG (Todas las edades): Envío a colposcopia\".<br><br>Análisis de Distractores: Retrasar el diagnóstico repitiendo el estudio (C) o haciendo pruebas virales (A) compromete la vida de la paciente. Tratar a ciegas con ablación (B) destruye la zona e imposibilita confirmar o descartar invasión de estroma.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Anexos, Página 50." 
+            },
+            {
+                id: 14, 
+                question: "En una paciente de 40 años con tamizaje primario positivo para el genoma viral pero con resultado negativo para lesión celular, ¿cuándo debe repetirse la prueba biomolecular?", 
+                options: ["En 6 meses", "En 1 año", "En 3 años", "En 5 años"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de prevención de lesiones cervicales, este escenario implica la presencia del patógeno sin daño celular visible aún (discordancia). El manejo es expectante para otorgar tiempo al sistema inmunológico de negativizar la carga viral antes de intervenir agresivamente.<br><br>Perla ENARM: \"Diagrama de flujo 9. Conducta ante prueba biomolecular VPH-AR positiva y citología complementaria negativa: Nueva prueba VPH-AR en un año\".<br><br>Análisis de Distractores: Repetir en 3 o 5 años (C y D) es el seguimiento estipulado cuando la prueba inicial es negativa tanto para virus como para lesión. Evaluaciones en 6 meses (A) no permiten un tiempo biológicamente plausible para el aclaramiento viral.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Anexos, Página 52." 
+            },
+            {
+                id: 15, 
+                question: "¿Bajo qué antecedente anatómico y quirúrgico está médicamente justificada la suspensión definitiva del tamizaje de neoplasias cervicales?", 
+                options: ["Histerectomía subtotal por miomatosis", "Oclusión tubaria bilateral", "Histerectomía total por causa benigna", "Traquelectomía radical"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de prevención de lesiones cervicales, al extirpar el cuello uterino y el cuerpo uterino por condiciones no oncológicas (como hemorragia o leiomiomas), desaparece la zona de transformación escamo-columnar, eliminando el riesgo biológico de padecer esta neoplasia en el futuro.<br><br>Perla ENARM: \"Criterios para suspender el tamizaje: Mujer con antecedente de histerectomía total secundaria a proceso benigno... el riesgo es muy bajo\".<br><br>Análisis de Distractores: La histerectomía subtotal (A) conserva el cérvix, manteniendo el riesgo intacto. La oclusión tubaria (B) solo previene el embarazo. La traquelectomía (D) es un procedimiento oncológico, que requiere vigilancia estrecha posterior de márgenes.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Prevención, Página 34." 
+            },
+            {
+                id: 16, 
+                question: "¿Cuál es el procedimiento técnico indispensable durante la evaluación colposcópica para establecer el diagnóstico oncológico definitivo de una lesión de alto grado?", 
+                options: ["Cepillado del canal endocervical", "Tinción dual inmunohistoquímica", "Aplicación de solución de lugol", "Toma de biopsias dirigidas"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de prevención de lesiones cervicales, la simple visualización de cambios vasculares o aceto-blancos no otorga la profundidad de la lesión histológica. Para confirmar un NIC 2 o superior y descartar la ruptura de la membrana basal es mandatario obtener tejido.<br><br>Perla ENARM: \"Para realizar el diagnóstico de certeza de LEIAG, la colposcopia se debe complementar con la toma de biopsias dirigidas (mínimo dos)\".<br><br>Análisis de Distractores: El Lugol (C) solo demarca áreas de baja captación de glucógeno para guiar el procedimiento. El cepillado (A) y la tinción molecular (B) no suplen el peso diagnóstico del reporte histopatológico tisular.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Diagnóstico, Página 36." 
+            },
+            {
+                id: 17, 
+                question: "¿Cuál es el tratamiento intervencionista de elección para erradicar una lesión intraepitelial de alto grado localizada por completo en la porción ectocervical?", 
+                options: ["Conización con bisturí frío", "Crioterapia con óxido nitroso", "Escisión electroquirúrgica con asa", "Histerectomía simple"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de prevención de lesiones cervicales, este método proporciona una muestra íntegra para la evaluación de los márgenes histológicos con menor tasa de complicaciones hemorrágicas severas o estenosis cervical a largo plazo comparado con métodos más profundos.<br><br>Perla ENARM: \"Se prefiere el uso de LEEP en lugar de la escisión láser a menos que la lesión sea endocervical\".<br><br>Análisis de Distractores: El bisturí frío (A) es excesivo para lesiones puramente ectocervicales. La crioterapia (B) no permite estudio de tejido remanente. La histerectomía (D) es una medida radical injustificada para etapas pre-invasoras.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Tratamiento, Página 37." 
+            },
+            {
+                id: 18, 
+                question: "Si el reporte de patología confirma la sospecha de adenocarcinoma in situ multifocal, ¿cuál es el procedimiento quirúrgico de mayor utilidad clínica?", 
+                options: ["Ablación con láser", "Conización con bisturí frío", "Escisión electroquirúrgica con asa", "Radioterapia pélvica de rescate"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de prevención de lesiones cervicales, las patologías del epitelio glandular suelen ser profundas, multifocales y difíciles de delimitar. El uso del bisturí evita el artefacto térmico en los bordes de la muestra, permitiendo al patólogo asegurar que no quedó enfermedad residual.<br><br>Perla ENARM: \"Se recomienda realizar CBF de la zona de transformación como tratamiento para las mujeres con AIS confirmado mediante histología\".<br><br>Análisis de Distractores: El asa electroquirúrgica (C) produce daño térmico periférico limitando la interpretación de márgenes. Los métodos ablativos (A) están absolutamente contraindicados ante sospecha glandular.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Tratamiento, Página 39." 
+            },
+            {
+                id: 19, 
+                question: "¿En qué plazo máximo de tiempo debe ser referida y evaluada en un centro oncológico una paciente con diagnóstico sugestivo de adenocarcinoma invasivo?", 
+                options: ["1 semana", "2 semanas", "4 semanas", "8 semanas"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de prevención de lesiones cervicales, el hallazgo de celularidad sugestiva de invasión estromal representa una verdadera urgencia oncológica, ya que la supervivencia a largo plazo disminuye dramáticamente con cada semana de retraso en la estadificación y tratamiento radical.<br><br>Perla ENARM: \"Las mujeres que tienen un resultado positivo para VPH-AR con citología sugerente de presencia de adenocarcinoma invasivo, deben remitirse al centro oncológico para su evaluación urgente, idealmente dentro de las 2 semanas\".<br><br>Análisis de Distractores: Plazos mayores como 4 u 8 semanas (C y D) violan los estándares de calidad de atención, impactando la supervivencia y aumentando el riesgo de metástasis ganglionares ocultas.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Prevención, Página 42." 
+            },
+            {
+                id: 20, 
+                question: "Tras el tratamiento quirúrgico escisional de una lesión cervical precursora de alto grado, ¿cuál es el seguimiento meta estipulado para la detección de recurrencias?", 
+                options: ["Citología a los 6 meses", "Prueba biomolecular a los 12 meses", "Colposcopia a los 3 meses", "Inspección visual anual"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de prevención de lesiones cervicales, luego de la escisión del tejido dañado, el riesgo más importante de recidiva radica en la persistencia del genoma viral remanente en los bordes vaginales. Demostrar su ausencia al cabo de un año es el indicador de mayor sensibilidad para el éxito terapéutico.<br><br>Perla ENARM: \"Después de que las mujeres reciban el tratamiento de lesiones precursoras de CCU, el seguimiento debe consistir en pruebas de detección de VPH-AR a los 12 meses\".<br><br>Análisis de Distractores: Evaluaciones prematuras a los 3 o 6 meses (A y C) arrojan altas tasas de falsos positivos asociados a inflamación y cicatrización del lecho quirúrgico.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Tratamiento, Página 44." 
+            },
+            {
+                id: 21, 
+                question: "En una paciente de 71 años que acude a consulta de primera vez solicitando el escrutinio de cáncer cervicouterino, ¿cuál es el criterio normativo para poder suspender definitivamente el tamizaje en este grupo de edad?", 
+                options: ["Ausencia de vida sexual activa", "Vacunación completa en la adolescencia", "Tres citologías negativas en 10 años", "Ultrasonido pélvico sin alteraciones"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo GPC de lesiones precursoras del cáncer cervical, la evidencia actual sugiere que el riesgo de padecer neoplasia maligna después de los 65 a 69 años es mucho menor si la paciente ha estado sometida a un escrutinio regular negativo, justificando el cese de intervenciones.<br><br>Perla ENARM: \"Criterios para suspender el tamizaje: Paciente con más de 69 años de edad con antecedente de tres citologías negativas consecutivas durante los 10 años previos\".<br><br>Análisis de Distractores: La ausencia de vida sexual actual (A) no elimina el riesgo de una infección latente adquirida décadas atrás. La vacunación (B) no exime del tamizaje. El ultrasonido (D) no evalúa lesiones intraepiteliales del cérvix.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Prevención, Página 34." 
+            },
+            {
+                id: 22, 
+                question: "De acuerdo con los estudios epidemiológicos evaluados en la guía, ¿qué efecto tiene el uso del dispositivo intrauterino sobre el riesgo de desarrollar carcinoma de células escamosas del cérvix?", 
+                options: ["Incrementa el riesgo al doble", "Asociación inversa o protectora", "Riesgo dependiente de la edad", "Ausencia total de correlación"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo GPC de lesiones precursoras del cáncer cervical, tras ajustar los factores de confusión, los metaanálisis demostraron que las usuarias de dispositivo intrauterino experimentan menos cáncer cervical invasor. Se postula que la inflamación local estéril inducida por el dispositivo podría favorecer el aclaramiento inmunológico del virus.<br><br>Perla ENARM: \"Se observó una asociación protectora para el carcinoma de células escamosas (OR 0.56, 0.43 a 0.72; p= <0.0001)\".<br><br>Análisis de Distractores: A diferencia de los anticonceptivos orales que sí aumentan el riesgo (A), el dispositivo intrauterino no lo hace. Las opciones C y D contradicen la evidencia de los estudios observacionales descritos en la norma.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Prevención, Página 20." 
+            },
+            {
+                id: 23, 
+                question: "En una paciente de 40 años sometida a escrutinio primario mediante prueba conjunta de detección biomolecular y citología, ambas con resultado negativo, ¿en cuánto tiempo se debe programar el siguiente tamizaje?", 
+                options: ["1 año", "3 años", "5 años", "10 años"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo GPC de lesiones precursoras del cáncer cervical, el altísimo valor predictivo negativo de combinar la ausencia de genoma viral con la ausencia de anormalidad morfológica celular permite extender el intervalo de seguridad al máximo, reduciendo costos y molestias sin comprometer la sensibilidad diagnóstica.<br><br>Perla ENARM: \"En mujer de 35 años y más, tamizada con cotesting, si ambas pruebas resultan negativas, las próximas pruebas se podrán realizar en cinco años\".<br><br>Análisis de Distractores: El seguimiento anual (A) o trienal (B) aplica para citología aislada o pacientes con riesgo no descartado. Diez años (D) excede la ventana de seguridad clínica documentada.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Prevención, Página 29." 
+            },
+            {
+                id: 24, 
+                question: "¿En qué escenario clínico específico está justificado y recomendado el uso de la inspección visual con ácido acético como prueba de tamizaje primario?", 
+                options: ["Pacientes menores de 25 años", "Embarazo del primer trimestre", "Zonas de alta marginalidad", "Posterior a conización cervical"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo GPC de lesiones precursoras del cáncer cervical, aunque la citología y las pruebas moleculares son superiores, en entornos con escasos recursos donde es imposible asegurar la infraestructura para procesar muestras o localizar a la paciente para seguimiento, la técnica visual permite la estrategia de \"ver y tratar\" en una sola visita.<br><br>Perla ENARM: \"Únicamente en los lugares de alta marginalidad o de difícil acceso, se sugiere utilizar la prueba de IVAA\".<br><br>Análisis de Distractores: En jóvenes (A) hay altos falsos positivos por ectopia fisiológica. En el embarazo (B) o post-cirugía (D), la anatomía alterada disminuye la especificidad de la prueba visual.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Prevención, Página 29." 
+            },
+            {
+                id: 25, 
+                question: "Según la nomenclatura de Bethesda 2014, ¿qué significado diagnóstico tiene el reporte citológico categorizado bajo las siglas \"ASC-H\"?", 
+                options: ["Atipias de significado indeterminado", "Células atípicas no excluyen alto grado", "Alteraciones glandulares invasivas", "Infección por virus del papiloma"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo GPC de lesiones precursoras del cáncer cervical, esta categoría se utiliza cuando el citopatólogo observa cambios celulares escamosos que, aunque no cumplen todos los criterios morfológicos estrictos para diagnosticar una lesión intraepitelial de alto grado, son altamente sugestivos de la misma, obligando a una evaluación colposcópica inmediata.<br><br>Perla ENARM: \"ASC-H: acrónimo del inglés Atypical Squamous Cells, can not exclude an HSIL que se refiere a la presencia de células atípicas que no excluyen LEIAG\".<br><br>Análisis de Distractores: Las atipias indeterminadas simples (A) corresponden a ASC-US. Las alteraciones glandulares (C) se reportan como AGC. La simple infección viral (D) suele reportarse como LEIBG o NIC 1.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Glosario, Página 121." 
+            },
+            {
+                id: 26, 
+                question: "En una paciente de 58 años referida a colposcopía en la que no es posible visualizar la unión escamocolumnar por atrofia, ¿cuál es el manejo farmacológico preparatorio indicado antes de repetir el estudio?", 
+                options: ["Progesterona oral por 10 días", "Crema de clindamicina vaginal", "Estrógenos conjugados locales", "Ácido tricloroacético tópico"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo GPC de lesiones precursoras del cáncer cervical, el hipoestrogenismo menopáusico causa retracción de la zona de transformación hacia el canal endocervical y adelgazamiento del epitelio. El trofismo inducido por la terapia estrogénica tópica evierte la mucosa, permitiendo una evaluación colposcópica satisfactoria y evitando falsos positivos por inflamación atrófica.<br><br>Perla ENARM: \"Se sugiere que en pacientes peri y postmenopaúsicas en las cuales la colposcopia sea no adecuada (unión escamo columnar fisiológica no visible) se administre tratamiento con estrógenos locales... diariamente por 2 meses\".<br><br>Análisis de Distractores: La progesterona (A) no tiene efecto trófico en el epitelio escamoso vaginal. La clindamicina (B) es un antibacteriano. El ácido tricloroacético (D) es un cáustico destructivo.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Diagnóstico, Página 36." 
+            },
+            {
+                id: 27, 
+                question: "En una paciente con tamizaje primario positivo para genotipo viral de alto riesgo y citología complementaria con células glandulares atípicas, ¿cuál es el estudio de extensión anatómica obligado además de la colposcopía?", 
+                options: ["Resonancia magnética pélvica", "Toma de muestra endometrial", "Tomografía por emisión de positrones", "Histeroscopía de consultorio"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo GPC de lesiones precursoras del cáncer cervical, la presencia de atipias glandulares en el cérvix no solo puede originarse en el canal endocervical, sino que frecuentemente representa descamación de neoplasias ocultas en el tracto genital superior, siendo mandatario descartar patología del endometrio.<br><br>Perla ENARM: \"Las mujeres con prueba de VPH-AR positiva y con presencia en la citología de células glandulares... se les debe examinar el tracto genital superior (endometrio, trompa de Falopio u ovario) mediante la toma de muestra endometrial y/o ecografía pélvica\".<br><br>Análisis de Distractores: La resonancia (A) y la tomografía (C) son herramientas de estadificación en cáncer invasor ya diagnosticado, no de escrutinio tisular primario. La histeroscopía (D) es un paso posterior si el muestreo ciego o ecografía lo ameritan.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Diagnóstico, Página 43." 
+            },
+            {
+                id: 28, 
+                question: "Acude una paciente cursando con gestación de 20 semanas y un reporte citológico previo de lesión intraepitelial de bajo grado. ¿Cuál es el momento indicado para realizar la evaluación colposcópica definitiva?", 
+                options: ["Inmediatamente en el segundo trimestre", "Durante la resolución del parto", "Seis semanas después del parto", "Tres meses después del destete"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo GPC de lesiones precursoras del cáncer cervical, el cérvix grávido es sumamente hiperémico y friable. La manipulación o biopsia en lesiones de bajo grado (que tienen nula probabilidad de progresar a cáncer durante los 9 meses) acarrea un riesgo inaceptable de hemorragia severa, por lo que se prefiere esperar la involución puerperal.<br><br>Perla ENARM: \"En las mujeres embarazadas con NIC1, se prefiere la colposcopia; sin embargo, es recomendable diferir la colposcopia hasta 6 semanas después del parto\".<br><br>Análisis de Distractores: Intervenir durante el embarazo (A) o el parto (B) aumenta la morbimortalidad materna sin beneficio oncológico real. Esperar al destete (D) es un plazo arbitrario no respaldado por la fisiología de la involución uterina.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Prevención, Página 33." 
+            },
+            {
+                id: 29, 
+                question: "¿Cuál es la tecnología de laboratorio validada por la guía para sustituir a la citología convencional incrementando la sensibilidad diagnóstica en mujeres menores de 30 años?", 
+                options: ["Reacción en cadena de polimerasa", "Secuenciación masiva de nueva generación", "Detección de ARN mensajero viral", "Inmunohistoquímica para p16 y Ki-67"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo GPC de lesiones precursoras del cáncer cervical, la detección de estos dos biomarcadores celulares en un mismo frotis confirma que el virus no solo está presente, sino que ya indujo una alteración en el ciclo celular y la proliferación, eliminando la subjetividad de la interpretación morfológica clásica del patólogo.<br><br>Perla ENARM: \"Se recomienda realizar la técnica de inmunohistoquímica para la detección de biomarcadores p16/Ki-67, como sustitución de la técnica de citología convencional, ya que es una técnica que aumenta la sensibilidad\".<br><br>Análisis de Distractores: Las opciones A, B y C son métodos de biología molecular para detectar la presencia o actividad del virus, pero no son técnicas de inmunotinción celular que reemplacen la evaluación morfológica directa del frotis.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Diagnóstico, Página 30." 
+            },
+            {
+                id: 30, 
+                question: "Además de prevenir nuevas infecciones, ¿qué beneficio oncológico secundario ha demostrado el uso consistente del preservativo masculino en mujeres con lesiones precursoras del cáncer de cuello uterino?", 
+                options: ["Disminuye el dolor pélvico crónico", "Favorece la regresión de lesiones", "Evita el uso de antibióticos locales", "Acorta el tiempo de cicatrización"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo GPC de lesiones precursoras del cáncer cervical, al evitar la reexposición constante al antígeno viral y a otros cofactores inflamatorios presentes en el semen, el sistema inmunológico local de la paciente logra montar una respuesta efectiva, acelerando el aclaramiento del virus y la resolución de la displasia.<br><br>Perla ENARM: \"Las participantes presentaron un riesgo significativamente menor de infectarse... y además una mayor probabilidad de eliminar infecciones previas o mayor probabilidad de regresión de NIC de alto grado\".<br><br>Análisis de Distractores: El condón no tiene propiedades analgésicas (A) ni cicatrizantes directas (D). Su rol en evitar antibióticos (C) es irrelevante para la fisiopatología oncológica viral.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Prevención, Página 15." 
+            },
+            {
+                id: 31, 
+                question: "En una paciente cuyo reporte histopatológico inicial reporta sospecha de adenocarcinoma microinvasor, ¿cuál es el procedimiento obligado para establecer la dimensión de la infiltración?", 
+                options: ["Histerectomía radical", "Biopsia en cono o traquelectomía", "Crioterapia de la zona de transformación", "Legrado uterino instrumental"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo GPC de lesiones precursoras del cáncer cervical, no se puede tratar un cáncer microinvasor a ciegas. Es mandatario obtener una pieza quirúrgica tridimensional profunda para que el patólogo mida los milímetros exactos de invasión estromal y la presencia de permeación linfovascular, lo cual dicta la magnitud de la cirugía final.<br><br>Perla ENARM: \"En el caso del adenocarcinoma microinvasor, se debe hacer el diagnóstico mediante biopsia. De cualquier forma se requiere el espécimen de conización, LEEP o traquelectomía para establecer la dimensión y profundidad\".<br><br>Análisis de Distractores: La histerectomía radical (A) es un tratamiento definitivo que requiere estatificación previa exacta. La crioterapia (C) destruye el tejido. El legrado (D) evalúa endometrio, no la profundidad estromal del cérvix.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Tratamiento, Página 42." 
+            },
+            {
+                id: 32, 
+                question: "De acuerdo a los lineamientos de buena práctica clínica, ¿cuál de las siguientes condiciones es una contraindicación o motivo para NO realizar el tamizaje fuera de los intervalos programados?", 
+                options: ["Diagnóstico de verrugas genitales", "Antecedente de multiparidad", "Edad mayor de 35 años", "Uso de terapia de reemplazo hormonal"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo GPC de lesiones precursoras del cáncer cervical, las verrugas (condilomas) son causadas por genotipos de bajo riesgo (6 y 11) que no tienen potencial oncogénico significativo hacia el cérvix. Someter a la paciente a tamizajes extras solo por esta causa genera ansiedad y sobrecarga al sistema sin beneficio predictivo de malignidad.<br><br>Perla ENARM: \"Las siguientes no son indicaciones para realizar tamizaje... fuera de la edad e intervalos programados: Con diagnóstico de verrugas genitales o infección pélvica\".<br><br>Análisis de Distractores: Opciones como la multiparidad (B) y la edad (C) son factores epidemiológicos base. El inicio de reemplazo hormonal (D) tampoco es indicación, a menos que coincida con su intervalo de rutina.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Prevención, Página 35." 
+            },
+            {
+                id: 33, 
+                question: "En una paciente sometida a prueba de detección biomolecular con resultado positivo (excluyendo genotipos 16 y 18) y citología complementaria negativa, se indica repetir ambas pruebas al año. Si a los 12 meses persiste este mismo patrón, ¿cuál es la conducta a seguir?", 
+                options: ["Nueva prueba en 3 años", "Tratamiento ablativo inmediato", "Referir a evaluación colposcópica", "Escisión electroquirúrgica con asa"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo GPC de lesiones precursoras del cáncer cervical, la presencia sostenida del virus oncogénico por más de un año (cronicidad viral) rompe la ventana de observación conservadora, ya que aumenta drásticamente la probabilidad de que exista una lesión intraepitelial no detectada por la descamación citológica.<br><br>Perla ENARM: \"Si al repetir la prueba para el VPH-AR es positiva (no 16/18) y el informe de la citología es negativo o LIEBG, se repetirá la prueba de VPH en 12 meses. Si la segunda prueba de seguimiento es positiva... se debe de referir para evaluación colposcópica previa citología complementaria\".<br><br>Análisis de Distractores: Retrasar el estudio a 3 años (A) asume un riesgo inaceptable. Los tratamientos quirúrgicos (B y D) no se aplican sin tener antes un mapeo visual y biopsia confirmatoria.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Prevención, Página 33." 
+            },
+            {
+                id: 34, 
+                question: "Una paciente de 32 años acude por el reporte de su citología cervical de tamizaje, la cual es calificada como \"inadecuada para el diagnóstico\". Al revisar su expediente, nota que es el segundo reporte consecutivo con esta misma limitación técnica. ¿Cuál es el paso clínico indicado?", 
+                options: ["Repetir muestra en 21 días", "Referir a colposcopía", "Iniciar tratamiento antibiótico", "Prueba biomolecular de virus"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo GPC de lesiones precursoras del cáncer cervical, la falla persistente para obtener celularidad evaluable (ya sea por atrofia severa, sangrado o anatomía difícil) agota la utilidad del tamizaje primario. Es imperativo visualizar la zona bajo aumento para descartar que la dificultad técnica no esté enmascarando una neoplasia destructiva subyacente.<br><br>Perla ENARM: \"La mujer con muestra de citología calificada como inadecuada... Después de dos citologías inadecuadas la recomendación es enviarla a colposcopia\".<br><br>Análisis de Distractores: Repetir por tercera vez (A) prolonga la incertidumbre diagnóstica. Dar antibióticos empíricos (C) no resuelve el problema tisular. La prueba viral (D) no está indicada en este grupo de edad ni resuelve la falta de visualización anatómica.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Prevención, Página 29." 
+            },
+            {
+                id: 35, 
+                question: "¿Cuál es la ventaja anatomo-patológica clínica que fundamenta la elección del cono con bisturí frío sobre los métodos electroquirúrgicos en el tratamiento del Adenocarcinoma in situ?", 
+                options: ["Requiere menor anestesia general", "Produce hemostasia automática", "Deja márgenes interpretables de evaluación", "Disminuye la tasa de partos prematuros"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo GPC de lesiones precursoras del cáncer cervical, el electrodo de asa de LEEP quema y carboniza los milímetros periféricos del tejido resecado. En el epitelio glandular, que tiende a ser multifocal y saltatorio hacia la profundidad del canal, esta carbonización impide al patólogo asegurar al cien por ciento que los bordes quirúrgicos estén libres de enfermedad.<br><br>Perla ENARM: \"Se recomienda realizar CBF de la zona de transformación como tratamiento para las mujeres con AIS confirmado... La muestra debe presentar márgenes interpretables para la evaluación histológica\".<br><br>Análisis de Distractores: El bisturí frío en realidad requiere mayor anestesia y quirófano (A), no cauteriza vasos (B) y, por su profundidad, tiene mayor riesgo de incompetencia cervical obstétrica posterior (D).", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Tratamiento, Página 41." 
+            },
+            {
+                id: 36, 
+                question: "En el abordaje diagnóstico de lesiones precursoras del cáncer de cuello uterino, si existe una discordancia significativa entre la impresión colposcópica de alto grado y un reporte de biopsia que descarta lesión, ¿cuál es la medida administrativa y clínica indicada?", 
+                options: ["Repetir la colposcopía en 6 meses", "Realizar histerectomía diagnóstica", "Revisión de muestras por patólogo experto", "Iniciar esquema de vacunación"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo GPC de lesiones precursoras del cáncer cervical, las variaciones interobservador en histología pueden ser sustanciales. Antes de someter a la paciente a cirugías innecesarias o, por el contrario, darla de alta erróneamente, se debe conciliar el caso clínico en una revisión de laminillas de segundo nivel.<br><br>Perla ENARM: \"Para las mujeres que se han sometido a la colposcopia con una discordancia significativa entre la histopatología y la citología de referencia, ambas muestras deben ser revisadas por un patólogo de al menos uno de los laboratorios que dieron el resultado\".<br><br>Análisis de Distractores: Retrasar el diagnóstico (A) asume riesgo oncológico. La cirugía radical diagnóstica (B) es inaceptable. La vacunación (D) es preventiva, no resuelve el conflicto diagnóstico actual.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Diagnóstico, Página 36." 
+            },
+            {
+                id: 37, 
+                question: "En el esquema de inmunización pre-exposición de dos dosis indicado para prevención primaria en niñas, ¿cuál es el intervalo de tiempo máximo permitido entre la primera y la segunda aplicación para garantizar inmunogenicidad?", 
+                options: ["1 a 2 meses", "3 a 4 meses", "5 a 13 meses", "24 a 36 meses"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo GPC de lesiones precursoras del cáncer cervical, el esquema clásico se diseña a 0 y 6 meses. Sin embargo, por logística de programas de salud pública, la segunda dosis genera memoria inmunológica adecuada si se administra dentro de esta ventana extendida, sin necesidad de reiniciar el esquema.<br><br>Perla ENARM: \"Se recomienda administrar la vacuna bivalente o tetratavalente contra el VPH en dos dosis, con un intervalo de 0 y 6 meses... Los intervalos entre una aplicación y otra podrían ser de 5 a 13 meses\".<br><br>Análisis de Distractores: Intervalos muy cortos (A y B) corresponden al esquema de tres dosis. Intervalos de años (D) pierden el efecto de refuerzo (booster) necesario para sostener los títulos de anticuerpos a largo plazo.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Prevención, Página 18." 
+            },
+            {
+                id: 38, 
+                question: "¿Qué estrategia organizativa recomienda la GPC para incrementar sustancialmente las tasas de cobertura de tamizaje en mujeres que no responden a las invitaciones convencionales para acudir a la clínica?", 
+                options: ["Realizar ultrasonido domiciliario", "Autotoma de muestra en el domicilio", "Visitas de inspección visual forzadas", "Distribución masiva de preservativos"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo GPC de lesiones precursoras del cáncer cervical, ofrecer pruebas biomoleculares mediante hisopos o cepillos que la propia paciente puede utilizar en privado elimina barreras culturales, de vergüenza y de acceso geográfico, elevando significativamente la captación poblacional.<br><br>Perla ENARM: \"Se sugiere considerar auto toma de la muestra en el domicilio de la mujer, como una estrategia que puede resultar muy útil para alcanzar una mayor cobertura de tamizaje. Se puede incluir a mujeres que no acuden a realizarse el tamizaje\".<br><br>Análisis de Distractores: El ultrasonido (A) no es método de tamizaje cervical. Las inspecciones forzadas (C) violan los derechos de la paciente. Los preservativos (D) son prevención primaria, no estrategia de detección precoz poblacional.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Prevención, Página 24." 
+            },
+            {
+                id: 39, 
+                question: "Durante el interrogatorio y consentimiento informado previo a realizar una colposcopía diagnóstica, ¿cuál de las siguientes complicaciones sistémicas agudas debe contemplar el servicio para asegurar el enlace a urgencias?", 
+                options: ["Crisis convulsivas febriles", "Ruptura prematura de membranas", "Reflejo vagal grave o sangrado", "Choque anafiláctico a la anestesia"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo GPC de lesiones precursoras del cáncer cervical, la instrumentación del cérvix y la toma de biopsia estimulan plexos nerviosos parasimpáticos que pueden desencadenar síncope y bradicardia. Asimismo, la vascularización alterada de las displasias incrementa el riesgo de hemorragia aguda en el sitio de pellizco.<br><br>Perla ENARM: \"En ciertas mujeres que son sometidas a colposcopia con fines de diagnóstico y tramiento, existe la posibilidad que presenten complicaciones (reflejo vagal grave o sangrado) que amerite su envío al área de urgencias\".<br><br>Análisis de Distractores: La colposcopía no causa fiebre ni convulsiones (A), ni emplea anestesia general (D). La ruptura de membranas (B) es un riesgo obstétrico, pero el vagal es la urgencia médica general reportada por la norma.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Diagnóstico, Página 36." 
+            },
+            {
+                id: 40, 
+                question: "Ante la confirmación histopatológica de una lesión intraepitelial escamosa de alto grado (NIC 2), ¿en qué grupo específico de pacientes es médicamente aceptable diferir el tratamiento escisional y ofrecer observación clínica de 6 a 12 meses?", 
+                options: ["Mayores de 65 años", "Mujeres con histerectomía previa", "Portadoras de dispositivo intrauterino", "Mujeres que no han completado maternidad"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo GPC de lesiones precursoras del cáncer cervical, los métodos escisionales (cono, LEEP) debilitan la estructura del cérvix y aumentan el riesgo de abortos tardíos y partos pretérmino. Si una mujer joven desea fertilidad y la lesión es moderada (NIC 2, no NIC 3) y completamente visible, la balanza riesgo-beneficio permite un manejo expectante estrecho esperando la regresión.<br><br>Perla ENARM: \"En algunas circunstancias, puede ser aceptable ofrecer un período de observación... siempre y cuando se disponga de un colposcopista experimentado... Mujeres que no han completado su maternidad\".<br><br>Análisis de Distractores: En mayores de 65 (A) no hay factor reproductivo a cuidar. En histerectomizadas (B) el riesgo está en la cúpula vaginal, requiriendo otro abordaje. El uso de DIU (C) no dicta la pauta oncológica en lesiones de alto grado.", 
+                source: "GPC-SS-146-18, Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer de cuello uterino en primer y segundo nivel de atención, 2018, Prevención, Página 34." 
+            }        
+        ];
+
+        // ==========================================
+        // ==========================================
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('gyoFLastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('gyoFProgress');
+                localStorage.removeItem('gyoFLastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-pink-500 shadow-md z-10 border-pink-500 dark:border-pink-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-rose-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "GINECOLOGÍA Y OBSTETRICIA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "GPC-SS-146-18 • Prevención, detección, diagnóstico y tratamiento de lesiones precursoras del cáncer del cuello cérvicouterino en primer y segundo nivel de atención";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="GS66621GYOE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-pink-100 dark:border-pink-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-pink-50 has-[:checked]:border-pink-400 dark:has-[:checked]:bg-pink-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-pink-600 dark:hover:bg-pink-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('gyoFProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('gyoFLastQId', currentQuestionId);
+                else localStorage.removeItem('gyoFLastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('gyoFProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

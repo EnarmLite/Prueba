@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================
+        // =========================================================
+        const questionsData = [
+            {
+                id: 1, 
+                question: "¿Cuál es la vía de abordaje de primera elección recomendada para realizar histerectomía por patología uterina benigna?", 
+                options: ["Laparoscópica asistida", "Abdominal total", "Vaginal directa", "Laparoscópica robótica"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, esta vía anatómica reporta resultados superiores en recuperación y morbilidad hospitalaria frente a los abordajes incisionales.<br><br>Perla ENARM: \"En mujeres que presentan patología uterina benigna, se recomienda como primera opción de tratamiento quirúrgico la realización de histerectomía vaginal, por que se asocia a menor número de complicaciones, se realiza más rápido y con menos morbilidad\".<br><br>Análisis de Distractores: La vía laparoscópica es la segunda línea de tratamiento. La vía abdominal se reserva como última opción. El abordaje robótico toma mayor tiempo y no reporta beneficios superiores.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 19." 
+            },
+            {
+                id: 2, 
+                question: "¿Qué estructuras anatómicas deben suturarse obligatoriamente a la cúpula vaginal durante el cierre para evitar su prolapso posterior?", 
+                options: ["Ligamentos redondos y anchos", "Fascia endopélvica profunda", "Ligamentos uterosacros y cardinales", "Músculo elevador del ano"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, restituir el soporte del nivel apical es vital para mantener la estática pélvica.<br><br>Perla ENARM: \"La sutura de los ligamentos uterosacros y cardinales a la cúpula vaginal durante la histerectomía, es una medida que se recomienda para evitar su prolapso\".<br><br>Análisis de Distractores: Los ligamentos redondos y anchos no fungen como principales suspensores apicales anatómicos. La fascia endopélvica y el músculo elevador proveen soporte lateral e inferior, no fijación de cúpula postquirúrgica primaria.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 24." 
+            },
+            {
+                id: 3, 
+                question: "Ante la evidencia clínica de pérdida involuntaria de orina previa a la cirugía, ¿qué estudio preoperatorio es obligatorio solicitar?", 
+                options: ["Ultrasonido renal bilateral", "Estudio urodinámico completo", "Cistoscopia flexible transuretral", "Urografía excretora contrastada"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, el tratamiento quirúrgico pélvico modifica la anatomía y puede enmascarar o agravar disfunciones vesicales, por lo que es mandatorio evaluar la dinámica funcional preexistente.<br><br>Perla ENARM: \"Se recomienda realizar una adecuada evaluación prequirúrgica completa y ante la evidencia de incontinencia urinaria, realizar estudio urodinámico antes de someter a la paciente a histerectomía\".<br><br>Análisis de Distractores: El ultrasonido, cistoscopia y urografía son estudios de imagen y evaluación estructural, pero no cuantifican presiones ni funcionalidad de continencia urinaria.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 28." 
+            },
+            {
+                id: 4, 
+                question: "¿Cuál es la indicación de seguimiento oncológico que debe recibir una paciente sometida a histerectomía supracervical?", 
+                options: ["Ultrasonido pélvico anual", "Colposcopia con biopsia semestral", "Citología cervical anual", "Determinación de papilomavirus humano"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, al conservar la zona de transformación del cuello uterino, la paciente mantiene su riesgo poblacional inalterado para malignidad escamosa.<br><br>Perla ENARM: \"Se recomienda que si se considera la preservación del cuello del útero, la paciente debe ser informada de que es necesario continuar la citología cervical anual, para la detección oportuna de cáncer cervicouterino\".<br><br>Análisis de Distractores: El ultrasonido no detecta displasia epitelial temprana. La colposcopia y la determinación viral se utilizan en algoritmos específicos ante hallazgos anormales, no sustituyen el tamizaje anual de primer nivel.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 21." 
+            },
+            {
+                id: 5, 
+                question: "¿Cuál es el factor mecánico primario que desencadena la lesión del nervio femoral tras una histerectomía abdominal?", 
+                options: ["Disección térmica con electrocauterio", "Presión de las valvas sobre el psoas", "Tracción uterina superior forzada", "Isquemia por ligadura vascular"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, el uso de separadores autoestáticos con hojas muy profundas genera daño isquémico directo al nervio en su trayecto.<br><br>Perla ENARM: \"Se recomienda que el cirujano corrobore en el momento de colocación del separador, que las hojas laterales tengan la longitud adecuada para separar exclusivamente la pared abdominal y que sus puntas no presionen el músculo psoas... para evitar la neuropatía femoral postoperatoria\".<br><br>Análisis de Distractores: El electrocauterio, la tracción uterina y la ligadura arterial condicionan otras lesiones iatrogénicas, pero la neuropatía periférica femoral se asocia específicamente a la compresión retropélvica mecánica prolongada.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 26." 
+            },
+            {
+                id: 6, 
+                question: "¿Cuál es el manejo indicado inicial en una paciente diagnosticada con miomatosis uterina que no presenta ninguna manifestación clínica?", 
+                options: ["Manejo conservador farmacológico", "Histerectomía vaginal profiláctica", "Ablación endometrial térmica", "Seguimiento clínico"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, la ausencia de sintomatología compresiva o sangrado invalida la exposición al riesgo de un procedimiento invasivo o tratamiento hormonal innecesario.<br><br>Perla ENARM: \"Diagrama de flujo 1. Histerectomía en patología uterina benigna: Miomatosis -> ¿Paciente asintomática? SI -> Seguimiento\".<br><br>Análisis de Distractores: El manejo farmacológico y la ablación se indican en pacientes con sangrado activo. La histerectomía carece de indicación profiláctica en úteros no sintomáticos.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Diagramas de Flujo, Página 36." 
+            },
+            {
+                id: 7, 
+                question: "En pacientes premenopáusicas programadas para histerectomía, ¿cuál es la conducta recomendada respecto a la ooforectomía profiláctica rutinaria?", 
+                options: ["Realizarla en mayores de 35 años", "Realizarla en todas las pacientes", "Individualizar el riesgo del paciente", "Preservarla siempre por miomatosis"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, extirpar los anexos sin patología comprobada acelera la deficiencia estrogénica y conlleva riesgos cardiometabólicos severos que pueden superar la prevención del riesgo oncológico futuro.<br><br>Perla ENARM: \"No existe suficiente evidencia para emitir una recomendación sobre la realización de ooforectomía en mujeres premenopáusicas, siempre se deberá individualizar tomando en cuenta el riesgo de cada paciente\".<br><br>Análisis de Distractores: Indicarla sistemáticamente o sólo basándose en edad poblacional expone a la mujer a falla ovárica prematura; su preservación dogmática ignoraría el historial oncológico genético que pudiera justificarla.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 30." 
+            },
+            {
+                id: 8, 
+                question: "¿Qué porcentaje de pacientes sometidas a histerectomía subtotal manifiestan sangrado transvaginal cíclico posquirúrgico a largo plazo?", 
+                options: ["5 %", "10 %", "15 %", "20 %"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, el remanente de mucosa endocervical puede continuar respondiendo al estímulo hormonal bifásico conservado si los ovarios permanecen íntegros.<br><br>Perla ENARM: \"El sangrado cíclico posterior a la histerectomía subtotal se presenta hasta en el 20 % de las pacientes\".<br><br>Análisis de Distractores: Los valores menores al 20 % son incorrectos en el escenario natural; sin embargo, la misma GPC indica que realizar conización transoperatoria reduce este sangrado a cifras cercanas al 1.4 %.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 21." 
+            },
+            {
+                id: 9, 
+                question: "¿Cuál grupo farmacológico disminuye el tamaño uterino y mejora parámetros hematológicos cuando se administra semanas previas a la cirugía por miomatosis?", 
+                options: ["Anticonceptivos orales combinados", "Agonistas de hormona liberadora de gonadotrofina", "Progestágenos intramusculares de depósito", "Sistemas de liberación de levonorgestrel"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, su uso continuo bloquea el eje hipotálamo-hipófisis induciendo hipoestrogenismo transitorio, lo que provoca la atrofia del leiomioma y facilita la vía vaginal.<br><br>Perla ENARM: \"Se ha demostrado que los agonistas de la GnRH-a, administrados de 2 a 3 meses antes de la intervención quirúrgica, mejoran los parámetros hematológicos, acortan la estancia hospitalaria y disminuyen el sangrado...\".<br><br>Análisis de Distractores: Los anticonceptivos orales y progestágenos logran un control clínico aceptable de las metrorragias, pero carecen de efecto comprobado sobre la reducción física del tamaño miomatoso.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 17." 
+            },
+            {
+                id: 10, 
+                question: "En pacientes con miomatosis tratadas con dispositivo intrauterino liberador de levonorgestrel premenopáusicas, ¿cuál es el resultado fisiológico clínico esperado?", 
+                options: ["Disminuye pérdida hemática sin reducir miomas", "Disminuye el tamaño de los miomas submucosos", "Aumenta sangrado transoperatorio a nivel vaginal", "Induce atrofia uterina completa y definitiva"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, su mecanismo de acción es la decidualización y atrofia del endometrio suprayacente, mejorando la hemoglobina, pero no afecta estructuralmente al tumor liso.<br><br>Perla ENARM: \"En mujeres premenopáusicas, los sistemas intrauterinos que liberan progestágeno (DIU levonorgestrel) reducen la pérdida de sangre menstrual, pero no reducen el tamaño de los miomas\".<br><br>Análisis de Distractores: La creencia de que reducen el tamaño tumoral es un error común descartado por la evidencia clínica. No existe asociación documentada con incremento de hemorragia quirúrgica.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 16." 
+            },
+            {
+                id: 11, 
+                question: "¿Qué medida farmacológica de prevención se indica específicamente para pacientes con factores de riesgo sometidas a histerectomía abdominal total?", 
+                options: ["Lavado peritoneal transoperatorio exhaustivo", "Uso de estrógenos tópicos locales", "Administración de antibióticos profilácticos", "Terapia puente con anticoagulantes orales"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, al incidir la bóveda vaginal vía abdominal, la cavidad se contamina con flora natural ascendente incrementando la tasa de morbilidad febril.<br><br>Perla ENARM: \"Se recomienda en pacientes a quienes se les realice histerectomía abdominal total y presenten riesgos asociados para presentar infección, se les informe e indiquen antibióticos profilácticos\".<br><br>Análisis de Distractores: El lavado abdominal aislado o estrógenos locales no previenen la celulitis de cúpula bacteriana. La terapia anticoagulante puente es manejo de riesgo tromboembólico, no para control de sepsis en el sitio quirúrgico.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 26." 
+            },
+            {
+                id: 12, 
+                question: "Según el algoritmo para endometriosis grave, ¿qué criterio clínico preoperatorio es indispensable antes de proceder a la histerectomía radical?", 
+                options: ["Nuliparidad en edad reproductiva", "Paciente asintomática con endometriosis mínima", "Sospecha diagnóstica inicial sin tratamiento", "Falla a tratamientos médicos conservadores"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, la extirpación quirúrgica pélvica tiene impacto sistémico severo y debe reservarse exclusivamente tras agotar medidas como progestinas, danazol o análogos.<br><br>Perla ENARM: \"Se recomienda la histerectomía como tratamiento de última elección en pacientes que presentan endometriosis grave, asociada a sintomatología incapacitante y con falla de otros tratamientos...\".<br><br>Análisis de Distractores: La sospecha de primera vez requiere manejo médico. Realizarla en la paciente asintomática o nulípara con deseo de fertilidad atenta contra el pronóstico biológico de la mujer.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 18." 
+            },
+            {
+                id: 13, 
+                question: "En comparación directa con el abordaje laparotómico abdominal, ¿qué ventaja ha demostrado la histerectomía laparoscópica?", 
+                options: ["Menor costo directo del procedimiento", "Rápido regreso a las actividades normales", "Menor tasa de lesiones urinarias incidentales", "Ausencia total de sangrado postoperatorio"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, las mínimas incisiones parietales evitan complicaciones de herida y reducen drásticamente el uso de analgésicos.<br><br>Perla ENARM: \"La histerectomía laparoscópica comparada con la histerectomía abdominal tiene las ventajas de: Menor dolor postquirúrgico, rápido regreso a las actividades normales, menor sangrado, alta hospitalaria temprana\".<br><br>Análisis de Distractores: La laparoscopia aumenta el costo general y presenta mayor índice de lesiones del tracto urinario térmicas o mecánicas. Ninguna cirugía reporta ausencia total de sangrado.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 20." 
+            },
+            {
+                id: 14, 
+                question: "¿Cuál es la principal desventaja operatoria reportada por la vía laparoscópica frente a los resultados obtenidos con la histerectomía vaginal?", 
+                options: ["Mayor tasa de prolapso de cúpula", "Mayor número de lesiones al tracto urinario", "Incremento en complicaciones anestésicas", "Estancia intrahospitalaria más prolongada"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, la manipulación de fuentes de energía y la pérdida de retroalimentación táctil cerca de los meatos y trayecto de los uréteres propician su daño inadvertido.<br><br>Perla ENARM: \"La histerectomía laparoscópica comparada con la histerectomía vaginal tiene las siguientes desventajas: Mayor número de lesiones al tracto urinario, mayor costo para la paciente\".<br><br>Análisis de Distractores: El prolapso de cúpula se relaciona con fallas en la suspensión anatómica apical, no con la vía de extracción. La vía laparoscópica tiene en general estancias cortas y recuperaciones rápidas comparables con la vía vaginal, sin mayor diferencia anestésica global.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 20." 
+            },
+            {
+                id: 15, 
+                question: "¿Cuál es el punto de corte en gramos del volumen uterino en el que se exige pericia quirúrgica y experiencia laparoscópica comprobada para intervenir con seguridad?", 
+                options: ["≥ 250 g", "≥ 500 g", "≥ 750 g", "≥ 1000 g"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, úteros sumamente pesados obstruyen la visión de los puertos inferiores, incrementando el riesgo hemorrágico durante la coagulación de la arteria uterina.<br><br>Perla ENARM: \"Se recomienda la histerectomía laparoscópica en mujeres con úteros de más de 500 g, por laparoscopistas experimentados\".<br><br>Análisis de Distractores: Opciones con valores de 250 g no representan impedimento técnico mayor; dimensiones extremas a menudo limitan completamente el uso de la técnica y demandan minilaparotomía para su resolución.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 20." 
+            },
+            {
+                id: 16, 
+                question: "¿Cuál es la indicación absoluta requerida para indicar histerectomía en pacientes con patología benigna después de verificar la paridad satisfecha?", 
+                options: ["Útero aumentado al doble de tamaño", "Falla del tratamiento conservador establecido", "Sangrado escaso persistente y cíclico", "Miomatosis intramural de pequeños elementos"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, el protocolo proscribe derivar a quirófano sin antes comprobar la nula respuesta clínica a intervenciones médicas de primer contacto y fármacos hemostáticos.<br><br>Perla ENARM: \"Diagrama de flujo 1. Histerectomía en patología uterina benigna: Sangrado uterino anormal -> Manejo conservador -> ¿Mejoría? NO -> Histerectomía\".<br><br>Análisis de Distractores: El aumento de tamaño aislado y los miomas pequeños asintomáticos o de bajo sangrado son manejables de forma no invasiva según flujogramas de primera elección.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Diagramas de Flujo, Página 36." 
+            },
+            {
+                id: 17, 
+                question: "¿Qué medida técnica transoperatoria durante la histerectomía interviene directamente en la profilaxis funcional contra la formación posterior de enteroceles?", 
+                options: ["Colocación de malla sintética profiláctica", "Suspensión fórnica de los ligamentos redondos", "Culdoplastía de McCall al cierre peritoneal", "Tensión selectiva de los pliegues vesicouterinos"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, el defecto anatómico provocado por la extirpación uterina en el fondo de saco de Douglas posterior debe obliterarse mecánicamente uniendo los ligamentos uterosacros altos.<br><br>Perla ENARM: \"Se recomienda realizar la culdoplastía de McCall al momento de la histerectomía, a fin de prevenir la formación de enteroceles\".<br><br>Análisis de Distractores: Las mallas y fijaciones a redondos carecen de aval profiláctico de primer nivel. Trabajar sobre pliegues anteriores corrige cistoceles, no el defecto profundo rectovaginal del saco de Douglas.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 24." 
+            },
+            {
+                id: 18, 
+                question: "¿Cuál de las siguientes es una indicación clínica válida para la utilización del sistema de histerectomía laparoscópica asistida robótica de puerto único?", 
+                options: ["Obesidad mórbida", "Útero de grandes dimensiones", "Índice de masa corporal bajo", "Cirugía umbilical anterior extensa"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, la plataforma robótica requiere espacios de maniobra específicos, donde el exceso de panículo adiposo restringe severamente el choque de los brazos mecánicos externos.<br><br>Perla ENARM: \"Puede indicarse la histerectomía laparoscópica asistida robótica con puerto único en los siguientes casos: Índice de masa corporal bajo, estado físico adecuado, ausencia de cirugías anteriores...\".<br><br>Análisis de Distractores: La obesidad, tumores ginecológicos gigantes y abdomen hostil previo por cirugías extensas fungen como contraindicaciones explícitas de este abordaje tecnológico particular.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 22." 
+            },
+            {
+                id: 19, 
+                question: "Al comparar objetivamente las técnicas de mínima invasión, ¿cuál ha demostrado requerir un tiempo quirúrgico significativamente menor a la vía laparoscópica?", 
+                options: ["Histerectomía total abdominal laparotómica", "Histerectomía laparoscópica asistida por robot", "Histerectomía supracervical abierta tradicional", "Histerectomía vaginal sin asistencia laparoscópica"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, evitar el proceso de neumoperitoneo, la instalación y retiro de trócares múltiples acelera considerablemente la fluidez de las fases quirúrgicas.<br><br>Perla ENARM: \"Existe un tiempo quirúrgico menor al realizar histerectomía vaginal comparado con la histerectomía vaginal asistida por laparoscopia\".<br><br>Análisis de Distractores: Los abordajes abdominales carecen del concepto comparativo de mínima invasión pura analizada aquí; la vía robótica prolonga drásticamente los tiempos netos debido al montaje de consola (\"docking\").", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 29." 
+            },
+            {
+                id: 20, 
+                question: "En una paciente asintomática posterior a histerectomía subtotal, que reporta tres pruebas de citología anual previa completamente normales, ¿cuál es su riesgo basal de presentar cáncer en el muñón cervical restante?", 
+                options: ["0.05 %", "1.5 %", "5.0 %", "10.0 %"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, conservar la matriz inferior reporta un ínfimo riesgo de transformación oncológica posterior, siempre y cuando se demuestre un historial de escrutinio negativo sostenido.<br><br>Perla ENARM: \"El riesgo de cáncer del muñón cervical es de aproximadamente 0.05 % después de tres pruebas de citología cervical normal en mujeres con histerectomía subtotal\".<br><br>Análisis de Distractores: Estimaciones elevadas del 1.5 % en adelante se observan en mujeres con antecedente de displasia o exposición sostenida y persistente sin seguimiento adecuado a lo largo de los años.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 21." 
+            },
+            {
+                id: 21, 
+                question: "¿Por cuánto tiempo se indica la administración preoperatoria de agonistas de GnRH para lograr amenorrea y optimizar los parámetros hematológicos previos a la histerectomía?", 
+                options: ["7 a 14 días", "2 a 3 meses", "4 a 6 meses", "1 a 2 semanas"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, el hipoestrogenismo profundo inducido por los análogos de la GnRH requiere un periodo basal de consolidación tisular para disminuir el flujo sanguíneo y encoger el mioma.<br><br>Perla ENARM: 'Se ha demostrado que los agonistas de la GnRH-a, administrados de 2 a 3 meses antes de la intervención quirúrgica, mejoran los parámetros hematológicos, acortan la estancia hospitalaria y disminuyen el sangrado'.<br><br>Análisis de Distractores: Periodos menores a un mes no alcanzan a generar reducción de volumen tisular ni elevación de hemoglobina significativa. Más de 6 meses expone a la paciente a osteoporosis prematura por deprivación estrogénica severa.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 17." 
+            },
+            {
+                id: 22, 
+                question: "En una histerectomía subtotal, ¿qué procedimiento transoperatorio disminuye la incidencia de sangrado cíclico posterior del 20 % hasta un 1.4 %?", 
+                options: ["Ablación endometrial térmica", "Culdoplastía de McCall", "Cierre hermético de cúpula", "Conización del endocérvix"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, el muñón cervical retenido posee epitelio glandular susceptible al estímulo estrogénico-progestacional; al resecarlo focalmente con un cono, se elimina el tejido sangrante.<br><br>Perla ENARM: 'La conización del endocérvix durante la histerectomía subtotal parece reducir la incidencia de sangrado cíclico del 20 % al 1.4 %'.<br><br>Análisis de Distractores: La ablación es un tratamiento conservador primario intracavitario, no transoperatorio de la subtotal. La culdoplastía repara defectos del saco de Douglas. El cierre de cúpula aplica a la histerectomía total donde el cérvix ya fue extraído.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 21." 
+            },
+            {
+                id: 23, 
+                question: "¿Cuál es la incidencia esperada de tromboembolismo venoso en pacientes sometidas a cirugía ginecológica mayor que no reciben profilaxis antitrombótica?", 
+                options: ["1 a 5 %", "8 a 12 %", "17 a 40 %", "≥ 50 %"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, la cirugía pélvica cruza ejes vasculares mayores y requiere posiciones como la litotomía, provocando alta estasis venosa.<br><br>Perla ENARM: 'La incidencia de tromboembolismo venoso (TEV) después de cirugía ginecológica mayor entre las pacientes que no reciben tromboprofilaxis, ha sido informado entre el 17 % a 40 %'.<br><br>Análisis de Distractores: Rangos menores subestiman severamente el estado hipercoagulable inducido por el trauma tisular de esta intervención. Cifras mayores al 50 % se observarían solo en contextos oncológicos avanzados no benignos.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 27." 
+            },
+            {
+                id: 24, 
+                question: "Según el análisis de morbilidad quirúrgica, ¿cuáles son los factores intrínsecos al procedimiento y a la paciente con mayor asociación a la infección del sitio quirúrgico post-histerectomía abdominal?", 
+                options: ["Transfusión sanguínea y obesidad", "Edad avanzada y diabetes mellitus", "Tabaquismo activo y desnutrición", "Uso previo de DIU y anemia grave"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, el grosor del panículo adiposo genera espacios muertos con hipoxia tisular, y la transfusión deprime temporalmente la respuesta inmune celular.<br><br>Perla ENARM: 'Existe evidencia de factores (transfusión sanguínea y obesidad) que se asocian a riesgo de infección del sitio quirúrgico después de realizar la histerectomía total abdominal'.<br><br>Análisis de Distractores: Aunque la diabetes, tabaquismo y anemia son factores de riesgo generales universales, la GPC marca explícitamente a la obesidad y hemoderivados con evidencia directa de nivel moderado para esta intervención particular.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 26." 
+            },
+            {
+                id: 25, 
+                question: "¿Cuál de las siguientes condiciones es una contraindicación clínica explícita para indicar histerectomía laparoscópica asistida por robot con puerto único?", 
+                options: ["Índice de masa corporal bajo", "Paciente adulto joven sano", "Ausencia de cirugías pélvicas", "Función pulmonar disminuida"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, el neumoperitoneo extremo y prolongado junto con la posición de Trendelenburg acentuada limitan críticamente la excursión diafragmática.<br><br>Perla ENARM: 'Son posibles contraindicaciones de histerectomía laparoscópica asistida por robot con puerto único: Enfermedad metastásica/Carcinoma, Función pulmonar disminuida, Cirugía umbilical anterior extensa, Obesidad mórbida, Útero de grandes dimensiones'.<br><br>Análisis de Distractores: Las opciones A, B y C son, de hecho, las indicaciones ideales marcadas por la guía para optar por la vía robótica con puerto único de manera segura.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 23." 
+            },
+            {
+                id: 26, 
+                question: "Si una paciente candidata a cirugía por patología benigna tiene historia clínica de resultados anormales significativos en citología cervical, ¿qué recomendación normativa preoperatoria establece la guía?", 
+                options: ["Aconsejar histerectomía total", "Proponer histerectomía subtotal", "Diferir cirugía por 6 meses", "Indicar braquiterapia intracavitaria"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, preservar el cuello uterino en un huésped que ya demostró vulnerabilidad epitelial al VPH triplica su riesgo relativo a futuro de malignidad oncológica.<br><br>Perla ENARM: 'Las mujeres que necesitan histerectomía y que tienen historia actual o significativa de resultados anormales en citologías del cuello uterino, deberán ser aconsejadas acerca de las ventajas de la histerectomía total sobre la histerectomía subtotal'.<br><br>Análisis de Distractores: La histerectomía subtotal estaría formalmente contraindicada. Retrasar la cirugía no resuelve la patología basal que motivó el evento. La braquiterapia es un manejo exclusivo oncológico avanzado.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 24." 
+            },
+            {
+                id: 27, 
+                question: "En pacientes donde no se realiza ooforectomía, ¿qué impacto secundario se documenta entre la histerectomía per se y el riesgo a futuro de desarrollar cáncer de ovario?", 
+                options: ["Incrementa el riesgo por éstasis", "Disminuye el riesgo asociado", "Elimina por completo el riesgo", "Carece de impacto estadístico"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, remover el útero podría obstaculizar las vías de diseminación ascendentes de carcinógenos perineales hacia la trompa y superficie ovárica.<br><br>Perla ENARM: 'El riesgo relativo estimado para cáncer de ovario en relación de la histerectomía fue de 0.81, mostrando una disminución del riesgo, sin embargo, existe heterogeneidad en el grupo estudiado, por lo que deben tomarse con reserva'.<br><br>Análisis de Distractores: Falsamente se cree que no interfiere o que lo aumenta; de hecho, confiere una protección moderada asimétrica pero jamás elimina la posibilidad primaria del estroma ovárico de mutar.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 29." 
+            },
+            {
+                id: 28, 
+                question: "A largo plazo, ¿qué nivel de evidencia tiene la histerectomía subtotal para prevenir el prolapso futuro de órganos pélvicos en comparación con la extirpación completa?", 
+                options: ["Previene totalmente el defecto", "Superior a histerectomía total", "Sin evidencia de prevención", "Requiere malla como refuerzo"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, el mito histórico de que el cérvix actúa como 'piedra angular' del soporte vaginal ha sido desmentido en ensayos aleatorizados recientes.<br><br>Perla ENARM: 'No existe evidencia que soporte que la preservación del cérvix, en la histerectomía subtotal, prevenga el prolapso de órganos pélvicos'.<br><br>Análisis de Distractores: Afirmar que previene totalmente o que es superior choca directamente contra la evidencia nivel Alto que reporta tasas de distopia idénticas entre los grupos de estudio total y subtotal.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 25." 
+            },
+            {
+                id: 29, 
+                question: "En la histerectomía total laparoscópica, ¿qué vía de cierre de la cúpula vaginal previene hasta de 3 a 9 veces la complicación de dehiscencia posoperatoria?", 
+                options: ["Cierre intracorpóreo laparoscópico", "Cierre directo por vía vaginal", "Aplicación de sellantes biológicos", "Uso de engrapadora quirúrgica"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, al realizar el nudo manualmente a través del canal vaginal, el cirujano ejerce una tensión táctil óptima en el tejido isquémico, cosa que la laparoscopia compromete.<br><br>Perla ENARM: 'Se recomienda el cierre de cúpula vaginal por vía vaginal cuando se realice histerectomía total laparoscópica'.<br><br>Análisis de Distractores: El cierre intracorpóreo laparoscópico o con engrapadoras carece de la resistencia biológica que los nudos extracorpóreos/vaginales confieren a los bordes de la colpotomía en cicatrización activa.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 25." 
+            },
+            {
+                id: 30, 
+                question: "Epidemiológicamente, ¿qué prevalencia reporta la guía sobre endometriosis en mujeres infértiles y con cuadros de dolor pélvico crónico?", 
+                options: ["10 %", "25 %", "38 %", "60 %"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, los focos endometriósicos generan distorsión anatómica grave e inflamación estéril neurogénica sostenida en la paciente joven.<br><br>Perla ENARM: 'La endometriosis representa un problema importante de salud en mujeres en edad reproductiva. Con una prevalencia del 38 % (rango 20 % a 50 %) en mujeres infértiles y con dolor pélvico crónico'.<br><br>Análisis de Distractores: La endometriosis rara vez tiene una prevalencia baja en el contexto de infertilidad específica; por otro lado, un 60 % sobreestimaría un cuadro sindromático que abarca muchos más diferenciales ginecológicos de dolor.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 17." 
+            },
+            {
+                id: 31, 
+                question: "En el marco preventivo preoperatorio, si la paciente cursa con antecedente de uso de tratamiento anticoagulante continuo, ¿cuál es la conducta anestésica-quirúrgica obligada?", 
+                options: ["Suspensión total inmediata", "Terapia puente ajustada", "Antídoto universal profiláctico", "Proceder sin modificar dosis"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, el riesgo dual de sangrado intraabdominal masivo contra el rebote tromboembólico obliga a una traslación farmacológica controlada, generalmente con heparinas de bajo peso molecular.<br><br>Perla ENARM: 'En caso de cirugía en paciente que recibe tratamiento anticoagulante, se sugiere... Establecer la necesidad de una \"terapia puente\" y sus tiempos exactos de inicio y retiro en relación con ciertas variables y reinicio posquirúrgico del anticoagulante oral'.<br><br>Análisis de Distractores: La suspensión abrupta dispara eventos isquémicos mortales; operar sin modificar garantiza un choque hemorrágico transoperatorio. Administrar antídotos generales desestabiliza las metas terapéuticas valvulares o sistémicas a largo plazo.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 27." 
+            },
+            {
+                id: 32, 
+                question: "Como componente de calidad clínica y consentimiento informado, ¿qué aspecto subjetivo de la paciente se debe integrar en el expediente antes de decidir una histerectomía radical?", 
+                options: ["Evaluación de su técnica de apego", "Tipo y marca de la analgesia", "Impacto sobre su sexualidad", "Preferencia estética de incisión"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, extirpar el útero tiene repercusiones biopsicosociales marcadas sobre el autoconcepto, el deseo y la dinámica pélvica de pareja.<br><br>Perla ENARM: 'Se debe realizar una amplia información y discusión con las pacientes a las que se les ofrezca histerectomía... La información debe incluir: Sentimientos, Sexualidad, Impacto en la fertilidad, Funcionalidad de vejiga'.<br><br>Análisis de Distractores: Aunque la estética y analgesia son relevantes en segundo término, la mutilación de órganos reproductivos rige directrices imperativas bioéticas en la esfera psicosexual primaria que el cirujano no puede omitir evaluar.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 16." 
+            },
+            {
+                id: 33, 
+                question: "A pesar de ser una intervención de mínima invasión recomendada, ¿qué diferencia técnica hace que la histerectomía laparoscópica tenga un tiempo quirúrgico mayor que el abordaje abdominal promedio?", 
+                options: ["Requerimiento de anestesia general", "Complejidad en cierre peritoneal", "Morcelación y montaje de equipos", "Necesidad de urografía transquirúrgica"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, armar las consolas, introducir trócares y la fragmentación mecánica para extraer el útero prolongan considerablemente los minutos reloj del procedimiento.<br><br>Perla ENARM: 'La histerectomía abdominal tiene un tiempo quirúrgico más corto que la laparoscópica, en promedio 11.8 minutos (IC 95% 8.6 min a 14.9 min)'.<br><br>Análisis de Distractores: Ambas cirugías emplean anestesia profunda general. El cierre peritoneal no aporta diferencia horaria significativa. La urografía transquirúrgica no es rutinaria en patología benigna estándar.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 28." 
+            },
+            {
+                id: 34, 
+                question: "De acuerdo con la normatividad clínica de la histerectomía, si el tratamiento radical fue indicado originalmente por colapso severo del piso pélvico, ¿qué factor pronóstico debe informarse a la paciente?", 
+                options: ["El prolapso se puede repetir", "Curación vitalicia anatómica", "Ausencia total de cistoceles", "Inducción de dispareunia leve"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, la enfermedad basal recae sobre la laxitud congénita y debilidad de la fascia endopélvica completa, no en el peso del útero per se; al retirar el órgano, la presión intraabdominal encuentra nuevas rutas de escape.<br><br>Perla ENARM: 'Existe evidencia que el prolapso se puede repetir en aquellas pacientes, en donde se indicó la histerectomía por el prolapso'.<br><br>Análisis de Distractores: Garantizar curación definitiva o la ausencia de defectos anteriores vesicales futuros incurre en desinformación negligente sobre la historia natural de los trastornos del piso pélvico.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 25." 
+            },
+            {
+                id: 35, 
+                question: "¿Qué herramienta documental sugiere implementar la GPC como métrica de éxito clínico antes y posterior a la histerectomía radical?", 
+                options: ["Diario menstrual retrospectivo", "Cuestionarios de calidad de vida", "Escala ecográfica tridimensional", "Cuestionario de estrés posquirúrgico"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, el objetivo último de extraer patología benigna es reincorporar funcional, física y emocionalmente a la mujer a su cotidianeidad.<br><br>Perla ENARM: 'Se sugiere aplicar cuestionarios de calidad de vida previo y posterior a realizar histerectomía'.<br><br>Análisis de Distractores: El diario menstrual carece de sentido post-histerectomía. Las escalas ecográficas anatómicas no evalúan percepción emocional ni impacto biopsicosocial, sino morfológico estructural.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 23." 
+            },
+            {
+                id: 36, 
+                question: "Durante un prolapso uterovaginal masivo clasificado a nivel del introito intencionalmente llevado a cirugía vaginal, ¿qué fijación profiláctica de máxima anclaje recomienda la GPC?", 
+                options: ["Fijación profiláctica sacroespinosa", "Ligadura de ligamento redondo", "Culdoplastía superficial simple", "Anastomosis uterosacra baja"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, al descender masivamente las estructuras, los ligamentos originarios se elongan perdiendo tensión, por lo que anclar la cúpula hacia la recia fascia posterior sacra asegura el éxito anatómico profundo.<br><br>Perla ENARM: 'Se ha sugerido, cuando existe prolapso uterovaginal a nivel del introito, la fijación profiláctica del ligamento sacroespinoso al momento de la histerectomía vaginal, para evitar el prolapso de la cúpula'.<br><br>Análisis de Distractores: La ligadura de redondos no provee soporte apical; la culdoplastía simple obliterará un enterocele futuro pero no ejerce el vector retrógrado que necesita una cúpula desinsertada desde el introito vulvar.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 25." 
+            },
+            {
+                id: 37, 
+                question: "En estudios clínicos que evaluaron funcionalidad postquirúrgica (urinaria, intestinal y sexual), ¿qué diferencias clínicas hallaron a largo plazo entre histerectomía total y la histerectomía supracervical?", 
+                options: ["Mayor mejoría en la total", "Menos dispareunia en subtotal", "Cero diferencias en ambas técnicas", "Aumento del deseo sexual en total"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, la inervación autonómica pélvica sufre un impacto equivalente y las molestias compresivas cesan en la misma magnitud en ambas estrategias, desmitificando la supuesta ventaja sexual del cérvix retenido.<br><br>Perla ENARM: 'No existe evidencia en la literatura, en pacientes sometidas a histerectomía total comparadas con la supracervical, en relación a diferencias en la función sexual, urinaria e intestinal'.<br><br>Análisis de Distractores: Antiguamente se promocionaba que el cérvix mejoraba la humedad vaginal y el orgasmo profundo o que quitarlo protegía de distopias; los ensayos prospectivos refutaron completamente dichos paradigmas clásicos.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 21." 
+            },
+            {
+                id: 38, 
+                question: "Según el registro estadístico de intervenciones incluido en la guía, ¿cuál ha sido históricamente la indicación principal con mayor porcentaje para realizar histerectomías vaginales exitosas?", 
+                options: ["Hiperplasia endometrial", "Miomatosis uterina", "Prolapso uterino", "Adenomiosis difusa"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, el ensanchamiento del canal vaginal y el descenso previo de la matriz facilitan radicalmente la exposición técnica quirúrgica del nivel III al I de DeLancey hacia el exterior.<br><br>Perla ENARM: 'La histerectomía vaginal se indicó en una población de 468 mujeres: Prolapso uterino 52 %, Miomatosis 37.4 %, Adenomiosis 4.2 %'.<br><br>Análisis de Distractores: Aunque la miomatosis es la causa principal de sangrado, en ella el útero alto e hipertrófico dificulta el descenso forzando muchas veces a los médicos no capacitados al uso erróneo pero mayoritario de la vía abdominal general.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 18." 
+            },
+            {
+                id: 39, 
+                question: "Pese a que las guías de práctica clínica internacionales estipulan la vía vaginal y laparoscópica como elecciones primarias, en los registros de diagnóstico de miomatosis uterina de grandes proporciones, ¿qué conducta quirúrgica imperó predominantemente en nuestro país?", 
+                options: ["Histerectomía subtotal vaginal", "Histerectomía total abdominal", "Morcelación por miomectomía", "Histerectomía robótica"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, existe una disonancia brutal entre las recomendaciones de mínima invasión y la realidad de los centros por falta de destreza técnica de los cirujanos ante tumores fibrosos sin prolapso.<br><br>Perla ENARM: 'El 90 % de las histerectomías son realizadas por miomatosis uterina y sangrado uterino anormal. El 67 % de estas histerectomías fueron abdominales aún cuando la histerectomía vaginal era de elección'.<br><br>Análisis de Distractores: La cirugía robótica e histerectomías vía vaginal exclusivas representan volúmenes mínimos. La evidencia refleja claramente el sobreuso injustificado estadístico del bisturí clásico abdominal para la patología benigna de matriz.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Evidencias y Recomendaciones, Página 18." 
+            },
+            {
+                id: 40, 
+                question: "Según la terminología quirúrgica especializada referida por el glosario, ¿cómo se define el procedimiento que inicia con ligadura de arterias uterinas vía endoscópica y concluye con la tracción uterina externa?", 
+                options: ["Histerectomía supracervical laparoscópica", "Histerectomía vaginal laparoscópica", "Histerectomía vaginal asistida por laparoscopia", "Histerectomía total laparoscópica"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Histerectomía en patología benigna, el proceso endoscópico se detiene a la altura de las colpotomías, transformándose operativamente la fase de amputación cervical a una visión inferior pura.<br><br>Perla ENARM: \"Glosario: Histerectomía vaginal asistida por laparoscopia: procedimiento quirúrgico que se inicia con el abordaje laparoscópico, la ligadura de los vasos uterinos por vía vaginal y concluye con la extracción vaginal del útero y sus anexos\".<br><br>Análisis de Distractores: En la histerectomía total laparoscópica pura la disección se continúa íntegramente de manera intracavitaria endoscópica hasta soltar todo tejido de los medios de fijación y amputar antes de descenderlo.", 
+                source: "SS-295-10, Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención, 2017, Glosario, Página 40." 
+            }
+        ];
+
+        // ==========================================
+        // ==========================================
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('gyoHMLastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('gyoHMProgress');
+                localStorage.removeItem('gyoHMLastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-pink-500 shadow-md z-10 border-pink-500 dark:border-pink-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-rose-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "GINECOLOGÍA Y OBSTETRICIA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "GPC SS-295-10 • Indicaciones y contraindicaciones de la histerectomía en mujeres con patología benigna en el segundo nivel de atención";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="AU16209GYOE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-pink-100 dark:border-pink-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-pink-50 has-[:checked]:border-pink-400 dark:has-[:checked]:bg-pink-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-pink-600 dark:hover:bg-pink-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('gyoHMProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('gyoHMLastQId', currentQuestionId);
+                else localStorage.removeItem('gyoHMLastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('gyoHMProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

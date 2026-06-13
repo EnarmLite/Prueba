@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================
+        // =========================================================
+        const questionsData = [
+            {
+                id: 1, 
+                question: "En la evaluación epidemiológica de la pérdida temprana de la gestación, ¿cuál es la etiología responsable de la mitad de los casos confirmados clínicamente?", 
+                options: ["Insuficiencia del cuerpo lúteo", "Anomalías cromosómicas fetales", "Infecciones de vías urinarias", "Traumatismo abdominal cerrado"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, la mitad de las gestaciones que terminan en pérdida durante el primer trimestre tienen un origen genético intrínseco, lo que explica por qué el manejo médico a menudo no puede evitar la progresión de la pérdida cuando esta alteración está presente.<br><br>Perla ENARM: \"Aproximadamente 50% de todos los casos de pérdida temprana del embarazo se deben a anomalías cromosómicas fetales.\"<br><br>Análisis de Distractores: La insuficiencia del cuerpo lúteo (A) es una causa específica pero mucho menos frecuente, abordable con progesterona. Las infecciones (C) y traumatismos (D) son factores predisponentes u obstétricos incidentales, pero no representan la causa de la mitad de los casos.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto, 2020, Introducción, Página 8." 
+            },
+            {
+                id: 2, 
+                question: "Durante la evaluación física de una paciente con sangrado transvaginal del primer trimestre, ¿cuál es el objetivo clínico principal de realizar una especuloscopía?", 
+                options: ["Medir la longitud cervical exacta", "Tomar cultivo de líquido amniótico", "Evaluar el grado de desprendimiento", "Descartar origen no obstétrico"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, el sangrado vaginal no siempre proviene de la cavidad uterina. La visualización directa con espejo vaginal es imperativa para descartar lesiones anatómicas locales que simulen una amenaza, como pólipos, laceraciones o cáncer.<br><br>Perla ENARM: \"La exploración de la paciente debe incluir especuloscopia para visualizar y evaluar el cérvix, para descartar cualquier otra lesión capaz de producir sangrado trasvaginal (eversión glandular, lesiones cervicales malignas, pólipo cervical, entre otras).\"<br><br>Análisis de Distractores: La longitud cervical (A) y el grado de desprendimiento (C) se evalúan de forma precisa mediante ultrasonido endovaginal, no con especuloscopía. La toma de cultivo de líquido amniótico (B) está contraindicada y no aplica en este escenario de membranas íntegras.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto, 2020, Detección, Página 17." 
+            },
+            {
+                id: 3, 
+                question: "Ante una paciente con sangrado transvaginal en la que el rastreo ecográfico no logra documentar un saco gestacional dentro de la cavidad uterina, ¿cuál es el diagnóstico diferencial primario a descartar?", 
+                options: ["Mola hidatiforme completa", "Embarazo ectópico", "Aborto diferido temprano", "Insuficiencia cervical"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, un útero vacío acompañado de una prueba de embarazo positiva y sangrado obliga a asumir una implantación anómala hasta demostrar lo contrario, dada la morbimortalidad materna asociada a su ruptura.<br><br>Perla ENARM: \"USG en paciente con sangrado transvaginal en el primer trimestre de embarazo... ¿Presencia de Saco gestacional intrauterino? No -> Considerar embarazo ectópico.\"<br><br>Análisis de Distractores: La mola hidatiforme (A) mostraría un patrón de \"tormenta de nieve\" intrauterino. El aborto diferido (C) requiere la visualización previa de un producto intrauterino sin vitalidad. La insuficiencia cervical (D) cursa con dilatación indolora usualmente en el segundo trimestre.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto, 2020, Diagramas de flujo, Página 22." 
+            },
+            {
+                id: 4, 
+                question: "En una paciente catalogada ecográficamente con un \"embarazo de viabilidad incierta\", ¿cuántos días deben transcurrir estrictamente para repetir el estudio de imagen y confirmar el diagnóstico?", 
+                options: ["2 a 3 días", "24 a 48 horas", "7 a 10 días", "14 a 21 días"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, apresurar el dictamen ecográfico puede resultar en un diagnóstico erróneo de aborto en un embarazo sano muy temprano. El intervalo establecido otorga el tiempo necesario para visualizar el desarrollo estructural o la aparición del latido cardíaco.<br><br>Perla ENARM: \"Se recomienda repetir el estudio ultrasonográfico con un intervalo de 7 a 10 días, cuando existan marcadores ultrasonográficos de mal pronóstico o embarazo con viabilidad incierta.\"<br><br>Análisis de Distractores: El lapso de 2 a 3 días (A) es exclusivo para la medición seriada de laboratorio (Beta-hCG). Reevaluar en 24 a 48 horas (B) no mostrará cambios ecográficos significativos. Esperar 14 a 21 días (D) incrementa innecesariamente la ansiedad y el riesgo de complicaciones agudas.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto, 2020, Pronóstico, Página 18." 
+            },
+            {
+                id: 5, 
+                question: "Para el seguimiento bioquímico ambulatorio de un embarazo en etapas tempranas, ¿cuál es el intervalo de tiempo recomendado para las determinaciones seriadas de la fracción beta de Gonadotropina Coriónica Humana?", 
+                options: ["Cada 24 horas", "Cada 12 horas", "Cada 7 días", "Cada 2 a 3 días"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, la curva fisiológica de la actividad metabólica del trofoblasto en un embarazo intrauterino normal duplica sus valores en este margen temporal, convirtiéndolo en un marcador dinámico excelente de buen pronóstico.<br><br>Perla ENARM: \"Consideraciones generales: Manejo ambulatorio... Medidas seriadas de b-HGC cada 2 a 3 días.\"<br><br>Análisis de Distractores: Determinar niveles a las 12 o 24 horas (A, B) no es costo-efectivo ni refleja un cambio exponencial confirmatorio. Hacerlo a los 7 días (C) corresponde al tiempo indicado para repetir un ultrasonido ecográfico, no la prueba hormonal en sangre.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto, 2020, Cuadro 1, Página 23." 
+            },
+            {
+                id: 6, 
+                question: "Durante la evaluación ultrasonográfica de un saco intrauterino anembrionado, ¿a partir de qué diámetro del saco gestacional se decreta la inviabilidad definitiva del embarazo?", 
+                options: ["Mayor a 10 milímetros", "Mayor a 15 milímetros", "Mayor a 20 milímetros", "Mayor a 25 milímetros"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, un saco de estas dimensiones que se encuentre totalmente vacío certifica un fallo del desarrollo primario y permite al médico tomar decisiones resolutivas definitivas sin necesidad de vigilancia adicional.<br><br>Perla ENARM: \"Repetir USG: Saco Gestacional mayor 25 mm... Embarazo no viable -> Referencia.\"<br><br>Análisis de Distractores: Los valores menores a 25 milímetros (A, B, C) representan estadios donde el polo fetal podría ser aún muy pequeño para el nivel de resolución del ultrasonido, lo cual los agrupa en la categoría de \"viabilidad incierta\" que obliga a revalorar.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto, 2020, Diagramas de flujo, Página 22." 
+            },
+            {
+                id: 7, 
+                question: "Si durante el rastreo por ultrasonido no se percibe actividad cardíaca fetal, ¿cuál es el tamaño de la longitud cráneo-rabadilla que establece el diagnóstico confirmatorio de \"embarazo no viable\"?", 
+                options: ["Mayor a 5 milímetros", "Mayor a 7 milímetros", "Mayor a 10 milímetros", "Mayor a 12 milímetros"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, este punto de corte biométrico es irrefutable. Si el embrión alcanzó esta longitud, la falta de tubo cardíaco funcional asegura que la detención del crecimiento es irreversible.<br><br>Perla ENARM: \"No se detecta Frecuencia Cardiaca Fetal, Longitud Cráneo-Rabadilla mayor 7mm: Embarazo No viable.\"<br><br>Análisis de Distractores: Embriones de 5 milímetros (A) caen en el rubro de viabilidad incierta, pudiendo tratarse de gestaciones menores a 6 semanas. Las medidas de 10 y 12 milímetros (C, D) sobrepasan el criterio y retrasarían la conducta si se esperara a que el embrión creciera hasta ese punto sin latido.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto, 2020, Diagramas de flujo, Página 22." 
+            },
+            {
+                id: 8, 
+                question: "¿Cuál es el hallazgo anormal de la frecuencia cardíaca fetal que cuenta con mayor especificidad para predecir un desenlace abortivo en el primer trimestre?", 
+                options: ["Bradicardia menor a 110", "Taquicardia mayor a 180", "Arritmia sinusal fetal", "Desaceleración temprana"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, la caída de los latidos fetales refleja un ambiente de hipoxia severa y colapso circulatorio inminente del embrión, siendo el factor pronóstico aislado más adverso documentado por ultrasonido.<br><br>Perla ENARM: \"Los marcadores ultrasonograficos que predicen aborto en mujeres con viabilidad fetal confirmada son: Bradicardia fetal (con FCF < 110 latidos por minuto, entre la 6 a 14 semanas de gestación, Sensibilidad 68% y Especificidad 97%).\"<br><br>Análisis de Distractores: La taquicardia (B) o arritmias (C) no son predictores ecográficos de alta especificidad para aborto descritos en esta normativa. Las desaceleraciones (D) se evalúan mediante registro cardiotocográfico en el tercer trimestre, no en la amenaza de aborto.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto, 2020, Pronóstico, Página 17." 
+            },
+            {
+                id: 9, 
+                question: "De forma fisiológica y ecográfica, ¿cuál es la frecuencia cardiaca normal esperada para un embrión sano entre las semanas 5 y 10 de gestación?", 
+                options: ["80 a 110 latidos por minuto", "100 a 175 latidos por minuto", "120 a 160 latidos por minuto", "140 a 190 latidos por minuto"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, los rangos de normalidad en etapas tan precoces son más amplios que en el embarazo a término, y conocerlos evita catalogar falsamente al producto con sufrimiento agudo precoz o inminencia de pérdida.<br><br>Perla ENARM: \"La Frecuencia Cardiaca Fetal durante la semana de gestación 5 a 10 es de 100 a 175 latidos por minuto, cuando existe FCF < 120 latidos por minuto se asocia con muerte fetal.\"<br><br>Análisis de Distractores: El rango de 120 a 160 (C) es el estándar oro para el feto durante el segundo y tercer trimestre, pero es incorrecto para esta etapa embrionaria. Rangos muy bajos (A) indican muerte inminente y los altos (D) no corresponden a la norma basal clínica.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto, 2020, Pronóstico, Página 18." 
+            },
+            {
+                id: 10, 
+                question: "¿Cuál es el fármaco de primera línea sugerido por su mecanismo antiespasmódico para aliviar el dolor y relajar el músculo liso uterino?", 
+                options: ["Terbutalina", "Indometacina", "Butilhioscina", "Paracetamol"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, controlar la sintomatología dolorosa mejora el estado de ansiedad de la paciente y teóricamente reduce el riesgo de expulsión al frenar la motilidad del miometrio con agentes anticolinérgicos específicos.<br><br>Perla ENARM: \"Los tocolíticos que han sido evaluados incluyen la atropina, agentes escopolaminas e hioscinas (por su actividad antiespasmódica)... Cuadro 1: Antiespasmódicos (butilhioscina).\"<br><br>Análisis de Distractores: La terbutalina (A) es un beta-agonista también sugerido, pero la Butilhioscina es el antiespasmódico directo resaltado como primera opción. La indometacina (B) es para amenaza de parto pretérmino en etapas tardías. El paracetamol (D) es analgésico pero sin efecto tocolítico relajante de músculo liso.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto, 2020, Cuadro 1, Página 23." 
+            },
+            {
+                id: 11, 
+                question: "¿En qué escenario clínico específico cuenta con recomendación absoluta la indicación terapéutica de progesterona natural?", 
+                options: ["Presencia de hemorragia severa", "Prevención primaria poblacional", "Presencia de contracciones uterinas", "Deficiencia de cuerpo lúteo"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, usar progesterona de manera indiscriminada como un \"sellador\" del embarazo carece de base médica. Solo aporta beneficio si la mujer se sometió a reproducción asistida o inducción de ovulación, donde la producción hormonal materna es biológicamente deficiente.<br><br>Perla ENARM: \"Solo se recomienda el uso de los progestágenos, en los casos de deficiencia del cuerpo lúteo (en embarazos obtenidos mediante técnicas de reproducción asistida o con el uso de inductores de la ovulación).\"<br><br>Análisis de Distractores: Darla a toda la población (B), para contracciones (C) o hemorragias (A) es una mala práctica médica común reprobada expresamente por la directriz clínica.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto, 2020, Cuadro 1, Página 23." 
+            },
+            {
+                id: 12, 
+                question: "Según el cuadro de medicamentos normativo de la GPC, ¿cuál es la dosis establecida de inmunoglobulina humana anti-D a administrar en el primer embarazo con sangrado?", 
+                options: ["50 microgramos", "100 microgramos", "300 microgramos", "500 microgramos"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, la dosis estándar que logra la neutralización profiláctica de los antígenos eritrocitarios fetales tempranos en circulación materna es inferior a la utilizada en el postparto o en traumatismos obstétricos severos.<br><br>Perla ENARM: \"La inmunoglobulina humana anti-D, se debe administrar en las mujeres Rh negativo... Dosis: 100 microgramos (500 Unidades Internacionales) en el primer embarazo.\"<br><br>Análisis de Distractores: Las dosis de 300 microgramos (C) se emplean tradicionalmente después de las 28 semanas o en eventos masivos de microtransfusión. Las dosis de 50 (A) y 500 microgramos (D) no corresponden al cuadro clínico de protección precoz indicado en la pauta oficial.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto, 2020, Prevención, Página 16." 
+            },
+            {
+                id: 13, 
+                question: "En el manejo no farmacológico de la Amenaza de Aborto, ¿cuál es el tiempo de reposo absoluto sugerido a partir de que la paciente deja de presentar sangrado?", 
+                options: ["Hasta 12 horas", "Hasta 48 horas", "Hasta 7 días", "Todo el embarazo"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, enviar a la mujer a la inmovilidad prolongada es contraproducente (riesgo de trombosis) y no modifica el éxito. El reposo está dictado de manera breve como ventana de observación clínica ante recidivas del coágulo subcorial.<br><br>Perla ENARM: \"Se sugiere el reposo absoluto, hasta 48 horas, tras el cese del sangrado, suplementar con ácido fólico y uso de sedante.\"<br><br>Análisis de Distractores: Reposar 12 horas (A) es insuficiente para asegurar el cese hemostático real. Extenderlo a 7 días (C) o indicarlo por todo el embarazo (D) es obsoleto, aumenta la morbilidad y es catalogado como carente de justificación y evidencia.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto, 2020, Tratamiento, Página 19." 
+            },
+            {
+                id: 14, 
+                question: "Como estrategia en el tratamiento, se indica suspender las relaciones sexuales (coito interrumpido). ¿Cuál es la justificación fisiopatológica textual que cita la GPC respecto a la eyaculación?", 
+                options: ["Alteración de flora bacteriana", "El semen libera prostaglandinas", "Incrementa riesgo de desgarro", "Aumenta isoinmunización feto-materna"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, la exposición vaginal a los componentes biológicos del líquido seminal ejerce un efecto directo sobre el cérvix y el miometrio, provocando contracciones uterinas y maduración cervical indeseadas en el escenario de sangrado.<br><br>Perla ENARM: \"Manejo ambulatorio: Explicar la importancia del coito interrumpido durante la actividad sexual, debido a que el semen libera prostaglandinas.\"<br><br>Análisis de Distractores: Alterar la flora (A) o generar desgarros (C) no son los mecanismos moleculares inductores de contracción en este caso. La isoinmunización (D) es hematológica, no transmitida por vía sexual.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto, 2020, Cuadro 1, Página 23." 
+            },
+            {
+                id: 15, 
+                question: "Con base en la mejor evidencia documentada en la GPC, ¿qué intervención de micronutrientes se recomienda de forma universal antes y durante el embarazo para prevenir el aborto espontáneo?", 
+                options: ["Altas dosis de vitamina A", "Altas dosis de vitamina C", "Ácido acetilsalicílico temprano", "Multivitaminas y ácido fólico"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, existe una correlación sólida entre los depósitos adecuados de oligoelementos y folatos séricos con un menor índice poblacional de pérdidas tempranas por defectos anatómicos y vasculares iniciales.<br><br>Perla ENARM: \"La suplementación de vitaminas antes y durante del embarazo ayuda a prevenir el aborto espontaneo. Multivitaminas más hierro y ácido fólico (Fuerte GRADE).\"<br><br>Análisis de Distractores: El consumo aislado de Vitamina C (B) o Vitamina A (A) carece de impacto en la tasa de nacimientos y están explícitamente negados en la guía. El ácido acetilsalicílico (C) tiene su nicho preventivo en fenotipos de preeclampsia o síndrome antifosfolípido, no como norma general contra el aborto.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto, 2020, Prevención, Página 13 y 32." 
+            },
+            {
+                id: 16, 
+                question: "Desde la perspectiva del riesgo epidemiológico, ¿cuál es el porcentaje de posibilidad basal de presentar aborto espontáneo en una paciente que tiene 45 años de edad?", 
+                options: ["20 por ciento", "40 por ciento", "60 por ciento", "80 por ciento"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, la curva de riesgo asciende severamente, traduciendo directamente el deterioro de la calidad de los ovocitos y el altísimo incremento de errores meióticos al final de la etapa reproductiva de la mujer.<br><br>Perla ENARM: \"La frecuencia de pérdida temprana del embarazo... aumenta bruscamente a 20% a la edad de 35 años y a 40% a la edad de 40 años, siendo de 80% a la edad de 45 años.\"<br><br>Análisis de Distractores: A los 35 años el riesgo es del 20 por ciento (A). A los 40 años el riesgo se sitúa en 40 por ciento (B). Ningún grupo etario tiene una estandarización de 60 por ciento (C) directo en la estadística oficial de la guía.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto, 2020, Introducción, Página 8." 
+            },
+            {
+                id: 17, 
+                question: "Según la clasificación temporal estipulada para la amenaza de aborto, ¿a partir de qué semana de gestación se cataloga clínicamente como \"tardía\"?", 
+                options: ["12 semanas de gestación", "14 semanas de gestación", "18 semanas de gestación", "20 semanas de gestación"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, el abordaje diagnóstico cambia porque tras completar las primeras trece semanas y la placentación total, las causas del sangrado varían de defectos cromosómicos a factores mecánicos u obstétricos mayores.<br><br>Perla ENARM: \"La amenaza de aborto tardía es aquella que se presenta entre la semana 14 a 22.\"<br><br>Análisis de Distractores: Las 12 semanas (A) marcan el fin del primer trimestre pero no el corte oficial de \"tardía\" según el texto. 20 y 22 semanas (D) representan el límite máximo teórico donde el cuadro dejaría de ser aborto para transformarse legalmente en amenaza de parto pretérmino inmaduro.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto, 2020, Introducción, Página 8." 
+            },
+            {
+                id: 18, 
+                question: "Si la Amenaza de Aborto se asocia como factor de riesgo en el transcurso futuro del embarazo que logra la viabilidad, ¿cuál es la principal complicación obstétrica asociada por la GPC en estas pacientes?", 
+                options: ["Oligohidramnios severo", "Preeclampsia con datos de severidad", "Trabajo de parto prematuro", "Acretismo placentario"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, el sangrado decidual temprano interfiere en parte con la invasión trofoblástica óptima y libera citocinas inflamatorias que crean un ambiente propenso a complicaciones estructurales de la membrana y el músculo en etapas finales.<br><br>Perla ENARM: \"Se ha demostrado que se asocia con aumento de riesgo obstétrico, como el trabajo de parto prematuro, bajo peso al nacer y rotura prematura de membranas.\"<br><br>Análisis de Distractores: La preeclampsia (B) requiere defectos endoteliales puros independientemente del sangrado clínico temprano. El acretismo (D) está ligado a cirugías uterinas previas. El oligohidramnios (A) es secundario a falla renal fetal o patología de arterias uterinas terminales.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto, 2020, Introducción, Página 8." 
+            },
+            {
+                id: 19, 
+                question: "A nivel ecográfico temprano, ¿cuál es el hallazgo patológico tisular característico que sustenta las manifestaciones clínicas o metrorragia en la Amenaza de Aborto?", 
+                options: ["Coágulo subcorial o hemorragia decidual", "Desprendimiento prematuro de placenta", "Implantación en segmento inferior", "Placentación con invasión miometrial"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, la tracción o fricción en el margen de adhesión del trofoblasto inmaduro con el tejido decidual origina un hematoma, cuya resolución puede tardar semanas y cursar con sangrado intermitente pero sin pérdida fetal intrínseca.<br><br>Perla ENARM: \"Cuadro 2. Etapas Clínicas de la Amenaza de Aborto: Ecografía: Hemorragia decidual, Coágulo subcorial, Embrión vivo intrauterino.\"<br><br>Análisis de Distractores: El desprendimiento prematuro (B) es un término exclusivo para el tercer trimestre. La implantación inferior (C) genera placenta previa a futuro. La invasión miometrial (D) describe un defecto histológico del acretismo y no un sangrado subcorial agudo.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto, 2020, Cuadros o figuras, Página 24." 
+            },
+            {
+                id: 20, 
+                question: "En el diagnóstico diferencial clínico, ¿qué dato de la exploración del cuello uterino transforma la clasificación de \"Amenaza de aborto\" a un aborto \"Inevitable\"?", 
+                options: ["Posición en retroversión", "Sangrado con coágulos", "Dolor lumbopélvico punzante", "Inicio de la dilatación cervical"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, la integridad del orificio cervical interno es la barrera que permite denominar al cuadro como una \"amenaza\" reversible. La ruptura de este hito indica que el motor uterino ya ha progresado irreversiblemente hacia la expulsión ovular.<br><br>Perla ENARM: \"Una vez que la dilatación del cuello uterino ha comenzado el aborto involuntario es inevitable.\"<br><br>Análisis de Distractores: Un cérvix retroverso (A) es una variante anatómica normal. La presencia de coágulos (B) o dolor severo (C) aumenta la sospecha de pérdida aguda y agrava el cuadro clínico, pero no categoriza estructuralmente la inevitabilidad de forma autónoma sin comprobar la dilatación.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto, 2020, Detección, Página 16." 
+            },
+            {
+                id: 21, 
+                question: "De acuerdo a la estadística epidemiológica, ¿cuál es la frecuencia de presentación de la amenaza de aborto durante los embarazos tempranos?", 
+                options: ["5 a 10 %", "10 a 15 %", "20 a 25 %", "30 a 35 %"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, el sangrado temprano es una de las complicaciones obstétricas más prevalentes, afectando a una cuarta parte de todas las mujeres en las fases iniciales de la gestación, lo que exige un protocolo de escrutinio sistematizado en el primer nivel de atención.<br><br>Perla ENARM: \"La amenaza de aborto es una de las complicaciones obstétricas más comunes, con una incidencia que varía entre 20% y 25% de los embarazos tempranos.\"<br><br>Análisis de Distractores: El rango de 5 a 10 % corresponde al riesgo de pérdida después de la novena semana. 10 a 15 % y 30 a 35 % son valores subestimados y sobreestimados, respectivamente, que no reflejan la estadística oficial de presentación clínica.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto en el primer y segundo nivel de atención, 2020, Introducción, Página 8." 
+            },
+            {
+                id: 22, 
+                question: "De las pacientes que cursan clínicamente con una amenaza de aborto, ¿qué porcentaje de ellas progresará de forma inevitable a una pérdida de la gestación?", 
+                options: ["1 a 2 %", "3 a 16 %", "20 a 25 %", "40 a 50 %"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, aunque la presentación clínica del sangrado es muy frecuente, la gran mayoría de los embarazos continúan su desarrollo de manera exitosa si se descartan alteraciones cromosómicas; solo una fracción menor culminará en la expulsión del producto.<br><br>Perla ENARM: \"La amenaza de aborto se presenta en uno de cada cinco embarazos, de los cuales entre 3% y 16% terminará en aborto.\"<br><br>Análisis de Distractores: 1 a 2 % es un porcentaje de complicación demasiado bajo. 20 a 25 % representa la incidencia global de la amenaza de aborto en sí misma. 40 a 50 % es incorrecto, ya que significaría que casi la mitad de los sangrados terminarían en aborto, lo cual contradice la estadística clínica.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto en el primer y segundo nivel de atención, 2020, Justificación, Página 9." 
+            },
+            {
+                id: 23, 
+                question: "En un embarazo evaluado entre las 5 y 10 semanas de gestación, ¿cuál es el valor exacto de la frecuencia cardíaca fetal que se asocia con un aumento marcado en la mortalidad intrauterina?", 
+                options: ["< 120 latidos por minuto", "< 140 latidos por minuto", "< 160 latidos por minuto", "< 175 latidos por minuto"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, la inmadurez del tubo cardíaco embrionario tiene un margen de tolerancia específico. Una frecuencia por debajo de 120 latidos por minuto en esta etapa es un signo ominoso de disfunción cardiovascular precoz.<br><br>Perla ENARM: \"La frecuencia cardíaca fetal durante la semana de gestación 5 a 10 es de 100 a 175 latidos por minuto, cuando existe frecuencia cardíaca fetal < 120 latidos por minuto se asocia con muerte fetal.\"<br><br>Análisis de Distractores: Las opciones < 140, < 160 y < 175 caen dentro del amplio rango de normalidad esperado para la actividad autonómica embrionaria (100 a 175 latidos por minuto), por lo que no son predictores de muerte en esta fase temprana.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto en el primer y segundo nivel de atención, 2020, Pronóstico, Página 18." 
+            },
+            {
+                id: 24, 
+                question: "Además de la bradicardia fetal y el tamaño del hematoma, ¿cuál es el hallazgo anatómico en los anexos embrionarios evaluado por ultrasonido que incrementa el riesgo de pérdida del embarazo?", 
+                options: ["Saco gestacional simétrico", "Líquido amniótico claro", "Trofoblasto con flujo periférico", "Saco vitelino de forma irregular"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, el saco vitelino provee el soporte nutricional primario; cualquier alteración morfológica, ya sea irregularidad, alteraciones en su ecogenicidad o su ausencia, predice un fallo en el desarrollo embrionario.<br><br>Perla ENARM: \"Los marcadores ultrasonográficos que predicen aborto son: Saco vitelino con forma irregular, alteraciones de ecogenicidad o ausencia.\"<br><br>Análisis de Distractores: Un saco gestacional simétrico, el líquido amniótico claro y un flujo trofoblástico periférico conservado son hallazgos de un embarazo de evolución normal y pronóstico favorable.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto en el primer y segundo nivel de atención, 2020, Pronóstico, Página 17." 
+            },
+            {
+                id: 25, 
+                question: "Si se decide emplear un fármaco de la familia de los beta-agonistas para lograr la relajación del músculo liso uterino en la amenaza de aborto, ¿cuál es la opción sugerida?", 
+                options: ["Nifedipino", "Terbutalina", "Atosiban", "Indometacina"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, cuando la actividad uterina contribuye al riesgo de expulsión, se pueden utilizar agentes tocolíticos. La terbutalina actúa sobre los receptores beta-2 adrenérgicos del miometrio disminuyendo las contracciones.<br><br>Perla ENARM: \"Los tocolíticos que han sido evaluados incluyen la atropina, agentes escopolaminas e hioscinas, y betas agonistas (terbutalina, isoxsuprina, clorhidrato de nilidrina).\"<br><br>Análisis de Distractores: Nifedipino es un calcioantagonista, Atosiban es un antagonista de oxitocina, e Indometacina es un inhibidor de prostaglandinas; aunque todos son tocolíticos, pertenecen a familias farmacológicas diferentes y no son beta-agonistas.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto en el primer y segundo nivel de atención, 2020, Cuadro 1, Página 23." 
+            },
+            {
+                id: 26, 
+                question: "¿Cuál es la dosis diaria estandarizada de ácido fólico que debe recibir una paciente embarazada para la prevención de complicaciones en el primer trimestre?", 
+                options: ["1.0 mg", "2.0 mg", "0.4 mg", "5.0 mg"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, la suplementación con folatos previene la aparición de defectos del tubo neural y fomenta un entorno celular óptimo para la placentación, siendo esta la dosis profiláctica universal en pacientes sin factores de riesgo adicionales.<br><br>Perla ENARM: \"Se sugiere el reposo absoluto, suplementar con ácido fólico (0.4 mg/día) y multivitamínicos.\"<br><br>Análisis de Distractores: La dosis de 5.0 mg está reservada para pacientes con antecedente de defectos del tubo neural, uso de anticonvulsivantes o diabetes descontrolada. Las dosis de 1.0 mg y 2.0 mg no corresponden a la indicación de profilaxis poblacional estándar.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto en el primer y segundo nivel de atención, 2020, Cuadro de medicamentos, Página 25." 
+            },
+            {
+                id: 27, 
+                question: "En pacientes sin complicaciones aparentes, ¿en qué momento de la gestación se establece que debe realizarse de forma ideal la consulta de control prenatal inicial para la detección de riesgos?", 
+                options: ["10 semanas", "12 semanas", "14 semanas", "20 semanas"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, realizar la valoración inicial en este momento permite identificar de forma temprana comorbilidades, iniciar suplementación clave y programar estudios de escrutinio cromosómico oportunos.<br><br>Perla ENARM: \"La consulta de control prenatal (idealmente a las diez semanas), debe incluir detecciones y pruebas encaminadas a identificar a las mujeres que necesitan cuidados adicionales.\"<br><br>Análisis de Distractores: Consultar a las 12 o 14 semanas retrasa la ventana de oportunidad para detectar riesgo de anomalías cromosómicas tempranas y optimizar niveles de micronutrientes. A las 20 semanas el periodo de organogénesis y máximo riesgo de aborto temprano ha concluido.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto en el primer y segundo nivel de atención, 2020, Prevención, Página 14." 
+            },
+            {
+                id: 28, 
+                question: "¿Qué esquema vitamínico carece de utilidad clínica demostrada y, por lo tanto, no debe recomendarse como intervención para la prevención del aborto espontáneo?", 
+                options: ["Vitamina D y Calcio", "Complejo B y Ácido fólico", "Sulfato ferroso y Zinc", "Vitamina A y Vitamina C"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, la evidencia científica de alta calidad descartó el beneficio de la suplementación aislada o combinada de estos dos elementos en la prevención de la pérdida temprana, a diferencia de los multivitamínicos integrales.<br><br>Perla ENARM: \"La suplementación con vitamina A y C no ayudan a prevenir el aborto espontaneo (Fuerte GRADE).\"<br><br>Análisis de Distractores: El ácido fólico y el sulfato ferroso están explícitamente indicados dentro de la estrategia de multivitamínicos. La vitamina D y el Calcio son componentes nutricionales del control prenatal con beneficio en otros desenlaces como preeclampsia.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto en el primer y segundo nivel de atención, 2020, Prevención, Página 14." 
+            },
+            {
+                id: 29, 
+                question: "Durante la consulta de control prenatal integral de una paciente menor de 25 años, ¿qué patógeno infeccioso específico debe buscarse intencionadamente debido a su alta prevalencia en este grupo etario?", 
+                options: ["Treponema pallidum", "Neisseria gonorrhoeae", "Chlamydia trachomatis", "Virus del papiloma humano"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, la infección intracelular por este microorganismo es frecuentemente asintomática pero altamente deletérea para la integridad de las membranas ovulares y la cavidad uterina, elevando el riesgo de complicaciones.<br><br>Perla ENARM: \"La consulta de control prenatal debe incluir: Informar a las mujeres menores de 25 años, la alta prevalencia de infección por Chlamidia en su grupo de edad.\"<br><br>Análisis de Distractores: Aunque la sífilis (Treponema pallidum) se tamiza rutinariamente, la especificidad poblacional de alerta en '< 25 años' dictada en la recomendación de la GPC pertenece a Chlamydia. Gonorrea y VPH son patógenos de transmisión sexual, pero no son el enfoque directo de esta instrucción preventiva etaria.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto en el primer y segundo nivel de atención, 2020, Prevención, Página 15." 
+            },
+            {
+                id: 30, 
+                question: "Ante una mujer embarazada con antecedentes de aborto espontáneo, ¿qué intervención no farmacológica de soporte ha demostrado aumentar la tasa de éxito del embarazo en curso?", 
+                options: ["Reposo absoluto en cama", "Asesoramiento psicológico prenatal", "Dieta hipercalórica estricta", "Suspensión de la actividad física"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, la modulación del estrés, la ansiedad y la depresión a través de apoyo profesional especializado disminuye las catecolaminas circulantes y mejora el entorno neuroendocrino del embarazo.<br><br>Perla ENARM: \"El aborto espontáneo se ha asociado con aumento de angustia, ansiedad y depresión. Las mujeres embarazadas que seguían un plan específico de apoyo de asesoramiento prenatal tenían una tasa de éxito del embarazo significativamente más alta que las que no participaron.\"<br><br>Análisis de Distractores: El reposo absoluto y la suspensión de actividad no garantizan la prevención de pérdida ni mejoran las tasas de éxito estadístico. Una dieta hipercalórica promueve obesidad, la cual es un factor de riesgo independiente para aborto.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto en el primer y segundo nivel de atención, 2020, Prevención, Página 14." 
+            },
+            {
+                id: 31, 
+                question: "Independientemente de la edad cronológica gestacional, ¿qué peso fetal establece el límite fisiológico y legal para catalogar la interrupción del embarazo como un aborto?", 
+                options: ["< 500 g", "< 1000 g", "< 1500 g", "< 2000 g"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, esta definición permite estandarizar el diagnóstico a nivel internacional. Si un producto es expulsado pesando más de este valor, ingresa a la categoría de inmaduro o prematuro, lo cual cambia el manejo médico y el pronóstico neonatal.<br><br>Perla ENARM: \"Aborto: interrupción del embarazo antes de las 22 semanas de gestación o antes que el feto alcance 500 gramos de peso.\"<br><br>Análisis de Distractores: Pesos de 1000 g, 1500 g o 2000 g corresponden a diferentes grados de prematurez fetal (extrema a moderada) en embarazos que ya superaron el límite clínico de aborto.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto en el primer y segundo nivel de atención, 2020, Glosario, Página 38." 
+            },
+            {
+                id: 32, 
+                question: "En el contexto del asesoramiento genético y reproductivo temprano, ¿cuál es el porcentaje de riesgo basal de presentar una pérdida gestacional en una paciente de 40 años?", 
+                options: ["9 a 17 %", "20 %", "80 %", "40 %"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, el declive exponencial en la competencia de los ovocitos provoca que el riesgo de aneuploidías y pérdida celular alcance casi la mitad de las gestaciones al iniciar la quinta década de vida.<br><br>Perla ENARM: \"La frecuencia de pérdida temprana del embarazo aumenta bruscamente a 20% a la edad de 35 años y a 40% a la edad de 40 años.\"<br><br>Análisis de Distractores: El riesgo de 9 a 17 % aplica a pacientes jóvenes entre 20 y 30 años. El 20 % se observa a los 35 años, y el catastrófico 80 % se establece a partir de los 45 años.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto en el primer y segundo nivel de atención, 2020, Introducción, Página 8." 
+            },
+            {
+                id: 33, 
+                question: "Durante la primera visita de control prenatal en el embarazo temprano, ¿qué alteración infecciosa silente debe ser tamizada y detectada obligatoriamente mediante estudios de laboratorio?", 
+                options: ["Vaginosis bacteriana", "Infección por estreptococo", "Bacteriuria asintomática", "Candidiasis vulvovaginal"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, la colonización urinaria superior a 100,000 unidades formadoras de colonias sin síntomas clásicos es un potente inductor de prostaglandinas inflamatorias que desencadenan sangrado uterino, cólicos y progresión al aborto.<br><br>Perla ENARM: \"La consulta de control prenatal debe incluir detecciones y pruebas encaminadas a: Detectar bacteriuria asintomática.\"<br><br>Análisis de Distractores: Vaginosis y candidiasis producen flujo vaginal evidente y no son tamizadas obligatoriamente sin síntomas en la primera cita profiláctica básica. El estreptococo del grupo B se tamiza mediante cultivo selectivo en las semanas 35 a 37 del tercer trimestre.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto en el primer y segundo nivel de atención, 2020, Prevención, Página 15." 
+            },
+            {
+                id: 34, 
+                question: "Ante un cuadro clínico compatible con sangrado temprano en el primer nivel de atención, ¿cuál es el déficit en la unidad médica que obliga a la referencia inmediata de la paciente?", 
+                options: ["Ausencia de ultrasonido o laboratorio", "Dolor pélvico de leve intensidad", "Presencia de náuseas y vómitos", "Sangrado transvaginal escaso"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, la toma de decisiones obstétricas no puede basarse únicamente en la clínica; requiere forzosamente visualizar la viabilidad y descartar patologías mortales como el embarazo ectópico mediante imagen y soporte de laboratorio urgente.<br><br>Perla ENARM: \"Cuando el servicio de atención médica no está disponible y los síntomas clínicos requieren de la evaluación adicional, se debe referir a la institución más cercana que ofrezca servicio de laboratorio y exploración por ultrasonido.\"<br><br>Análisis de Distractores: El sangrado escaso y el dolor leve son los datos clásicos que integran la definición de amenaza manejable si existen los recursos. Náuseas y vómitos son síntomas gestacionales comunes no relacionados directamente como criterio de traslado urgente.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto en el primer y segundo nivel de atención, 2020, Referencia, Página 20." 
+            },
+            {
+                id: 35, 
+                question: "En el escenario estricto de un embarazo logrado mediante reproducción asistida con deficiencia lutea confirmada, ¿cuál es la dosis de progesterona natural recomendada vía vaginal u oral?", 
+                options: ["50 mg cada 24 horas", "100 mg cada 8 horas", "500 mg en dosis única", "200 a 400 mg cada 12 horas"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, la sustitución hormonal debe mantener un soporte endometrial óptimo de manera constante hasta que la placenta asuma su función de producción endocrina (semana 12).<br><br>Perla ENARM: \"Cuadro 1: Progesterona natural 200 mg a 400 mg, cada 12 horas, hasta la semana 12 de gestación en caso de insuficiencia de cuerpo lúteo.\"<br><br>Análisis de Distractores: Las dosis menores de 50 mg o 100 mg no logran la concentración terapéutica requerida para frenar la actividad uterina compensatoria. La dosis única masiva de 500 mg no provee una biodisponibilidad sostenida en el tiempo necesario.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto en el primer y segundo nivel de atención, 2020, Cuadro 1, Página 23." 
+            },
+            {
+                id: 36, 
+                question: "En la estratificación de riesgos e intervenciones, ¿a partir de qué índice de masa corporal se diagnostica la obesidad como una condición de vulnerabilidad para pérdida gestacional?", 
+                options: ["≥ 25", "≥ 30", "≥ 35", "≥ 40"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, el tejido adiposo en exceso genera resistencia a la insulina y estados proinflamatorios que interfieren de forma directa con la fertilidad conyugal, alterando la microcirculación endometrial necesaria para una implantación firme.<br><br>Perla ENARM: \"Las mujeres embarazadas que requieren cuidado adicional son las que tienen: Obesidad con índice de masa corporal (IMC) ≥ 30 o bajo peso (IMC ≤ 18).\"<br><br>Análisis de Distractores: Un índice ≥ 25 corresponde a sobrepeso, el cual no está marcado como criterio mayor para cuidados adicionales estrictos en este contexto. Los valores de ≥ 35 y ≥ 40 son grados avanzados que ya entran en la categoría de riesgo, pero el punto de corte definitorio basal es 30.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto en el primer y segundo nivel de atención, 2020, Prevención, Página 15." 
+            },
+            {
+                id: 37, 
+                question: "Si se prescribe butilhioscina para el manejo agudo de los espasmos uterinos en una paciente hospitalizada o ambulatoria, ¿cuál es la posología correcta establecida en el cuadro oficial de medicamentos?", 
+                options: ["10 mg cada 12 horas", "40 mg cada 6 horas", "20 mg cada 8 horas", "100 mg cada 24 horas"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, la administración pautada de este relajante del músculo liso uterino por vía intramuscular o intravenosa abate de forma eficaz la contractilidad pélvica rítmica sin inducir efectos colaterales severos de hipotensión o bloqueo colinérgico total.<br><br>Perla ENARM: \"Butilhioscina: 20 mg cada 8 horas intramuscular o intravenoso.\"<br><br>Análisis de Distractores: Dosis más altas aumentan exponencialmente la taquicardia refleja, erupciones y sequedad en la paciente, superando la dosis ponderal tóxica. Una dosis de 10 mg cada 12 horas es subterapéutica para suprimir contracciones que amenazan la viabilidad de la gestación.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto en el primer y segundo nivel de atención, 2020, Cuadro de medicamentos, Página 25." 
+            },
+            {
+                id: 38, 
+                question: "Además de la prueba de gonadotropina, ultrasonido, examen de orina y hemoclasificación, ¿qué otro estudio de sangre es imperativo solicitar en el abordaje general de la Amenaza de Aborto?", 
+                options: ["Biometría hemática", "Tiempos de coagulación", "Perfil tiroideo completo", "Enzimas hepáticas"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, el sangrado puede variar desde escasas manchas hasta causar choque hipovolémico, por lo que documentar la hemoglobina inicial y el nivel de leucocitos es básico para descartar anemia materna o infecciones sistémicas que condicionen la pérdida.<br><br>Perla ENARM: \"Exámenes complementarios: Biometría Hemática, Química Sanguínea, Grupo sanguíneo y Rh, Examen General de Orina, Exudado cervicovaginal.\"<br><br>Análisis de Distractores: Tiempos de coagulación, perfil tiroideo y enzimas hepáticas son pruebas especializadas que solo se solicitarán si la paciente presenta antecedentes previos de trombofilias, preeclampsia severa o patología tiroidea franca, no como batería de ingreso universal.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto en el primer y segundo nivel de atención, 2020, Diagramas de flujo, Página 21." 
+            },
+            {
+                id: 39, 
+                question: "En un embarazo sin malformaciones y de desarrollo fisiológico, ¿a qué porcentaje de riesgo se reduce la probabilidad intrínseca de aborto espontáneo después de haber superado la novena semana?", 
+                options: ["1 a 2 %", "15 a 30 %", "50 %", "5 %"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, la superación del periodo temprano más crítico de división celular significa que el feto tiene una estructura robusta y las probabilidades de una falla genética letal han sido en gran parte sorteadas.<br><br>Perla ENARM: \"En un embarazo normal el feto viable de seis semanas es visualizado... el riesgo de aborto disminuye de 5% a 10% de la semana siete a la nueve, y 5% después de la novena semana de gestación.\"<br><br>Análisis de Distractores: El 15 a 30 % representa el riesgo inicial del embarazo temprano en las primeras seis semanas de implantación. Riesgos de 50 % están asociados con alteraciones confirmadas, no con embarazos normales que cruzan la semana nueve.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto en el primer y segundo nivel de atención, 2020, Introducción, Página 8." 
+            },
+            {
+                id: 40, 
+                question: "Durante el interrogatorio en la consulta prenatal inicial, ¿cuál de los siguientes trastornos endocrinos maternos exige categorizar obligatoriamente a la paciente para recibir cuidados adicionales?", 
+                options: ["Diabetes insulinodependiente", "Hipotiroidismo subclínico", "Síndrome de ovario poliquístico", "Hiperprolactinemia leve"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Amenaza de Aborto, el estado metabólico inestable y la microangiopatía diabética representan factores de riesgo mayores tanto para el fracaso de la placentación inicial como para alteraciones estructurales complejas en la organogénesis, requiriendo un nivel de atención superior.<br><br>Perla ENARM: \"Las mujeres embarazadas, que por lo general requieren de cuidado adicional, son las que tienen las siguientes condiciones: Enfermedad cardíaca, Enfermedad renal y Trastornos endocrinos como la diabetes insulinodependiente.\"<br><br>Análisis de Distractores: El SOP, el hipotiroidismo subclínico y la hiperprolactinemia afectan principalmente la ovulación y la fertilidad inicial. Una vez logrado el embarazo, su control farmacológico simple no posiciona a la madre en la misma categoría crítica de daño terminal de órgano que la diabetes tipo 1 insulinodependiente descrita en el protocolo de la GPC.", 
+                source: "GPC-SS-026-20, Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto en el primer y segundo nivel de atención, 2020, Prevención, Página 15." 
+            }
+        ];
+
+        // ==========================================
+        // ==========================================
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('gyoGMLastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('gyoGMProgress');
+                localStorage.removeItem('gyoGMLastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-pink-500 shadow-md z-10 border-pink-500 dark:border-pink-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-rose-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "GINECOLOGÍA Y OBSTETRICIA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "GPC-SS-026-20 • Prevención, diagnóstico, tratamiento y referencia de la paciente con amenaza de aborto en el primer y segundo nivel de atención";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="HM29510GYO.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-pink-100 dark:border-pink-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-pink-50 has-[:checked]:border-pink-400 dark:has-[:checked]:bg-pink-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-pink-600 dark:hover:bg-pink-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('gyoGMProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('gyoGMLastQId', currentQuestionId);
+                else localStorage.removeItem('gyoGMLastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('gyoGMProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

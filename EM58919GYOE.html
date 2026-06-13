@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================
+        // =========================================================
+        const questionsData = [
+            {
+                id: 1, 
+                question: "En una paciente asintomática con antecedente de dos cesáreas, ¿cuál es el estudio inicial indicado en el segundo trimestre para el escrutinio de anomalías placentarias?", 
+                options: ["Resonancia magnética pélvica", "Ultrasonido transvaginal", "Ultrasonido abdominal", "Cistoscopía diagnóstica"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, el protocolo inicial de evaluación en pacientes de alto riesgo debe realizarse de forma no invasiva para localizar topográficamente la placenta antes de la confirmación milimétrica en el tercer trimestre.<br><br>Perla ENARM: \"Se recomienda realizar ultrasonido abdominal de tamizaje para la detección de placenta previa en pacientes con antecedente de cesárea previa, antecedente de placenta previa en gestaciones previas o con factores de riesgo para anomalías de la inserción placentaria\".<br><br>Análisis de Distractores: El ultrasonido transvaginal es el estudio confirmatorio de elección (estándar de oro) a las 32 semanas, no el tamizaje inicial. La resonancia magnética y la cistoscopía se reservan para evaluar la extensión de la invasión a órganos adyacentes en casos de acretismo o percretismo avanzado.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Diagnóstico, Página 14." 
+            },
+            {
+                id: 2, 
+                question: "¿Cuál es el hallazgo ecográfico exacto que define categóricamente a la placenta previa?", 
+                options: ["Borde placentario a 15 mm", "Borde placentario sobre el orificio", "Inserción en fondo uterino", "Presencia de vasos aberrantes"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, la terminología antigua de placenta \"parcial\" o \"marginal\" se ha abandonado. Si la masa placentaria ocluye total o parcialmente la salida cervical, se diagnostica directamente como previa.<br><br>Perla ENARM: \"Se recomienda emplear el término de placenta previa cuando se tenga evidencia ultrasonográfica de que el borde inferior de la placenta se encuentre sobre el orificio cervical interno\".<br><br>Análisis de Distractores: Un borde a 15 mm define una inserción baja de placenta, no placenta previa. La inserción en fondo uterino es la ubicación fisiológica normal. La presencia de vasos aberrantes corresponde a vasa previa.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Diagnóstico, Página 16." 
+            },
+            {
+                id: 3, 
+                question: "¿A partir de qué edad gestacional se recomienda realizar la confirmación diagnóstica definitiva de las anomalías de inserción placentaria?", 
+                options: ["20 semanas", "24 semanas", "28 semanas", "32 semanas"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, el fenómeno fisiológico de elongación del segmento inferior uterino provoca que muchas placentas \"migren\" alejándose del cérvix, por lo que los diagnósticos realizados tempranamente tienen altas tasas de falsos positivos.<br><br>Perla ENARM: \"Se recomienda que la confirmación diagnóstica de placenta previa o inserción baja de placenta, sea a partir de las 32 semanas de gestación\".<br><br>Análisis de Distractores: A las 20, 24 y 28 semanas se debe mantener la vigilancia y tamizaje, pero el diagnóstico no es definitivo ya que el tejido corial aún puede desplazarse hacia el fondo uterino por el crecimiento miometrial.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Diagnóstico, Página 15." 
+            },
+            {
+                id: 4, 
+                question: "¿Cuál es la manifestación clínica principal en los casos de vasa previa tras la ruptura de membranas?", 
+                options: ["Sangrado rojo rutilante indoloro", "Hipertonía uterina con bradicardia", "Sangrado oscuro con desaceleraciones", "Dolor abdominal irradiado a espalda"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, la hemorragia en este padecimiento es de origen 100% fetal. Al romperse los vasos expuestos en las membranas, el feto pierde volemia rápidamente, lo que se refleja en sufrimiento fetal agudo y sangre desoxigenada (venosa/fetal).<br><br>Perla ENARM: \"En casos de vasa previa, la principal manifestación clínica es el sangrado transvaginal obscuro, sin presencia de dolor, seguido de alteraciones súbitas en el registro cardiotocográfico\".<br><br>Análisis de Distractores: El sangrado rojo rutilante indoloro es patognomónico de placenta previa. La hipertonía uterina y el dolor irradiado son típicos del desprendimiento prematuro de placenta normoincerta, entidades donde la hemorragia es predominantemente materna.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Diagnóstico, Página 13." 
+            },
+            {
+                id: 5, 
+                question: "Ante la sospecha clínica de anomalías en la inserción placentaria por sangrado transvaginal, ¿cuál intervención está absolutamente contraindicada?", 
+                options: ["Especuloscopía directa", "Tacto vaginal", "Ultrasonido endovaginal", "Aplicación de corticoesteroides"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, la exploración digital a ciegas del cérvix puede penetrar el canal endocervical y desgarrar un cotiledón placentario o un vaso fetal previo, desencadenando una hemorragia incontrolable y potencialmente letal.<br><br>Perla ENARM: \"No se recomienda realizar tacto vaginal en pacientes con sospecha de placenta previa\".<br><br>Análisis de Distractores: La especuloscopía directa es la maniobra recomendada inicialmente para visualizar el origen del sangrado. El ultrasonido endovaginal es seguro y el estándar de oro. Los corticoesteroides están indicados profilácticamente entre las 24 y 34 semanas.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Diagnóstico, Página 14." 
+            },
+            {
+                id: 6, 
+                question: "¿Cuál factor de riesgo tiene el mayor nivel de asociación (Odds Ratio) para desarrollar alteraciones anatómicas en la placentación?", 
+                options: ["Tabaquismo activo", "Edad materna avanzada", "Tratamientos de infertilidad", "Cesárea previa"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, la manipulación de la cavidad endometrial y los procedimientos de reproducción asistida alteran profundamente los mecanismos de implantación trofoblástica, liderando la tabla de riesgos estadísticos globales.<br><br>Perla ENARM: \"Tratamientos de infertilidad OR 1.97; IC 95% 1.45–2.66; P < 0.001\".<br><br>Análisis de Distractores: La cesárea previa es el factor más importante para acretismo con un OR de 1.76, ligeramente inferior. El tabaquismo y la edad avanzada confieren un riesgo moderado a bajo (OR 1.42 y 1.08, respectivamente).", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Cuadros o figuras, Página 40." 
+            },
+            {
+                id: 7, 
+                question: "En el manejo de la placenta previa o inserción baja, ¿en qué periodo gestacional se indica la administración del esquema de madurez pulmonar?", 
+                options: ["20 a 24 semanas", "24 a 34 semanas", "34 a 36 semanas", "36 a 38 semanas"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, estas pacientes cursan con un altísimo riesgo de resolución anticipada de urgencia debido a hemorragias masivas impredecibles, por lo que la inducción de neumocitos tipo II es vital para la sobrevida neonatal.<br><br>Perla ENARM: \"Se recomienda la administración de un esquema de corticoesteroides para la madurez pulmonar entre la semana 24 a 34 de gestación en pacientes con diagnóstico de placenta previa o inserción baja de placenta\".<br><br>Análisis de Distractores: Antes de las 24 semanas no hay receptores suficientes en el tejido pulmonar fetal. Entre las 34 y 36 semanas se indica el nacimiento anticipado si hubo sangrado, y a las 36 a 38 semanas se programa la cesárea en pacientes asintomáticas sin necesidad de esquema.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Tratamiento, Página 20." 
+            },
+            {
+                id: 8, 
+                question: "¿En qué semanas de gestación se debe programar el nacimiento en una paciente con placenta previa asintomática sin episodios de sangrado?", 
+                options: ["34 a 35 semanas", "36 a 37 semanas", "38 a 39 semanas", "39 a 40 semanas"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, la estrategia es equilibrar la madurez fisiológica del recién nacido contra el riesgo de iniciar un trabajo de parto espontáneo de término que desencadenaría una catástrofe hemorrágica.<br><br>Perla ENARM: \"Se recomienda programar el nacimiento entre la semana 36 a 37 de gestación en pacientes con diagnóstico de placenta previa o inserción baja de placenta y sin factores de riesgo o comorbilidades asociadas\".<br><br>Análisis de Distractores: 34 a 35 semanas es muy prematuro para una paciente asintomática. Llegar a la semana 38 o 40 implica un riesgo inminente de dinámica uterina espontánea y sangrado masivo agudo que llevaría a una cirugía de alta urgencia.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Tratamiento, Página 21." 
+            },
+            {
+                id: 9, 
+                question: "¿Cuál es la conducta para el nacimiento en una paciente con placenta previa y antecedente de episodios de sangrado transvaginal controlados?", 
+                options: ["Programar cesárea a las 38 semanas", "Programar cesárea entre 34 y 36 semanas", "Programar parto vaginal a las 37 semanas", "Esperar inicio de trabajo de parto"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, el historial de hemorragia durante el embarazo es el principal predictor de una complicación intraparto letal, obligando a adelantar la fecha de resolución para evitar un nuevo y más grave sangrado miometrial.<br><br>Perla ENARM: \"Se recomienda programar el nacimiento entre la semana 34 a 36 de gestación en pacientes con diagnóstico de placenta previa o inserción baja de placenta y antecedente de haber presentado uno o más episodios de sangrado transvaginal\".<br><br>Análisis de Distractores: Esperar a las 38 semanas o al trabajo de parto está proscrito en pacientes que ya sangraron. El parto vaginal está contraindicado universalmente si la placenta cubre el orificio cervical o si la paciente ha cursado con sangrado activo.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Tratamiento, Página 21." 
+            },
+            {
+                id: 10, 
+                question: "En una paciente asintomática con ultrasonido endovaginal a las 36 semanas, ¿cuál es la distancia ecográfica mínima del borde placentario al orificio cervical interno que permite intentar un parto vaginal seguro?", 
+                options: ["Mayor a 5 milímetros", "Menor a 10 milímetros", "Mayor a 10 milímetros", "Menor a 20 milímetros"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, si la placenta está a más de 1 cm, el polo cefálico puede descender durante la dilatación realizando un efecto hemostático compresivo sobre el borde vascular sin ocluir la salida.<br><br>Perla ENARM: \"Se recomienda considerar el nacimiento por vía vaginal en pacientes con diagnóstico de inserción baja de placenta, sin sangrado transvaginal activo y que cuenten con condiciones obstétricas favorables (Distancia entre el borde placentario y el OCI > 10 mm en Algoritmo 1)\".<br><br>Análisis de Distractores: Las distancias de 5 mm o menos de 10 mm tienen una tasa de fracaso prohibitiva y terminan en cesárea de emergencia. Menor a 20 milímetros es solo la definición de inserción baja, pero el punto de corte exacto para permitir prueba de parto de manera segura es que rebase los 10 mm.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Algoritmos, Página 36." 
+            },
+            {
+                id: 11, 
+                question: "En la fisiopatología quirúrgica del acretismo placentario secundario a cesáreas iterativas, ¿cuál es el sitio anatómico uterino que resulta invadido con mayor frecuencia?", 
+                options: ["Cara anterior del útero", "Fondo uterino posterior", "Cuerno uterino derecho", "Segmento uterino posterior"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, la implantación del trofoblasto sigue la ruta de menor resistencia miometrial creada por el defecto cicatrizal de las histerotomías transversas bajas previas, las cuales inciden clásicamente en la pared anterior por detrás de la reflexión vesical.<br><br>Perla ENARM: \"...se deberá de realizar una inspección completa de la pelvis, especialmente en la cara anterior del útero, pues es el sitio más común de invasión placentaria\".<br><br>Análisis de Distractores: El fondo uterino, cuerno derecho y segmento posterior son sitios de tejido íntegro en las técnicas quirúrgicas obstétricas habituales, por lo que raramente sufren acretismo de origen yatrogénico secundario a cesárea previa.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Tratamiento, Página 25." 
+            },
+            {
+                id: 12, 
+                question: "Durante el manejo de control de daños en una paciente con acretismo placentario, ¿qué grupo farmacológico NO se recomienda utilizar para la profilaxis de hemorragia obstétrica?", 
+                options: ["Corticoesteroides", "Antibióticos profilácticos", "Uterotónicos", "Antifibrinolíticos"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, la contracción enérgica de un miometrio invadido y firmemente adherido al tejido corial provocará desgarros tisulares extensos e irreparables, empeorando dramáticamente la pérdida hemática.<br><br>Perla ENARM: \"En pacientes con diagnóstico de acretismo placentario no se recomienda el uso de uterotónicos para la profilaxis de la hemorragia obstétrica\".<br><br>Análisis de Distractores: Los corticoesteroides no alteran el tono muscular en quirófano. Los antibióticos previenen infección por manipulación. Los antifibrinolíticos como el ácido tranexámico son útiles en el control del sangrado masivo.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Tratamiento, Página 26." 
+            },
+            {
+                id: 13, 
+                question: "En pacientes con acretismo placentario confirmado, ¿cuál es la técnica quirúrgica radical recomendada para la resolución del embarazo?", 
+                options: ["Histerectomía subtotal con extracción", "Legrado uterino inmediato profundo", "Extracción manual de placenta", "Dejar la placenta in situ"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, la máxima premisa de supervivencia es no manipular un lecho invadido. Se debe aislar el órgano y extirparlo en bloque.<br><br>Perla ENARM: \"En pacientes con acretismo placentario se recomienda realizar cesárea histerectomía, dejar la placenta in situ y evitar intentar separar la placenta de las paredes uterinas\".<br><br>Análisis de Distractores: La histerectomía subtotal es incorrecta porque la invasión suele involucrar cérvix, debiendo ser histerectomía total. El legrado profundo o la extracción manual provocarán de manera inmediata un choque hipovolémico exanguinante masivo al arrancar el miometrio y tejido vascular penetrado.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Tratamiento, Página 25." 
+            },
+            {
+                id: 14, 
+                question: "¿Cuál es el límite ecográfico en milímetros para clasificar a una placenta como de inserción baja sin llegar a cubrir el orificio cervical interno?", 
+                options: ["Menor a 10 milímetros", "Menor a 15 milímetros", "Menor a 20 milímetros", "Menor a 30 milímetros"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, se elimina el concepto de \"placenta marginal\". Cualquier inserción que, sin ocluir, se encuentre lo suficientemente cerca del cérvix como para sangrar durante la formación del segmento inferior, recibe este título anatómico.<br><br>Perla ENARM: \"Se recomienda emplear el término de inserción baja de placenta cuando se tenga evidencia ultrasonográfica de que el borde inferior de la placenta se encuentre a menos de 20 mm de orificio cervical interno, sin llegar a cubrirlo\".<br><br>Análisis de Distractores: Menor a 10 mm es un parámetro pronóstico para fracaso de parto, pero no la definición global. 15 mm está dentro del rango, pero no es el punto de corte definitorio. 30 mm se considera una inserción placentaria fisiológica y normal.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Diagnóstico, Página 16." 
+            },
+            {
+                id: 15, 
+                question: "Con el fin de facilitar la exploración de la cavidad abdominal en pacientes intervenidas por acretismo placentario, ¿cuál es la incisión quirúrgica recomendada?", 
+                options: ["Incisión de Pfannenstiel", "Incisión de Maylard", "Incisión transversa supraumbilical", "Incisión media infraumbilical"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, la complejidad de la cirugía exige máxima exposición pélvica para aislar los grandes vasos parametriales, acceder rápidamente al segmento uterino inferior y extender el campo hacia el abdomen superior en caso de sangrado retroperitoneal incontrolable.<br><br>Perla ENARM: \"En pacientes con diagnóstico de acretismo placentario se recomienda realizar una incisión media infraumbilical, ya que permite una mejor exploración de la cavidad abdominal y una mejor exposición de los tejidos\".<br><br>Análisis de Distractores: Las incisiones transversas bajas como Pfannenstiel o Maylard limitan la exposición cefálica del útero y prolongan la extracción fúndica del feto. La transversa supraumbilical no permite el abordaje adecuado del hueco pélvico inferior y vejiga.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Tratamiento, Página 25." 
+            },
+            {
+                id: 16, 
+                question: "¿Cuál es el momento indicado para programar la interrupción del embarazo vía cesárea en pacientes con diagnóstico de vasa previa sin signos de alarma?", 
+                options: ["32 a 34 semanas", "34 a 36 semanas", "36 a 38 semanas", "38 a 40 semanas"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, la vasa previa acarrea un riesgo letal si se presenta dinámica uterina. Por ello, la interrupción debe adelantarse al periodo fisiológico de formación del segmento inferior, garantizando previamente inductores de madurez.<br><br>Perla ENARM: \"En caso de confirmación diagnóstica de vasa previa en el tercer trimestre y ante la ausencia de signos de alarma, se recomienda programar la interrupción del embarazo vía cesárea entre las 34 y 36 semanas de gestación\".<br><br>Análisis de Distractores: De 32 a 34 es el periodo de vigilancia e internamiento profiláctico. Llegar a 36 a 38 o 40 semanas implica un 100% de riesgo de ruptura de membranas a término con mortalidad fetal instantánea.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Tratamiento, Página 31." 
+            },
+            {
+                id: 17, 
+                question: "¿Qué evento clínico indica la realización de una cesárea de urgencia inminente en una paciente con diagnóstico prenatal de vasa previa?", 
+                options: ["Disminución de movimientos fetales", "Ruptura de membranas", "Contracciones uterinas aisladas", "Expulsión del tapón mucoso"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, los vasos umbilicales expuestos sobre las membranas cervicales se desgarran físicamente en el mismo segundo en el que se pierde la integridad de la bolsa amniótica (amniorrexis).<br><br>Perla ENARM: \"Se recomienda realizar cesárea de urgencia en casos de pacientes con diagnóstico prenatal de vasa previa y que presenten ruptura de membranas o trabajo de parto\".<br><br>Análisis de Distractores: Las contracciones aisladas o expulsión del tapón exigen vigilancia estricta pero no son, sin modificaciones cervicales o sangrado franco, la indicación inmediata de hoja roja a quirófano. La disminución de movimientos amerita prueba sin estrés (NST) para su abordaje, no laparotomía de entrada sin confirmar sufrimiento.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Tratamiento, Página 31." 
+            },
+            {
+                id: 18, 
+                question: "Según la escala predictiva de la GPC de transfusión masiva en placenta previa, ¿cuál hallazgo cervical se considera un factor de riesgo clínico-ecográfico que otorga un punto?", 
+                options: ["Apariencia esponjosa del cérvix", "Longitud cervical mayor a 35 milímetros", "Dilatación cervical de un centímetro", "Ausencia de glándulas endocervicales"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, la alta perfusión que el segmento uterino inferior demanda provoca neovascularizaciones gruesas que alteran el parénquima cervical (vascularidad > 5 áreas hipoecogénicas mayores a 5 mm), las cuales predecirán un lecho intensamente sangrante en quirófano.<br><br>Perla ENARM: \"(Score de predicción de transfusión masiva en placenta previa): Se otorga un punto por cada factor de riesgo: edad gestacional menor de 37 semanas, cesárea previa, placenta anterior, apariencia esponjosa del cérvix\".<br><br>Análisis de Distractores: La dilatación de un centímetro o la longitud cervical mayor a 35 mm (la patológica sería < 35 mm para riesgo) no forman parte de los parámetros de esta escala validada para volumen transfundido. La ausencia de glándulas no interfiere en la hemodinámica obstétrica.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Cuadros o figuras (Cuadro 7), Página 42." 
+            },
+            {
+                id: 19, 
+                question: "En pacientes con diagnóstico de percretismo placentario a vejiga en plano quirúrgico, ¿cuál es la técnica intraoperatoria recomendada para la resolución de la pared anterior?", 
+                options: ["Extracción manual rápida", "Legrado vesical con cureta", "Cistotomía intencional y escisión", "Aplicación de metotrexato intraoperatorio"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, tratar de arrancar el tejido que ya invadió la capa serosa y la pared vesical originará fístulas incontables y sangrado masivo, por lo que es preferible abrir de manera limpia la víscera y resecar en bloque el bloque fibrótico invadido.<br><br>Perla ENARM: \"En casos de percretismo a vejiga, se recomienda considerar la cistotomía intencional y realizar la escisión del tejido afectado\".<br><br>Análisis de Distractores: La extracción manual rápida es una sentencia de muerte por hemorragia incontrolable. El legrado vesical no tiene fundamento oncológico u obstétrico útil. El metotrexato intraoperatorio no funciona mecánicamente y su uso en el manejo conservador está de hecho proscrito por su toxicidad.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Tratamiento, Página 26." 
+            },
+            {
+                id: 20, 
+                question: "¿En qué situación clínica específica se recomienda y justifica el uso de la resonancia magnética para la evaluación de las anomalías de inserción placentaria?", 
+                options: ["Tamizaje universal de placenta previa", "Sospecha de inserción baja asintomática", "Evaluación de extensión de invasión", "Diagnóstico de primera línea en urgencias"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, aunque el ultrasonido Doppler es el estándar de oro, existen zonas anatómicas posteriores y tejidos extrauterinos profundos donde las ondas sonoras pierden resolución, siendo ahí donde el contraste magnético tisular determina si el cirujano requerirá un urólogo o cirujano vascular.<br><br>Perla ENARM: \"El uso de la resonancia magnética no es esencial para el diagnóstico de acretismo... sin embargo, se recomienda su uso en el contexto de la evaluación de la extensión de invasión placentaria o ante la presencia de áreas de difícil evaluación ultrasonográfica\".<br><br>Análisis de Distractores: El diagnóstico de primera línea en urgencias o el tamizaje universal siempre será con ultrasonido obstétrico debido a su accesibilidad y bajo costo. La inserción baja asintomática se evalúa y controla perfectamente con ultrasonido endovaginal.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Diagnóstico, Página 18." 
+            },
+            {
+                id: 21, 
+                question: "Paciente de 30 semanas de gestación con diagnóstico de placenta previa y amenaza de parto pretérmino. Hemodinámicamente estable con sangrado leve. ¿Cuál es el manejo tocolítico indicado en esta condición clínica?", 
+                options: ["Indometacina continua hasta la semana 34", "Nifedipino de mantenimiento por 4 semanas", "Contraindicación absoluta de tocolisis uterina", "Tocolíticos limitados a 48 horas"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, la tocolisis crónica no mejora los resultados perinatales y prolonga el riesgo de hemorragia materna. Su único objetivo es retrasar la dinámica uterina el tiempo estricto para inducir neumocitos tipo II.<br><br>Perla ENARM: \"Se recomienda considerar la administración de tocolíticos por 48 horas (tiempo para administrar esquema de madurez pulmonar) en pacientes con amenaza de parto pretérmino y diagnóstico de placenta previa o inserción baja de placenta\".<br><br>Análisis de Distractores: La indometacina y nifedipino de mantenimiento prolongado exponen a efectos adversos sin beneficio comprobado. La contraindicación absoluta privaría al feto pretérmino del beneficio crítico de los corticoesteroides.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Tratamiento, Página 21." 
+            },
+            {
+                id: 22, 
+                question: "Femenina de 28 semanas de gestación con diagnóstico ecográfico de vasa previa. Se encuentra asintomática y sin dinámica uterina. ¿En qué momento se indica su hospitalización profiláctica continua?", 
+                options: ["30 a 34 semanas de gestación", "Al momento del diagnóstico inicial", "34 a 36 semanas de gestación", "Al presentar ruptura de membranas"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, el riesgo de que el trabajo de parto inicie de forma sorpresiva a pretérmino tardío es altísimo, por lo que estas pacientes asintomáticas deben ser ingresadas precozmente para monitorización estrecha de la longitud cervical.<br><br>Perla ENARM: \"Se recomienda la hospitalización de pacientes con diagnóstico prenatal de vasa previa entre las 30 a 34 semanas de gestación\".<br><br>Análisis de Distractores: De 34 a 36 semanas es el rango para programar la cesárea, no para iniciar el internamiento. El diagnóstico a las 28 semanas permite aún manejo ambulatorio muy vigilado. Si se espera a la ruptura de membranas, el feto fallecerá por exanguinación aguda.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Tratamiento, Página 30." 
+            },
+            {
+                id: 23, 
+                question: "Paciente con placenta previa sin sangrado activo, programada para cesárea electiva a las 37 semanas de gestación. Clínicamente estable. ¿Cuál es el manejo anestésico de elección para el procedimiento quirúrgico?", 
+                options: ["Anestesia general balanceada", "Sedación intravenosa profunda", "Anestesia regional", "Bloqueo pudendo bilateral"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, contrario a conductas del pasado, el bloqueo neuroaxial ha demostrado ser seguro en pacientes hemodinámicamente estables, disminuyendo complicaciones asociadas a la vía aérea y mejorando el confort materno.<br><br>Perla ENARM: \"Se recomienda la administración de anestesia regional durante el procedimiento de la cesárea en pacientes con diagnóstico de placenta previa o inserción baja de placenta\".<br><br>Análisis de Distractores: La anestesia general balanceada se reserva como plan de contingencia si ocurre choque hipovolémico intraoperatorio, pero no es la elección electiva. La sedación profunda o el bloqueo pudendo son técnica ineficientes para el control del dolor de una laparotomía.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Tratamiento, Página 23." 
+            },
+            {
+                id: 24, 
+                question: "En el contexto del tratamiento conservador de una paciente con acretismo placentario (dejando la placenta in situ), ¿qué intervención farmacológica está formalmente contraindicada como terapia adyuvante?", 
+                options: ["Ácido tranexámico sistémico", "Metotrexato", "Corticoesteroides intramusculares", "Antibióticos profilácticos"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, aunque históricamente se usó el metotrexato buscando inducir la necrosis del tejido placentario retenido, los estudios actuales no avalan su seguridad y añaden toxicidad severa sin mejorar la tasa de reabsorción.<br><br>Perla ENARM: \"No se recomienda el uso de metotrexato como terapia adyuvante del manejo conservador del acretismo placentario\".<br><br>Análisis de Distractores: El ácido tranexámico puede usarse si hay hemorragia, los corticoesteroides se usan preparto y los antibióticos están indicados en el manejo quirúrgico; ninguna de estas intervenciones está proscrita sistemáticamente.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Tratamiento, Página 29." 
+            },
+            {
+                id: 25, 
+                question: "Durante la vigilancia prenatal de una paciente con placenta previa, se realiza medición seriada del cérvix uterino. ¿Qué longitud cervical máxima se asocia con un mayor riesgo pronóstico de hemorragia masiva y cesárea de urgencia?", 
+                options: ["≤ 45 milímetros", "≤ 15 milímetros", "≤ 25 milímetros", "≤ 35 milímetros"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, las variaciones dinámicas del segmento predisponen al sangrado antes de la madurez fetal. El corte ultrasonográfico validado demuestra que cérvix largos previenen el desgarro, mientras que medidas ≤ 35 mm lo facilitan exponencialmente.<br><br>Perla ENARM: \"Una longitud cervical menor o igual a 35 mm se asoció a mayor riesgo de presentar una cesárea pretérmino por hemorragia masiva\".<br><br>Análisis de Distractores: Las medidas de ≤ 15 o ≤ 25 mm indican inminencia de parto prematuro, pero el punto de alerta específico tipificado en el algoritmo de esta patología es 35 mm, rebasando los ≤ 45 mm que representan un cérvix largo y seguro.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Complicaciones, Página 32." 
+            },
+            {
+                id: 26, 
+                question: "Paciente sometida a cesárea por placenta previa, presenta hemorragia obstétrica proveniente del lecho placentario en el segmento inferior que no responde a la administración de uterotónicos. ¿Cuál es la intervención de primera línea recomendada?", 
+                options: ["Histerectomía total abdominal", "Embolización de arterias uterinas", "Colocación de balón intrauterino", "Ligadura de arterias hipogástricas"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, el segmento uterino inferior carece del músculo cruzado para realizar la \"ligadura viva de Pinard\", por lo que al fallar la oxitocina, el taponamiento hidrostático intracavitario (como el balón de Bakri) suple la compresión mecánica perdida con altas tasas de éxito.<br><br>Perla ENARM: \"En caso de presencia de hemorragia obstétrica a pesar del uso de uterotónicos, se recomienda el uso de balones intrauterinos o técnicas quirúrgicas conservadoras para el control de la hemorragia\".<br><br>Análisis de Distractores: La histerectomía es el recurso definitivo extremo y debe reservarse solo cuando falla lo conservador. La embolización no está disponible rápido en todos los centros y la ligadura es el segundo escalón quirúrgico tras el balón en una paciente que se desea preservar útero.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Tratamiento, Página 23." 
+            },
+            {
+                id: 27, 
+                question: "En una paciente con diagnóstico de placenta previa de localización anterior programada para cesárea, ¿qué consideración técnica sobre la histerotomía es imperativa para mejorar el pronóstico materno?", 
+                options: ["Realizar incisión fúndica transversal", "Priorizar una incisión tipo Kerr", "Extracción manual rápida del feto", "Evitar la incisión transplacentaria"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, atravesar el tejido placentario incrementa significativamente la hemorragia materna y expone la red vascular fetal a trauma directo. Por ello, el mapeo debe ubicar el sitio libre.<br><br>Perla ENARM: \"La cesárea... debe ser realizada por personal médico capacitado y se deberá considerar la realización de una incisión media infraumbilical y evitar incidir la placenta durante el momento de la histerotomía y la extracción del recién nacido\".<br><br>Análisis de Distractores: La incisión de Kerr baja transversal incidiría justo sobre la inserción previa descrita. La incisión fúndica transversal causa desgarros a vasos mayores; en caso de necesitar entrar por el fondo, debe ser vertical o corporal. La extracción rápida manual aumenta el riesgo de atonía y ruptura.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Tratamiento, Página 22." 
+            },
+            {
+                id: 28, 
+                question: "Durante el ultrasonido estructural, se detectan vasos fetales discurriendo por las membranas ovulares. ¿Cuál es la distancia máxima al orificio cervical interno para confirmar el diagnóstico ecográfico de vasa previa?", 
+                options: ["< 15 milímetros", "< 10 milímetros", "< 20 milímetros", "< 30 milímetros"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, al estar en la vecindad de la tracción mecánica de las bolsas cuando el cérvix se modifique, el consenso ha delimitado un radio de seguridad espacial específico.<br><br>Perla ENARM: \"Documentos de consenso han propuesto que el diagnóstico de vasa previa se establezca cuando los vasos fetales se encuentren a menos de 2 centímetros de distancia del orificio cervical interno\".<br><br>Análisis de Distractores: Las distancias estrictas de < 10 mm o < 15 mm ya engloban patología segura, pero acotan erróneamente los casos marginales que siguen en peligro. Por encima de 20 mm (< 30 mm) ya no se clasifica como entidad de riesgo crítico intraparto inmediato.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Diagnóstico, Página 19." 
+            },
+            {
+                id: 29, 
+                question: "Paciente multigesta que cursa con su cuarto embarazo, teniendo el antecedente de tres cesáreas previas. ¿Cuál es la probabilidad porcentual de desarrollar acretismo placentario descrita estadísticamente en esta patología?", 
+                options: ["11 %", "61 %", "3 %", "40 %"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, la correlación entre cicatrices e invasión sigue una curva logarítmica, dando el salto epidemiológico más fuerte entre la segunda y la tercera histerotomía.<br><br>Perla ENARM: \"El riesgo de acretismo placentario es directamente proporcional al número de cesáreas previas: primera (3%), segunda (11%), tercera (40%), cuarta (61%) y quinta o más (67%)\".<br><br>Análisis de Distractores: El 3 % corresponde a un único procedimiento anterior. El 11 % a dos cesáreas, mientras que el 61 % se asocia a pacientes con cuatro eventos quirúrgicos previos.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Epidemiología, Página 8 y 40." 
+            },
+            {
+                id: 30, 
+                question: "¿Qué medida farmacológica de soporte basal debe optimizarse estrictamente durante la etapa prenatal en toda paciente diagnosticada con placenta previa asintomática?", 
+                options: ["Infusión profiláctica de ácido tranexámico", "Administración de heparina de bajo peso", "Prevención y tratamiento de anemia", "Tratamiento con antibióticos macrólidos"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, la optimización del volumen eritrocitario es una intervención anticipatoria obligada, ya que contar con reservas permite un margen de respuesta hemodinámica materna mucho más amplio ante la hemorragia transoperatoria.<br><br>Perla ENARM: \"Se recomienda prevenir y tratar la anemia durante la etapa prenatal en pacientes con diagnóstico de placenta previa o inserción baja de placenta\".<br><br>Análisis de Distractores: El ácido tranexámico se instaura como tratamiento reactivo durante sangrados obstétricos, no como profilaxis prenatal en asintomáticas. La heparina incrementaría catastróficamente el sangrado en caso de desprendimiento y los antibióticos solo se justifican si existe proceso infeccioso concomitante.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Tratamiento, Página 20." 
+            },
+            {
+                id: 31, 
+                question: "En la resolución quirúrgica definitiva de una paciente con diagnóstico establecido de placenta percreta, ¿cuál es el abordaje de resección uterina indicado para evitar tejido invasivo residual?", 
+                options: ["Histerectomía subtotal abdominal", "Traquelectomía radical modificada", "Histerectomía total abdominal", "Resección cuneiforme miometrial"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, al asentar típicamente la implantación sobre el segmento inferior con alta proximidad e invasión al estroma cervical, amputar solo el cuerpo uterino garantiza dejar lechos sangrantes fulminantes.<br><br>Perla ENARM: \"En pacientes con placenta acreta, increta o percreta se recomienda realizar histerectomía total abdominal dejando la placenta in situ en vez de realizar histerectomía subtotal\".<br><br>Análisis de Distractores: La histerectomía subtotal abdominal no debe realizarse por lo expuesto arriba. La resección cuneiforme se realiza en miomectomías de escasa dimensión o embarazos ectópicos, no en percretismo. La traquelectomía es un procedimiento oncológico.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Tratamiento, Página 26." 
+            },
+            {
+                id: 32, 
+                question: "Durante la hospitalización profiláctica de una paciente con vasa previa asintomática, ¿cuál es el estudio ecográfico que debe realizarse cada 1 a 2 semanas para predecir el riesgo de ruptura inminente?", 
+                options: ["Flujometría de la arteria cerebral media", "Cálculo del índice de líquido amniótico", "Perfil biofísico fetal completo", "Medición de la longitud cervical"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, el borramiento mecánico paulatino y la disminución milimétrica del cuello es un predictor directo de parto pretérmino inminente, lo cual multiplicaría el riesgo de amniorrexis y tragedia hemorrágica.<br><br>Perla ENARM: \"Durante el seguimiento de las pacientes con diagnóstico de vasa previa se deberá considerar la medición periódica de la longitud cervical (semanal o quincenal) como parte del control prenatal\".<br><br>Análisis de Distractores: La flujometría evalúa anemia fetal, muy tardía aquí. El cálculo de líquido amniótico y el perfil biofísico evalúan el bienestar de forma indirecta, pero el predictor directo del inicio de actividad miometrial lesiva es el acortamiento cervicouterino.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Tratamiento, Página 32." 
+            },
+            {
+                id: 33, 
+                question: "A diferencia de la placenta previa simple, ¿en qué rango de edad gestacional específico se recomienda la administración del esquema de corticoesteroides para madurez pulmonar en pacientes con vasa previa?", 
+                options: ["24 a 28 semanas de gestación", "28 a 32 semanas de gestación", "32 a 34 semanas de gestación", "34 a 36 semanas de gestación"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, estas pacientes son programadas de manera unánime entre la 34 a 36 y cursan alto riesgo de cesárea de urgencia antes de eso, marcando una ventana temporal adelantada y específica para garantizar efecto en inducción de factor surfactante.<br><br>Perla ENARM: \"Se recomienda la administración de un esquema de corticoesteroides para la madurez pulmonar fetal en mujeres con diagnóstico de vasa previa, entre la semana 28 a 32 de gestación\".<br><br>Análisis de Distractores: De 24 a 28 y de 32 a 34 es el esquema de madurez en placenta previa o de inserción baja por protocolo general, pero en vasa previa se restringe la orden directa al rango 28 a 32 semanas. De 34 a 36 es la fecha quirúrgica y carece de tiempo útil si inicia trabajo de parto.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Tratamiento, Página 31." 
+            },
+            {
+                id: 34, 
+                question: "Respecto a la preparación quirúrgica en pacientes con acretismo placentario, ¿cuál es la indicación normativa de la guía sobre el uso de balones iliacos o técnicas profilácticas de embolización arterial?", 
+                options: ["Obligatorias si existe compromiso vesical", "Indicadas como estándar de oro preoperatorio", "No se recomiendan de forma rutinaria", "Limitadas a pacientes primigestas estables"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, el beneficio de controlar la hemodinámica limitando el flujo colateral debe contrapesarse contra riesgos graves como trombosis o migración del dispositivo; por lo que no es una exigencia generalizada de infraestructura.<br><br>Perla ENARM: \"Dada la falta de estudios que avalen su seguridad y efectividad, no se recomienda el uso rutinario de procedimientos de radiología intervencionista para el manejo del acretismo placentario\".<br><br>Análisis de Distractores: Tratar la radiología intervencionista como estándar de oro u obligatoria es equívoco sin infraestructura constante, priorizándose la cesárea-histerectomía corporal en bloque. Limitarlas a primigestas no tiene fundamento patológico en la cicatrización.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Tratamiento, Página 27." 
+            },
+            {
+                id: 35, 
+                question: "¿Cuál es el diagnóstico prenatal específico que, por su riesgo agudo y necesidad inminente de transfusión neonatal intraquirúrgica, constituye un criterio absoluto de envío a tercer nivel de atención?", 
+                options: ["Vasa previa confirmada", "Placenta de inserción baja", "Hemorragia del primer trimestre", "Placenta previa asintomática"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, si los vasos fetales se rompen al interior, la extracción neonatal presentará a un paciente pálido en falla cardíaca requiriendo O negativo y terapia intensiva avanzada desde el minuto cero del Apgar.<br><br>Perla ENARM: \"Se recomienda el traslado a una unidad de tercer nivel a toda mujer gestante con diagnóstico de vasa previa\".<br><br>Análisis de Distractores: La placenta previa asintomática o la inserción baja pueden vigilarse sin problema en hospitales generales (2do nivel) hasta la programación final, difiriendo por mucho del riesgo inminente y dependiente de neonatología extrema en vasa previa.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Referencia, Página 35." 
+            },
+            {
+                id: 36, 
+                question: "En la optimización preanestésica de una paciente con acretismo placentario que ingresa a quirófano, ¿cuál es el esquema obligatorio recomendado para el manejo de los accesos vasculares?", 
+                options: ["Un catéter venoso periférico de grueso calibre", "Un catéter venoso central exclusivo", "Dos catéteres venosos periféricos y uno arterial", "Un catéter intraóseo y uno venoso periférico"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, el flujo por dos vías periféricas de corto alcance (calibre 14 o 16) supera al flujo central para resucitación con cristaloides, a la vez que la línea arterial percutánea reportará gases e invadirá presión invasiva al segundo.<br><br>Perla ENARM: \"En pacientes con diagnóstico de inserción anómala de placenta que van a ingresar a quirófano, se deberá considerar la instalación de dos catéteres venosos periféricos y un catéter arterial para el monitoreo de la presión arterial (PA) y la toma de muestras sanguíneas\".<br><br>Análisis de Distractores: El catéter central aislado sufre de alto grado de resistencia hidrodinámica limitando resucitación volémica masiva. Una vía periférica es subóptima para transfundir 10 unidades simultáneas. El acceso intraóseo es el abordaje desesperado durante reanimación por paro sin vías prexistentes.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Complicaciones, Página 33." 
+            },
+            {
+                id: 37, 
+                question: "En el abordaje terapéutico conservador del acretismo placentario donde se opta por dejar la placenta in situ para su reabsorción a largo plazo, ¿cuál es la complicación materna documentada con mayor frecuencia?", 
+                options: ["Fístula vesicouterina", "Sepsis de origen pélvico", "Hemorragia obstétrica", "Enfermedad trofoblástica gestacional"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, los intentos históricos de preservar el útero dejando la masa corial abandonada, terminan fracasando el 51.5% de las veces debido a que la gran perfusión arterial hipertrófica no encuentra espasmo limitante al quedar el útero ocupado.<br><br>Perla ENARM: \"Principales riesgos maternos asociados al manejo conservador de la placenta acreta... Hemorragia obstétrica en un 51.5%, Necesidad de hemotransfusión 41.9% e Infección 28.1%\".<br><br>Análisis de Distractores: La sepsis pélvica ocurre, pero en menor proporción (28.1%) frente a la descompensación circulatoria. La fístula vesicouterina es extremadamente infrecuente (0.6%). La enfermedad trofoblástica es una patología tumoral independiente de otra etiología no relacionada con la conservación tisular anatómica de este contexto.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Cuadros o figuras, Página 42." 
+            },
+            {
+                id: 38, 
+                question: "Durante una laparotomía obstétrica de urgencia por antecedente de cesárea iterativa se sospecha visualmente de acretismo placentario extenso. El feto sigue in situ y la paciente está hemodinámicamente estable. ¿Cuál es la conducta indicada por la GPC si el hospital carece de recursos?", 
+                options: ["Intentar desprendimiento manual gentil", "Extraer al feto y trasladar con útero abierto", "Realizar incisión transplacentaria rápida", "Trasladar inmediatamente antes de la histerotomía"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, es preferible someter a la mujer a traslado a una unidad con banco de sangre con el vientre cerrado y el lecho inalterado, que desatar un evento sangrante en una unidad donde no habrá forma de reponer lo drenado.<br><br>Perla ENARM: \"En caso de que, durante un hallazgo incidental transoperatorio de acretismo placentario no se cuente con los recursos materiales y humanos suficientes... en ausencia de inestabilidad materna o fetal y previo a la realización de histerotomía, se podrá considerar el traslado inmediato de la paciente a un centro hospitalario que cuente con banco de sangre\".<br><br>Análisis de Distractores: El desprendimiento manual y la extracción fetal con útero abierto desencadenan un volumen de pérdida indetectable e incontrolable sin banco de sangre. La incisión transplacentaria garantiza choque materno y exanguinación fetal por disrupción del flujo placentario con la cavidad descubierta.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Tratamiento, Página 26." 
+            },
+            {
+                id: 39, 
+                question: "De acuerdo a la morfología descrita, ¿cómo se define la anomalía patológica donde los vasos fetales transcurren desprotegidos de gelatina de Wharton entre el amnios y el corion antes de insertarse en el disco placentario?", 
+                options: ["Vasa previa", "Inserción marginal de cordón", "Placenta bilobulada", "Inserción velamentosa de cordón"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, esta condición predispone fisiopatológicamente a la rotura por fragilidad intrínseca ante traumatismos leves o compresión, presentándose con hemorragia aguda y constituyendo un criterio de riesgo a vigilar y derivar.<br><br>Perla ENARM: \"Inserción velamentosa del cordón: los vasos umbilicales se insertan en las membranas ovulares entre el amnios y corion, a una distancia del borde placentario, los cual alcanzan circundados solo por un pliegue de amnios y carece de gelatina de Wharton\".<br><br>Análisis de Distractores: La vasa previa describe el trayecto por debajo de la presentación sobre el orificio cervical. La inserción marginal ocurre sobre el borde del disco, pero sin transcurrir libre por membrana. La placenta bilobulada presenta dos cotiledones macroscópicos separados entre los que el vaso cursa libremente hacia ambas, pero no es el nombre dado al defecto de inserción principal de esta descripción anatómica.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Glosario, Página 57." 
+            },
+            {
+                id: 40, 
+                question: "Además de la indicación directa de una resonancia magnética pélvica, ¿ante qué sospecha ecográfica preoperatoria específica la GPC justifica el uso de una evaluación por cistoscopía?", 
+                options: ["Vasa previa de trayecto bajo", "Sospecha de percretismo anterior", "Placenta previa total asintomática", "Inserción velamentosa de cordón"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Anomalías en Inserción Placentaria, la extensión de las vellosidades que atraviesan las serosas y se fijan en órganos adyacentes suele infiltrar la cúpula vesical e inmiscuir en la morbilidad quirúrgica al urotelio, lo que requiere ser estadificado con visualización directa.<br><br>Perla ENARM: \"En pacientes con diagnóstico de acretismo placentario, especialmente con sospecha de percretismo, se podrá considerar el uso de la resonancia magnética y de la cistoscopía, para confirmar el diagnóstico y establecer el grado de invasión placentaria\".<br><br>Análisis de Distractores: La placenta previa total, la vasa previa y la inserción velamentosa engloban anatomía confinada exclusivamente a la cavidad uterina y sus membranas, para lo cual la invasión instrumentada del tracto urinario de la mujer gestante sería médicamente irracional e injustificada.", 
+                source: "GPC-IMSS-589-19, Diagnóstico y manejo de las anomalías en la inserción placentaria y vasa previa, 2019, Diagnóstico, Página 18." 
+            }
+        ];
+
+        // ==========================================
+        // ==========================================
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('gyoEMLastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('gyoEMProgress');
+                localStorage.removeItem('gyoEMLastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-pink-500 shadow-md z-10 border-pink-500 dark:border-pink-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-rose-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "GINECOLOGÍA Y OBSTETRICIA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "GPC-IMSS-589-19 • Diagnóstico y manejo de anomalías en la inserción placentaria y vasa previa";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="FM67318GYOE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-pink-100 dark:border-pink-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-pink-50 has-[:checked]:border-pink-400 dark:has-[:checked]:bg-pink-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-pink-600 dark:hover:bg-pink-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('gyoEMProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('gyoEMLastQId', currentQuestionId);
+                else localStorage.removeItem('gyoEMLastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('gyoEMProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

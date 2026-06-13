@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================
+        // =========================================================
+        const questionsData = [
+            {
+                id: 1, 
+                question: "¿En qué grupo etario el Cáncer de Mama ocupa el primer lugar de mortalidad por tumor maligno en mujeres mexicanas?", 
+                options: ["Mayores de 25 años", "Mayores de 40 años", "Mayores de 50 años", "Mayores de 65 años"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, esta patología ha presentado una transición epidemiológica crítica, superando al cáncer cervicouterino en etapas más tempranas de la vida adulta.<br><br>Perla ENARM: \"...ocupa el primer lugar de mortalidad, por tumor maligno en mujeres mayores de 25 años de edad, desplazando al cáncer cervicouterino.\"<br><br>Análisis de Distractores: Las edades de 40, 50 y 65 años marcan pautas para tamizaje y picos de incidencia, pero la mortalidad como primera causa global tumoral se registra a partir de los 25 años en la demografía mexicana actual.", 
+                source: "S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama, 2017, Justificación, p. 12." 
+            },
+            {
+                id: 2, 
+                question: "¿Cuál de las siguientes condiciones en la historia clínica confiere un riesgo relativo de 4.0 para el desarrollo de Cáncer de Mama?", 
+                options: ["Obesidad postmenopáusica", "Nuliparidad", "Hiperplasia atípica confirmada", "Menarca antes de 12 años"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, la presencia de alteraciones proliferativas previas comprobadas por histología es uno de los factores biológicos con mayor peso para una progresión a malignidad franca, cuadruplicando el riesgo basal.<br><br>Perla ENARM: \"Riesgo relativo 4.0: Mutación en los genes BRCA1 y BRCA2, Dos o más familiares de primer grado..., Historia personal de cáncer de mama, Hiperplasia atípica confirmada con biopsia.\"<br><br>Análisis de Distractores: La obesidad postmenopáusica, la nuliparidad y la menarca temprana son factores de riesgo menores bien documentados, pero otorgan un riesgo relativo que oscila únicamente entre 1.1 a 2.0.", 
+                source: "S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama, 2017, Cuadro 1, p. 51." 
+            },
+            {
+                id: 3, 
+                question: "En la evaluación de un hallazgo palpable focal, ¿en qué estado fisiológico el estudio de imagen inicial de elección es el ultrasonido mamario?", 
+                options: ["Menopausia temprana", "Periodo de lactancia", "Densidad mamográfica baja", "Premenopausia sintomática"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, los cambios hipertróficos y galactofóricos propios de la gestación y el puerperio disminuyen severamente la sensibilidad de la mastografía, volviendo a la sonografía el método inicial más seguro y efectivo.<br><br>Perla ENARM: \"¿Está embarazada o lactando? SI -> Ultrasonido mamario.\"<br><br>Análisis de Distractores: La menopausia temprana y premenopausia no contraindican la mastografía como método diagnóstico primario si la paciente es mayor de 40 años. Una densidad mamográfica baja favorece aún más el uso de mastografía.", 
+                source: "S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama, 2017, Algoritmo 3, p. 56." 
+            },
+            {
+                id: 4, 
+                question: "¿A partir de cuánto tiempo de uso continuo la terapia de reemplazo hormonal se considera un factor de riesgo para el desarrollo de la enfermedad?", 
+                options: ["> 1 año", "> 3 años", "> 5 años", "> 10 años"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, la exposición prolongada a estrógenos/progestágenos exógenos en edades avanzadas promueve estímulos proliferativos que incrementan la incidencia del cáncer, por lo que siempre se sugiere el uso más breve posible.<br><br>Perla ENARM: \"Factores de riesgo: Uso de terapia de remplazo hormonal de largo plazo en edades avanzadas (>5 años).\"<br><br>Análisis de Distractores: Las opciones de 1 o 3 años no superan el umbral documentado de riesgo clínico significativo en la guía. Un periodo de 10 años es un riesgo comprobado, pero el punto de corte epidemiológico exacto es 5 años.", 
+                source: "S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama, 2017, Detección, p. 16." 
+            },
+            {
+                id: 5, 
+                question: "Ante la presencia de signos y síntomas francos sugestivos de malignidad en la exploración primaria, ¿cuál debe ser el manejo inmediato?", 
+                options: ["Biopsia en el consultorio", "Ultrasonido mamario urgente", "Mastografía con conos", "Referir sin estudios confirmatorios"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, cuando la evidencia clínica es altamente sugestiva (ej. úlcera, retracción, piel de naranja), solicitar gabinete en primer nivel genera una demora burocrática inaceptable en el pronóstico oncológico.<br><br>Perla ENARM: \"Se recomienda que al establecer clínicamente la sospecha de tumor maligno de la mama, será motivo de referencia inmediata al nivel de referencia superior... sin solicitar estudios confirmatorios para no retrasar la atención.\"<br><br>Análisis de Distractores: La biopsia en consultorio no está indicada en el primer nivel. Solicitar ultrasonido o mastografía retrasaría el envío a la clínica de mama donde se realizarán de manera integral y simultánea al abordaje oncológico.", 
+                source: "S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama, 2017, Referencia, p. 17." 
+            },
+            {
+                id: 6, 
+                question: "¿Cuál es el porcentaje esperado de posibilidad de malignidad para una lesión mamaria estratificada como categoría ACR BI-RADS 4?", 
+                options: ["≤ 2%", "> 2% y < 95%", "≥ 95%", "0%"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, la categoría 4 abarca un espectro muy amplio de lesiones sospechosas (subdivididas en A, B y C) que justifican invariablemente la obtención de tejido para análisis histopatológico.<br><br>Perla ENARM: \"4 Sospechoso: > 2 % y < 95 % de sospecha de malignidad. Diagnóstico histológico.\"<br><br>Análisis de Distractores: El porcentaje ≤ 2 % corresponde a una lesión probablemente benigna (BI-RADS 3). El porcentaje ≥ 95 % define a la categoría 5 (altamente sugestivo de malignidad). El 0 % pertenece a las categorías 1 o 2.", 
+                source: "S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama, 2017, Cuadro 2, p. 51." 
+            },
+            {
+                id: 7, 
+                question: "¿Qué intervención sobre el estilo de vida ha demostrado, con nivel de evidencia alto, una disminución significativa del riesgo de Cáncer de Mama?", 
+                options: ["Abstinencia total de lactosa", "Dieta vegetariana estricta", "Actividad física aeróbica frecuente", "Suplementación de vitamina D"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, el control del peso y el ejercicio físico regular modulan la exposición estrogénica endógena periférica, impactando directamente en la prevención primaria.<br><br>Perla ENARM: \"Las guías para actividad física de los Estados Unidos, recomiendan que los adultos realicen al menos 150 minutos por semana de actividad física. Este nivel... ha demostrado reducción de las tasas de mortalidad prematura.\"<br><br>Análisis de Distractores: Las dietas estrictas sin lactosa o vegetarianas no figuran como recomendación primaria de la GPC. La suplementación vitamínica carece de soporte contundente frente al beneficio comprobado del ejercicio.", 
+                source: "S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama, 2017, Promoción de la salud, p. 19." 
+            },
+            {
+                id: 8, 
+                question: "¿Cuál es la conducta de seguimiento temporal para una paciente cuyo reporte mastográfico es interpretado como BI-RADS 3?", 
+                options: ["Biopsia por escisión", "Mastografía bilateral al año", "Intervención temprana a 6 meses", "Resonancia magnética basal"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, las lesiones probablemente benignas requieren comprobar su estabilidad a corto plazo; si existe progresión en esos meses, se deriva a biopsia, limitando los falsos negativos.<br><br>Perla ENARM: \"3 Probablemente benigno: Intervención temprana (6 meses) seguimiento con mastografía.\"<br><br>Análisis de Distractores: La biopsia se reserva para categorías 4 o superiores. La vigilancia anual se aplica al tamizaje en lesiones BI-RADS 1 o 2. La resonancia magnética tiene indicaciones muy limitadas por genotipo o radioterapia previa, no por una categoría 3 rutinaria.", 
+                source: "S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama, 2017, Cuadro 2, p. 51." 
+            },
+            {
+                id: 9, 
+                question: "¿Qué categoría ACR BI-RADS se define obligatoriamente como un reporte \"incompleto\" que requiere proyecciones adicionales antes de establecer un diagnóstico?", 
+                options: ["Categoría 0", "Categoría 1", "Categoría 3", "Categoría 4"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, esta clasificación alerta al médico de que el estudio es insuficiente (por superposición de tejido o técnica) y es un error clínico dar de alta o enviar a biopsia sin resolver la insuficiencia de imagen.<br><br>Perla ENARM: \"0 Incompleto: Se necesita evaluación adicional de imagen y/o mastografías previas para comparar.\"<br><br>Análisis de Distractores: La categoría 1 es un estudio completo y negativo. La categoría 3 ya integró un hallazgo probable benigno. La categoría 4 integró un hallazgo sospechoso que requiere biopsia.", 
+                source: "S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama, 2017, Cuadro 2, p. 51." 
+            },
+            {
+                id: 10, 
+                question: "¿Cuál de las siguientes características se incluye dentro del catálogo de lesiones de la categoría ACR BI-RADS 2?", 
+                options: ["Microcalcificaciones lineales", "Nódulos con bordes espiculados", "Fibroadenomas calcificados", "Masa de densidad heterogénea"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, existen hallazgos estructurales que, a pesar de ser detectados, su morfología confirma una naturaleza inocua y no requieren vigilancia extraordinaria.<br><br>Perla ENARM: \"Estudio negativo con hallazgos benignos... incluye fibroadenomas calcificados, calcificaciones de la piel, cuerpos extraños metálicos y lesiones como quistes, lipomas...\"<br><br>Análisis de Distractores: Las microcalcificaciones lineales y los nódulos espiculados son datos altamente sospechosos (categorías 4 o 5). Una masa de densidad heterogénea no categorizada normalmente requiere valoración adicional (BI-RADS 0) o vigilancia estricta (BI-RADS 3) dependiendo de sus bordes.", 
+                source: "S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama, 2017, Cuadro 3, p. 52." 
+            },
+            {
+                id: 11, 
+                question: "En el abordaje preventivo, ¿cuál es uno de los factores nutricionales específicos que ha reportado un efecto protector (RR de 0.85) contra el Cáncer de Mama?", 
+                options: ["Aceite de oliva", "Lácteos enteros", "Alimentos sin gluten", "Frutos rojos secos"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, algunos meta-análisis han sugerido que el consumo alto de productos derivados de la leche interfiere favorablemente en la disminución del riesgo a largo plazo.<br><br>Perla ENARM: \"Un metanálisis de 18 estudios... reportó un RR de 0.85 para el consumo alto de alimentos lácteos enteros comparado con el consumo más bajo, indicando disminución significativa del riesgo de cáncer de mama...\"<br><br>Análisis de Distractores: Aunque el aceite de oliva pertenece a dietas cardioprotectoras, la guía detalla el hallazgo estadístico específico de los lácteos enteros. El gluten y los frutos rojos no están enmarcados en la GPC como los protectores primarios documentados.", 
+                source: "S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama, 2017, Factores de riesgo, p. 22." 
+            },
+            {
+                id: 12, 
+                question: "Según la evidencia disponible, ¿cuál alteración ósea en pacientes postmenopáusicas se considera un factor de riesgo para el desarrollo de Cáncer de Mama (RR 2.1 a 4.0)?", 
+                options: ["Osteopenia leve aislada", "Osteoporosis generalizada", "Alta densidad ósea", "Fracturas vertebrales previas"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, la alta masa ósea posterior a la menopausia es un marcador indirecto de mayores niveles sostenidos de estrógenos endógenos a lo largo del tiempo, lo cual correlaciona directamente con el estímulo tumoral en mama.<br><br>Perla ENARM: \"Riesgo relativo 2.1 a 4 ... altas dosis de radiación en tórax, alta densidad ósea postmenopáusica.\"<br><br>Análisis de Distractores: La osteoporosis y la osteopenia o las fracturas se relacionan al déficit estrogénico que caracteriza la menopausia típica, no suponiendo un aumento de riesgo proliferativo en la mama.", 
+                source: "S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama, 2017, Cuadro 1, p. 51." 
+            },
+            {
+                id: 13, 
+                question: "En pacientes evaluadas por tamizaje radiológico, ¿cuál es el nivel de atención médica definitivo al que se debe referir un resultado mastográfico BI-RADS 5?", 
+                options: ["Centro de salud familiar", "Consulta externa de medicina general", "Segundo nivel de atención", "Tercer nivel o clínica especializada"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, una categoría 5 implica más del 95% de seguridad de patología maligna, ameritando manejo oncológico integral desde el primer instante sin dilaciones burocráticas en escalones intermedios.<br><br>Perla ENARM: \"5 Altamente sugestivo de malignidad... Envío a tercer nivel o clínica de mama, para su atención inmediata y estudio histopatológico.\"<br><br>Análisis de Distractores: El primer nivel no tiene capacidad de biopsia ni abordaje oncológico. El segundo nivel está indicado para el abordaje de categorías 4, pero la sospecha máxima salta directamente a especialidad oncológica (tercer nivel/clínica).", 
+                source: "S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama, 2017, Referencia, p. 15." 
+            },
+            {
+                id: 14, 
+                question: "¿A qué categoría ACR BI-RADS corresponde el manejo clínico de envío programado a segundo nivel de atención para valorar y realizar toma de biopsia?", 
+                options: ["Categoría 2", "Categoría 3", "Categoría 4", "Categoría 6"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, los hallazgos sospechosos sin certeza visual absoluta requieren confirmación histológica obligatoria antes de instituir planes quirúrgicos radicales.<br><br>Perla ENARM: \"Las mastografias B1-RADS 4 deben ser enviadas a la clínica especializada de mama para valorar toma de biopsia.\"<br><br>Análisis de Distractores: Categoría 2 exige solo tamizaje de rutina. Categoría 3 exige reevaluación por imagen a 6 meses. Categoría 6 significa que la biopsia ya se realizó previamente y el cáncer es conocido.", 
+                source: "S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama, 2017, Recomendación Clave, p. 18." 
+            },
+            {
+                id: 15, 
+                question: "¿Qué indicador reproductivo en la anamnesis eleva la probabilidad de padecer Cáncer de Mama en la vida adulta?", 
+                options: ["Nuliparidad", "Multiparidad", "Lactancia por 12 meses", "Menarca después de los 15 años"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, la ausencia de interrupciones en la ovulación ininterrumpida a lo largo de la vida reproductiva maximiza la exposición mitogénica a los estrógenos.<br><br>Perla ENARM: \"Factores de riesgo: ... Nuliparidad o edad avanzada al primer parto.\"<br><br>Análisis de Distractores: La multiparidad y la lactancia materna generan periodos de anovulación y protección tisular, reduciendo el riesgo. Una menarca tardía acorta la ventana de exposición estrogénica, siendo factor protector.", 
+                source: "S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama, 2017, Prevención secundaria, p. 16." 
+            },
+            {
+                id: 16, 
+                question: "¿Cuál es el tiempo máximo permisible en el cual una paciente con patrón clínico sugestivo de cáncer debe recibir cita en la especialidad de segundo nivel?", 
+                options: ["Menos de 48 horas", "Menos de 2 semanas", "Menos de 1 mes", "Menos de 3 meses"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, se deben acortar de forma urgente los tiempos administrativos para lograr un inicio de tratamiento temprano y mejorar la curva de sobrevida.<br><br>Perla ENARM: \"Se recomienda referir a las personas que tengan un patrón clínico sugestivo de cáncer de mam a la consulta de especialidad en el segundo nivel, con una cita en menos de 2 semanas...\"<br><br>Análisis de Distractores: Menos de 48 horas es un estándar ideal pero no la recomendación explícita de la norma para 2do nivel. Plazos de un mes o más son negligentes frente a una sospecha oncológica.", 
+                source: "S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama, 2017, Recomendación Clave, p. 18." 
+            },
+            {
+                id: 17, 
+                question: "Según el sistema BI-RADS, ¿qué escenario describe adecuadamente el hallazgo de la categoría 6?", 
+                options: ["Distorsión no explicada del parénquima", "Lesión sólida no visible por mastografía", "Malignidad comprobada por biopsia previa", "Nódulo pétreo clínicamente no palpable"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, esta última estratificación se utiliza en el monitoreo o planeación quirúrgica de un tejido que ya cuenta con un dictamen celular maligno.<br><br>Perla ENARM: \"6 Malignidad comprobada por biopsia. Esta categoría está reservada para pacientes con biopsia positiva de malignidad (imágen realizada después de la biopsia percutánea, antes de la extirpación quirúrgica completa)...\"<br><br>Análisis de Distractores: Distorsiones no explicadas encajan en BI-RADS 0 o 4. El hallazgo aislado por ultrasonido pero no mastográfico debe integrarse y ameritaría correlación. Solo el diagnóstico de patología previo certifica el nivel 6.", 
+                source: "S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama, 2017, Cuadro 3, p. 52." 
+            },
+            {
+                id: 18, 
+                question: "¿A qué edad gestacional u obstétrica se recomienda brindar asesoría por considerarse factor de riesgo cuando se presenta el primer embarazo de término?", 
+                options: ["Después de 20 años", "Después de 25 años", "Después de 30 años", "Después de 40 años"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, la maduración completa de los acinos mamarios es protectora si sucede temprano; si ocurre tardíamente, el tejido ya sufrió años de exposición estrogénica y es vulnerable a mutaciones.<br><br>Perla ENARM: \"Primer embarazo a edad avanzada (> 30 años)... Nuliparidad y el primer parto después de los 30 años de edad, se asocia con aumento de un tercio del riesgo.\"<br><br>Análisis de Distractores: Antes de los 30 no supone un incremento epidemiológico demostrado en el riesgo. Pasados los 40 años el riesgo ya está instituido, pero el umbral de inflexión clásico de la guía es 30 años.", 
+                source: "S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama, 2017, Cuadro 1, p. 51 y 22." 
+            },
+            {
+                id: 19, 
+                question: "¿Cuál es la probabilidad diagnóstica de malignidad que obliga a clasificar una mastografía exclusivamente en el grado ACR BI-RADS 3?", 
+                options: ["0% a 2%", "3% a 10%", "15% a 50%", "Mayor a 95%"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, este rango estadístico tan estrecho asegura que la inmensa mayoría de estas lesiones son hallazgos transitorios o benignos, validando la conducta expectante.<br><br>Perla ENARM: \"El límite máximo para la categoría 3, la evaluación es una probabilidad del 2% de la malignidad y el piso para la categoría 5, la evaluación es el 95%.\"<br><br>Análisis de Distractores: Los rangos de 3 a 50% son competencia del escrutinio sospechoso propio de la categoría 4 y sus subdivisiones (A y B). Mayor al 95% es un BI-RADS 5 indudable.", 
+                source: "S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama, 2017, Hallazgos sospechosos, p. 52." 
+            },
+            {
+                id: 20, 
+                question: "¿Qué estrategia preventiva sugiere la guía relacionada con la vida obstétrica y pediátrica para mitigar las tasas de Cáncer de Mama?", 
+                options: ["Suspensión temprana del destete", "Lactancia materna prolongada", "Alimentación con fórmula desde el mes 3", "Retraso terapéutico del inicio de la menarca"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, la lactancia ejerce cambios terminales en la diferenciación lobulillar y bloquea transitoriamente los ciclos estrogénicos ováricos.<br><br>Perla ENARM: \"Se sugiere la lactancia materna prolongada y evitar el uso de terapia hormonal prolongada para disminuir el riesgo de padecer cáncer de mama.\"<br><br>Análisis de Distractores: La suspensión del destete o el uso de sucedáneos tempranos anulan este efecto biológico protector. Alterar farmacológicamente el ciclo natural premenárquico no es una práctica establecida para prevención oncológica poblacional.", 
+                source: "S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama, 2017, Prevención, p. 15." 
+            },
+            {
+                id: 21, 
+                question: "¿Cuál es la indicación clínica precisa para realizar un tamizaje anual con resonancia magnética en mujeres asintomáticas?", 
+                options: ["Obesidad mórbida postmenopáusica", "Radiación torácica entre 10 y 30 años", "Terapia de reemplazo por 10 años", "Menopausia después de los 55 años"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, la exposición tisular a radioterapia torácica a edades tempranas eleva de forma alarmante el riesgo de malignidad a largo plazo, superando la capacidad del escrutinio mamográfico regular.<br><br>Perla ENARM: \"Se recomienda realizar RM anual en mujeres con: Antecedente de radiación en tórax entre los 10 y 30 años de edad... iniciando el tamizaje 8 años después de la radioterapia.\"<br><br>Análisis de Distractores: La obesidad (A) y la menopausia tardía (D) son factores de riesgo menores. La terapia hormonal prolongada (C) es de riesgo, pero la GPC no justifica el uso sistemático de resonancia magnética (estudio de alto costo) sin una base de riesgo mayor contundente (mutaciones o radiación).", 
+                source: "GPC S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama en el primer nivel de atención, 2017, Resonancia magnética, p. 34." 
+            },
+            {
+                id: 22, 
+                question: "¿A partir de qué edad debe iniciar sistemáticamente la exploración clínica mamaria por personal de salud en la población general?", 
+                options: ["18 años", "20 años", "25 años", "40 años"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, la incidencia de neoplasias inicia un ascenso epidemiológico medible después de los 25 años, justificando el escrutinio físico institucionalizado desde este punto de la vida adulta.<br><br>Perla ENARM: \"La realiza el médico y el personal de enfermería capacitado. Se efectúa a partir de los 25 años de edad cada 1-3 años como parte del exámen físico.\"<br><br>Análisis de Distractores: A los 18 (A) no hay indicación de tamizaje clínico. A los 20 años (B) se recomienda el inicio exclusivo de la autoexploración mensual, no la clínica. A los 40 años (D) arranca la mastografía diagnóstica de rutina en mujeres sintomáticas y tamizaje inicial en algunas normativas.", 
+                source: "GPC S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama en el primer nivel de atención, 2017, Exploración mamaria clínica, p. 46." 
+            },
+            {
+                id: 23, 
+                question: "¿Cuál es la ventana temporal óptima respecto al ciclo menstrual para realizar y enseñar la exploración clínica de mamas?", 
+                options: ["Día 1 al 3 del ciclo", "Día 5 al 7 tras finalizar el periodo", "Día 14 exacto del ciclo", "Día 21 al 28 del ciclo"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, en este lapso los estímulos estrogénicos y progestacionales basales han descendido, lo que minimiza la congestión, la nodularidad fisiológica y la sensibilidad, facilitando la detección de masas reales.<br><br>Perla ENARM: \"Se recomienda acudir entre el quinto y séptimo día del término del ciclo menstrual... En el periodo menstrual se sienten congestionadas, por los estímulos hormonales.\"<br><br>Análisis de Distractores: Durante los días 1 al 3 (A) y la fase lútea tardía (D), la glándula presenta máxima retención de líquidos e inflamación lobulillar, arrojando falsos positivos. El día 14 (C) coincide con el pico ovulatorio de estrógenos.", 
+                source: "GPC S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama en el primer nivel de atención, 2017, Recomendaciones del examen físico, p. 46." 
+            },
+            {
+                id: 24, 
+                question: "En hombres portadores confirmados de mutaciones genéticas BRCA 1 y 2, ¿a partir de qué edad debe realizarse la primera mastografía de escrutinio basal?", 
+                options: ["25 años", "30 años", "35 años", "40 años"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, el tejido mamario masculino con penetrancia genética BRCA tiene una ventana de transformación similar a la mujer joven, estandarizando su abordaje de imagen.<br><br>Perla ENARM: \"Se recomienda en hombres con BRCA 1 y BRCA 2 positivo... empezar a los 35 años de edad (la clínica), continuando con mastografía anual en hombres con ginecomastia o parénquima glandular mamario denso en la mastografía de base a los 40 años.\"<br><br>Análisis de Distractores: A los 25 (A) y 30 (B) no existe beneficio documentado. A los 35 años (C) se instaura únicamente la revisión física semestral o anual, reservando la imagen hasta los 40 años.", 
+                source: "GPC S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama en el primer nivel de atención, 2017, Cáncer de mama en el hombre, p. 38." 
+            },
+            {
+                id: 25, 
+                question: "Ante una mujer con 26 semanas de gestación y un nódulo francamente sospechoso, ¿cuál es la normativa para el uso de la mastografía?", 
+                options: ["Posponer hasta finalizar el embarazo", "Contraindicación absoluta por teratogénesis", "Realizarla con protección abdominal", "Sustituir obligatoriamente por resonancia"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, aunque el ultrasonido es la línea inicial en embarazo, si la sospecha de malignidad es elevada, los beneficios de caracterizar la lesión mamográfica (ej. microcalcificaciones) superan abismalmente los nulos efectos por dispersión radiológica sobre el feto con escudo plomado.<br><br>Perla ENARM: \"La mastografía no está contraindicada durante el embarazo o la lactancia, debe realizarse si se sospecha malignidad... Se sugiere que durante el embarazo o la lactancia se realice la mastografía en caso de sospecha de malignidad.\"<br><br>Análisis de Distractores: Posponer el diagnóstico (A) es negligencia oncológica. No existe contraindicación absoluta (B) ya que la dosis gonadal es insignificante (<0.001 Gy). La resonancia magnética con gadolinio (D) sí cuenta con mayores controversias en gestación.", 
+                source: "GPC S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama en el primer nivel de atención, 2017, Cáncer de mama en el embarazo, p. 37." 
+            },
+            {
+                id: 26, 
+                question: "¿Qué modificación técnica es indispensable al solicitar una mastografía de tamizaje en pacientes con implantes mamarios estéticos?", 
+                options: ["Mastografía digital con técnica 3D", "Proyecciones con desplazamiento del implante", "Compresión máxima sostenida", "Inyección de medio de contraste"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, el material sintético del implante bloquea la penetración de los rayos X, requiriendo maniobras especiales (técnica de Eklund) para separar el parénquima natural hacia adelante y permitir la evaluación de la glándula oculta.<br><br>Perla ENARM: \"La evaluación del implante mamario debe incluir proyecciones craneocaudales y oblicuas mediolaterales, así como las vistas de desplazamiento del implante... debido a la inmovilidad del implante, las imágenes laterales de 90 grados deben agregarse.\"<br><br>Análisis de Distractores: La mastografía digital pura (A) no sortea la densidad del silicón sin la maniobra de Eklund. La compresión máxima (C) sobre el implante puede romperlo y no mejora la visión glandular. El medio de contraste (D) no aplica para este estudio.", 
+                source: "GPC S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama en el primer nivel de atención, 2017, Tamizaje, p. 27." 
+            },
+            {
+                id: 27, 
+                question: "¿A qué edad se debe promover el inicio de la autoexploración mamaria mensual como hábito para el conocimiento anatómico del cuerpo?", 
+                options: ["15 años", "18 años", "20 años", "25 años"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, aunque la autoexploración no disminuye la mortalidad probada en metaanálisis, es una herramienta fundamental de autoconocimiento para demandas tempranas de atención desde la juventud madura.<br><br>Perla ENARM: \"La autoexploración se debe recomendar a partir de los 20 años de edad, es función del personal de salud enseñar la técnica adecuada.\"<br><br>Análisis de Distractores: Las edades de 15 (A) o 18 (B) se consideran muy tempranas por los constantes cambios fibroquísticos de la adolescencia. A los 25 años (D) inicia la exploración por personal médico institucional.", 
+                source: "GPC S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama en el primer nivel de atención, 2017, Exploración clínica y autoexploración, p. 32." 
+            },
+            {
+                id: 28, 
+                question: "Durante la exploración del hueco axilar en búsqueda de ganglios metastásicos, ¿qué postura del miembro superior es esencial para un examen exitoso?", 
+                options: ["Abducción máxima del brazo", "Tensión del músculo dorsal ancho", "Relajación total del pectoral mayor", "Rotación interna forzada"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, la tensión muscular de la pared anterior del tórax bloquea por completo el acceso táctil a los ápices ganglionares de los niveles de Berg axilares, arrojando falsos negativos.<br><br>Perla ENARM: \"El examen de la axila requiere de una relajación total del pectoral mayor y una palpación muy suave pero firme, debe recordarse en condiciones normales que es casi imposible tocar los ganglios.\"<br><br>Análisis de Distractores: La abducción (A) o cualquier tipo de tensión (B, D) endurecen la fascia axilar, escondiendo adenopatías milimétricas. La maniobra correcta es sostener el brazo del paciente relajado sobre el antebrazo del explorador.", 
+                source: "GPC S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama en el primer nivel de atención, 2017, Exploración de hueco axilar, p. 48." 
+            },
+            {
+                id: 29, 
+                question: "¿Qué rasgo en la inspección de la telorrea se considera de sospecha inminente y requiere derivación inmediata a clínica de mama?", 
+                options: ["Salida serosanguinolenta unilateral", "Descarga verdosa multiporo", "Secreción purulenta con dolor", "Secreción lechosa bilateral"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, la presencia de sangre espontánea proveniente de un solo conducto galactóforo obedece estadísticamente a la ruptura del epitelio por proliferación papilar (papiloma intraductal) o carcinoma ductal in situ.<br><br>Perla ENARM: \"Además de los signos y síntomas clínicos, otros datos de sospecha son: ... Telorrea (secreción sero-sanguinolenta).\"<br><br>Análisis de Distractores: La secreción verdosa (B) típica de ectasia ductal. La purulenta (C) asocia a abscesos y mastitis. La secreción láctea bilateral (D) obedece a hiperprolactinemia u otros disturbios endocrinos sin relación al cáncer mamario primario.", 
+                source: "GPC S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama en el primer nivel de atención, 2017, Cuadro de sospecha clínica, p. 31." 
+            },
+            {
+                id: 30, 
+                question: "¿Cuál es el límite temporal normativo de respuesta para la cita en segundo nivel ante una mujer de 52 años con alteraciones recientes en un pezón?", 
+                options: ["Menos de 48 horas", "Menos de 2 semanas", "Menos de 1 mes", "Referencia trimestral ordinaria"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, los cambios unilaterales del pezón sin explicación a esa edad tienen altas tasas de valor predictivo positivo, exigiendo celeridad burocrática para el abordaje diagnóstico temprano.<br><br>Perla ENARM: \"Se recomienda referir a las personas que tengan un patrón clínico sugestivo de cáncer de mama a la consulta de especialidad en el segundo nivel, con una cita en menos de 2 semanas si tiene lo siguiente: ≥50 años de edad, con alguno de los siguientes síntomas en un solo pezón: Descarga, Retracción...\"<br><br>Análisis de Distractores: 48 horas (A) no es el umbral protocolizado para el segundo nivel regular. Un mes (C) y una referencia ordinaria (D) merman drásticamente la sobrevida en un escenario de crecimiento logarítmico oncológico.", 
+                source: "GPC S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama en el primer nivel de atención, 2017, Criterios de referencia, p. 36." 
+            },
+            {
+                id: 31, 
+                question: "En la historia reproductiva femenina, ¿qué factor de exposición a estrógenos se clasifica como riesgo incrementado para Cáncer de Mama?", 
+                options: ["Menopausia temprana antes de los 45 años", "Menopausia tardía después de los 55 años", "Menarca posterior a los 15 años", "Periodos amenorreicos fisiológicos largos"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, prolongar la edad de insuficiencia ovárica incrementa dramáticamente el número total de ciclos menstruales en la vida, expandiendo la ventana biológica donde las células de la mama sufren mitosis estrogénicas sucesivas.<br><br>Perla ENARM: \"Se recomienda considerar la referencia oportuna, si se presentan los siguientes factores de riesgo: ... Menopausia tardía (≥55 años de edad).\"<br><br>Análisis de Distractores: La menopausia temprana (A), la menarca tardía (C) y la amenorrea sostenida (D) interrumpen o acortan el baño estrogénico tisular, fungiendo por tanto como variables protectoras frente a la génesis del cáncer lobulillar y ductal.", 
+                source: "GPC S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama en el primer nivel de atención, 2017, Factores de riesgo, p. 26." 
+            },
+            {
+                id: 32, 
+                question: "Para la ejecución de un ultrasonido mamario de alta calidad, ¿qué característica física debe poseer obligatoriamente el transductor ecográfico?", 
+                options: ["Baja frecuencia de 3 MHz", "Alta frecuencia de 10 MHz", "Cristal convexo profundo", "Rango mixto de 1 a 5 MHz"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, la glándula es un órgano superficial que requiere transductores lineales de altísima resolución espacial para diferenciar la microarquitectura tisular (quiste sebáceo vs nódulo sólido).<br><br>Perla ENARM: \"El ultrasonido mamario debe realizarse en tiempo real y de alta resolución, con un traductor de alta frecuencia de 10 MHz por lo menos.\"<br><br>Análisis de Distractores: Las sondas de 3 a 5 MHz (A, D) se usan para estructuras abdominales u obstétricas profundas; su uso en mama arroja una imagen difuminada e inútil para microcalcificaciones o márgenes espiculados. El arreglo convexo (C) no aplica a tejidos blandos de pared.", 
+                source: "GPC S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama en el primer nivel de atención, 2017, Ultrasonido, p. 33." 
+            },
+            {
+                id: 33, 
+                question: "¿Cuál es el rango estimado de porcentaje de cánceres no detectados (falsos negativos) de la mastografía en mujeres jóvenes de 40 a 49 años?", 
+                options: ["Menor al 10 %", "Del 25 % al 30 %", "Del 40 % al 60 %", "Mayor al 80 %"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, es imperativo concientizar sobre las severas limitaciones del estudio en esta franja de edad a causa de la alta radiodensidad estromal, lo que enmascara los focos tumorales nacientes.<br><br>Perla ENARM: \"Se debe de aconsejar a las pacientes sobre los riesgos y beneficios asociados al tamizaje con mastografía: Posibilidad de resultado falso negativo... Alrededor de un 25% a 30% de los cánceres de mama no serán detectados por mastografía en mujeres de 40 a 49 años.\"<br><br>Análisis de Distractores: Porcentajes muy bajos (A) aplican únicamente a mamas seniles grasas (>60 años). Porcentajes masivos (C, D) invalidarían el uso total del estudio diagnóstico que sí está normado a los 40 años.", 
+                source: "GPC S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama en el primer nivel de atención, 2017, Tamizaje, p. 27." 
+            },
+            {
+                id: 34, 
+                question: "Una vez que el programa de escrutinio radiológico identifica una masa completamente asintomática y no palpable, ¿cuál debe ser la conducta de canalización?", 
+                options: ["Alta con autoexploración mensual", "Seguimiento en centro de salud familiar", "Referencia a segundo nivel especializado", "Repetir la mastografía en 3 años"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, el objetivo de la política de salud es precisamente cazar tumores incipientes en estadios subclínicos y la carencia de hallazgos palpables no merma la urgencia de someter el reporte a escrutinio secundario.<br><br>Perla ENARM: \"Cuando en la mastografía de tamizaje se percibe una masa no palpable, la paciente debe ser referida a un profesional con experiencia en el diagnóstico de cáncer de mama.\"<br><br>Análisis de Distractores: Retener a la paciente en primer nivel (A, B) sin correlación tisular o esperar 3 años (D) anula el propósito de reducción de mortalidad del tamizaje nacional. El abordaje requiere ecografía de segunda opinión o biopsia con aguja (segundo nivel).", 
+                source: "GPC S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama en el primer nivel de atención, 2017, Criterios de referencia, p. 36." 
+            },
+            {
+                id: 35, 
+                question: "¿Qué incremento porcentual relativo (RR) por consumo de alcohol se asocia al Cáncer de Mama de acuerdo a cada 10 gramos ingeridos diariamente?", 
+                options: ["Aumento del 2.5 %", "Aumento del 7.1 %", "Aumento del 15.0 %", "Aumento del 25.5 %"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, los estudios epidemiológicos han tipificado una relación lineal ascendente del etanol, presuntamente vinculada a su alteración del metabolismo de los estrógenos hepáticos e impacto oxidativo.<br><br>Perla ENARM: \"El riesgo de cáncer de mama aumenta con el consumo de alcohol. El grupo colaborativo de NICE reportó un incremento del 7.1% del riesgo relativo por cada 10 gramos de alcohol ingerido por día.\"<br><br>Análisis de Distractores: Las otras cifras porcentuales (A, C, D) no coinciden con la estadística métrica rigurosa documentada por NICE que adopta la guía como umbral para educación del paciente en primer contacto.", 
+                source: "GPC S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama en el primer nivel de atención, 2017, Promoción de la salud, p. 17." 
+            },
+            {
+                id: 36, 
+                question: "Durante la inspección con la paciente sentada descubierta, ¿qué técnica física debe instruirse para evidenciar cambios sutiles por tracción de los ligamentos de Cooper?", 
+                options: ["Elevar rodillas al pecho", "Presionar las manos sobre las caderas", "Tocar los talones sin flexionar", "Colocar manos cruzadas tras espalda"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, la contracción voluntaria del músculo subyacente fuerza los planos aponeuróticos; si un tumor invade un tracto fibroso, la presión en la cadera jalará la piel y revelará una indentación asimétrica en el cuadrante afectado.<br><br>Perla ENARM: \"A continuación, solicite que presione las manos sobre sus caderas, para que se contraiga el músculo pectoral mayor, esta posición puede poner de manifiesto una retracción cutánea que de otro modo pasaría inadvertida.\"<br><br>Análisis de Distractores: Los demás movimientos (A, C) no aplican biomecánicamente a la parrilla costal superior. Las manos en la nuca (parecido a D) se usan, pero la contracción específica se logra con la tensión hacia abajo contra la cadera pélvica.", 
+                source: "GPC S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama en el primer nivel de atención, 2017, Cuadros o figuras: Inspección, p. 48." 
+            },
+            {
+                id: 37, 
+                question: "En el árbol de decisiones ante un embarazo o lactancia con masa palpable, ¿cuál es el desenlace diagnóstico que obliga inmediatamente a la toma de una biopsia sin intermediarios?", 
+                options: ["Categoría 1 a 2 sin cambios previos", "Masa con probables características benignas", "Resultado incompleto o no concluyente", "Hallazgos catalogados de sospecha franca"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, aunque los estados gestacionales cursan con alteraciones prodrómicas extremas, confirmar visualmente masas sólidas con espiculación o microcalcificaciones impone intervención celular para proteger el binomio materno-fetal de metástasis galopantes.<br><br>Perla ENARM: \"¿Es sospechoso de hallazgos malignos? (BI RADS 4 o 5) SI -> Envío inmediato a tercer nivel para realización de estudios complementarios / Planear necesidad de biopsia y evaluar extensión de enfermedad ante alta sospecha.\"<br><br>Análisis de Distractores: Las opciones (A) requieren vigilancia. (B) requieren ultrasonido de seguimiento o envío programado (BI-RADS 3). (C) indica únicamente la necesidad de repetir con proyecciones especiales, no un plan inminente de biopsia oncológica.", 
+                source: "GPC S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama en el primer nivel de atención, 2017, Algoritmo 3. Hallazgo palpable focal, p. 56." 
+            },
+            {
+                id: 38, 
+                question: "¿Qué aseveración dicta el meta-análisis utilizado por la GPC sobre el riesgo atribuible por el uso contemporáneo de anticonceptivos orales?", 
+                options: ["Constituye un riesgo mayor o absoluto (>4.0)", "Son protectores para tejido mamario", "Incrementan ligeramente el riesgo (RR 1.1 - 1.2)", "Causan exclusivamente cáncer ductal in situ"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, aunque los análogos de progesterona frenan el influjo anovulatorio, los miligramos activos circulantes imponen un desafío proliferativo de bajísimo perfil pero constatable para cáncer de mama.<br><br>Perla ENARM: \"Un metanálisis reportó un RR de 1.1 a 1.2 indicando un pequeño pero significativo incremento en el riesgo para cáncer de mama, los anticonceptivos orales usados son habitualmente una combinación de estrógenos y análogos...\"<br><br>Análisis de Distractores: No alcanzan grados de riesgo \"mayor\" absolutos de la familia BRCA (A). No son protectores para tejido de mama, aunque sí para endometrio y ovario (B). El tipo celular no está limitado al in situ (D).", 
+                source: "GPC S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama en el primer nivel de atención, 2017, Prevención secundaria, p. 23." 
+            },
+            {
+                id: 39, 
+                question: "Durante el cribado nacional para una mujer sin factores familiares ni clínica, ¿qué reducción estadística aporta la paridad de 5 o más nacidos vivos al riesgo oncológico basal?", 
+                options: ["Reducción del 5 %", "Reducción del 10 %", "Reducción del 38 %", "Reducción del 75 %"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, los periodos repetitivos sin ovulación generados por las altas tasas de multiparidad consolidan la diferenciación anatómica lobulillar terminal y amortiguan los daños de los picos de estradiol repetitivos.<br><br>Perla ENARM: \"El incremento en la paridad se ha asociado con disminución en el riesgo de cáncer de mama... Las mujeres que reportaron cinco o más nacidos vivos, tuvieron una reducción del 38% de riesgo.\"<br><br>Análisis de Distractores: El 5% y 10% (A, B) son márgenes que caen cortos ante la magnitud biológica que los embarazos a término imponen frente a la nuliparidad. El 75% (D) es un descenso inverosímil para una variable dependiente del estilo de vida exclusivamente.", 
+                source: "GPC S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama en el primer nivel de atención, 2017, Prevención secundaria, p. 22." 
+            },
+            {
+                id: 40, 
+                question: "En el árbol genealógico familiar de la paciente, ¿qué entidad neoplásica directa orienta como foco rojo para referirla al escrutinio con asesoría genética temprana?", 
+                options: ["Cáncer de cuello uterino agresivo", "Cáncer de ovario en familiares cercanos", "Cáncer gástrico no polipósico", "Tumor de tiroides diseminado"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer de Mama, el tracto ovárico y la glándula mamaria comparten la vulnerabilidad primaria a la inactivación de los genes de recombinación homóloga (BRCA 1 y 2), configurando un síndrome heredofamiliar dominante de alta penetrancia oncológica.<br><br>Perla ENARM: \"Se recomienda considerar la referencia oportuna, si presentan los siguientes factores de riesgo: ... Antecedentes familiares de cáncer de mama o de ovario (especialmente en los familiares cercanos al paciente en el mismo lado de la familia).\"<br><br>Análisis de Distractores: El cáncer gástrico (C), tiroideo (D) y cervicouterino (A) (este último por VPH) carecen de los lazos cromosómicos directos que impongan por sí solos el protocolo diagnóstico de consejería en consulta de mama.", 
+                source: "GPC S-001-08, Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama en el primer nivel de atención, 2017, Recomendación Clave. Factores de riesgo, p. 26 y 75." 
+            }        
+        ];
+
+        // ==========================================
+        // ==========================================
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('gyoDLastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('gyoDProgress');
+                localStorage.removeItem('gyoDLastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-pink-500 shadow-md z-10 border-pink-500 dark:border-pink-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-rose-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "GINECOLOGÍA Y OBSTETRICIA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "GPC S-001-08 • Prevención, tamizaje y referencia oportuna de casos sospechosos de cáncer de mama en el primer nivel de atención";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="ES11818GYOE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-pink-100 dark:border-pink-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-pink-50 has-[:checked]:border-pink-400 dark:has-[:checked]:bg-pink-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-pink-600 dark:hover:bg-pink-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('gyoDProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('gyoDLastQId', currentQuestionId);
+                else localStorage.removeItem('gyoDLastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('gyoDProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

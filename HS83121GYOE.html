@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================
+        // =========================================================
+        const questionsData = [
+            {
+                id: 1, 
+                question: "¿Cuál es el punto de corte en unidades formadoras de colonias requerido en un cultivo de orina para establecer el diagnóstico confirmatorio de bacteriuria asintomática?", 
+                options: ["≥ 10,000 de múltiples microorganismos", "≥ 100,000 de múltiples microorganismos", "≥ 50,000 de un solo microorganismo", "≥ 100,000 de un solo microorganismo"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, el diagnóstico de certeza exige una carga bacteriana significativa mediante urocultivo, debiendo aislarse una única cepa para descartar contaminación de la muestra.<br><br>Perla ENARM: \"Se recomienda realizar urocultivo para confirmar diagnóstico de ITU en embarazadas con síntomas (100,000 unidades formadoras de colonias de un solo microrganismo).\"<br><br>Análisis de Distractores: Las opciones con menor recuento (10,000 o 50,000) o con múltiples microorganismos indican contaminación de la muestra de orina durante la recolección y no justifican el inicio de tratamiento antimicrobiano.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Diagnóstico, Página 22." 
+            },
+            {
+                id: 2, 
+                question: "¿Cuál es el microorganismo patógeno aislado con mayor frecuencia en las infecciones del tracto urinario durante la gestación?", 
+                options: ["Escherichia coli", "Proteus mirabilis", "Klebsiella pneumoniae", "Staphylococcus saprophyticus"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, las alteraciones anatómicas y el estancamiento urinario facilitan la colonización por enterobacterias provenientes del tracto gastrointestinal, siendo este bacilo responsable de hasta el 86% de los episodios.<br><br>Perla ENARM: \"Los microorganismos patógenos más frecuentemente asociados con ITU son Escherichia coli (86%), Staphylococcus saprophyticus, Klebsiella spp, Enterobacter spp, Proteus spp\".<br><br>Análisis de Distractores: Staphylococcus saprophyticus, Proteus mirabilis y Klebsiella pneumoniae son uropatógenos clínicamente posibles y documentados en cultivos obstétricos, pero su incidencia poblacional es abismalmente menor en comparación con E. coli.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Etiología, Página 6." 
+            },
+            {
+                id: 3, 
+                question: "¿Cuál de los siguientes antecedentes médicos en los últimos 3 meses constituye un factor de riesgo para desarrollar infección por bacterias productoras de betalactamasas de espectro extendido?", 
+                options: ["Uso de nitrofurantoína", "Uso de cefalosporinas", "Consumo de probióticos", "Alergia a la penicilina"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, la presión selectiva ejercida por el uso previo de antibióticos de amplio espectro induce mutaciones enzimáticas bacterianas que confieren resistencia cruzada de alto impacto.<br><br>Perla ENARM: \"Se sugiere considerar como factores de riesgo para presentar ITU por bacterias BLEE durante el embarazo, los antecedentes de ITU, uso de cefalosporinas, antimicrobianos combinados y catéter urinario.\"<br><br>Análisis de Distractores: La nitrofurantoína mantiene un perfil de resistencia sumamente bajo. Los probióticos intervienen en la flora intestinal pero no alteran la resistencia genética. La alergia a la penicilina es una condición materna, no del patógeno.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Prevención, Página 16." 
+            },
+            {
+                id: 4, 
+                question: "¿Cuál es el estudio de tamizaje de primera elección que debe solicitarse en la consulta prenatal inicial para detectar bacteriuria asintomática?", 
+                options: ["Tinción de Gram", "Sedimento urinario", "Tira reactiva", "Urocultivo"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, la alta tasa de complicaciones perinatales derivadas de una colonización asintomática exige utilizar el estándar de oro diagnóstico para evitar el subdiagnóstico desde el primer contacto.<br><br>Perla ENARM: \"Se recomienda realizar el tamizaje de BA en la primera consulta prenatal. Se recomienda realizar tamizaje de BA mediante urocultivo en mujeres embarazadas.\"<br><br>Análisis de Distractores: La tinción de Gram solo se avala como segunda opción si no se cuenta con incubación de cultivos. La tira reactiva y el sedimento urinario presentan demasiados falsos negativos como herramienta de escrutinio primario en embarazadas.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Diagnóstico, Página 21." 
+            },
+            {
+                id: 5, 
+                question: "Ante la falta de disponibilidad de un cultivo de orina en la unidad de primer nivel, ¿cuál es la prueba diagnóstica alternativa sugerida para tamizaje por su mayor rendimiento y sensibilidad?", 
+                options: ["Tinción de Gram", "Reacción de nitritos", "Esterasa leucocitaria", "Examen general de orina"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, la visualización microscópica directa de bacterias centrifugadas sin incubación previa ofrece una sensibilidad del 86% y especificidad del 97%, superando por mucho a los métodos bioquímicos convencionales.<br><br>Perla ENARM: \"Se sugiere realizar tamizaje con tinción de Gram cuando no se cuente con urocultivo y se tenga disponibilidad de realizar la prueba.\"<br><br>Análisis de Distractores: La reacción de nitritos, la esterasa leucocitaria y el EGO tienen una propensión fisiológica a falsos positivos en el embarazo por incremento de secreciones y leucocitosis, relegándolas al último escalón.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Diagnóstico, Página 21." 
+            },
+            {
+                id: 6, 
+                question: "¿Cuál es el criterio temporal exacto que define a una infección del tracto urinario como recurrente y justifica evaluar el inicio de profilaxis farmacológica?", 
+                options: ["2 infecciones en 12 meses", "4 infecciones en 6 meses", "3 infecciones en 12 meses", "1 infección en cada trimestre"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, para exponer a un feto a antibióticos de manera continua se requiere documentar un fracaso persistente del aclaramiento bacteriano, el cual se define por una alta frecuencia demostrada en urocultivo.<br><br>Perla ENARM: \"Se sugiere la profilaxis farmacológica en mujeres embarazadas con alto riesgo de infección del tracto urinario como ITU recurrente (tres infecciones recurrentes demostradas mediante urocultivo positivo en menos de un año).\"<br><br>Análisis de Distractores: Presentar únicamente 2 infecciones en un año no cumple la definición primaria (requeriría ser 2 en 6 meses). Cuatro infecciones en 6 meses excede severamente el límite. Una infección por trimestre no es una pauta diagnóstica.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Prevención, Página 18." 
+            },
+            {
+                id: 7, 
+                question: "En pacientes obstétricas con diagnóstico documentado de infección urinaria recurrente o anomalías anatómicas, ¿cuál es el fármaco profiláctico de primera elección?", 
+                options: ["Fosfomicina trometamol", "Nitrofurantoína", "Cefalexina", "Amoxicilina"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, la profilaxis extendida amerita un agente que logre concentraciones intraluminales elevadas en la vejiga con mínima alteración sistémica de la microbiota intestinal para evitar sobreinfecciones.<br><br>Perla ENARM: \"Se sugiere el uso de nitrofurantoína para profilaxis farmacológica en mujeres embarazadas con alto riesgo de infección del tracto urinario.\"<br><br>Análisis de Distractores: La fosfomicina trometamol es fundamental en el tratamiento empírico de eventos agudos, no en pautas profilácticas crónicas. La cefalexina y amoxicilina sufren severas tasas de resistencia nacional (hasta 80%).", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Prevención, Página 18." 
+            },
+            {
+                id: 8, 
+                question: "¿Qué grupo de medicamentos antimicrobianos está explícitamente contraindicado utilizar de manera empírica para cistitis debido a su elevada tasa de resistencia bacteriana en México?", 
+                options: ["Fosfomicina y nitrofurantoína", "Ceftriaxona y ertapenem", "Ampicilina y cefalexina", "Trimetoprim y sulfametoxazol"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, la prevalencia de cepas de E. coli multirresistentes anula la utilidad de los betalactámicos de primera y segunda generación, asociándose a fracaso del tratamiento primario si no existe sensibilidad comprobada.<br><br>Perla ENARM: \"No se recomienda la utilización de forma empírica de ampicilina, amoxicilina y/o cefalexina debido a la tasa elevada de resistencia identificada en uropatógenos.\"<br><br>Análisis de Distractores: Fosfomicina y nitrofurantoína representan la primera línea empírica actual por su perfil de susceptibilidad. Ceftriaxona y ertapenem son de uso intrahospitalario guiado. TMP/SMX se evita por toxicidad embrionaria, no primariamente por ineficacia.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Herramientas, Página 37." 
+            },
+            {
+                id: 9, 
+                question: "¿Cuál es el tratamiento antimicrobiano empírico de elección para cistitis aguda que cuenta con el mejor perfil de seguridad y se puede prescribir en cualquier trimestre?", 
+                options: ["Ciprofloxacino 500 mg", "Amoxicilina 500 mg", "Nitrofurantoína 100 mg", "Fosfomicina trometamol 3 g"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, este fármaco garantiza una curación clínica sobresaliente gracias a su administración en dosis única (alta adherencia) y a que carece de toxicidad hematológica intrauterina en todas las fases del desarrollo fetal (Clasificación B).<br><br>Perla ENARM: \"En el caso de no contar con urocultivo y antibiograma, se recomienda tratamiento antimicrobiano empírico de la cistitis con fosfomicina (posible prescribirlo con mínimo riesgo en cualquier trimestre del embarazo).\"<br><br>Análisis de Distractores: La nitrofurantoína es excelente alternativa, pero se prohíbe en 1er y 3er trimestre. El ciprofloxacino impacta el cartílago de crecimiento. La amoxicilina presenta falla terapéutica endémica en México.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Tratamiento, Página 31." 
+            },
+            {
+                id: 10, 
+                question: "¿Cuál es la principal morbilidad neonatal previsible por la cual se debe evitar la administración de nitrofurantoína cerca de la fecha de resolución del embarazo?", 
+                options: ["Cierre de conducto arterioso", "Anemia hemolítica", "Riesgo de kernicterus", "Hemorragia intraventricular"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, los eritrocitos del recién nacido cursan con inmadurez enzimática en sus sistemas antioxidantes, haciéndolos frágiles ante el estrés oxidativo provocado por drogas si existe exposición hematógena periparto.<br><br>Perla ENARM: \"Evite nitrofurantoína en primer trimestre... y a término debido al riesgo potencial de anemia hemolítica en el recién nacido.\"<br><br>Análisis de Distractores: El kernicterus se presenta con el uso de trimetoprim/sulfametoxazol por alteración en la fijación de albúmina. El cierre prematuro del conducto arterioso deriva de la toma de antiinflamatorios no esteroideos sistémicos.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Herramientas, Página 36." 
+            },
+            {
+                id: 11, 
+                question: "Fisiopatológicamente, ¿por qué motivo se contraindica de manera formal el uso de trimetoprim con sulfametoxazol durante el tercer trimestre del embarazo?", 
+                options: ["Causa displasia de cartílago", "Produce anomalías del tubo neural", "Desplaza la bilirrubina plasmática", "Induce agranulocitosis fulminante"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, las sulfonamidas tienen alta afinidad por los sitios de unión proteica, liberando bilirrubina indirecta circulante en el neonato, la cual cruza la barrera hematoencefálica favoreciendo la encefalopatía (kernicterus).<br><br>Perla ENARM: \"El sulfametoxazol debe evitarse cerca del término por el riesgo teórico de kernicterus (desplaza la bilirrubina de sus sitios de unión en el recién nacido).\"<br><br>Análisis de Distractores: El cierre de defectos del tubo neural (teratogénesis por antagonismo de folatos) es un evento que contraindica el fármaco en el primer trimestre, no en el tercero. La displasia del cartílago óseo se asocia a la familia de las fluoroquinolonas.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Herramientas, Página 37." 
+            },
+            {
+                id: 12, 
+                question: "En una paciente gestante que presenta cuadro clínico de fiebre, disuria, dolor lumbar y maniobra de Giordano positiva, ¿cuál es el antibiótico intrahospitalario empírico recomendado?", 
+                options: ["Ertapenem intravenoso", "Fosfomicina vía oral", "Ampicilina intravenosa", "Nitrofurantoína vía oral"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, la inflamación pielocalicial aguda es una entidad grave que predispone a urosepsis materna y requiere concentraciones inhibitorias tisulares que solo los parenterales de amplio espectro garantizan desde el inicio.<br><br>Perla ENARM: \"El tratamiento de pacientes con pielonefritis en el embarazo incluye ingreso hospitalario e manejo con antimicrobiano intravenoso... Pielonefritis: Ertapenem 1 gramo cada 24 horas durante 10-14 días\".<br><br>Análisis de Distractores: Fosfomicina y nitrofurantoína son excelentes agentes limitados a orina, incapaces de penetrar tejido inflamado sistémico en pielonefritis. La ampicilina aislada tiene una enorme resistencia de enterobacterias a nivel local.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Herramientas, Página 37." 
+            },
+            {
+                id: 13, 
+                question: "¿Cuál es el paso clínico obligatorio en la consulta de atención primaria tras haber concluido un esquema de tratamiento antimicrobiano por bacteriuria asintomática?", 
+                options: ["Indicar profilaxis ininterrumpida", "Repetir tira reactiva de orina", "Referir a urología ginecológica", "Realizar urocultivo de control"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, asegurar la resolución del cuadro clínico primario no garantiza la esterilidad de la orina, y toda persistencia incrementa drásticamente el riesgo de complicaciones a medida que el feto progresa.<br><br>Perla ENARM: \"Se sugiere realizar urocultivo posterior a concluir el tratamiento de BA en mujeres embarazadas.\"<br><br>Análisis de Distractores: La tira reactiva de seguimiento es insuficiente por sus falsos negativos. La profilaxis solo aplica a las infecciones de comprobada recurrencia mayor. La referencia solo está indicada si se comprueba falla en la erradicación del patógeno.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Seguimiento, Página 32." 
+            },
+            {
+                id: 14, 
+                question: "En caso de omitir el abordaje de tamizaje y tratamiento oportuno de la bacteriuria asintomática, ¿cuál es la principal complicación infecciosa esperada hasta en un 40% de los embarazos?", 
+                options: ["Absceso vesical o renal", "Cistitis hemorrágica", "Insuficiencia renal aguda", "Pielonefritis aguda"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, el medio gestacional permite la proliferación de cepas indolentes; el reflujo de las vías superiores dilata cálices y asciende estas colonias, invadiendo el parénquima renal y detonando manifestaciones sistémicas graves.<br><br>Perla ENARM: \"En la gestante el tamizaje de BA en primer trimestre o en la primera consulta está justificado, ya que, de no tratarse, hasta 40% de mujeres puede desarrollar pielonefritis.\"<br><br>Análisis de Distractores: La formación de abscesos, la falla renal y la variante hemorrágica de cistitis son fenómenos infrecuentes en estadios pre-sepsis y no corresponden a la altísima incidencia de secuela inflamatoria primaria del riñón reportada en guías mundiales.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Introducción, Página 8." 
+            },
+            {
+                id: 15, 
+                question: "Con base en la duración óptima de la prescripción antimicrobiana para bacteriuria asintomática y cistitis, ¿cuál es la indicación precisa para asegurar el éxito terapéutico con menor toxicidad?", 
+                options: ["Indicar ciclos de 14 días", "Indicar terapia supresora", "Indicar ciclos acortados", "Indicar antibióticos intravenosos"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, los regímenes farmacológicos de menor duración limitan la alteración de la flora comensal vaginal e intestinal, previenen resistencia prolongada e impactan favorablemente en la adherencia a la toma.<br><br>Perla ENARM: \"Se sugiere indicar ciclos acortados de antimicrobiano, siempre que sea posible.\"<br><br>Análisis de Distractores: Los ciclos empíricos de 14 días y las fórmulas parenterales (intravenosas) se justifican única y exclusivamente si la barrera renal fue penetrada (pielonefritis clínica) o ante choque séptico urológico.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Tratamiento, Página 26." 
+            },
+            {
+                id: 16, 
+                question: "Durante los cambios fisiológicos de adaptación al embarazo, ¿qué esteroide es el responsable principal de la reducción del tono muscular y estasis urinaria?", 
+                options: ["Estradiol plasmático", "Progesterona circulante", "Gonadotropina coriónica", "Hormona relaxina"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, las alteraciones funcionales condicionan dilatación en cálices y uréteres. Este bloqueo temporal de las contracciones peristálticas del músculo liso perpetúa el estancamiento volumétrico crónico que favorece cultivos positivos.<br><br>Perla ENARM: \"reducción del tono muscular con la consiguiente disminución de la peristalsis ureteral y aumento en la relajación del esfínter ureteral, lo anterior, se debe probablemente al aumento en la concentración de progesterona.\"<br><br>Análisis de Distractores: Los estrógenos favorecen principalmente el hiperaflujo sanguíneo mucoso (congestión). La relaxina y gonadotropina coriónica afectan ligamentos musculoesqueléticos pélvicos y preservación embrionaria temprana, no el detrusor de manera predominante.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Introducción, Página 7." 
+            },
+            {
+                id: 17, 
+                question: "¿Cuál de las siguientes alteraciones anatómicas documentadas constituye una indicación formal para referir a una paciente embarazada de primera vez a tercer nivel de atención?", 
+                options: ["Malformación urológica concomitante", "Reflujo vesicoureteral leve", "Reacción alérgica a cefalosporinas", "Cistitis con hematuria macroscópica"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, las variables anatómicas como riñones en herradura, uréteres dobles o estenosis severas imposibilitan el lavado vesical fisiológico y requieren abordaje multidisciplinario para predecir fallo a medicación e instrumentación futura segura.<br><br>Perla ENARM: \"Se sugiere la referencia a un servicio de Ginecología y Obstetricia y en su caso a Perinatología o Uro-ginecología a mujeres embarazadas con ITU recurrente, malformaciones uro-ginecológicas, litiasis reno-ureteral o antecedente de procedimientos invasivos urinarios.\"<br><br>Análisis de Distractores: La cistitis, las alergias en la historia clínica y el reflujo fisiológico (hidronefrosis leve natural de la gestante) están dentro de la competencia ordinaria del control obstétrico básico mensual.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Prevención, Página 18." 
+            },
+            {
+                id: 18, 
+                question: "A nivel celular e inmunológico, ¿cuál es el mecanismo bioquímico por el cual las infecciones urinarias desencadenan inestabilidad miometrial y parto pretérmino?", 
+                options: ["Liberación de oxitocina pituitaria", "Incremento del calcio libre miometrial", "Destrucción de la barrera uterina", "Bloqueo de canales de potasio"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, las colonias bacterianas gramnegativas producen fosfolipasa A2 y prostaglandinas inflamatorias a nivel sistémico que estimulan exógenamente el tono uterino hasta desencadenar borramiento y acortamiento cervical con contracciones sostenidas.<br><br>Perla ENARM: \"estudios sugieren que estos microorganismos son capaces de producir ácido araquidónico... con el consiguiente incremento del calcio libre miometrial, con la consiguiente estimulación del tono uterino y contracciones, dando como resultado desenlaces como parto pretérmino.\"<br><br>Análisis de Distractores: La oxitocina fetal o materna interviene fisiológicamente, no producto directo de mediadores endógenos inducidos por infección inferior local. El daño de barrera tisular pertenece a otra fisiopatología (corioamnionitis severa directa).", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Introducción, Página 7." 
+            },
+            {
+                id: 19, 
+                question: "En pacientes que requieren instrumentación urológica o colocación de sonda urinaria permanente, ¿qué estrategia farmacológica profiláctica secundaria se recomienda en el embarazo?", 
+                options: ["Dosis única de fosfomicina oral", "Urocultivos mensuales sin profilaxis", "Uso de nitrofurantoína profiláctica", "Cefalosporinas intravenosas periódicas"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, la sonda forma biopelículas bacterianas intratables una vez establecidas, por lo que se prioriza mantener orinas permanentemente hostiles mediante dosis reducidas continuas de agentes de concentración puramente luminal.<br><br>Perla ENARM: \"Se sugiere la profilaxis farmacológica en mujeres embarazadas con alto riesgo de infección... portadoras de catéter doble jota o sonda urinaria permanente. Se sugiere el uso de nitrofurantoína para profilaxis\".<br><br>Análisis de Distractores: La omisión de la profilaxis (puro seguimiento de laboratorio con urocultivos) condiciona hospitalización severa precoz. Fosfomicina no debe usarse para control crónico para preservar su potencial en urgencias empíricas.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Prevención, Página 18." 
+            },
+            {
+                id: 20, 
+                question: "Al evaluar estructuralmente mediante estudio ultrasonográfico a una gestante, ¿qué hallazgo en el tracto urinario superior se considera un cambio normal hasta en el 80% de los casos?", 
+                options: ["Engrosamiento de pared vesical", "Atrofia de la corteza renal", "Hidronefrosis leve transitoria", "Estenosis funcional de uretra"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, el músculo liso ureteral reacciona invariablemente a las altas cargas de progesterona disminuyendo drásticamente el aclaramiento vesical y predisponiendo una compresión del sistema excretor que revierte postparto.<br><br>Perla ENARM: \"En el 80% de las mujeres embarazadas existe una combinación de dilatación del tracto urinario e hidronefrosis leve causado parcialmente por una reducción del tono muscular\".<br><br>Análisis de Distractores: El engrosamiento vesical corresponde a edema crónico por cistitis franca, estenosis uretral anatómica (patología pélvica) o atrofia que denotan daño renal irremediable subyacente ajeno al cuadro fisiológico del embarazo normal.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Introducción, Página 7." 
+            },
+            {
+                id: 21, 
+                question: "¿Cuál es la indicación respecto al uso de medidas no farmacológicas, como el consumo de jugo de arándano o lisados bacterianos, para la prevención de infecciones urinarias en la gestación?", 
+                options: ["Indicar junto con nitrofurantoína", "Usar solo en infecciones recurrentes", "Recomendar como profilaxis primaria", "No recomendar por evidencia insuficiente"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, el uso de alternativas naturales o suplementos biológicos no ha demostrado superioridad estadística frente a placebo en la reducción de episodios infecciosos.<br><br>Perla ENARM: \"No existe suficiente evidencia para recomendar el consumo de productos de arándano, probióticos y lisados bacterianos durante el embarazo para prevención de infecciones del tracto urinario.\"<br><br>Análisis de Distractores: Las opciones profilácticas, primarias o complementarias son incorrectas porque la directriz desaconseja su uso rutinario al no modificar la tasa de bacteriuria asintomática, reservando el manejo preventivo exclusivamente para agentes farmacológicos validados (nitrofurantoína).", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Prevención, Página 17." 
+            },
+            {
+                id: 22, 
+                question: "¿Cuál es la duración establecida para la terapia antimicrobiana intravenosa en una paciente embarazada hospitalizada por pielonefritis aguda?", 
+                options: ["10 a 14 días", "14 a 21 días", "3 a 5 días", "5 a 7 días"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, la invasión del tracto superior y el riesgo de bacteriemia exigen un esquema sostenido para evitar recaídas y consolidar la esterilización del parénquima renal.<br><br>Perla ENARM: \"El tratamiento de pacientes con pielonefritis en el embarazo incluye ingreso hospitalario... Ertapenem 1 gramo cada 24 horas durante 10-14 días o Ceftriaxona 2 gramos cada 24 horas durante 10-14 días.\"<br><br>Análisis de Distractores: Los esquemas acortados (3 a 5 días o 5 a 7 días) son la indicación para bacteriuria asintomática y cistitis aguda (vías bajas). Un ciclo de 14 a 21 días excede la recomendación para un cuadro agudo sin absceso comprobado.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Herramientas de implementación 1, Página 37." 
+            },
+            {
+                id: 23, 
+                question: "A diferencia de la bacteriuria asintomática, ¿en qué condición clínica específica se sugiere solicitar un urocultivo de control posterior a finalizar el tratamiento por cistitis aguda?", 
+                options: ["Antes de resolución del embarazo", "Cambio de trimestre de gestación", "Persistencia o recurrencia de síntomas", "En todas las pacientes tratadas"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, mientras que la bacteriuria asintomática exige urocultivo de control siempre, en el caso de la cistitis, el seguimiento bacteriológico se focaliza si la clínica falla en remitir.<br><br>Perla ENARM: \"Se sugiere realizar urocultivo posterior al tratamiento de cistitis durante el embarazo en caso de persistencia o recurrencia de la sintomatología.\"<br><br>Análisis de Distractores: La solicitud universal (\"en todas las pacientes tratadas\") aplica estrictamente a la bacteriuria asintomática para confirmar curación. El control por cambios de trimestre o cercanía al parto no está pautado para cuadros ya resueltos de cistitis.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Seguimiento, Página 32." 
+            },
+            {
+                id: 24, 
+                question: "Para catalogar el uso previo de terapia antimicrobiana como un factor de riesgo para el desarrollo de bacterias productoras de betalactamasas de espectro extendido (BLEE), ¿cuál es el límite temporal indicado?", 
+                options: ["Últimos 6 meses", "Último año completo", "Últimos 3 meses", "Últimos 30 días"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, la presión selectiva ejercida sobre la microbiota intestinal y urinaria por antibióticos (especialmente cefalosporinas) mantiene una ventana de riesgo de mutación enzimática a corto y mediano plazo.<br><br>Perla ENARM: \"Se sugiere considerar los 3 meses previos como periodo de tiempo para antecedente de uso de antimicrobianos.\"<br><br>Análisis de Distractores: Los periodos de 6 meses o un año son utilizados para definir la cronicidad o recurrencia de la infección urinaria, no para la temporalidad de la resistencia inducida por prescripciones previas. 30 días subestima el impacto real.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Prevención, Página 15." 
+            },
+            {
+                id: 25, 
+                question: "Fisiopatológicamente, ¿por qué se encuentra formalmente contraindicada la prescripción empírica de trimetoprim con sulfametoxazol durante el primer trimestre del embarazo?", 
+                options: ["Alteración del cartílago fetal", "Desplazamiento de bilirrubina fetal", "Cierre del conducto arterioso", "Antagonismo del ácido fólico"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, la inhibición de la dihidrofolato reductasa interfiere con la embriogénesis temprana, asociándose a un aumento en el riesgo de malformaciones como defectos del tubo neural.<br><br>Perla ENARM: \"Evite TMP/SMX durante el primer trimestre... El trimetoprim es antagonista del ácido fólico; riesgo potencial de malformaciones en primer trimestre.\"<br><br>Análisis de Distractores: El desplazamiento de bilirrubina (Kernicterus) es el mecanismo de toxicidad de este mismo fármaco pero en el tercer trimestre (cerca del término). La alteración del cartílago corresponde a fluoroquinolonas, y el cierre del conducto a AINEs.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Herramientas de implementación 2, Página 37." 
+            },
+            {
+                id: 26, 
+                question: "Si se extrae una muestra de orina mediante cateterismo uretral único, ¿cuál es el conteo mínimo de unidades formadoras de colonias (UFC/ml) aceptado para diagnosticar una verdadera bacteriuria?", 
+                options: ["≥ 100 UFC/ml", "≥ 10,000 UFC/ml", "≥ 1,000 UFC/ml", "≥ 100,000 UFC/ml"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, la orina obtenida de forma directa por sonda elude la colonización uretral y vaginal, volviendo altamente significativo cualquier desarrollo bacteriano mínimo.<br><br>Perla ENARM: \"En una sola muestra cateterizada, el crecimiento bacteriano puede ser tan bajo como 10^2 UFC/ml para que se considere que representa una verdadera bacteriuria.\"<br><br>Análisis de Distractores: El conteo clásico de ≥ 100,000 UFC/ml aplica única y exclusivamente para la recolección de orina por técnica de chorro medio. Cifras intermedias carecen de valor absoluto en la guía oficial para muestras por sonda.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Introducción, Página 6." 
+            },
+            {
+                id: 27, 
+                question: "En una gestante con pielonefritis aguda que presenta deterioro comprobado de la función renal, ¿cuál es la cefalosporina parenteral de elección que no requiere ajuste de dosis?", 
+                options: ["Cefazolina 1 gramo", "Cefotaxima 1 gramo", "Ceftriaxona 2 gramos", "Cefuroxima 750 miligramos"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, este agente posee una doble vía de excreción (renal y biliar), garantizando perfiles de seguridad sistémica incluso en pacientes con tasas de filtrado mermadas por sepsis urológica.<br><br>Perla ENARM: \"Ceftriaxona 2 gramos cada 24 horas durante 10-14 días... No requiere de ajuste cuando existe deterioro de la función renal.\"<br><br>Análisis de Distractores: La cefazolina, cefotaxima y cefuroxima tienen un predominio de excreción puramente renal y requerirían ajuste estricto. Además, la ceftriaxona es el único de estos mencionado como terapia de elección para el manejo de ITU superior en la normatividad.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Herramientas de implementación 1, Página 37." 
+            },
+            {
+                id: 28, 
+                question: "Si una paciente embarazada requiere profilaxis continua por infecciones recurrentes pero presenta contraindicación absoluta para el uso de nitrofurantoína, ¿qué alternativa indica la norma?", 
+                options: ["Fosfomicina o amoxicilina", "Trimetoprim o sulfametoxazol", "Ciprofloxacino o levofloxacino", "Ceftriaxona o ertapenem"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, ante la intolerancia al antiséptico primario, deben emplearse alternativas de baja toxicidad fetal, debiendo el especialista supervisar la posible resistencia en regímenes prolongados.<br><br>Perla ENARM: \"Se sugiere profilaxis farmacológica con fosfomicina o amoxicilina a consideración de médico especialista en caso de no poder usar nitrofurantoína.\"<br><br>Análisis de Distractores: Las quinolonas (ciprofloxacino) causan daño articular fetal. Ceftriaxona y ertapenem son terapias intravenosas hospitalarias, no ambulatorias crónicas. TMP/SMX es teratogénico en el primer trimestre y tóxico al término.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Prevención, Página 19." 
+            },
+            {
+                id: 29, 
+                question: "¿Por qué motivo la norma restringe el uso de tiras reactivas (nitritos o esterasa leucocitaria) a ser solo la \"última opción\" para el escrutinio de bacteriuria asintomática?", 
+                options: ["Falsos positivos y negativos elevados", "Dificultad técnica para interpretación", "Alto costo del insumo médico", "Reacción cruzada con progesterona"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, los cambios físicos (dilución) e inflamatorios naturales de la vía urinaria gestacional anulan la sensibilidad y especificidad de las pruebas químicas para detectar colonización bacteriana indolente.<br><br>Perla ENARM: \"Se sugiere considerar como última opción el tamizaje con tiras reactivas cuando no se cuente con urocultivo o tinción de Gram debido a que tiene una mayor probabilidad de falsos positivos y negativos.\"<br><br>Análisis de Distractores: Las tiras reactivas son el método más económico, rápido y fácil de interpretar en cualquier nivel de atención. No existe reacción química directa con la progesterona; el fallo es su baja precisión intrínseca.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Diagnóstico, Página 22." 
+            },
+            {
+                id: 30, 
+                question: "Si una gestante asintomática presenta positividad a nitritos en una tira reactiva, y no se cuenta con incubación en la clínica de primer nivel, ¿cuál es la acción inmediata exigida?", 
+                options: ["Repetir tira reactiva mensualmente", "Iniciar amoxicilina empírica inmediata", "Referir a segundo nivel para urocultivo", "Iniciar fosfomicina profiláctica inmediata"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, una prueba bioquímica presuntiva en una paciente asintomática no avala iniciar tratamiento antibiótico. Resulta obligatorio asegurar el aislamiento microbiológico para evitar presión selectiva bacteriana.<br><br>Perla ENARM: \"Se sugiere realizar tira reactiva... y en caso de encontrar hallazgos anormales (bacterias, nitritos o esterasa leucocitaria positivos) referir a segundo nivel para toma de urocultivo.\"<br><br>Análisis de Distractores: Iniciar fosfomicina o amoxicilina empírica está proscrito en bacteriuria asintomática (requiere cultivo previo, distinto a la cistitis donde sí se inicia empírico). Repetir la tira seriada retrasa el diagnóstico de un evento ya altamente probable.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Diagnóstico, Página 22." 
+            },
+            {
+                id: 31, 
+                question: "Además de la compresión mecánica y la estasis, ¿cuál es el cambio fisicoquímico específico en la orina de la embarazada que funciona como medio óptimo para la replicación bacteriana?", 
+                options: ["Aumento de excreción proteica", "Alcalinización extrema del pH", "Disminución de filtrado glomerular", "Glucosuria fisiológica gestacional"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, el aumento del filtrado glomerular que rebasa la tasa de reabsorción tubular provoca el derrame de sustratos energéticos, alimentando activamente el crecimiento de enterobacterias en la luz vesical.<br><br>Perla ENARM: \"Además, el crecimiento bacteriano es favorecido por el cambio en el pH y osmolaridad urinaria y la glucosuria inducida por el embarazo.\"<br><br>Análisis de Distractores: El filtrado glomerular aumenta (no disminuye) notoriamente. Aunque hay cambios en el pH, no se define como alcalinización extrema. La excreción de proteínas aumenta levemente, pero el sustrato bacteriano principal referenciado es la glucosa.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Introducción, Página 7." 
+            },
+            {
+                id: 32, 
+                question: "El manejo antimicrobiano oportuno de la bacteriuria asintomática reduce la incidencia de pielonefritis. Según la efectividad descrita (NNT 20), ¿qué otro desenlace perinatal adverso se previene significativamente?", 
+                options: ["Desprendimiento prematuro de placenta", "Bajo peso al nacer", "Preeclampsia severa temprana", "Diabetes gestacional secundaria"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, controlar la infección subclínica elimina la cascada de prostaglandinas y calcio miometrial que acelera los eventos obstétricos, incidiendo directamente en el peso final del producto.<br><br>Perla ENARM: \"Tres GPC informadas en la evidencia compararon el administrar tratamiento para BA en mujeres embarazadas con no dar tratamiento reportando menor incidencia de pielonefritis (NNT 5 a 7) y bajo peso al nacer (NNT 20) en el grupo con tratamiento.\"<br><br>Análisis de Distractores: Las patologías vasculares/endoteliales (preeclampsia, desprendimiento de placenta) y metabólicas (diabetes) no tienen una reducción causal documentada por el aclaramiento de bacterias vesicales; su fisiopatología es independiente.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Tratamiento, Página 23." 
+            },
+            {
+                id: 33, 
+                question: "Durante la profilaxis farmacológica continua con nitrofurantoína, ¿qué complicación o riesgo dicta la necesidad de reevaluar constantemente el beneficio de mantener la terapia?", 
+                options: ["Desarrollo de resistencias bacterianas", "Toxicidad hepática fulminante", "Alteración del flujo uteroplacentario", "Insuficiencia renal materna aguda"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, la exposición prolongada y profiláctica a antisépticos urinarios genera presión biológica, favoreciendo cepas mutantes o selección de patógenos BLEE si no se controla estrechamente la sensibilidad.<br><br>Perla ENARM: \"Se sugiere evaluar constantemente a mujeres embarazadas con profilaxis farmacológica ante el riesgo de resistencias bacterianas y decidir el riesgo-beneficio de continuar con la profilaxis.\"<br><br>Análisis de Distractores: La toxicidad hepática es rarísima y no es el factor primario de vigilancia clínica regular. La insuficiencia renal aguda y alteraciones de flujo placentario no son complicaciones farmacológicas descritas para regímenes prolongados de nitrofurantoína.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Prevención, Página 19." 
+            },
+            {
+                id: 34, 
+                question: "De acuerdo a la epidemiología de la patología infecciosa del embarazo, ¿cuál es la frecuencia o prevalencia nacional e internacional de la bacteriuria asintomática?", 
+                options: ["2 a 10%", "Menor al 1%", "30 a 50%", "15 a 20%"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, este evento colonizador silencioso es el hallazgo urológico más frecuente detectado en las pruebas de escrutinio universales durante el control prenatal.<br><br>Perla ENARM: \"Las ITU son las infecciones más frecuentes en el embarazo. La BA se presenta en un 2-10% de mujeres embarazadas. La cistitis es menos frecuente, se presenta en 1-2%.\"<br><br>Análisis de Distractores: Una tasa \"Menor al 1%\" corresponde específicamente a la pielonefritis aguda global. La cifra de \"30 a 50%\" se refiere al porcentaje de mujeres con bacteriuria no tratada que desarrollarán síntomas clínicos posteriormente.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Epidemiología, Página 6." 
+            },
+            {
+                id: 35, 
+                question: "¿Qué fármaco empírico de primera línea (Clasificación B) recomienda la GPC evitar prescribir durante el primer trimestre si se cuenta con otra opción segura y efectiva disponible?", 
+                options: ["Ertapenem intravenoso", "Ceftriaxona intramuscular", "Nitrofurantoína macrocristales", "Fosfomicina trometamol"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, aunque es Categoría B, existen reportes epidemiológicos menores de su posible impacto en malformaciones (síndrome de corazón izquierdo hipoplásico), por lo cual se prefiere esquivarla en el periodo de organogénesis.<br><br>Perla ENARM: \"Se recomienda no utilizar nitrofurantoína como primera opción durante el primer y tercer trimestre del embarazo. Evitar en primer trimestre si otro antimicrobiano efectivo y seguro está disponible.\"<br><br>Análisis de Distractores: Fosfomicina trometamol se establece explícitamente como la opción con mínimo riesgo aplicable en cualquier trimestre. Ertapenem y Ceftriaxona no poseen restricciones trimestrales para su indicación de urgencia (pielonefritis).", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Herramientas de implementación 2, Página 37." 
+            },
+            {
+                id: 36, 
+                question: "De la población de embarazadas que cursa con bacteriuria asintomática y no recibe ningún esquema antibiótico, ¿qué porcentaje progresará al desarrollo de infección urinaria clínica sintomática?", 
+                options: ["80 al 90%", "10 al 15%", "30 al 50%", "5 al 10%"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, la historia natural de la infección en una vía urinaria con estasis crónica dicta que las colonias silentes eventualmente desencadenan respuesta inflamatoria inmunológica y progresión tisular de alta morbimortalidad.<br><br>Perla ENARM: \"En aquellas mujeres que no reciben tratamiento médico el 30% al 50% presentaran síntomas clínicos de ITU y pielonefritis entre el 15% y 45%.\"<br><br>Análisis de Distractores: Un porcentaje del 80 al 90% es erróneo e irrealista, ya que muchas bacteriurias pueden aclararse postparto. El rango de 5 a 15% subestima dramáticamente la probabilidad de invasión tisular y severidad justificante del tamizaje universal.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Introducción, Página 7." 
+            },
+            {
+                id: 37, 
+                question: "En el manejo de la cistitis aguda, si se cuenta con el resultado de antibiograma que demuestra susceptibilidad, ¿cuál grupo antibiótico oral es señalado como alternativa válida de segunda línea en la norma oficial?", 
+                options: ["Aminoglucósidos de primera generación", "Lincosamidas de tercera generación", "Cefalosporinas de segunda generación", "Macrólidos de segunda generación"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, tras excluir betalactámicos iniciales por su resistencia genérica empírica, las moléculas más robustas (ej. cefuroxima oral) mantienen perfiles seguros siempre que se guíen microbiológicamente.<br><br>Perla ENARM: \"Tratamiento de cistitis aguda... Cefalosporina de 2ª generación podría ser opción si el antibiograma lo permite.\"<br><br>Análisis de Distractores: Aminoglucósidos carecen de opciones orales efectivas en este renglón y asumen riesgo de ototoxicidad fetal profunda en altas dosis. Macrólidos y lincosamidas carecen de penetración/espectro biológico primario contra enterobacterias urológicas gramnegativas (E. coli).", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Herramientas de implementación 1, Página 36." 
+            },
+            {
+                id: 38, 
+                question: "Desde un contexto anatómico y nosológico, ¿cuál es la estructura tisular cuya invasión es requisito clínico para definir la entidad de Cistitis Aguda?", 
+                options: ["Mucosa vesical superficial", "Esfínter ureteral proximal", "Pelvis renal y cálices", "Parénquima renal profundo"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, el tracto inferior diferencia su abordaje terapéutico basado en la inflamación local limitada, traduciendo esto en síntomas puramente irritativos de expulsión.<br><br>Perla ENARM: \"Cistitis aguda: Presencia de bacteriuria significativa asociada a invasión de la mucosa vesical. Los síntomas son disuria, urgencia y frecuencia urinaria, así como dolor suprapúbico.\"<br><br>Análisis de Distractores: La invasión de la pelvis renal, los cálices mayores o el parénquima renal profundo cambian la clasificación inmediatamente a infección del tracto urinario superior (pielonefritis), la cual involucra cuadros febriles y sistémicos ausentes en la cistitis.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Introducción, Página 6." 
+            },
+            {
+                id: 39, 
+                question: "Farmacológicamente, ¿por qué se indica la Fosfomicina trometamol de manera segura y sin restricciones limitantes a lo largo de todas las semanas de gestación?", 
+                options: ["Tiene excreción puramente biliar", "Pertenece a la Categoría B de riesgo", "Es inactivada por enzimas fetales", "No atraviesa la barrera placentaria"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, los ensayos farmacológicos demostraron que una sola carga molecular es incapaz de generar toxicidad o alteración en el desarrollo anatómico del feto, avalando su lugar como comodín primario.<br><br>Perla ENARM: \"Clasificación de medicamentos... Fosfomicina: Categoría B. Seguro en el embarazo. Estudios con dosis única en embarazadas no han encontrado efectos fetales adversos.\"<br><br>Análisis de Distractores: Prácticamente todos los antibióticos indicados atraviesan de alguna manera la placenta o llegan al feto, el perfil se basa en la clasificación toxicológica (FDA/Categoría B). Su excreción es primordialmente renal concentrándose intraluminalmente (no biliar).", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Herramientas de implementación 2, Página 37." 
+            },
+            {
+                id: 40, 
+                question: "Si una gestante recibe fosfomicina de manera empírica, pero el urocultivo posterior reporta susceptibilidad extendida a fármacos de menor nivel, ¿cuál es la conducta normativa a seguir?", 
+                options: ["Mantener el tratamiento inicial empírico", "Combinar ambos antimicrobianos", "Prolongar la terapia por 14 días", "Ajustar a terapia de menor espectro"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Infecciones Urinarias en el Embarazo, se debe ejercer una protección estricta del ambiente ecológico (stewardship) bajando escalones terapéuticos siempre que el patógeno lo permita para asegurar disponibilidad farmacológica futura.<br><br>Perla ENARM: \"En caso de iniciar con una terapia antimicrobiana de forma empírica y realizar urocultivo, ajuste a la terapia más apropiada y reduzca el espectro siempre que sea posible para evitar la emergencia de patógenos multidrogorresistentes.\"<br><br>Análisis de Distractores: Mantener el amplio espectro (o la primera elección pesada) favorece mutaciones comunitarias de BLEE en la flora comensal no tratada. Prolongar a 14 días y combinar agentes son manejos proscritos en cistitis sin complicación ascendente confirmada.", 
+                source: "GPC-SS-831-21, Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo, 2021, Herramientas de implementación 1, Página 37." 
+            }
+        ];
+
+        // ==========================================
+        // ==========================================
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('gyoHLastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('gyoHProgress');
+                localStorage.removeItem('gyoHLastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-pink-500 shadow-md z-10 border-pink-500 dark:border-pink-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-rose-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "GINECOLOGÍA Y OBSTETRICIA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "GPC-SS-831-21 • Prevención, abordaje y manejo de bacteriuria asintomática e infección de vías urinarias durante el embarazo";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="AU16209GYO.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-pink-100 dark:border-pink-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-pink-50 has-[:checked]:border-pink-400 dark:has-[:checked]:bg-pink-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-pink-600 dark:hover:bg-pink-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('gyoHProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('gyoHLastQId', currentQuestionId);
+                else localStorage.removeItem('gyoHLastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('gyoHProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

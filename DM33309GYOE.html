@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================
+        // =========================================================
+        const questionsData = [
+            {
+                id: 1, 
+                question: "Ante un diagnóstico citológico sugestivo de malignidad cervical, ¿cuál es el estudio recomendado para corroborar el diagnóstico?", 
+                options: ["Conización cervical", "Histerectomía extrafascial", "Biopsia por colposcopia", "Resonancia magnética"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, el diagnóstico definitivo requiere confirmación tisular antes de planificar un esquema oncológico. La citología es exclusivamente una herramienta de tamizaje.<br><br>Perla ENARM: \"El estudio de todas las pacientes con cáncer cérvico-uterino debe incluir historia clínica, exploración física completa, realización de citología cervical y toma de biopsia de sitio representativo de la lesión. Preferentemente guiada por colposcopia\".<br><br>Análisis de Distractores: La conización cervical evalúa lesiones microinvasoras ya identificadas. La histerectomía extrafascial es un tratamiento definitivo, no de escrutinio. La resonancia magnética se usa para determinar extensión tumoral, no aporta el diagnóstico histopatológico inicial.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en Segundo y Tercer nivel de atención, 2017, Evaluación Clínica, p. 13." 
+            },
+            {
+                id: 2, 
+                question: "¿Qué sistema de clasificación rige la toma de decisiones iniciales para determinar el estadio clínico de esta patología?", 
+                options: ["Clasificación de Bethesda", "Criterios clínicos de FIGO", "Escala de Sedlis y Peters", "Criterios quirúrgicos de Piver"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, la estadificación es fundamentalmente clínica, basándose en la exploración bimanual, tacto rectovaginal y especuloscopía para categorizar el grado de avance tumoral.<br><br>Perla ENARM: \"Para la estadificación clínica del cáncer cervicouterino es recomendable utilizar los criterios emitidos por la FIGO 2010\".<br><br>Análisis de Distractores: La clasificación de Bethesda estandariza el reporte citológico de Papanicolaou. La escala de Sedlis y Peters evalúa el riesgo de recurrencia postquirúrgica. Los criterios de Piver dictaminan el nivel de radicalidad de la histerectomía.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en Segundo y Tercer nivel de atención, 2017, Evaluación Clínica, p. 14." 
+            },
+            {
+                id: 3, 
+                question: "¿Cuál es el límite máximo de profundidad en la invasión estromal para categorizar un tumor dentro del estadio clínico IA1?", 
+                options: ["≤ 3 mm", "≤ 5 mm", "≤ 7 mm", "≤ 10 mm"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, delimitar los milímetros exactos de invasión separa a las pacientes que pueden recibir un manejo conservador de aquellas que requieren disección de ganglios linfáticos.<br><br>Perla ENARM: \"Estadio IA1: Invasión estromal no más profunda de 3 mm y no mayor de 7 mm de diseminación horizontal\".<br><br>Análisis de Distractores: Una profundidad ≤ 5 mm corresponde al estadio IA2. El valor de 7 mm marca el límite de extensión horizontal, no de profundidad. Un grosor de 10 mm refiere a la profundidad total que debe alcanzar el cono quirúrgico, no a la infiltración tumoral.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en Segundo y Tercer nivel de atención, 2017, Anexos, p. 47." 
+            },
+            {
+                id: 4, 
+                question: "En el manejo de estadios tempranos, ¿qué margen negativo mínimo requiere el estudio histopatológico para definir a un cono cervical como terapéutico?", 
+                options: ["1 mm", "3 mm", "5 mm", "10 mm"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, asegurar un margen oncológico suficiente previene tratamientos radicales posteriores en mujeres jóvenes.<br><br>Perla ENARM: \"Se considera como cono terapéutico cuando se reporta por histopatología: Margen negativo de 3 mm, profundidad del cono mínima de 10 mm, sin invasión linfovascular y colposcopia adecuada\".<br><br>Análisis de Distractores: Un margen de 1 mm es insuficiente e indica un cono incompleto. Los 5 mm no son el punto de corte normativo. El valor de 10 mm es la profundidad longitudinal requerida del cono, no el margen circunferencial libre de tumor.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en Segundo y Tercer nivel de atención, 2017, Estadio IA1 sin invasión linfovascular, p. 18." 
+            },
+            {
+                id: 5, 
+                question: "Para catalogar un procedimiento de conización cervical como terapéutico, ¿cuál debe ser la profundidad mínima del tejido extraído?", 
+                options: ["3 mm", "5 mm", "7 mm", "10 mm"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, la pieza de escisión debe abarcar la totalidad de la zona de transformación y las criptas glandulares para reducir el riesgo de tejido residual inadvertido.<br><br>Perla ENARM: \"Profundidad en el canal endocervical de 10 mm para que incluya las criptas\".<br><br>Análisis de Distractores: Los 3 mm corresponden al margen negativo necesario o al límite del estadio IA1. Los 5 mm definen la invasión del estadio IA2. Los 7 mm corresponden a la máxima diseminación horizontal permitida en microinvasores.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en Segundo y Tercer nivel de atención, 2017, Cono vs Biopsia cervical, p. 15." 
+            },
+            {
+                id: 6, 
+                question: "¿Cuál es la intervención quirúrgica de elección en estadio IA1 sin invasión linfovascular en una paciente con paridad satisfecha?", 
+                options: ["Histerectomía tipo Piver III", "Histerectomía extrafascial", "Traquelectomía radical laparoscópica", "Exenteración pélvica anterior"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, al documentarse un riesgo menor al 1% de metástasis ganglionar en esta etapa específica, la disección pélvica radical no aporta beneficio a la supervivencia global.<br><br>Perla ENARM: \"El tratamiento estándar consiste en cono cervical vs histerectomía extrafascial (PIVER I o tipo A)\".<br><br>Análisis de Distractores: La histerectomía tipo Piver III conlleva alta morbilidad y es excesiva. La traquelectomía radical es para estadios mayores en pacientes con deseo de fertilidad. La exenteración pélvica se reserva como salvamento en recurrencias centrales avanzadas.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en Segundo y Tercer nivel de atención, 2017, Estadio IA1 sin invasión linfovascular, p. 18." 
+            },
+            {
+                id: 7, 
+                question: "¿Cuál es el tratamiento quirúrgico recomendado en estadio clínico IA2 para una paciente que exige preservar la función reproductiva?", 
+                options: ["Conización cervical simple", "Histerectomía extrafascial tipo A", "Braquiterapia de baja tasa", "Traquelectomía radical"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, el estadio IA2 incrementa el riesgo de afectación linfática, por lo que el manejo no puede limitarse a tejido cervical superficial. Debe ir acompañado de mapeo ganglionar bilateral.<br><br>Perla ENARM: \"Se recomienda como opciones terapéuticas: Cono cervical más LPB o Traquelectomía radical con linfadenectomía pélvica bilateral laparoscópica o abierta\".<br><br>Análisis de Distractores: La conización simple omite la extirpación obligatoria de los ganglios linfáticos pélvicos. La histerectomía extrafascial imposibilita la gestación. La braquiterapia causa daño endometrial irreversible y no permite conservar la fertilidad.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en Segundo y Tercer nivel de atención, 2017, Estadio IA2, p. 20." 
+            },
+            {
+                id: 8, 
+                question: "¿Qué hallazgo a la exploración física bimanual clasifica la patología directamente como estadio IIB e indica inoperabilidad?", 
+                options: ["Invasión clínica a parametrios", "Extensión a cavidad uterina", "Afección de mucosa rectal", "Tumor cervical ≥ 4 cm"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, palpar induración en el tejido paracervical y ligamentos laterales modifica el abordaje de quirúrgico a radioterapia definitiva por el riesgo de seccionar tumor activo.<br><br>Perla ENARM: \"Estadio T2b/IIb: Tumor con compromiso parametrial\".<br><br>Análisis de Distractores: La extensión a cavidad uterina no modifica el estadio. La afección de la mucosa rectal eleva el estadiaje a IVA. Un tumor ≥ 4 cm pero confinado al cérvix se clasifica como IB2.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en Segundo y Tercer nivel de atención, 2017, Anexos, p. 47." 
+            },
+            {
+                id: 9, 
+                question: "¿Cuál es la concentración de hemoglobina que se estipula mantener durante la radio-quimioterapia para prevenir la hipoxia tumoral intratratamiento?", 
+                options: ["≥ 8 g/dl", "≥ 9 g/dl", "≥ 10 g/dl", "≥ 12 g/dl"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, el daño celular por radiación ionizante requiere abundante oxígeno tisular para la fijación de radicales libres; niveles anémicos promueven la radioresistencia y empeoran la sobrevida.<br><br>Perla ENARM: \"El nivel de hemoglobina debe llevarse por arriba del 10 g/dL previo y durante el tratamiento con Quimio/Radioterapia\".<br><br>Análisis de Distractores: Valores de 8 o 9 g/dl no revierten el estado hipóxico neoplásico. Mantener ≥ 12 g/dl no está indicado rutinariamente como límite inferior, ya que la guía institucional especifica taxativamente 10 g/dl.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en Segundo y Tercer nivel de atención, 2017, Estadio IB2 - IVA, p. 27." 
+            },
+            {
+                id: 10, 
+                question: "¿Cuál es el tiempo máximo en el que debe ser completado el esquema total de teleterapia y braquiterapia para optimizar el control oncológico local?", 
+                options: ["4 semanas", "6 semanas", "8 semanas", "12 semanas"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, exceder este lapso crítico induce una repoblación celular acelerada que disminuye la supervivencia libre de enfermedad.<br><br>Perla ENARM: \"Se recomienda completar el tratamiento de Teleterapia/Braquiterapia en 8 semanas o menos\".<br><br>Análisis de Distractores: Finalizar en 4 o 6 semanas requiere fraccionamientos de alta toxicidad inaceptables para tejidos sanos. Un periodo de 12 semanas genera fracaso terapéutico por tolerancia clonal tumoral.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en Segundo y Tercer nivel de atención, 2017, Estadio IB2 - IVA, p. 27." 
+            },
+            {
+                id: 11, 
+                question: "¿Qué antineoplásico se administra como primera línea concomitante a la radioterapia externa en la enfermedad localmente avanzada?", 
+                options: ["Paclitaxel", "Cisplatino", "Ifosfamida", "Doxorrubicina"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, el uso de compuestos platinados actúa como agente sensibilizador, amplificando el daño en el ADN causado por los haces de radiación a nivel pélvico.<br><br>Perla ENARM: \"Para las pacientes con alto riesgo de recurrencia, además de RT se debe otorgar además quimioterapia concomitante a base de Cisplatino\".<br><br>Análisis de Distractores: El paclitaxel y la ifosfamida se aplican como opciones de segunda línea o en paliación. La doxorrubicina es prioritaria en neoplasias de mama o sarcomas, no en cervicouterino.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en Segundo y Tercer nivel de atención, 2017, Estadio IB1>2cm y Estadio IIA1, p. 24." 
+            },
+            {
+                id: 12, 
+                question: "¿Qué hallazgo histopatológico documentado durante el estadio IA1 exige contra-referir inmediatamente a la paciente hacia oncología quirúrgica en tercer nivel?", 
+                options: ["Infiltración linfovascular", "Márgenes quirúrgicos ≤ 5 mm", "Presencia de células atípicas", "Grado de diferenciación bajo"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, la invasión a vasos sanguíneos o linfáticos detona el potencial metastásico. Esto transfiere el caso de un manejo extrafascial en segundo nivel a la necesidad de linfadenectomías pélvicas especializadas.<br><br>Perla ENARM: \"Serán enviadas a oncología quirúrgica pacientes con diagnóstico histológico por cono de cáncer cervicouterino etapa IA1 con infiltración linfovascular\".<br><br>Análisis de Distractores: Márgenes menores a 5 mm implican un cono no terapéutico (requiere re-cono), pero no envío directo si es IA1 sin invasión. Las células atípicas y el grado bajo de diferenciación son factores histológicos, pero el criterio de referencia forzoso para el nivel es la infiltración linfovascular.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en Segundo y Tercer nivel de atención, 2017, Criterios de Referencia, p. 37." 
+            },
+            {
+                id: 13, 
+                question: "¿Cuál de las siguientes variantes histológicas es un motivo directo para particularizar el tratamiento clínico en un centro especializado independientemente del estadio?", 
+                options: ["Carcinoma epidermoide", "Adenocarcinoma mucinoso", "Células pequeñas", "Carcinoma adenoescamoso"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, estos subtipos de agresividad extrema escapan a los algoritmos estandarizados habituales de estadificación y manejo general.<br><br>Perla ENARM: \"Bajo circunstancias especiales en pacientes con histología diferente a epidermoide o adenoescamoso (Neuroendocrino, de células pequeñas, carcinoma adenoideo quístico, etc). Se debe particularizar el tratamiento y envío a centro oncológico especializado\".<br><br>Análisis de Distractores: El carcinoma epidermoide y el adenoescamoso engloban más del 80% de los casos y siguen la norma convencional. El adenocarcinoma mucinoso es tratado con los parámetros estándar según su estadio clínico y deseo de fertilidad.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en Segundo y Tercer nivel de atención, 2017, Estadio IB1>2cm y Estadio IIA1, p. 23." 
+            },
+            {
+                id: 14, 
+                question: "Tras completar la remisión de la enfermedad, ¿con qué frecuencia se instaura la evaluación y revisión clínica en la consulta durante los primeros dos años?", 
+                options: ["Cada mes", "Cada 3 a 6 meses", "Cada 6 a 12 meses", "Cada año"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, el seguimiento estrecho durante los primeros 24 meses detecta clínicamente la fase en que ocurren la mayoría de las recurrencias locorregionales en este padecimiento.<br><br>Perla ENARM: \"La revisión clínica se efectúa: Cada 3-6 meses los 2 primeros años\".<br><br>Análisis de Distractores: Citar de forma mensual satura los servicios sin evidencia de sobrevida. Programar la evaluación cada 6 a 12 meses se indica del tercer al quinto año. El control anual solo se aprueba tras 5 años íntegros sin signos de enfermedad.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en Segundo y Tercer nivel de atención, 2017, Seguimiento, p. 36." 
+            },
+            {
+                id: 15, 
+                question: "En una paciente gestante diagnosticada con carcinoma invasor, ¿qué estudio de extensión está absolutamente contraindicado durante todo el embarazo?", 
+                options: ["Resonancia magnética pélvica", "Ultrasonido endovaginal", "Tomografía por emisión", "Cistoscopia transuretral"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, la administración de radiofármacos (PET-CT) y la radiación ionizante por TAC representan un riesgo de daño directo, teratogénesis o muerte fetal.<br><br>Perla ENARM: \"La tomografía axial computada y la tomografía con emisión de positrones están contraindicadas en el embarazo\".<br><br>Análisis de Distractores: La resonancia magnética pélvica sin contraste y el ultrasonido endovaginal son los pilares diagnósticos permitidos por estar libres de radiación. La cistoscopia transuretral es un procedimiento invasivo viable para evaluar extensión vesical sin riesgo de radiación.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en Segundo y Tercer nivel de atención, 2017, Manejo de la paciente embarazada, p. 33." 
+            },
+            {
+                id: 16, 
+                question: "Durante el embarazo, ¿cuál es el paraclínico de primera línea recomendado para la delimitación de las estructuras pélvicas y el estado ganglionar local?", 
+                options: ["Radiografía simple abdominal", "Resonancia magnética sin contraste", "Tomografía axial abdominopélvica", "Ultrasonido pélvico Doppler"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, la delimitación anatómica de los parametrios y el tejido linfático requiere un estudio de alta definición con nulo impacto radiológico para el feto.<br><br>Perla ENARM: \"La resonancia magnética sin contraste es el mejor estudio para determinar la extensión local de la enfermedad así como la presencia de ganglios linfáticos\".<br><br>Análisis de Distractores: La radiografía abdominal no es resolutiva para tejidos blandos. La tomografía axial está proscrita por radiación ionizante. El ultrasonido pélvico Doppler visualiza la morfología, pero es inferior a la resonancia para infiltración parametrial profunda y ganglios.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en Segundo y Tercer nivel de atención, 2017, Manejo de la paciente embarazada, p. 33." 
+            },
+            {
+                id: 17, 
+                question: "Al confirmarse el diagnóstico de una paciente en estadio IA2, ¿cuál es la prevalencia de infiltración ganglionar pélvica esperada que justifica su manejo quirúrgico linfático?", 
+                options: ["1 a 2 %", "3 a 7 %", "16 a 21 %", "25 a 31 %"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, al rebasarse el umbral de los 3 mm de infiltración estromal, la posibilidad de escape linfático amerita una disección de ganglios bilateral sistemática.<br><br>Perla ENARM: \"El porcentaje de afección ganglionar pélvica en etapas de cáncer cervicouterino IA2 es del 3 al 7%\".<br><br>Análisis de Distractores: El riesgo del 1 a 2% corresponde a las etapas IA1 con invasión linfovascular. Un 16 a 21% concuerda con las pacientes en etapa IIB (involucro de ganglios paraaórticos). De 25 a 31% es característico del estadio IIIB avanzado.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en Segundo y Tercer nivel de atención, 2017, Estadio IA2, p. 20." 
+            },
+            {
+                id: 18, 
+                question: "Con base en la escala de riesgo patológico postquirúrgico (Sedlis y Peters), ¿cuál hallazgo cataloga formalmente a la paciente en la categoría de riesgo alto?", 
+                options: ["Invasión linfovascular presente", "Invasión profunda estromal", "Márgenes quirúrgicos positivos", "Tumor cervical ≥ 4 cm"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, identificar enfermedad en los bordes de la resección dictamina la persistencia tumoral y obliga a consolidar la pelvis con radiación inmediata.<br><br>Perla ENARM: \"Hallazgos histopatológicos (Alto Riesgo): Márgenes quirúrgicos positivos, Afección de ganglios pélvicos confirmados patológicamente, Involucro microscópico de los Parametrios\".<br><br>Análisis de Distractores: La invasión linfovascular, la invasión profunda del estroma y un tumor cervical voluminoso representan hallazgos de Riesgo Intermedio que, si bien pueden requerir radioterapia adyuvante, no se catalogan en el grupo de alto riesgo como lo hacen los bordes o ganglios infiltrados.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en Segundo y Tercer nivel de atención, 2017, Anexos, p. 48." 
+            },
+            {
+                id: 19, 
+                question: "Si en la paciente se documenta recurrencia a distancia durante la ventana libre de enfermedad, ¿en qué estructura anatómica se presenta el mayor índice de recaídas (81%)?", 
+                options: ["Ganglios retroperitoneales", "Parénquima hepático", "Ganglios supraclaviculares", "Estructuras óseas"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, el drenaje ascendente linfático del cérvix impacta directamente estas cadenas ganglionares, evadiendo los márgenes quirúrgicos pélvicos estándar.<br><br>Perla ENARM: \"Se ha observado que la recurrencia se presenta a ganglios retroperitoneales representan el 81%, supraclaviculares 71%, pulmonares 7% hepáticas o carcinomatosis 8% y óseas 16%\".<br><br>Análisis de Distractores: El parénquima hepático constituye el 8% de los casos. Los ganglios supraclaviculares son el segundo sitio con 71%. Las metástasis a hueso integran aproximadamente el 16% de las recaídas sistémicas.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en Segundo y Tercer nivel de atención, 2017, Estadio IV B, p. 28." 
+            },
+            {
+                id: 20, 
+                question: "Al reportarse en la nota quirúrgica la realización de una Histerectomía radical (tipo Piver III), ¿cuál límite anatómico es característico de este procedimiento?", 
+                options: ["Exéresis exclusiva paracervical", "Sección medial de uterosacro", "Resección al sistema de ilíaca", "Exenteración parcial de uréter"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, el nivel de radicalidad de Piver rige la disección, estipulando la transección del ligamento cardinal en su inserción vascular más profunda para garantizar el retiro de la patología.<br><br>Perla ENARM: \"Histerectomía radical (Tipo C / Piver III): Sección de ligamento cardinal hasta el sistema vascular de ilíaca interna\".<br><br>Análisis de Distractores: La exéresis exclusiva paracervical corresponde a las resecciones de Piver I. La sección medial sin desvincular arterias principales asimila la histerectomía modificada de Piver II. La resección del uréter Terminal indica una exenteración (Tipo V).", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en Segundo y Tercer nivel de atención, 2017, Anexos, p. 48." 
+            },
+            {
+                id: 21, 
+                question: "¿Cuál es la condición sociodemográfica que concentra el 85 % de la incidencia mundial de esta neoplasia?", 
+                options: ["Tabaquismo crónico activo", "Desventaja económica y social", "Nuliparidad en etapa joven", "Múltiples parejas sexuales"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, esta patología sigue un patrón estrechamente ligado a las barreras de salud pública, lo que retrasa el tamizaje oportuno en países en vías de desarrollo.<br><br>Perla ENARM: \"Desafortunadamente afecta a mujeres con desventaja económica, social y cultural y por ende, es mucho más común en países en vías de desarrollo donde ocurre el 85%\".<br><br>Análisis de Distractores: El tabaquismo y las múltiples parejas son cofactores virales clásicos, pero no definen el rasgo sociodemográfico global citado. La nuliparidad no representa un riesgo para esta neoplasia, al contrario que en los cánceres dependientes de estrógenos ininterrumpidos.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en segundo y tercer nivel de atención, 2017, Aspectos Generales, p. 8." 
+            },
+            {
+                id: 22, 
+                question: "¿Cuál es la extensión horizontal máxima permitida por la clasificación vigente para catalogar la invasión tumoral como microscópica (Estadio IA)?", 
+                options: ["≤ 3 mm", "≤ 5 mm", "≤ 7 mm", "≤ 10 mm"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, un tumor que invade de forma superficial el estroma debe respetar los límites tanto de profundidad como transversales para mantener su estatuto pre-clínico (no visible).<br><br>Perla ENARM: \"T1a/Ia Carcinoma invasivo diagnosticado por microscopía... Invasión estromal con un máximo de profundidad de 5 mm medidos de la base del epitelio, y una diseminación horizontal menor a 7 mm\".<br><br>Análisis de Distractores: El nivel de ≤ 3 mm y ≤ 5 mm corresponden a los límites de profundidad vertical para clasificar los subestadios IA1 y IA2, respectivamente. Una extensión de ≤ 10 mm rebasa el criterio de lesión microinvasora y se considera automáticamente IB1 visible.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en segundo y tercer nivel de atención, 2017, Anexos, p. 46." 
+            },
+            {
+                id: 23, 
+                question: "En una paciente con tumor cervical de 1.5 cm (Estadio IB1) y profundo deseo de fertilidad, ¿cuál es el abordaje quirúrgico definitivo recomendado?", 
+                options: ["Conización cervical profunda", "Histerectomía extrafascial simple", "Traquelectomía y linfadenectomía", "Exenteración pélvica parcial"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, en tumores francamente invasores pero ≤ 2 cm, se puede lograr la preservación del cuerpo uterino retirando el cérvix, los parametrios mediales y barriendo las cadenas ganglionares pélvicas bilaterales.<br><br>Perla ENARM: \"La traquelectomía más linfadenectomía pélvica bilateral y muestreo de los ganglios intercavoaorticos es el tratamiento quirúrgico para pacientes con cáncer cervico-uterino en estadio Ib1 y deseo de fertilidad, siempre y cuando las lesiones midan < 2cm\".<br><br>Análisis de Distractores: La conización carece de la radicalidad parametrial y ganglionar exigida para la invasión macroscópica. La histerectomía erradica definitivamente la posibilidad gestacional. La exenteración es una cirugía mórbida de rescate, no de preservación inicial.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en segundo y tercer nivel de atención, 2017, Estadio Ib1 < 2 cm, p. 21." 
+            },
+            {
+                id: 24, 
+                question: "De los criterios de riesgo de Sedlis y Peters, ¿qué combinación de patología clasifica a la paciente en la categoría de 'riesgo intermedio' para recurrencia postquirúrgica?", 
+                options: ["Márgenes quirúrgicos microscópicos positivos", "Involucro confirmatorio de los parametrios", "Invasión linfovascular y tercio profundo", "Metástasis en ganglios linfáticos pélvicos"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, la decisión de otorgar radioterapia tras una histerectomía se basa en ponderar variables de agresividad biológica que, juntas, predicen una recaída pélvica.<br><br>Perla ENARM: \"Riesgo de Recurrencia Intermedio: Presencia de invasión linfovascular más invasión del tercio profundo del estroma cervical y tumor de cualquier tamaño\".<br><br>Análisis de Distractores: Los márgenes positivos, la infiltración de parametrios y las metástasis en ganglios linfáticos pélvicos son los tres criterios absolutos de 'Alto Riesgo' que imponen consolidación radio-quimioterapéutica inmediata.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en segundo y tercer nivel de atención, 2017, Anexos (Cuadro 3), p. 48." 
+            },
+            {
+                id: 25, 
+                question: "En el momento del diagnóstico, ¿cuál es la probabilidad estadística de encontrar ganglios pélvicos positivos en el estadio clínico IB1?", 
+                options: ["1 a 2 %", "3 a 7 %", "16 %", "25 a 31 %"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, el salto de un estadio microscópico a uno visible conlleva un incremento escalonado y predecible en la diseminación retroperitoneal.<br><br>Perla ENARM: \"En la etapa IB1 el riesgo de ganglios pélvicos positivos es del 16 %\".<br><br>Análisis de Distractores: El riesgo de 1 a 2 % aplica para el estadio microscópico IA1 con invasión linfovascular. Del 3 a 7 % se asocia a la progresión profunda microscópica del IA2. El margen de 25 a 31 % es característico del estadio localmente masivo IIIB con diseminación a cadenas paraaórticas.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en segundo y tercer nivel de atención, 2017, Estadio Ib1 < 2 cm, p. 21." 
+            },
+            {
+                id: 26, 
+                question: "En etapas avanzadas con respuesta completa al término de la teleterapia pélvica, ¿cuál es la dosis total recomendada al punto A mediante braquiterapia intracavitaria?", 
+                options: ["≥ 45 Gy", "≥ 50 Gy", "≥ 80 Gy", "≥ 90 Gy"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, la administración de dosis biológicas equivalentes plenas al muñón central garantiza la erradicación de clones tumorales radioresistentes, maximizando la supervivencia.<br><br>Perla ENARM: \"Si hay respuesta completa o el residual es menor de 4cm, la dosis total teleterapia/braquiterapia recomendada a punto A es ≥ 80 Gy\".<br><br>Análisis de Distractores: Las dosis de 45 a 50 Gy corresponden únicamente a la fracción de radiación externa (teleterapia) pélvica convencional. La intensidad escalada de 90 Gy se aplica exclusivamente a masas tumorales persistentes severas > 4 cm.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en segundo y tercer nivel de atención, 2017, Estadio IB2 - IVA, p. 26." 
+            },
+            {
+                id: 27, 
+                question: "En caso de persistir un tumor residual > 4 cm tras la fase inicial de radioterapia externa, ¿a qué nivel se debe escalar la dosis total biológica al punto A?", 
+                options: ["45 a 50 Gy", "60 a 70 Gy", "75 a 80 Gy", "85 a 90 Gy"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, las lesiones hipóxicas voluminosas que no se retraen exigen el límite máximo de tolerancia física para intentar el control locorregional antes de declarar refractariedad.<br><br>Perla ENARM: \"Para pacientes que no responden o con residual mayor de 4cm al momento de la braquiterapia, la dosis total a punto A es de 85-90 Gy\".<br><br>Análisis de Distractores: El rango de 45 a 50 Gy representa la base externa de teleterapia. De 60 a 70 Gy induce fallas terapéuticas por infradosificación local. Entre 75 y 80 Gy es la dosis curativa indicada cuando el tumor sí mostró reducción (< 4 cm).", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en segundo y tercer nivel de atención, 2017, Estadio IB2 - IVA, p. 26." 
+            },
+            {
+                id: 28, 
+                question: "Para el manejo de metástasis óseas dolorosas asociadas a esta neoplasia, ¿cuál fármaco inhibidor de la osteólisis está indicado a dosis de 4 mg intravenoso?", 
+                options: ["Ácido zoledrónico", "Denosumab subcutáneo", "Pamidronato sódico", "Ibandronato cálcico"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, el bloqueo de los osteoclastos reduce eventos esqueléticos, mitiga el dolor intratable y frena la rápida progresión del nido secundario.<br><br>Perla ENARM: \"Los regímenes terapéuticos utilizando ácido zolendronico han demostrado disminución en la progresión de lesiones malignas óseas... En las lesiones óseas se recomienda el uso de bifosfonatos\". (Tabla de medicamentos: Ácido zolendrónico 4 mg/5ml, intravenosa en infusión).<br><br>Análisis de Distractores: El denosumab, el pamidronato y el ibandronato pertenecen a la gama de moduladores óseos de especialidad, pero la guía institucional prescribe protocolarmente el ácido zoledrónico dentro de su catálogo básico para el perfil oncológico referido.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en segundo y tercer nivel de atención, 2017, Estadio IV B, p. 28 y Anexos, p. 54." 
+            },
+            {
+                id: 29, 
+                question: "¿Cuál es la supervivencia media esperada al combinar radioterapia en pacientes que desarrollan metástasis óseas dolorosas frente a usar sólo quimioterapia?", 
+                options: ["4 meses", "7 meses", "12 meses", "24 meses"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, la enfermedad sistémica al sistema esquelético conlleva un pésimo pronóstico; no obstante, el control local de la inflamación ósea con radiación impacta positivamente el tiempo de sobrevida comparado con la citotoxicidad sistémica sola.<br><br>Perla ENARM: \"La media de sobrevida en pacientes con metástasis ósea tratada con radioterapia ± quimioterapia es mejor que la quimioterapia sola (12 vs 7 meses)\".<br><br>Análisis de Distractores: El lapso de 4 meses es inferior al reporte documentado. Los 7 meses es la supervivencia de la cohorte que no recibió el auxilio paliativo de la radioterapia a la lesión ósea. Los 24 meses se acercan a la sobrevida esperada por una metástasis en ganglios retroperitoneales (24 semanas, no meses).", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en segundo y tercer nivel de atención, 2017, Estadio IV B, p. 29." 
+            },
+            {
+                id: 30, 
+                question: "En una paciente que desarrolla hidronefrosis de origen tumoral (Estadio IIIB), ¿cuál es el porcentaje de infiltración silente a ganglios paraaórticos esperado?", 
+                options: ["1 a 2 %", "3 a 7 %", "16 a 21 %", "25 a 31 %"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, la diseminación oncológica retroperitoneal se magnifica drásticamente cuando la masa primaria comprime los uréteres y se afianza a la pared lateral de la pelvis.<br><br>Perla ENARM: \"En las pacientes en estadio IIB el porcentaje de ganglios paraaórticos positivos es de 16 al 21% y en etapa IIIB en 25-31%\".<br><br>Análisis de Distractores: El 1 a 2 % corresponde al mínimo riesgo pélvico de IA1. Del 3 a 7 % se detecta en la etapa IA2 microscópica. El 16 a 21 % tipifica a las lesiones IIB con involucro puro parametrial.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en segundo y tercer nivel de atención, 2017, Estadio IB2 - IVA, p. 24." 
+            },
+            {
+                id: 31, 
+                question: "En pacientes en vigilancia que presentan recurrencia pélvica estrictamente central y con un tamaño tumoral ≤ 2 cm, ¿cuál es la intervención quirúrgica de rescate recomendada?", 
+                options: ["Traquelectomía radical laparoscópica", "Exenteración pélvica intraoperatoria", "Histerectomía radical o reirradiación", "Conización cervical con márgenes"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, la recaída pélvica pequeña permite una ventana de oportunidad quirúrgica conservadora (evitando el retiro de órganos vecinos) debido a la escasa masa residual y a los tejidos pre-tratados.<br><br>Perla ENARM: \"Enfermedad central... En pacientes con tumor ≤ 2 cm: Histerectomía radical o valorar reirradiación bajo protocolo\".<br><br>Análisis de Distractores: La traquelectomía es un procedimiento primario para fertilidad. La exenteración pélvica es la amputación total (vejiga/recto) exigida para masas recurrentes voluminosas (> 2 cm hasta 3 cm). El cono cervical es biológicamente inútil frente a tejido cicatricial y radioresistente.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en segundo y tercer nivel de atención, 2017, Enfermedad recurrente o persistente, p. 30." 
+            },
+            {
+                id: 32, 
+                question: "En una paciente diagnosticada durante la gestación, ¿cuál es la edad gestacional de corte que autoriza la espera protocolizada para salvaguardar la viabilidad fetal?", 
+                options: ["> 12 semanas", "> 16 semanas", "> 20 semanas", "> 24 semanas"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, ante un embarazo de primer trimestre la progresión neoplásica exige la interrupción inmediata para tratar a la madre; cruzando la viabilidad fetal, se evalúa el retraso de la cirugía oncológica para obtener madurez pulmonar.<br><br>Perla ENARM: \"El límite para considerar preservación del embarazo, la edad gestacional recomendada es: mayor de 24 SDG. En embarazos del primer trimestre se tiene que contemplar la terminación del embarazo aun con deseo de preservación\".<br><br>Análisis de Distractores: Las semanas 12, 16 y 20 caen en periodos de alto riesgo de inmadurez letal fetal, por lo que el esquema prioriza inequívocamente la vida materna mediante cirugía de evacuación e histerectomía radical simultánea si es necesario.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en segundo y tercer nivel de atención, 2017, Manejo de la paciente embarazada, p. 34." 
+            },
+            {
+                id: 33, 
+                question: "En caso de diagnóstico de tumor > 4 cm (Estadio IB2) durante el primer trimestre sin deseo de preservación gestacional, ¿cuál es el paso intervencionista inicial indicado?", 
+                options: ["Quimioterapia neoadyuvante inmediata", "Evacuación uterina por histerotomía", "Radioterapia pélvica de alta tasa", "Cesárea tipo corporal fúndica"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, frente a un tumor masivo que impide la resección radical simple y en edad temprana gestacional, se debe vaciar la cavidad uterina por la vía quirúrgica menos hemorrágica previo al protocolo de radio-quimioterapia estándar localmente avanzado.<br><br>Perla ENARM: \"Tratamiento sin deseo de preservar del embarazo... IB2 o >: Evacuación uterina en primer trimestre, 12-14 SDG (histerotomía)\".<br><br>Análisis de Distractores: La quimioterapia y la radioterapia directa a pelvis con feto in situ provocan abortos diferidos sépticos. La cesárea corporal fúndica se reserva para pacientes viables (> 34 SDG) a fin de extraer al producto evitando el canal cervical maligno.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en segundo y tercer nivel de atención, 2017, Manejo de la paciente embarazada, p. 34." 
+            },
+            {
+                id: 34, 
+                question: "De las morbilidades tempranas y mecánicas post-procedimiento, ¿cuál es la incidencia de presentar hemorragia clínicamente relevante tras realizar un cono cervical?", 
+                options: ["1 %", "2 a 4 %", "5 a 10 %", "15 a 20 %"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, el lecho cruento tras amputar el hocico de tenca concentra abundante flujo arterial, requiriendo hemostasia minuciosa.<br><br>Perla ENARM: \"Las complicaciones del cono cervical se presentan del 7-20%. Hemorragias: 5-10 %. Estenosis cervical: 1-4 % Infecciones: 1 %\".<br><br>Análisis de Distractores: El 1 % corresponde exclusivamente al riesgo de procesos infecciosos locales. El margen de 2 a 4 % tipifica a la estenosis cervical anatómica cicatricial. Los valores de 15 a 20 % sobreestiman el riesgo del evento vascular agudo aislado.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en segundo y tercer nivel de atención, 2017, Evaluación Clínica, p. 15." 
+            },
+            {
+                id: 35, 
+                question: "Tras el manejo exitoso en tercer nivel, ¿cuál es el criterio de tiempo oncológico riguroso exigido para realizar la contra-referencia definitiva de la paciente a su hospital de segundo nivel?", 
+                options: ["1 año de vigilancia", "2 años de vigilancia", "3 años de vigilancia", "5 años de vigilancia"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, el pico máximo de falla terapéutica se aglomera en el primer par de años, extinguiéndose gradualmente hasta el quinto, momento en el que el seguimiento hiper-especializado se descarta.<br><br>Perla ENARM: \"Criterios de contra-referencia. Serán enviadas a segundo nivel: Pacientes que recibieron tratamiento y concluyeron su vigilancia por 5 años en centro oncológico\".<br><br>Análisis de Distractores: Considerar plazos tempranos como 1 año, 2 años o 3 años expone a la paciente a que una metástasis locorregional se aborde tardíamente, perdiendo la oportunidad de cirugías centrales curativas (exenteración).", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en segundo y tercer nivel de atención, 2017, Criterios de contra-referencia, p. 37." 
+            },
+            {
+                id: 36, 
+                question: "Ante una confirmación histopatológica pre-operatoria de carcinoma invasor en cérvix uterino, ¿cuál modalidad terapéutica instrumental se encuentra absolutamente proscrita?", 
+                options: ["Ablación por medios físicos", "Conización cervical en frío", "Escisión electroquirúrgica con asa", "Radioterapia de intensidad modulada"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, la lisis (crioterapia, láser) vaporiza y destruye la arquitectura de la pieza quirúrgica, obliterando la capacidad de asignar un margen oncológico y un nivel milimétrico de invasión, condenando a la estadificación ciega.<br><br>Perla ENARM: \"Ante el diagnóstico de cáncer cervicouterino, no existe indicación de tratamiento ablativo. Punto de buena práctica\".<br><br>Análisis de Distractores: La conización cervical fría y con asa electroquirúrgica (LEEP) sí permiten rescatar un bloque histológico medible. La radioterapia de intensidad es un pilar curativo validado en el tratamiento loco-avanzado definitivo.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en segundo y tercer nivel de atención, 2017, Evaluación Clínica, p. 15." 
+            },
+            {
+                id: 37, 
+                question: "En el pronóstico biológico de una paciente clasificada en el estadio IVB terminal, ¿cuál es la supervivencia media histórica al documentarse una recurrencia de orden visceral múltiple?", 
+                options: ["4 semanas", "12 semanas", "24 semanas", "48 semanas"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, la implantación sistémica a órganos sólidos acorta drásticamente el curso natural comparado con una recaída aislada a retroperitoneo o hueso, justificando esquemas eminentemente paliativos de corta duración.<br><br>Perla ENARM: \"Se ha informado por estudios que la supervivencia para pacientes con recurrencia ganglionar es de 24 semanas y recurrencia visceral de 12 semanas\".<br><br>Análisis de Distractores: Una caída vital de 4 semanas es subestimada. El corte de 24 semanas aplica a mujeres que sólo expresaron actividad neoplásica en relevos ganglionares. El margen de 48 semanas corresponde a cohortes en etapas previas re-tratadas sin compromiso visceral extenso.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en segundo y tercer nivel de atención, 2017, Estadio IV B, p. 28." 
+            },
+            {
+                id: 38, 
+                question: "Ante la progresión irresecable a un estadio clínico IVB, ¿cuál es el objetivo oncológico principal que norma la indicación del tratamiento citotóxico (quimioterapia)?", 
+                options: ["Curación celular sistémica", "Reducción de la masa principal", "Paliar síntomas y calidad", "Sensibilización a teleterapia"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, careciendo de intención curativa por la biología agresiva diseminada, la meta se invierte hacia frenar el dolor óseo, las fístulas y mejorar el confort final sin toxicidades catastróficas.<br><br>Perla ENARM: \"La finalidad de la quimioterapia en estas pacientes es paliativa con el objetivo de disminuir síntomas y mejorar la calidad de vida, sin generar morbilidad\".<br><br>Análisis de Distractores: La curación y la reducción curativa de la masa primaria aplican a los subestadios locorregionales (Ej. IB2). La sensibilización radio-celular ocurre en dosis concomitantes tempranas, no de manera aislada en el colapso final IVB metastásico.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en segundo y tercer nivel de atención, 2017, Estadio IV B, p. 28." 
+            },
+            {
+                id: 39, 
+                question: "Para considerar normativamente la intervención de un especialista con fines de resección curativa ante una metástasis a distancia, ¿cuánto tiempo libre de enfermedad oncológica previa se requiere como mínimo?", 
+                options: ["> 3 meses", "> 6 meses", "> 9 meses", "> 12 meses"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, extirpar focos metastásicos (hígado o pulmón) en un paciente con metástasis explosiva sincrónica es inútil. Se exige constatar un fenotipo 'lento' y oligometastásico como predictor de sobrevida operatoria.<br><br>Perla ENARM: \"La resección de metástasis puede ser considerada en casos seleccionados con menos de 2 lesiones, variedad epidermoide, intervalo libre de enfermedad mayor a 12 meses\".<br><br>Análisis de Distractores: Periodos cortos menores a un año biológico como 3, 6 o 9 meses indican agresividad latente y diseminación masiva oculta, empujando a la paciente directamente a líneas de quimioterapia paliativa universal.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en segundo y tercer nivel de atención, 2017, Enfermedad recurrente o persistente, p. 29." 
+            },
+            {
+                id: 40, 
+                question: "En el contexto adyuvante post-histerectomía, ¿qué tecnología de distribución física de la dosis de radiación es recomendada para minimizar la toxicidad vascular y funcional de los órganos intra-abdominales remanentes?", 
+                options: ["Radioterapia bidimensional clásica", "Braquiterapia de baja tasa", "Radioterapia de intensidad modulada", "Radioterapia corporal estereotáctica"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Cáncer Cervicouterino, la técnica IMRT utiliza algoritmos computarizados que 'esculpen' la distribución del haz milimétricamente en el lecho pélvico deformado por la cirugía, salvando las asas intestinales y la mucosa vesical del daño tisular irreversible.<br><br>Perla ENARM: \"Puede usarse Radioterapia de Intensidad Modulada (IMRT) para minimizar la dosis a órganos de riesgo en el contexto post-histerectomía o cuando se necesite tratar ganglios paraaórticos\".<br><br>Análisis de Distractores: La radioterapia 2D antigua causa máxima toxicidad intestinal adyacente. La braquiterapia intracavitaria complementa la dosis interna pero no distribuye el mapeo externo pélvico general. La estereotáctica (SBRT) está explícitamente proscrita en la guía como reemplazo de las modalidades indicadas convencionalmente.", 
+                source: "IMSS-333-09, Tratamiento del Cáncer Cervicouterino en segundo y tercer nivel de atención, 2017, Estadio IB2 - IVA, p. 26." 
+            }
+        ];
+
+        // ==========================================
+        // ==========================================
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('gyoDMLastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('gyoDMProgress');
+                localStorage.removeItem('gyoDMLastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-pink-500 shadow-md z-10 border-pink-500 dark:border-pink-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-rose-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "GINECOLOGÍA Y OBSTETRICIA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "GPC IMSS-333-09 • Tratamiento del cáncer cérvicouterino en segundo y tercer nivel de atención";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="EM58919GYOE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-pink-100 dark:border-pink-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-pink-50 has-[:checked]:border-pink-400 dark:has-[:checked]:bg-pink-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-pink-600 dark:hover:bg-pink-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('gyoDMProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('gyoDMLastQId', currentQuestionId);
+                else localStorage.removeItem('gyoDMLastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('gyoDMProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

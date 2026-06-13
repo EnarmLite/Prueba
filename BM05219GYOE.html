@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================
+        // =========================================================
+        const questionsData = [
+            {
+                id: 1, 
+                question: "Gestante de 38 semanas acude a urgencias por presentar contracciones uterinas dolorosas. A la exploración física se documenta cérvix con 3 cm de dilatación y 50% de borramiento. ¿Cuál es el paso a seguir en el algoritmo de admisión?", 
+                options: ["Ingreso a sala de labor", "Amniotomía para conducción", "Egreso a domicilio", "Oxitocina 10 UI intravenosa"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de trabajo de parto de bajo riesgo, el ingreso a sala de labor está indicado a partir de la fase activa (≥ 5 cm de dilatación). Las pacientes con dilatación ≤ 4 cm se encuentran en fase latente y deben ser egresadas a domicilio con indicaciones de regresar ante signos de alarma obstétrica.<br><br>Perla ENARM: El personal médico no deberá indicar el ingreso de la mujer a sala de labor durante la fase latente del trabajo de parto (igual o menor de 4 cm de dilatación).<br><br>Análisis de Distractores: El ingreso a sala de labor (A) precipita cascadas de intervenciones innecesarias si se realiza en fase latente. La amniotomía (B) y la oxitocina (D) están contraindicadas como manejo de rutina para \"abreviar\" un trabajo de parto fisiológico, más aún si la paciente no cuenta con criterios de ingreso.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo de bajo riesgo, 2019, Evidencias y Recomendaciones, p. 26." 
+            },
+            {
+                id: 2, 
+                question: "Primigesta sana de 39 semanas cumple criterios de ingreso a sala de labor. ¿Cuál es el estudio inicial recomendado para evaluar el bienestar del feto en el área de triaje?", 
+                options: ["Ultrasonido obstétrico", "Perfil biofísico", "Cardiotocografía continua", "Auscultación intermitente"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de trabajo de parto de bajo riesgo, el estándar para evaluar el bienestar fetal de ingreso en pacientes sanas es la auscultación intermitente (con Pinard o Doppler). El uso de monitoreo electrónico continuo no mejora los desenlaces perinatales y aumenta la tasa de cesáreas injustificadas.<br><br>Perla ENARM: Se recomienda auscultar la frecuencia cardiaca fetal, ya sea con Pinard o con monitor fetal Doppler, para establecer el bienestar fetal en el momento del ingreso de la mujer a sala de labor.<br><br>Análisis de Distractores: La cardiotocografía continua (C) está proscrita de rutina al ingreso en embarazo no complicado. El ultrasonido (A) y el perfil biofísico (B) no son el tamizaje inicial ni práctico para establecer la viabilidad y normocardia en el algoritmo de urgencias.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo de bajo riesgo, 2019, Evidencias y Recomendaciones, p. 29." 
+            },
+            {
+                id: 3, 
+                question: "Paciente de 25 años en trabajo de parto de bajo riesgo ingresa a tococirugía. Señale la práctica que está proscrita de forma rutinaria al ingreso por carecer de beneficios clínicos.", 
+                options: ["Vía venosa periférica", "Enema evacuante", "Ingesta de líquidos", "Movilidad libre"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de trabajo de parto de bajo riesgo, la aplicación de enemas, el rasurado púbico y la pelvimetría son intervenciones médicas innecesarias que deben abandonarse al ingreso a sala de labor, ya que no reducen las tasas de infección neonatal o materna.<br><br>Perla ENARM: No se recomienda realizar enemas evacuantes en el momento del ingreso de la mujer a sala de labor.<br><br>Análisis de Distractores: La ingesta de líquidos claros (C) y la libre movilidad (D) son intervenciones activamente recomendadas para la comodidad materna y la progresión. La vía venosa periférica rutinaria (A) también se desaconseja si no hay indicación clínica, pero el enema evacuante es una práctica de \"preparación\" explícitamente proscrita en la bibliografía.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo de bajo riesgo, 2019, Evidencias y Recomendaciones, p. 32." 
+            },
+            {
+                id: 4, 
+                question: "Paciente con 6 cm de dilatación cervical y contracciones regulares. ¿Cuál es el intervalo de tiempo recomendado para realizar la evaluación del progreso del trabajo de parto mediante exploración vaginal?", 
+                options: ["1 hora", "2 horas", "4 horas", "6 horas"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de trabajo de parto de bajo riesgo, en ausencia de indicaciones maternas o fetales que demanden una revaloración inmediata, el tacto vaginal para vigilar la progresión en fase activa debe realizarse estandarizadamente cada 4 horas para reducir el riesgo de corioamnionitis y morbilidad infecciosa.<br><br>Perla ENARM: Se puede considerar la realización de tacto vaginal cada 4 horas, durante la fase activa del primer periodo del trabajo de parto.<br><br>Análisis de Distractores: Evaluaciones cada 1 o 2 horas (A, B) incrementan el número de tactos, exponiendo la cavidad a infecciones ascendentes sin modificar el desenlace. Evaluaciones cada 6 horas (D) retrasan la detección de una fase activa prolongada.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo de bajo riesgo, 2019, Evidencias y Recomendaciones, p. 39." 
+            },
+            {
+                id: 5, 
+                question: "De acuerdo a la cinética actual de modificaciones cervicales, ¿cuál es el parámetro o regla proscrita para establecer la detención del progreso en el trabajo de parto?", 
+                options: ["Dilatación de 1 cm/h", "Dilatación < 5 cm", "Borramiento estacionario", "Frecuencia de contracciones"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de trabajo de parto de bajo riesgo, la expectativa clásica de exigir una progresión lineal estricta de 1 cm por hora es irreal para la mayoría de las nulíparas. Su uso provoca diagnósticos falsos de \"detención\" y cesáreas innecesarias.<br><br>Perla ENARM: Dada la gran variabilidad reportada en la tasa de dilatación, no se recomienda emplear el criterio de dilatación de 1 cm/h como referencia para diagnosticar la falta de progresión.<br><br>Análisis de Distractores: La evaluación de la dilatación < 5 cm (B) sirve para diagnosticar fase latente, no detención. El borramiento (C) y las contracciones (D) son parámetros evaluables, pero la \"regla matemática\" abolida es la de 1 cm/hora.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo de bajo riesgo, 2019, Evidencias y Recomendaciones, p. 48." 
+            },
+            {
+                id: 6, 
+                question: "Paciente en fase activa del trabajo de parto refiere dolor intenso (8/10). ¿Cuál es el manejo no farmacológico con mayor eficacia demostrada para disminuir la percepción de este dolor?", 
+                options: ["Decúbito lateral izquierdo", "Pelota obstétrica", "Ingesta de líquidos", "Respiración dirigida"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de trabajo de parto de bajo riesgo, el uso de la pelota obstétrica, el masaje y las compresas calientes son las intervenciones manuales o físicas con evidencia estadística para disminuir la intensidad del dolor durante la primera fase de la labor.<br><br>Perla ENARM: La implementación del uso de la pelota obstétrica puede ser una estrategia para disminuir el dolor durante el trabajo de parto.<br><br>Análisis de Distractores: El decúbito lateral izquierdo (A) mejora el flujo placentario, no el dolor analgésico primario. La ingesta de líquidos (C) evita deshidratación. La respiración dirigida (D) no sustituye la eficacia mecánica de la distensión pélvica sobre una pelota.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo de bajo riesgo, 2019, Evidencias y Recomendaciones, p. 72." 
+            },
+            {
+                id: 7, 
+                question: "Primigesta cursa con fase latente prolongada (3 cm de dilatación) y solicita analgesia neuroaxial por dolor incapacitante. ¿En qué momento se recomienda aplicar el bloqueo epidural en esta paciente?", 
+                options: ["Al alcanzar 5 cm", "Al momento de solicitarla", "Al iniciar el expulsivo", "Con borramiento del 100%"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de trabajo de parto de bajo riesgo, la anestesia epidural no debe negarse ni retrasarse por no cumplir un umbral de centímetros. Si la paciente lo solicita, debe aplicarse, procurando usar la menor dosis posible, sin importar la dilatación cervical.<br><br>Perla ENARM: Se recomienda administrar la anestesia regional en el momento en que la mujer en trabajo de parto lo solicite, aún durante la fase latente.<br><br>Análisis de Distractores: Retrasar la analgesia hasta los 5 cm (A), hasta el expulsivo (C) o condicionarla al borramiento (D) es un acto que prolonga el sufrimiento materno y contraviene el principio de atención amigable y humanizada.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo de bajo riesgo, 2019, Evidencias y Recomendaciones, p. 69." 
+            },
+            {
+                id: 8, 
+                question: "Gestante con embarazo de 40 semanas presenta membranas íntegras, 7 cm de dilatación y dinámica uterina regular. ¿Cuál es la conducta indicada respecto al manejo de las membranas amnióticas?", 
+                options: ["Ruptura artificial precoz", "Despegamiento manual", "Evitar amniotomía rutinaria", "Amniotomía más oxitocina"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de trabajo de parto de bajo riesgo, intervenir mecánicamente las membranas de forma rutinaria no ha demostrado disminuir el tiempo total del parto y sí puede incrementar complicaciones. Se prefiere la progresión espontánea de la bolsa de las aguas.<br><br>Perla ENARM: No se recomienda realizar amniotomía rutinaria para abreviar el trabajo de parto.<br><br>Análisis de Distractores: La ruptura artificial (A) y la adición de oxitocina (D) conforman la conducción activa o \"medicalización\", proscrita de forma sistemática. El despegamiento manual (B) de membranas (maniobra de Hamilton) se usa para inducción en consulta, no durante la fase activa hospitalaria.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo de bajo riesgo, 2019, Evidencias y Recomendaciones, p. 40." 
+            },
+            {
+                id: 9, 
+                question: "Paciente cursando la fase activa del parto sin complicaciones, con dilatación de 7 cm. ¿Con qué frecuencia clínica se debe vigilar intermitentemente la frecuencia cardiaca fetal?", 
+                options: ["5 minutos", "10 minutos", "15 a 30 minutos", "60 minutos"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de trabajo de parto de bajo riesgo, durante todo el primer periodo (fase de dilatación), el feto de bajo riesgo debe vigilarse intermitentemente en este rango de tiempo. Se debe escuchar por 1 minuto posterior a la contracción.<br><br>Perla ENARM: Se recomienda auscultar intermitentemente la frecuencia cardiaca fetal durante el trabajo de parto de mujeres sanas (cada 15 a 30 minutos).<br><br>Análisis de Distractores: Evaluar cada 5 minutos (A) es el protocolo exclusivo para el segundo periodo (fase expulsiva). Una hora (D) es un periodo muy largo que podría enmascarar un evento hipóxico intraparto. 10 minutos (B) no es el corte establecido por la evidencia nacional.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo de bajo riesgo, 2019, Evidencias y Recomendaciones, p. 36." 
+            },
+            {
+                id: 10, 
+                question: "Paciente de 24 años se encuentra en periodo expulsivo del trabajo de parto con descenso de la cabeza en +2. ¿Cuál es el intervalo de tiempo recomendado para vigilar la auscultación cardiaca del feto en esta fase?", 
+                options: ["5 minutos", "15 minutos", "30 minutos", "60 minutos"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de trabajo de parto de bajo riesgo, el periodo expulsivo implica un grado máximo de compresión craneal y modificación del flujo umbilical. La exigencia de vigilancia se intensifica, pasando de 15-30 minutos en fase latente/activa, a 5 minutos estrictos.<br><br>Perla ENARM: Se recomienda escuchar intermitentemente la frecuencia cardiaca fetal al término de una contracción, cada 5 minutos.<br><br>Análisis de Distractores: Las opciones de 15, 30 y 60 minutos (B, C, D) son intervalos insuficientes durante el estrés máximo fisiológico que representa el paso por el canal de parto terminal.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo de bajo riesgo, 2019, Evidencias y Recomendaciones, p. 50." 
+            },
+            {
+                id: 11, 
+                question: "Secundigesta en dilatación y borramiento completos con analgesia epidural instalada y sin percepción de contracciones perineales. Para el manejo del segundo periodo, ¿cuánto tiempo se aconseja retrasar el inicio del pujo materno?", 
+                options: ["15 minutos", "30 minutos", "1 a 2 horas", "3 a 4 horas"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de trabajo de parto de bajo riesgo, en mujeres bajo los efectos de un bloqueo epidural, el reflejo de Ferguson fisiológico está abolido. Retrasar el pujo dirigido permite el descenso pasivo del producto guiado por la dinámica uterina, reduciendo el riesgo de parto instrumentado y fatiga.<br><br>Perla ENARM: Se recomienda retrasar, en una o dos horas, el momento de inicio del pujo materno durante el segundo periodo del trabajo de parto en mujeres con analgesia epidural.<br><br>Análisis de Distractores: Esperar solo minutos (A, B) generará pujos inefectivos y materno-agotamiento prematuro. Esperar más de 3 horas (D) incrementa el riesgo de corioamnionitis, compresión de estructuras pélvicas e hipoxia fetal.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo de bajo riesgo, 2019, Evidencias y Recomendaciones, p. 50." 
+            },
+            {
+                id: 12, 
+                question: "Durante el expulsivo con presentación cefálica, un médico aplica presión anterógrada intensa en el fondo del útero. ¿Cuál es la lesión materna directamente asociada a esta maniobra?", 
+                options: ["Desgarro grado 4", "Hematoma vulvar", "Desgarro cervical", "Laceración vaginal"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de trabajo de parto de bajo riesgo, la maniobra de Kristeller impacta forzosamente la cabeza fetal contra el cérvix que puede no estar totalmente retraído o elástico, generando laceraciones severas. Esta intervención incrementa la morbilidad y está catalogada como violencia obstétrica física.<br><br>Perla ENARM: Se observó mayor número de desgarros cervicales en el grupo de pacientes a las que se les realizó presión fúndica; no se recomienda aplicar presión en el fondo del útero durante el periodo expulsivo.<br><br>Análisis de Distractores: Los desgarros perineales superficiales o profundos (A, B, D) dependen de la elasticidad de los tejidos del piso pélvico, episiotomía o control del coronamiento, no de la presión directa y abrupta ejercida desde la cúpula miometrial alta.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo de bajo riesgo, 2019, Evidencias y Recomendaciones, p. 55." 
+            },
+            {
+                id: 13, 
+                question: "Gestante de término se encuentra en periodo expulsivo. Se documenta feto en presentación de cara. ¿Cuál es la técnica profiláctica recomendada para prevenir un trauma severo en este escenario?", 
+                options: ["Masaje perineal", "Episiotomía mediolateral", "Episiotomía media", "Compresas calientes"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de trabajo de parto de bajo riesgo, aunque la episiotomía rutinaria está prohibida, la presentación de cara exige forzosamente su aplicación selectiva por la necesidad de mayor espacio durante la deflexión de la cabeza. El abordaje mediolateral previene extensión a la mucosa y esfínter rectal.<br><br>Perla ENARM: Puede valorarse la práctica de la episiotomía en casos de periné corto; presentación de cara, compuesta o de nalgas; la técnica recomendada es la mediolateral.<br><br>Análisis de Distractores: La episiotomía media (C) tiene mayor riesgo de prolongación y desgarro de tercer o cuarto grado. Las compresas calientes (D) y el masaje (A) protegen el periné en presentaciones cefálicas occipitales normales, no solucionan el conflicto anatómico del diámetro de una presentación de cara.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo de bajo riesgo, 2019, Evidencias y Recomendaciones, p. 54." 
+            },
+            {
+                id: 14, 
+                question: "Posterior a la salida del hombro anterior del feto, inicia el manejo activo del tercer periodo del parto. ¿Cuál es el agente uterotónico profiláctico de primera elección y su dosis correcta?", 
+                options: ["Ergometrina 0.2 mg", "Carbetocina 100 µg", "Misoprostol 600 µg", "Oxitocina 10 UI"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de trabajo de parto de bajo riesgo, el estándar mundial profiláctico intraparto para prevenir la atonía es la administración de 10 UI de oxitocina, combinada con el pinzamiento tardío y tracción controlada.<br><br>Perla ENARM: Se recomienda administrar 10 UI de oxitocina (IV o IM), como uterotónico de elección para el manejo activo del tercer periodo del trabajo de parto.<br><br>Análisis de Distractores: La ergometrina (A), carbetocina (B) y misoprostol (C) son fármacos uterotónicos de segunda línea o alternativos si no se dispone de oxitocina o existe alguna contraindicación específica, pero nunca superan el perfil de seguridad de la oxitocina para profilaxis en pacientes sanas.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo de bajo riesgo, 2019, Evidencias y Recomendaciones, p. 60." 
+            },
+            {
+                id: 15, 
+                question: "Nace un producto de término con llanto enérgico, frecuencia cardiaca >100 lpm y buen tono muscular. ¿Cuál es el tiempo clínico mínimo establecido para realizar el pinzamiento del cordón umbilical?", 
+                options: ["10 segundos", "30 segundos", "60 segundos", "120 segundos"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de trabajo de parto de bajo riesgo, en neonatos que no requieren maniobras de reanimación inmediata, se debe retrasar el pinzamiento. Esta medida transfiere un volumen eritrocitario valioso desde la placenta que previene anemia en la infancia temprana.<br><br>Perla ENARM: Se recomienda realizar pinzamiento del cordón umbilical, por lo menos durante 60 segundos después del nacimiento en recién nacidos de término o pretérmino.<br><br>Análisis de Distractores: El pinzamiento temprano (< 30 segundos, opciones A y B) se reserva estrictamente para asfixia grave, desprendimiento placentario o desgarro vascular inminente. 120 segundos (D) es un límite superior, pero el \"corte mínimo normativo\" son los 60 segundos.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo de bajo riesgo, 2019, Evidencias y Recomendaciones, p. 57." 
+            },
+            {
+                id: 16, 
+                question: "Paciente en el puerperio inmediato tras un parto vaginal normoevolutivo y expulsión de placenta íntegra. ¿Cuál intervención intraparto sistemática multiplica severamente el riesgo de endometritis?", 
+                options: ["Exploración vaginal seriada", "Revisión manual uterina", "Pinzamiento tardío", "Alumbramiento fisiológico"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de trabajo de parto de bajo riesgo, la manipulación de la cavidad endometrial después del alumbramiento disemina bacterias del conducto vaginal directamente al lecho placentario cruento. Su uso injustificado es la principal variable evitable asociada a fiebre y endometritis puerperal.<br><br>Perla ENARM: Los principales factores asociados a endometritis posparto fueron: revisión manual de cavidad uterina (OR 10.5), por lo que no se aconseja realizarla de forma rutinaria.<br><br>Análisis de Distractores: Los tactos vaginales (A) aumentan el riesgo pero en mucho menor medida que la introducción de la mano estéril a útero. El pinzamiento (C) y el alumbramiento fisiológico (D) son procesos que no elevan las tasas de infección pélvica profunda.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo de bajo riesgo, 2019, Evidencias y Recomendaciones, p. 62." 
+            },
+            {
+                id: 17, 
+                question: "Tras la atención de un parto eutócico sin desgarros ni manipulación uterina, se da manejo de alta al binomio. ¿Cuál esquema de quimioprofilaxis materna es el indicado para prevenir la infección puerperal?", 
+                options: ["Cefalosporina primera generación", "Macrólido por 3 días", "Ningún antibiótico profiláctico", "Clindamicina vía oral"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de trabajo de parto de bajo riesgo, un parto vaginal de curso natural, sin intervenciones cruentas ni factores de riesgo identificados, no amerita cobertura de espectro microbiológico. El uso irracional de antibióticos genera resistencia y altera el microbioma transmitido al neonato.<br><br>Perla ENARM: No se recomienda administrar antibiótico profiláctico en mujeres después de un parto sin complicaciones.<br><br>Análisis de Distractores: Prescribir cefalosporinas (A), macrólidos (B) o lincosamidas (D) en el puerperio fisiológico es incorrecto. Estas pautas farmacológicas se reservan como tratamiento de infecciones demostradas o en cesáreas profilácticas.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo de bajo riesgo, 2019, Evidencias y Recomendaciones, p. 62." 
+            },
+            {
+                id: 18, 
+                question: "Neonato recién nacido vigoroso sin factores de riesgo y con líquido claro. ¿Cuál es la medida inicial universal más efectiva para fomentar y sostener el éxito de la lactancia materna exclusiva?", 
+                options: ["Alojamiento conjunto a 2 horas", "Contacto piel a piel temprano", "Baño inmediato estimulante", "Extracción manual de calostro"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de trabajo de parto de bajo riesgo, colocar al recién nacido desnudo sobre el tórax descubierto de la madre durante la primera hora genera termorregulación, apego emocional y estímulo mecánico para el reflejo de succión precoz, con altas tasas de éxito documentadas hasta los 6 meses posparto.<br><br>Perla ENARM: Se recomienda que los recién nacidos sin complicaciones tengan contacto piel con piel durante la primer hora después del nacimiento, con la finalidad de promover la lactancia materna.<br><br>Análisis de Distractores: El alojamiento tardío (A) interrumpe la hora crítica instintiva. El baño inmediato (C) está proscrito por riesgo de hipotermia severa. La extracción manual (D) no sustituye el apego neurológico del seno materno en sala de expulsión.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo de bajo riesgo, 2019, Evidencias y Recomendaciones, p. 64." 
+            },
+            {
+                id: 19, 
+                question: "Durante los cuidados y profilaxis rutinarios del recién nacido sano en la atención intrahospitalaria del parto, ¿cuál es la medida obligatoria indicada para prevenir una discrasia hemorrágica?", 
+                options: ["Vitamina K 1 mg intramuscular", "Fitomenadiona 2 mg vía oral", "Tocoferol 1 mg intravenoso", "Factor VIII profiláctico"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de trabajo de parto de bajo riesgo, todos los neonatos nacen con un estado fisiológico de déficit de protrombina dependiente del intestino no colonizado. La aplicación universal de 1 mg de Vitamina K (fitomenadiona) revierte este riesgo de hemorragia temprana y tardía de forma radical.<br><br>Perla ENARM: Se recomienda que a todos los recién nacidos se les administre 1 mg de vitamina K intramuscular después del nacimiento, como profilaxis.<br><br>Análisis de Distractores: La vía oral (B) no es la vía de elección garantizada en sala de labor para la profilaxis de rutina general. El tocoferol (C) es Vitamina E. La administración de hemoderivados (D) no es profiláctica, se emplea en coagulopatías agudas y graves preexistentes.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo de bajo riesgo, 2019, Evidencias y Recomendaciones, p. 65." 
+            },
+            {
+                id: 20, 
+                question: "Recién nacido de término presenta una transición a la vida extrauterina exitosa y apego materno. ¿En qué momento establece la recomendación el inicio del primer baño neonatal?", 
+                options: ["A las 2 horas", "A las 6 horas", "A las 12 horas", "A las 24 horas"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de trabajo de parto de bajo riesgo, el vérmix caseoso ounto sebáceo tiene funciones protectoras inmunológicas y de hidratación térmica. Retrasar el baño hasta cumplir el primer día completo (24 horas) se asocia a mejores tasas de lactancia exclusiva, reducción de hipotermia e irritabilidad.<br><br>Perla ENARM: Se recomienda el baño del recién nacido 24 horas después del nacimiento.<br><br>Análisis de Distractores: Interrumpir el apego para bañar al producto antes (2, 6 o 12 horas, opciones A, B y C) reduce la absorción epidérmica del vérmix y rompe los protocolos actuales del parto humanizado amigable.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo de bajo riesgo, 2019, Evidencias y Recomendaciones, p. 66." 
+            },
+            {
+                id: 21, 
+                question: "¿Cuál es la intensidad característica de las contracciones uterinas de Braxton-Hicks durante la gestación?", 
+                options: ["5 a 10 mmHg", "10 a 15 mmHg", "15 a 20 mmHg", "20 a 25 mmHg"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Vigilancia en trabajo de parto, las contracciones de Braxton-Hicks se distinguen del verdadero trabajo de parto por ser de baja intensidad, alcanzando presiones de 10 a 15 mmHg, tener una duración menor a 1 minuto y ser percibidas como un endurecimiento indoloro, sin generar borramiento ni dilatación cervical.<br><br>Perla ENARM: Contracciones de Braxton-Hicks: contracciones con intensidad de 10 a 15 mmHg, que duran menos de un minuto, percibidas por la madre como endurecimiento indoloro del útero o abdomen.<br><br>Análisis de Distractores: Valores menores (A) no se documentan como rango clínico de estas contracciones, mientras que los valores mayores (C y D) corresponden a la intensidad del inicio del trabajo de parto real que sí genera modificaciones cervicales y sensación de dolor francamente percibida por la paciente.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo no complicado, 2019, Glosario, p. 48." 
+            },
+            {
+                id: 22, 
+                question: "¿Entre qué semanas de gestación se debe ofrecer la inducción del trabajo de parto para evitar los riesgos inherentes al embarazo prolongado en pacientes sin comorbilidades?", 
+                options: ["39 y 40 semanas", "40 y 41 semanas", "41 y 42 semanas", "42 y 43 semanas"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Vigilancia en trabajo de parto, la meta en embarazos de bajo riesgo es permitir el inicio espontáneo del trabajo de parto, pero al llegar a la franja de las 41 a 42 semanas, se presenta un punto de inflexión donde el envejecimiento placentario incrementa la morbimortalidad, justificando la intervención activa médica para la interrupción.<br><br>Perla ENARM: Así mismo, se les debe ofrecer la inducción de trabajo de parto entre las semanas 41 y 42, para evitar los riesgos inherentes al embarazo prolongado.<br><br>Análisis de Distractores: Las semanas 39 a 41 (A y B) abarcan el término gestacional normal donde se debe priorizar la evolución fisiológica y vigilancia expectante. Esperar a las 42 a 43 semanas (D) somete al feto a un riesgo injustificado de asfixia y aspiración de meconio, estando fuera de normativa.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo no complicado, 2019, Evidencias y Recomendaciones, p. 23." 
+            },
+            {
+                id: 23, 
+                question: "¿Cuál de las siguientes acciones maternas está proscrita sistemáticamente en los nuevos algoritmos intrahospitalarios del periodo expulsivo?", 
+                options: ["Adopción de postura vertical", "Protección manual del periné", "Pujo dirigido por el personal", "Compresas perineales calientes"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Vigilancia en trabajo de parto, indicar a la paciente cuándo y cómo empujar (pujo dirigido) se asocia a fatiga materna temprana y desaceleraciones fetales sin mejorar las tasas de parto espontáneo. El enfoque amigable exige permitir que el deseo incontrolable de pujar fisiológico (reflejo de Ferguson) regule el esfuerzo.<br><br>Perla ENARM: No se recomienda dirigir el pujo materno durante el segundo periodo del trabajo de parto.<br><br>Análisis de Distractores: La postura vertical (A) acorta la duración del segundo periodo. Las compresas perineales (D) y la protección manual (B) previenen desgarros severos de grado 3 y 4. Todas estas están activamente recomendadas.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo no complicado, 2019, Evidencias y Recomendaciones, p. 49." 
+            },
+            {
+                id: 24, 
+                question: "Durante el tamizaje intermitente intraparto con monitor Doppler, ¿cuál es el intervalo de tiempo exacto dictado para medir la frecuencia fetal en la fase activa?", 
+                options: ["Durante la contracción por 30 segundos", "Antes de la contracción por 60 segundos", "Inmediatamente después de la contracción", "En intervalo neutro por 3 minutos"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Vigilancia en trabajo de parto, el objetivo de la auscultación es evaluar la respuesta fetal ante el estrés de la hipoxia fisiológica que causa la contracción uterina. Por ello, se debe auscultar invariablemente durante un minuto completo e inmediatamente después de percibir el acmé contráctil, detectando precozmente desaceleraciones tardías.<br><br>Perla ENARM: Se recomienda auscultar intermitentemente la frecuencia cardiaca fetal durante el trabajo de parto de mujeres sanas, durante un minuto inmediatamente después de la contracción.<br><br>Análisis de Distractores: Medir durante la contracción (A) es mecánicamente difícil y no refleja la recuperación. Medir antes (B) o mucho tiempo después (D) omite el periodo de ventana crítico para el diagnóstico de sufrimiento fetal tipo \"DIP II\".", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo no complicado, 2019, Evidencias y Recomendaciones, p. 36." 
+            },
+            {
+                id: 25, 
+                question: "De acuerdo al manejo no farmacológico de la fase activa del parto en mujeres de bajo riesgo, ¿cuál es la conducta nutricional estrictamente recomendada?", 
+                options: ["Ayuno total por 8 horas", "Ingesta de líquidos claros", "Infusión glucosada intravenosa", "Dieta semilíquida calórica"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Vigilancia en trabajo de parto, la restricción de líquidos y alimentos ha demostrado carecer de beneficios ante la posibilidad de requerir anestesia de urgencia en pacientes sanas y aumenta el disconfort. Se ha establecido que el aporte de líquidos claros mantiene la energía metabólica miometrial y el confort.<br><br>Perla ENARM: En mujeres con trabajo de parto no complicado, se recomienda la ingesta de líquidos claros.<br><br>Análisis de Distractores: El ayuno total (A) deshidrata a la paciente y favorece cuerpos cetónicos inefectivos. La terapia intravenosa profiláctica (C) es una intervención medicalizada no avalada rutinariamente. La dieta semilíquida o sólida (D) incrementa el riesgo broncoaspirativo severo (Síndrome de Mendelson) en caso eventual de requerir intubación.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo no complicado, 2019, Evidencias y Recomendaciones, p. 37." 
+            },
+            {
+                id: 26, 
+                question: "Según la GPC, ¿cuál es el riesgo materno asociado a la adopción exclusiva de posición vertical durante el segundo periodo del trabajo de parto?", 
+                options: ["Aumento de desgarros de segundo grado", "Incremento de episiotomías de urgencia", "Prolongación del tiempo de expulsión", "Atonía uterina refractaria posparto"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Vigilancia en trabajo de parto, aunque la posición vertical (cuclillas, de pie) acorta el tiempo del expulsivo hasta 6 minutos y disminuye el uso de episiotomías, la evidencia muestra un ligero incremento estadístico en la incidencia de desgarros perineales de segundo grado. Aun así, los beneficios biomecánicos favorecen su indicación.<br><br>Perla ENARM: La posición vertical se asoció con una reducción en episiotomías y un posible aumento de desgarros perineales de segundo grado (RR 1.20).<br><br>Análisis de Distractores: Las episiotomías (B) disminuyen radicalmente con esta técnica. El tiempo del expulsivo (C) se acorta gracias al vector de gravedad sobre el descenso fetal. La posición del parto no altera la actividad de retracción miometrial uterina que previene la atonía (D).", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo no complicado, 2019, Evidencias y Recomendaciones, p. 50." 
+            },
+            {
+                id: 27, 
+                question: "En el abordaje del primer periodo del parto, ¿cuál es la complicación obstétrica demostrada del uso sistemático y continuo del monitoreo cardiotocográfico de ingreso en embarazos sanos?", 
+                options: ["Mayor riesgo de ruptura uterina", "Alteración en la frecuencia basal", "Interrupción del embarazo por cesárea", "Requerimiento de reanimación neonatal avanzada"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Vigilancia en trabajo de parto, la monitorización continua restringe la movilidad materna, genera falsos positivos en el trazo cardíaco e induce estrés médico que desemboca irremediablemente en un aumento de cesáreas (RR 1.20) sin lograr reducir de forma paralela la asfixia o muertes perinatales.<br><br>Perla ENARM: Las mujeres evaluadas con cardiotocografía a su ingreso tuvieron mayor riesgo de interrupción del embarazo vía cesárea.<br><br>Análisis de Distractores: El registro continuo no es un factor mecánico que ocasione ruptura uterina (A). Las alteraciones basales del feto (B) y el requerimiento de RCP avanzado (D) dependen del pronóstico intrínseco del embarazo y la evolución de la hipoxia, no de la herramienta de monitoreo superficial en piel.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo no complicado, 2019, Evidencias y Recomendaciones, p. 28." 
+            },
+            {
+                id: 28, 
+                question: "¿Qué maniobra de intervención profiláctica durante el periodo expulsivo asocia específicamente la evidencia con la prevención de los desgarros perineales de primer grado?", 
+                options: ["Tracción fúndica de Kristeller", "Uso de maniobra de Ritgen", "Aplicación de compresas calientes", "Episiotomía de tipo paramediana"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Vigilancia en trabajo de parto, la maniobra de Ritgen modificada (control de la deflexión de la cabeza fetal mediante compresión sobre el mentón a través del periné) reduce la liberación explosiva del diámetro suboccipitobregmático, logrando disminuir selectivamente los desgarros cutáneos y mucosos de primer grado.<br><br>Perla ENARM: El uso de la maniobra de Ritgen se asoció a menor probabilidad de desgarros de primer grado (RR 0.32).<br><br>Análisis de Distractores: Las compresas calientes y masaje perineal (C) previenen desgarros severos de esfínter (grados 3 y 4). La maniobra de Kristeller (A) precipita desgarros cervicales. Las episiotomías (D) aumentan el trauma por corte incisional.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo no complicado, 2019, Evidencias y Recomendaciones, p. 52." 
+            },
+            {
+                id: 29, 
+                question: "Según el abordaje farmacológico de conducción estandarizado, ¿cuál es la recomendación directiva sobre la utilización de antiespasmódicos en la fase latente y activa del parto?", 
+                options: ["Recomendado con cuello cervical rígido", "No se recomienda su uso rutinario", "Indicado antes de ruptura de membranas", "Recomendado dosis única intravenosa"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Vigilancia en trabajo de parto, aunque la evidencia de baja calidad sugiere que los antiespasmódicos pueden acelerar sutilmente la tasa de dilatación, su impacto en desenlaces perinatales o en la duración del segundo y tercer periodo es nulo, motivo por el cual están fuera del arsenal farmacológico rutinario.<br><br>Perla ENARM: No se recomienda el uso rutinario de antiespasmódicos para abreviar el trabajo de parto.<br><br>Análisis de Distractores: No existe indicación en base a la rigidez cervical (A) o el estatus de las membranas (C). Justificar dosis únicas IV (D) es un error de práctica en el modelo desmedicalizado actual; el tiempo debe fluir naturalmente.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo no complicado, 2019, Evidencias y Recomendaciones, p. 42." 
+            },
+            {
+                id: 30, 
+                question: "¿Cuál de las siguientes alteraciones obstétricas agudas es una indicación absoluta y emergente para realizar el pinzamiento temprano (inmediato) del cordón umbilical?", 
+                options: ["Presentación cefálica transversa", "Desprendimiento prematuro de placenta", "Trabajo de parto fase prolongada", "Expulsivo con meconio grado 1"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Vigilancia en trabajo de parto, las únicas circunstancias que prohíben la espera de 60 segundos son catástrofes inminentes de aporte de oxígeno o volumen vascular: desprendimiento de placenta, placenta previa sangrante, ruptura uterina, asfixia neonatal que obliga reanimación rápida y paro cardíaco materno.<br><br>Perla ENARM: Se debe considerar el pinzamiento inmediato del cordón umbilical ante la presencia de desprendimiento de placenta, placenta previa, ruptura uterina, desgarro del cordón, paro cardiaco materno o asfixia neonatal.<br><br>Análisis de Distractores: Una posición de cabeza transversa (A) genera distocia, pero si nace vigoroso, se retrasa el pinzamiento. El tiempo del parto prolongado (C) no interviene con el volumen eritrocitario post-nacimiento. El meconio fino (D) sin depresión fetal ya no obliga a corte precoz para intubar rutinariamente.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo no complicado, 2019, Evidencias y Recomendaciones, p. 58." 
+            },
+            {
+                id: 31, 
+                question: "En la anatomía de trauma perineal, ¿cómo debe estadificarse a una paciente que presenta avulsión muscular del 25% correspondientes al esfínter anal externo exclusivamente?", 
+                options: ["Desgarro perineal grado 2", "Desgarro perineal grado 3A", "Desgarro perineal grado 3B", "Desgarro perineal grado 3C"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Vigilancia en trabajo de parto, el desgarro perineal de tercer grado lesiona invariablemente los esfínteres. La mnemotecnia técnica es: \"A\" si rompe menos del 50% del externo, \"B\" si abarca más del 50% del externo, y \"C\" si se profundiza y lesiona adicionalmente al esfínter anal interno.<br><br>Perla ENARM: Grado III: involucro de músculos perineales y esfínter anal externo e interno, que a su vez se subdivide en 3A: Lesión de <50% del esfínter anal externo.<br><br>Análisis de Distractores: El grado 2 (A) es lesión exclusiva de los músculos superficiales del periné (transverso). El 3B (C) implica mayor a 50% de afectación del externo. El 3C (D) añade el esfínter interno.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo no complicado, 2019, Glosario, p. 116." 
+            },
+            {
+                id: 32, 
+                question: "Tras el nacimiento de un producto que requiere manejo activo del alumbramiento, ¿cuál maniobra obligatoria debe acoplarse con la aplicación del fármaco uterotónico de primera línea?", 
+                options: ["Extracción manual sistemática de placenta", "Masaje uterino continuo bimanual", "Tracción controlada del cordón umbilical", "Episiotomía hemostática restrictiva"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Vigilancia en trabajo de parto, la aplicación de oxitocina 10 UI genera hipertonía miometrial que logra separar el plano esponjoso de la decidua, pero este fenómeno debe completarse activamente con la tracción controlada del cordón (Maniobra de Brandt-Andrews) para guiar la salida del anexo hacia el canal vaginal, previniendo hemorragia aguda.<br><br>Perla ENARM: Se asoció con una disminución de la perdida sanguínea ≥ 500 ml, menor duración del tercer periodo y menor necesidad de extracción manual de la placenta la tracción controlada del cordón umbilical.<br><br>Análisis de Distractores: La extracción manual de placenta (A) es un evento cruento y contaminante proscrito rutinariamente. El masaje bimanual intensivo (B) se usa frente a atonía instaurada. La episiotomía (D) es un tema de segunda fase resolutiva y sin función en el periodo de alumbramiento placentario.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo no complicado, 2019, Evidencias y Recomendaciones, p. 62 y Algoritmo 5." 
+            },
+            {
+                id: 33, 
+                question: "Nace producto de término mediante parto vaginal fisiológico. El neonato llora de forma enérgica, inicia patrón de respiración eficaz y el líquido amniótico se observa claro. ¿Cuál es el paso dictado en las normas de transición neonatal?", 
+                options: ["Aspiración con sonda de fosas nasales y boca", "Omitir la aspiración rutinaria oro-nasal", "Evaluar el test de Apgar de inmediato en cuna térmica", "Realizar lavado gástrico con 10 centímetros de suero"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Vigilancia en trabajo de parto, todo feto sano que expulsa los detritos bronquiales naturales con las presiones torácicas durante su paso por canal vaginal y llora enérgicamente, está sufriendo agresiones vaso-vagales mecánicas (bradicardia refleja, espasmo laringeo) con el uso de perillas en mucosas limpias.<br><br>Perla ENARM: No se recomienda la aspiración rutinaria de boca y fosas nasales en neonatos que han nacido con líquido amniótico claro y que inician respiración espontánea.<br><br>Análisis de Distractores: La aspiración directa (A y C) se reserva para pacientes meconiales o deprimidos sin esfuerzo respiratorio. Evaluar en cuna térmica interrumpiendo el apego fisiológico inmediato en niño sano (C) contraviene las normas de lactancia. El lavado gástrico (D) está proscrito en guías neonatales sanas.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo no complicado, 2019, Evidencias y Recomendaciones, p. 65." 
+            },
+            {
+                id: 34, 
+                question: "En el algoritmo que evalúa la decisión de ingreso y vigilancia clínica de la mujer gestante, ¿cuál es el estatus oficial sobre la indicación del partograma intrahospitalario en embarazos normoevolutivos?", 
+                options: ["Uso obligatorio en todo paciente que ingresa a sala", "No se recomienda emplear o realizar de forma rutinaria", "Aplicación posterior al uso de bloqueo epidural", "Se utiliza tras alcanzar los 7 centímetros de dilatación"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Vigilancia en trabajo de parto, las evidencias señalan que exigir los umbrales matemáticos del partograma clásico de Friedman incrementan falsamente la presión médica por \"falta de progresión\" y uso de fármacos aceleradores. Aunque puede ser útil, su registro sistemático estricto está desestimado como regla de oro.<br><br>Perla ENARM: Algoritmo 2: Acciones no recomendadas (no realizar de forma rutinaria): Canalización intravenosa, Amniotomía, Uso de oxitocina, Uso de antiespasmódicos, Uso de partograma.<br><br>Análisis de Distractores: Condicionar su uso al ingreso a todos (A) va en contra del enfoque actual, que promueve la observación clínica expectante de un ritmo personal no parametrizado en centímetros perfectos por hora (opciones C y D).", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo no complicado, 2019, Anexos, Algoritmo 2, p. 79." 
+            },
+            {
+                id: 35, 
+                question: "¿Qué característica somatométrica o demográfica se asoció estadísticamente a una duración mayor en el transcurso de la fase activa del parto?", 
+                options: ["Talla materna inferior a 1.50 metros", "Edad gestacional mayor a 40 semanas", "Índice de masa corporal elevado materno", "Historia de síndrome de ovario poliquístico"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Vigilancia en trabajo de parto, el tejido adiposo pélvico abundante y las alteraciones musculares consecuentes en mujeres embarazadas con obesidad (IMC alto) disminuyen la fuerza propulsora efectiva, generando una de las pocas correlaciones estadísticamente comprobadas de elongación natural (fisiológica) de la fase de dilatación mayor a 12 horas.<br><br>Perla ENARM: La duración de la fase activa del trabajo de parto era significativamente mayor en mujeres obesas. El riesgo de parto que dura más de 12 horas es mayor conforme incrementa el IMC.<br><br>Análisis de Distractores: La talla baja (A) sugiere un perfil de desproporción cefalopélvica, no una elongación de contracciones. La gestación prolongada (B) altera la reserva placentaria. El SOP (D) influye en la fertilidad y diabetes, pero no prolonga el tiempo activo miometrial por sí solo en labor.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo no complicado, 2019, Evidencias y Recomendaciones, p. 43." 
+            },
+            {
+                id: 36, 
+                question: "De acuerdo al manejo toxicológico de dolor obstétrico con anestésicos locales tipo amida, ¿cuál es la dosis máxima ponderal permitida de lidocaína simple (sin epinefrina)?", 
+                options: ["2 mg/kg", "3 mg/kg", "5 mg/kg", "7 mg/kg"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Vigilancia en trabajo de parto, el control de la toxicidad anestésica cardiaca y del sistema nervioso central es fundamental; la dosis umbral de lidocaína simple es 5 mg/kg. Al adicionar epinefrina, el fármaco se absorbe más lento a la circulación central y el umbral de dosis segura aumenta a 7 mg/kg.<br><br>Perla ENARM: Anestésico local Lidocaína: Dosis máxima recomendada (sin epinefrina) 5 mg/kg.<br><br>Análisis de Distractores: El nivel 2 mg/kg (A) corresponde a la ropivacaína. El valor 3 mg/kg (B) aplica a la bupivacaína. Por otra parte, 7 mg/kg (D) es la dosis de seguridad exclusiva para preparados con vasoconstrictor adjunto (epinefrina).", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo no complicado, 2019, Anexos, Cuadro 2, p. 86." 
+            },
+            {
+                id: 37, 
+                question: "Durante la fase activa normoevolutiva de labor, ¿cuál medida profiláctica no quirúrgica se establece para limitar lesiones perineales graves?", 
+                options: ["Tacto vaginal seriado para dilatación forzada", "Restricción de posiciones verticales del torso", "Aplicación de compresas calientes sobre periné", "Pinzamiento preventivo del caput fetal intrauterino"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Vigilancia en trabajo de parto, la aplicación intermitente de temperatura local alta sobre la región del periné anterior incrementa el flujo y la distensibilidad viscoelástica del rafe superficial, logrando disminuir sustancialmente la incidencia de rupturas tipo 3 y 4 en partos de presentación occipital normal.<br><br>Perla ENARM: Se recomienda emplear técnicas para prevenir el trauma perineal durante el segundo periodo del trabajo de parto, como aplicación de compresas calientes y la protección manual del periné.<br><br>Análisis de Distractores: Los tactos forzados de cérvix (A) causan desgarros del cuello. Las posiciones recostadas o reclinadas (B) entorpecen la mecánica de pélvis mayor. Intervenir manualmente la presentación caput fetal (D) expone al bebé a desgarros dérmicos severos innecesarios.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo no complicado, 2019, Evidencias y Recomendaciones, p. 53." 
+            },
+            {
+                id: 38, 
+                question: "Si el equipo médico considera plenamente justificada la necesidad quirúrgica de ampliar el canal vulvovaginal. ¿Cuál es el abordaje preventivo anatómico con mayor perfil de seguridad que se recomienda para la incisión?", 
+                options: ["Episiotomía media", "Episiotomía mediolateral", "Episiotomía lateral paralela", "Incisión en huso perianal posterior"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Vigilancia en trabajo de parto, cuando es imperativo el acto quirúrgico (fórceps o presentación pélvica/cara), la incisión a 45 grados de la línea media disminuye la probabilidad física de que un desgarro se proyecte en línea recta hacia las fibras del esfínter anal y la mucosa rectal (evitando el grado 3 y 4 de desgarro).<br><br>Perla ENARM: Puede valorarse la práctica de la episiotomía en casos selectivos... Siempre deberá realizarse bajo analgesia adecuada, y la técnica recomendada es la mediolateral.<br><br>Análisis de Distractores: La episiotomía media (A) es famosa por su alta tasa de prolongación directa al recto y su difícil reparación. La incisión lateral (C) corta un volumen exagerado de inervación y arterias del elevador del ano. Las incisiones anales posteriores (D) están proscritas por infección.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo no complicado, 2019, Evidencias y Recomendaciones, p. 54." 
+            },
+            {
+                id: 39, 
+                question: "Una paciente primigesta solicita que se prescinda de anestésicos o bloqueos espinales para el manejo de los intensos dolores de la fase latente. ¿Qué intervención de primera línea tiene aval normativo en esta paciente?", 
+                options: ["Infusión rápida de Hartman y paracetamol", "Uso continuo de pelota obstétrica o ejercicios físicos", "Sedación intravenosa con propofol diluido en bolo", "Restricción de movimientos y postura reclinada estricta"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Vigilancia en trabajo de parto, la distracción biomecánica del rebote, que se produce con el uso de la pelota obstétrica es un recurso de probada evidencia que disminuye drásticamente el dolor de primer periodo del parto al aumentar la movilidad del anillo pélvico inferior y reducir la isquemia uterina pasiva de otras posturas.<br><br>Perla ENARM: La implementación del uso de la pelota obstétrica puede ser una estrategia para disminuir el dolor durante el trabajo de parto.<br><br>Análisis de Distractores: Reposo estricto de la madre reclinada (D) exacerba el dolor ciático por compresión de la vena cava. AINES básicos (A) no controlan dolores neuro-simpáticos de labor. El propofol y sedantes intravenosos (C) cruzan barrera fetoplacentaria causando parada respiratoria neonatal franca.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo no complicado, 2019, Evidencias y Recomendaciones, p. 74." 
+            },
+            {
+                id: 40, 
+                question: "La administración continua del único agente uterotónico de primera línea (Oxitocina) cuenta con un límite posológico exacto a infundir, por la posibilidad de ruptura o hipotensión. ¿Cuál es la dosis tope basal de infusión?", 
+                options: ["10 mU por minuto", "20 mU por minuto", "40 mU por minuto", "60 mU por minuto"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Vigilancia en trabajo de parto, la conducción con oxitocina, que es una intervención secundaria tras una verdadera detención confirmada, debe pautarse a ritmo de titulación: inicia con 2-5 mU/min con incrementos suaves, llegando hasta una barrera de 40 mU/min, dosis donde los receptores saturan y excederla causa tetania e hipoxia inmediata.<br><br>Perla ENARM: Oxitocina: Iniciar con 2 a 5 mU/min, con incrementos de 2 mU cada 15 minutos, con dosis máxima de 40 mU/min.<br><br>Análisis de Distractores: Las dosis topes inferiores (A y B) no logran concentraciones valle útiles en úteros muy hipotónicos primarios. Una indicación indiscriminada superior a este límite (D, 60 mU/min) condena al feto a un colapso cardiovascular por compresión insuperable sostenida.", 
+                source: "GPC-IMSS-052-19, Vigilancia y atención amigable en el trabajo de parto en embarazo no complicado, 2019, Anexos, Tabla de Medicamentos, p. 41." 
+            }
+        ];
+
+        // ==========================================
+        // ==========================================
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('gyoBMLastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('gyoBMProgress');
+                localStorage.removeItem('gyoBMLastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-pink-500 shadow-md z-10 border-pink-500 dark:border-pink-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-rose-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "GINECOLOGÍA Y OBSTETRICIA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "GPC-IMSS-052-19 • Vigilancia y atención amigable en el trabajo de parto en embarazo de bajo riesgo";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="CM23209GYOE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-pink-100 dark:border-pink-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-pink-50 has-[:checked]:border-pink-400 dark:has-[:checked]:bg-pink-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-pink-600 dark:hover:bg-pink-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('gyoBMProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('gyoBMLastQId', currentQuestionId);
+                else localStorage.removeItem('gyoBMLastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('gyoBMProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

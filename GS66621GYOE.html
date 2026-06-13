@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================
+        // =========================================================
+        const questionsData = [
+            {
+                id: 1, 
+                question: "¿Cuál es el tiempo máximo de resolución espontánea que permite clasificar clínicamente un cuadro de alteración del estado de ánimo como \"tristeza materna\" (baby blues) en lugar de un episodio depresivo mayor?", 
+                options: ["7 días", "14 días", "2 a 3 semanas", "6 semanas"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, es imperativo diferenciar la adaptación fisiológica de la patología psiquiátrica. El baby blues inicia entre los 2 y 4 días posparto y no requiere intervención médica, ya que remite por sí solo antes del primer mes.<br><br>Perla ENARM: \"La patología denominada Baby Blues se describe como una alteración del estado de ánimo [...] Los síntomas de dicha patología son de alivio espontáneos dentro de las dos a tres semanas siguientes al parto, y no requieren de atención médica y/o psicológica.\"<br><br>Análisis de Distractores: La opción A corresponde al periodo de memoria que evalúa la Escala de Edimburgo (últimos 7 días). La opción B es el tiempo mínimo de persistencia de síntomas para diagnosticar una verdadera depresión clínica. La opción D es la duración anatómica del puerperio tradicional.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Introducción, Página 8." 
+            },
+            {
+                id: 2, 
+                question: "¿Cuál es el factor de riesgo con mayor peso predictivo para el desarrollo de depresión posparto en una paciente gestante?", 
+                options: ["Tristeza materna transitoria", "Depresión previa al embarazo", "Embarazo en la adolescencia", "Ausencia de control prenatal"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, el historial psiquiátrico de la paciente es el determinante biológico más fuerte para la recurrencia de un episodio durante la vulnerabilidad del puerperio, superando a los factores puramente sociodemográficos.<br><br>Perla ENARM: \"Los principales factores de riesgo para la depresión posparto es tener antecedente de este trastorno previamente al embarazo, depresión anteriormente y carecer de mecanismos de apoyo eficaces.\"<br><br>Análisis de Distractores: Las opciones A, C y D son factores de riesgo documentados en la etiología de la enfermedad, pero la guía especifica que la historia previa de depresión es el \"predictor más fuerte\" y principal.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Introducción, Página 9." 
+            },
+            {
+                id: 3, 
+                question: "¿Cuál es la herramienta de tamizaje de primera elección para el escrutinio de depresión en pacientes durante el periodo perinatal?", 
+                options: ["Inventario de Beck", "Escala de Edimburgo", "Escala de Hamilton", "Cuestionario PHQ-9"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, el tamizaje universal se realiza con esta herramienta autoadministrada de 10 ítems, ya que ha sido validada específicamente para esta población y discrimina de manera efectiva a las pacientes en riesgo con una alta especificidad.<br><br>Perla ENARM: \"La Escala de Depresión Postnatal de Edimburgo (EPDE) es la herramienta de detección de depresión recomendada para el período perinatal.\"<br><br>Análisis de Distractores: La opción A se utiliza en esta guía primariamente para clasificar la severidad de la depresión, no para el tamizaje universal. Las opciones C y D son herramientas psiquiátricas generales que no están designadas como primera elección para la población obstétrica en esta normatividad.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Detección, Página 17." 
+            },
+            {
+                id: 4, 
+                question: "Al interpretar la herramienta de tamizaje de primera elección en el puerperio, ¿qué puntuación mínima establece la probabilidad de depresión y justifica el inicio de una intervención multidisciplinaria?", 
+                options: ["≥ 8 puntos", "≥ 10 puntos", "≥ 12 puntos", "≥ 15 puntos"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, el corte operativo es estricto; alcanzar o superar esta cifra clasifica a la paciente en la zona de alarma clínica, detonando la canalización obligatoria a psicoterapia.<br><br>Perla ENARM: \"INTERPRETACIÓN: Puntuación ≥10 Probabilidad de Depresión.\"<br><br>Análisis de Distractores: La opción A refleja un puntaje de bajo riesgo que solo requiere vigilancia habitual. Las opciones C y D son puntajes que confirman la depresión pero exceden el límite inferior (el punto de inflexión) dictado por el algoritmo para iniciar manejo.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Anexos, Página 31." 
+            },
+            {
+                id: 5, 
+                question: "Independientemente del puntaje total obtenido en la Escala de Edimburgo, ¿qué hallazgo en el cuestionario clasifica a la paciente como una urgencia que requiere evaluación psiquiátrica inmediata?", 
+                options: ["Pregunta 3 mayor a 1", "Pregunta 10 mayor a 0", "Anhedonia severa aislada", "Insomnio de 7 días"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, el ítem 10 evalúa explícitamente los pensamientos de autolesión o suicidio. Cualquier respuesta afirmativa anula el abordaje escalonado ambulatorio por el alto riesgo de mortalidad materna o infanticidio.<br><br>Perla ENARM: \"Cualquier número que se escoja que no sea el 0 en la pregunta 10 significa que es necesario hacer evaluaciones adicionales de inmediato.\"<br><br>Análisis de Distractores: La opción A (sentimientos de culpa) suma puntos al total pero no es un foco rojo aislado vital. Las opciones C y D son síntomas cardinales y somáticos, respectivamente, que integran el síndrome pero no denotan una emergencia suicida inminente.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Anexos, Página 31." 
+            },
+            {
+                id: 6, 
+                question: "Si bien las escalas de escrutinio detectan el riesgo, ¿cuál es el estándar de oro establecido para la confirmación diagnóstica definitiva de la depresión posparto?", 
+                options: ["Inventario de Beck ≥ 19", "Evaluación psicosocial ALPHA", "Entrevista clínica estructurada", "Escala de Edimburgo ≥ 15"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, ningún cuestionario autoadministrado tiene peso diagnóstico final. El diagnóstico definitivo recae en la valoración por un profesional basándose estrictamente en los criterios del DSM-V.<br><br>Perla ENARM: \"La EDPE es una escala recomendada para la detección temprana [...] sin embargo, tome en cuenta que la EPD no es diagnóstica, el estándar de oro es la entrevista diagnóstica confirmada con los criterios en el DSM-V.\"<br><br>Análisis de Distractores: La opción A mide la gravedad, no confirma la patología. La opción B es una herramienta de detección de riesgo psicosocial en el embarazo. La opción D indica alta probabilidad en tamizaje, pero sigue sin ser una prueba confirmatoria por sí sola.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Detección, Página 18." 
+            },
+            {
+                id: 7, 
+                question: "Al utilizar el Inventario de Depresión de Beck para estadificar la severidad de un cuadro clínico confirmado en el puerperio, ¿qué clasificación corresponde a una puntuación de 24 puntos?", 
+                options: ["Tristeza materna leve", "Depresión leve", "Depresión moderada", "Depresión severa"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, esta herramienta es fundamental para guiar el inicio de tratamiento farmacológico. Su rango para la categoría moderada abarca de los 19 a los 29 puntos.<br><br>Perla ENARM: \"Inventario de Depresión de Beck [...] 10-18 = Depresión leve, 19-29 = Depresión moderada, 30-63 = Depresión severa.\"<br><br>Análisis de Distractores: La opción A no se clasifica con esta escala. La opción B corresponde a puntajes menores (10 a 18). La opción D aplica únicamente para puntajes de 30 o más.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Anexos, Página 36." 
+            },
+            {
+                id: 8, 
+                question: "¿Cuál es el abordaje terapéutico de primera línea indicado para prevenir y manejar los síntomas iniciales de depresión perinatal en el primer nivel de atención?", 
+                options: ["Clorhidrato de sertralina", "Terapia cognitivo conductual", "Clorhidrato de fluoxetina", "Inhibidores de la monoaminooxidasa"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, la medicalización temprana se evita debido a la exposición fetal y neonatal a psicofármacos. Las intervenciones psicológicas estructuradas han demostrado reducir la sintomatología y prevenir recaídas de forma segura.<br><br>Perla ENARM: \"Se recomienda utilizar la Terapia conductual en la prevención de la depresión posparto en la atención primaria.\"<br><br>Análisis de Distractores: Las opciones A y C son antidepresivos de primera elección, pero están reservados para pacientes con síntomas moderados a graves o que han presentado falla a la psicoterapia. La opción D incluye fármacos en desuso por su perfil de toxicidad e interacciones.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Tratamiento, Página 20." 
+            },
+            {
+                id: 9, 
+                question: "Tras instaurar el tratamiento no farmacológico de primera línea en una paciente con depresión posparto, ¿en qué momento exacto exige la normativa realizar la evaluación de efectividad terapéutica?", 
+                options: ["2 y 4 semanas", "1 y 3 meses", "4 y 6 meses", "6 y 12 meses"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, los beneficios de las terapias conductuales requieren tiempo para consolidarse, pero también tienden a disminuir, por lo que el seguimiento a mediano plazo es un estándar de calidad obligatorio para decidir si se escala el tratamiento.<br><br>Perla ENARM: \"Se recomienda utilizar la Terapia conductual en la prevención de la depresión posparto en la atención primaria. Así como evaluarla a los 4 y 6 meses posterior a la intervención.\"<br><br>Análisis de Distractores: Las opciones A, B y D presentan ventanas de tiempo que no concuerdan con la recomendación clave (RC) explícita de seguimiento para la intervención psicológica dictada en el documento.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Tratamiento, Página 20." 
+            },
+            {
+                id: 10, 
+                question: "En caso de requerir un estabilizador del estado de ánimo durante cualquier etapa de la gestación, ¿qué fármaco se encuentra absolutamente contraindicado por inducir defectos del tubo neural de forma dosis-dependiente?", 
+                options: ["Ácido valproico", "Carbonato de litio", "Clorhidrato de amitriptilina", "Bromhidrato de citalopram"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, este antiepiléptico y eutimizante es un teratógeno humano categórico (Categoría D) que causa el síndrome fetal homónimo y eleva hasta un 35% el riesgo de malformaciones mayores (espina bífida) en altas dosis.<br><br>Perla ENARM: \"Se recomienda evitar el uso de ácido Valproico durante la gestación.\"<br><br>Análisis de Distractores: La opción B (Litio) está contraindicada solo en el primer trimestre, no en toda la gestación. La opción C se asocia a parto pretérmino pero no primariamente a defectos del tubo neural. La opción D es un ISRS sin contraindicación absoluta.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Pronóstico, Página 28." 
+            },
+            {
+                id: 11, 
+                question: "Si una paciente obstétrica con patología psiquiátrica severa requiere prescripción ineludible de Carbonato de Litio, ¿en qué periodo específico se debe evitar rigurosamente su administración?", 
+                options: ["Primer trimestre", "Segundo trimestre", "Tercer trimestre", "Durante el trabajo de parto"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, la restricción temporal del Litio obedece a su impacto durante la organogénesis cardiaca temprana, momento en el cual induce daño directo en el desarrollo de las válvulas derechas.<br><br>Perla ENARM: \"Se recomienda evitar el uso de Litio durante el primer trimestre del embarazo [...] sólo existe un riesgo absoluto pequeño de anomalía de Epstein.\"<br><br>Análisis de Distractores: Las opciones B, C y D representan etapas de la gestación donde el corazón fetal ya está formado, por lo que el riesgo de anomalía de Ebstein desaparece, permitiendo el uso del Litio bajo estrecha vigilancia si el riesgo materno lo amerita.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Pronóstico, Página 27." 
+            },
+            {
+                id: 12, 
+                question: "¿Cuál es el riesgo cardiovascular fetal más grave asociado al consumo de Fluoxetina o Sertralina que obliga a mantener una vigilancia pediátrica estrecha en el momento del nacimiento?", 
+                options: ["Síndrome de adaptación neonatal", "Anomalía de válvula Ebstein", "Cierre prematuro del ductus", "Defectos del tubo neural"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, la exposición in utero a los Inhibidores Selectivos de la Recaptura de Serotonina (ISRS) produce un fenómeno de abstinencia o toxicidad serotoninérgica transitoria al momento de cortar el cordón umbilical en una tercera parte de los recién nacidos.<br><br>Perla ENARM: \"Se sugiere considerar la probabilidad de desarrollar síndrome de adaptación neonatal en los casos de depresión prenatal manejados con fluoxetina [...] el síndrome de adaptación neonatal puede ocurrir hasta en un 30% de los lactantes.\"<br><br>Análisis de Distractores: La option B es un efecto adverso específico del Litio. La opción C es una complicación clásica del uso de AINEs (ej. Indometacina) en el tercer trimestre. La opción D se relaciona con deficiencia de ácido fólico o uso de valproato.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Pronóstico, Páginas 25 y 26." 
+            },
+            {
+                id: 13, 
+                question: "Específicamente con el uso de Fluoxetina en la gestación, ¿qué complicación pulmonar del recién nacido tiene el doble de riesgo de presentarse frente a la población general?", 
+                options: ["Enfermedad de membrana hialina", "Hipertensión pulmonar persistente", "Taquipnea transitoria del recién nacido", "Síndrome de aspiración meconial"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, además del síndrome de adaptación y los leves defectos septales, este fármaco tiene un impacto directo sobre la vasculatura pulmonar fetal, elevando el riesgo de esta patología grave del 0.1% basal a casi el 0.3%.<br><br>Perla ENARM: \"Existe un pequeño riesgo de hipertensión pulmonar persistente para todos los ISRS (incidencia 0.3%; esperado 0.1-0.2%), aproximadamente el doble del riesgo de fondo.\"<br><br>Análisis de Distractores: Las opciones A y C están directamente ligadas a la edad gestacional (prematuridad o cesárea electiva), no a la toxicidad farmacológica por ISRS. La opción D se asocia a asfixia o sufrimiento fetal agudo.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Pronóstico, Página 25." 
+            },
+            {
+                id: 14, 
+                question: "En el contexto de los antidepresivos tricíclicos, ¿cuál es el resultado adverso obstétrico más comúnmente asociado al uso de Amitriptilina durante el embarazo?", 
+                options: ["Malformación de extremidades", "Parto prematuro", "Macrosomía fetal", "Desprendimiento de placenta"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, aunque faltan datos sobre la teratogenicidad estructural de este tricíclico, la evidencia epidemiológica asocia su consumo a una reducción en el tiempo de gestación y al peso del recién nacido.<br><br>Perla ENARM: \"Se recomienda tomar en cuenta que el uso de Amitriptilina durante la gestación duplica el riesgo de parto prematuro y bajo peso al nacer.\"<br><br>Análisis de Distractores: La opción A no tiene evidencia suficiente comprobada con este fármaco. La opción C es contraria, ya que la amitriptilina se asocia a \"bajo peso al nacer\". La opción D es clásica del tabaquismo, cocaína o preeclampsia, no de este fármaco.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Pronóstico, Página 27." 
+            },
+            {
+                id: 15, 
+                question: "De acuerdo al algoritmo de toma de decisiones, ¿en qué escenario clínico está estrictamente indicada la derivación de una paciente con depresión posparto al tercer nivel de atención?", 
+                options: ["Edimburgo ≥ 10 puntos", "Presencia de llanto frecuente", "Falla a terapia conductual", "Inicio de lactancia materna"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, el tercer nivel (alta especialidad psiquiátrica) se reserva para la patología refractaria a la primera línea de manejo o cuando existen antecedentes de trastorno mental grave previo.<br><br>Perla ENARM: \"Tras la obtención del puntaje [...] se debe canalizar a la paciente a un servicio de terapia cognitivo conductual [...] y en caso de no resultar efectiva la terapia deberá canalizarse a 3er nivel para su abordaje.\"<br><br>Análisis de Distractores: La opción A es el criterio para iniciar manejo psicológico en primer o segundo nivel. La opción B es un síntoma esperado que no agrava el estrato de atención. La opción D es una práctica recomendada que no contraindica el manejo ambulatorio.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Tratamiento, Página 20." 
+            },
+            {
+                id: 16, 
+                question: "Si por falta de recursos logísticos el tamizaje con la Escala de Edimburgo solo puede aplicarse de manera universal una única vez durante todo el puerperio, ¿cuál es el intervalo de tiempo ideal para realizarlo?", 
+                options: ["Primeras 24 horas", "Entre 2 y 4 días", "Entre 6 y 16 semanas", "A los 12 meses"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, este periodo logra el balance epidemiológico perfecto: capta a la mayoría de los casos de inicio temprano antes de que compliquen el apego y evita los falsos positivos transitorios (baby blues) de los primeros días.<br><br>Perla ENARM: \"Si la EPDS se va a administrar universalmente solo una vez durante el período posparto, el período de tiempo es entre seis y 16 semanas después del parto.\"<br><br>Análisis de Distractores: Las opciones A y B detectarían predominantemente casos de tristeza materna transitoria (baby blues). La opción D sería un tamizaje demasiado tardío, perdiendo la oportunidad de intervención temprana y prevención de secuelas en el infante.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Detección, Página 17." 
+            },
+            {
+                id: 17, 
+                question: "¿Cuál es la estrategia de prevención primaria de mayor impacto respaldada para mujeres con factores de riesgo conocidos antes de cursar un nuevo embarazo?", 
+                options: ["Consejería pregestacional", "Inicio empírico de sertralina", "Ingreso profiláctico a psiquiatría", "Vigilancia mensual estricta"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, preparar psicológicamente a la madre vulnerable, fortalecer redes de apoyo y establecer un plan antes de la concepción reduce sustancialmente la incidencia de la enfermedad.<br><br>Perla ENARM: \"Referir a mujeres con antecedentes o problemas de salud mental graves para recibir consejería previa a la concepción preferiblemente un servicio especializado en salud mental perinatal.\"<br><br>Análisis de Distractores: La opción B expone al feto a riesgos teratogénicos innecesarios en una paciente asintomática. La opción C es una medida exagerada sin criterios de gravedad aguda. La opción D es una conducta expectante, no una estrategia preventiva activa multidisciplinaria.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Prevención, Página 14." 
+            },
+            {
+                id: 18, 
+                question: "Para establecer el diagnóstico de depresión posparto de manera cronológica, ¿cuál es el tiempo mínimo ininterrumpido que debe persistir la sintomatología cardinal (tristeza, anhedonia)?", 
+                options: ["≥ 3 días", "≥ 7 días", "≥ 14 días", "≥ 4 semanas"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, este criterio temporal excluye fluctuaciones emocionales normales. Para cumplir el criterio de \"episodio depresivo mayor\", la clínica debe ser constante casi a diario.<br><br>Perla ENARM: \"Depresión posparto [...] con un inicio dentro de los 12 meses siguientes al parto y que los síntomas deben estar presentes casi a diario durante al menos dos semanas.\"<br><br>Análisis de Distractores: La opción A corresponde al inicio esperado del baby blues. La opción B es la ventana retrospectiva del tamizaje de Edimburgo, no el criterio diagnóstico de la patología. La opción D excede el tiempo clínico mínimo requerido para iniciar manejo.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Introducción, Página 8." 
+            },
+            {
+                id: 19, 
+                question: "En una paciente de bajo riesgo o con puntajes menores al umbral patológico en la evaluación inicial, ¿con qué periodicidad mínima debe mantenerse la vigilancia rutinaria de su estado de ánimo?", 
+                options: ["Cada mes", "Cada bimestre", "Cada trimestre", "Cada semestre"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, la revaluación sistemática permite detectar cuadros de aparición tardía. El algoritmo marca la temporalidad exacta para el seguimiento preventivo en el primer y segundo nivel.<br><br>Perla ENARM: Algoritmo \"Diagnóstico y Manejo de la depresión postparto [...] Continuar con vigilancia pre y post parto Por lo menos cada trimestre.\"<br><br>Análisis de Distractores: Las opciones A y B saturarían los servicios de primer nivel en pacientes de bajo riesgo sin un beneficio clínico añadido comprobado. La opción D dejaría ventanas de tiempo muy amplias (6 meses) donde un episodio de depresión podría progresar gravemente.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Anexos, Página 29." 
+            },
+            {
+                id: 20, 
+                question: "Según la evidencia clínica, ¿en qué porcentaje aproximado se logran reducir los episodios de depresión posparto al aplicar Terapia Cognitivo Conductual (TCC) de forma preventiva?", 
+                options: ["10%", "21%", "36%", "50%"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, la eficacia profiláctica de la TCC en gestantes con riesgo es estadísticamente significativa y justifica que sea la primera línea de intervención por encima de los fármacos.<br><br>Perla ENARM: \"El tamaño del efecto general fue de 0,64 [...] lo que representa una reducción del 36% en el riesgo de episodios depresivos posparto en los grupos que recibieron intervención de TCC.\"<br><br>Análisis de Distractores: La opción B (21%) corresponde a la mejoría mantenida a los 6 meses de seguimiento tras la terapia, no a la reducción global inicial del riesgo de presentación. Las opciones A y D son distractores numéricos sin sustento estadístico en la guía.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Tratamiento, Página 21." 
+            },
+            {
+                id: 21, 
+                question: "Utilizando el sistema de la Clasificación Internacional de Enfermedades (CIE-10), ¿qué código agrupa a los trastornos mentales y del comportamiento asociados de forma directa con el puerperio?", 
+                options: ["F32", "F33", "F53", "O99"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, la codificación precisa es necesaria para el registro epidemiológico y la estandarización del manejo en los sistemas de salud, separando el episodio depresivo general de los trastornos directamente puerperales.<br><br>Perla ENARM: \"CIE-10: F53 Trastornos mentales y del comportamiento asociados con el puerperio, no clasificados en otra parte.\"<br><br>Análisis de Distractores: La opción A (F32) corresponde a episodio depresivo no especificado. La opción B (F33) es para episodio depresivo recurrente general. La opción D (O99) agrupa otras enfermedades maternas que complican el embarazo, pero no es el código específico para trastornos mentales puerperales.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Aspectos Generales, Página 5." 
+            },
+            {
+                id: 22, 
+                question: "En la cronología clínica del puerperio, ¿cuál es el momento exacto de inicio esperado para la tristeza materna transitoria o \"baby blues\"?", 
+                options: ["Inmediatamente al nacer", "2 a 4 días", "7 a 10 días", "14 a 21 días"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, el inicio de esta alteración fisiológica del estado de ánimo coincide con la caída hormonal brusca (estrógenos y progesterona) y el inicio de la secreción láctea masiva, lo cual ayuda a diferenciarlo de la verdadera depresión posparto de aparición más tardía o persistente.<br><br>Perla ENARM: \"La patología denominada Baby Blues se describe como una alteración del estado de ánimo [...] la cual aparece entre los dos y cuatro días posteriores al parto.\"<br><br>Análisis de Distractores: La opción A es demasiado precoz y sugiere causas vinculadas al agotamiento del trabajo de parto o anestesia. La opción C y D entran en la ventana temporal donde se debe sospechar o confirmar un trastorno depresivo mayor.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Introducción, Página 8." 
+            },
+            {
+                id: 23, 
+                question: "Considerando el impacto epidemiológico en nuestra población, ¿qué porcentaje de mujeres latinas residentes en México presentan sintomatología de depresión durante los primeros cuatro meses posparto?", 
+                options: ["Hasta un 15%", "Hasta un 30%", "Hasta un 45%", "Hasta un 56%"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, la carga de morbilidad en la población latina es sustancialmente mayor que la media global (10-15%), teniendo su pico máximo en el primer mes, lo que justifica la implementación de tamizaje universal agresivo en el primer nivel.<br><br>Perla ENARM: \"[...] hay reportes que afecta hasta al 56 % de las mujeres latinas residentes en México y Estados Unidos durante los primeros cuatro meses tras el nacimiento de su bebé.\"<br><br>Análisis de Distractores: Las opciones A, B y C subestiman la gravedad epidemiológica documentada para las mujeres de origen latino en las encuestas citadas por la normatividad.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Introducción, Página 8." 
+            },
+            {
+                id: 24, 
+                question: "Según los criterios clínicos establecidos en el Manual Diagnóstico y Estadístico de los Trastornos Mentales (DSM-V), ¿cuál es el límite temporal máximo posparto en el que puede iniciar un cuadro para considerarse \"depresión posparto\"?", 
+                options: ["Primeras 6 semanas", "Primeros 3 meses", "Primeros 6 meses", "Primeros 12 meses"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, aunque el riesgo máximo ocurre en las primeras semanas, el periodo de vigilancia abarca todo el primer año de vida del infante, ya que los factores estresantes de la crianza y la adaptación continúan desencadenando episodios.<br><br>Perla ENARM: \"La depresión posparto [...] se define como un episodio de depresión mayor que es asociado temporalmente al parto, con un inicio dentro de los 12 meses siguientes al parto.\"<br><br>Análisis de Distractores: La opción A es la definición tradicional del puerperio fisiológico. La opción B es el periodo de mayor incidencia, pero no el límite diagnóstico. La opción C deja fuera el diagnóstico a las pacientes de inicio tardío.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Introducción, Página 8." 
+            },
+            {
+                id: 25, 
+                question: "Al momento de aplicar la Escala de Depresión Postnatal de Edimburgo (EPDE), ¿qué periodo de tiempo retrospectivo debe indicársele a la paciente que evalúe para responder los ítems?", 
+                options: ["Últimas 24 horas", "Últimos 3 días", "Últimos 7 días", "Últimos 14 días"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, la escala está diseñada para capturar el estado de ánimo y los síntomas somáticos de la semana inmediata anterior. Si la paciente evalúa un periodo mayor o solo el día de la consulta, la sensibilidad del instrumento se altera drásticamente.<br><br>Perla ENARM: \"La EDPE es un cuestionario auto informado de 10 ítems sobre los sentimientos de depresión experimentados en el período posnatal en los últimos 7 días.\"<br><br>Análisis de Distractores: Las opciones A y B reflejan estados transitorios o agudos que no sirven para el escrutinio de un síndrome instaurado. La opción D (14 días) es el criterio diagnóstico del DSM-V, pero no la instrucción temporal operativa del cuestionario de Edimburgo.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Detección, Página 16." 
+            },
+            {
+                id: 26, 
+                question: "Durante el abordaje de una gestante, al utilizar el Inventario de Depresión de Beck, ¿qué rango de puntuación clasifica a la paciente en la categoría de \"Depresión Severa\"?", 
+                options: ["10 a 18 puntos", "19 a 29 puntos", "30 a 63 puntos", "Mayor a 65 puntos"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, la correcta estatificación con esta escala dirige la toma de decisiones, ya que el rango severo es una indicación formal para el uso de psicofármacos e interconsulta a un tercer nivel.<br><br>Perla ENARM: \"Inventario de Depresión de Beck [...] 30-63 = Depresión severa.\"<br><br>Análisis de Distractores: La opción A corresponde a depresión leve. La opción B corresponde a depresión moderada. La opción D es numéricamente imposible ya que la escala de 21 ítems tiene una puntuación máxima teórica de 63.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Anexos, Página 36." 
+            },
+            {
+                id: 27, 
+                question: "Para asegurar una cobertura universal de tamizaje, ¿qué vías o medios de administración de la Escala de Edimburgo están validados formalmente para su uso clínico cotidiano?", 
+                options: ["Teléfono, correo e internet", "Entrevista médica exclusiva", "Solo encuesta domiciliaria", "Exclusivo en medio físico"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, el escrutinio no debe limitarse a la consulta presencial. Las barreras geográficas y de movilidad en el puerperio se resuelven utilizando múltiples plataformas comprobadas científicamente sin perder sensibilidad ni especificidad diagnóstica.<br><br>Perla ENARM: \"La literatura apoya la administración de la EPDE por teléfono, cara a cara, correo e Internet. Se ha demostrado que todas las formas de administración son válidas.\"<br><br>Análisis de Distractores: Las opciones B, C y D restringen falsamente la accesibilidad del instrumento y reducen la ventana de oportunidad diagnóstica para las pacientes que no acuden físicamente a la clínica de atención primaria.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Detección, Página 17." 
+            },
+            {
+                id: 28, 
+                question: "En el caso de una mujer con depresión posparto bajo tratamiento con Fluoxetina que cursa con migraña aguda severa, ¿cuál es la complicación letal que se desencadena al usar fármacos Triptanos concomitantes?", 
+                options: ["Síndrome neuroléptico maligno", "Síndrome serotoninérgico grave", "Crisis hipertensiva aguda", "Prolongación de intervalo QT"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, la asociación de inhibidores selectivos de recaptura de serotonina con agonistas de receptores 5-HT1 (triptanos) produce una acumulación masiva del neurotransmisor, resultando en hipertermia, rigidez, mioclonías y riesgo de muerte.<br><br>Perla ENARM: \"FLUOXETINA [...] Interacciones: Con triptanos (eletriptán, rizatriptán, sumatriptán y zolmitriptano) se presenta el Síndrome Serotoninérgico grave con riesgo para la vida.\"<br><br>Análisis de Distractores: La opción A se asocia al uso de antipsicóticos (haloperidol). La opción C es el riesgo clásico de la interacción entre fármacos ricos en tiramina y los IMAO. La opción D se asocia al citalopram a dosis altas, no como interacción central letal con triptanos.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Anexos (Cuadros de medicamentos), Página 38." 
+            },
+            {
+                id: 29, 
+                question: "Entre el grupo de los antidepresivos Inhibidores Selectivos de la Recaptura de Serotonina (ISRS), ¿cuál de los siguientes fármacos pertenece a la Categoría D de la FDA por su potencial riesgo teratogénico?", 
+                options: ["Clorhidrato de paroxetina", "Clorhidrato de fluoxetina", "Bromhidrato de citalopram", "Clorhidrato de sertralina"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, la elección del antidepresivo es crítica; mientras la mayoría de los ISRS entran en categoría C (riesgo no descartado pero aceptable), la paroxetina se asocia fuertemente a defectos septales cardíacos fetales, situándola en una categoría de mayor contraindicación relativa.<br><br>Perla ENARM: \"PAROXETINA [...] CLASIFICACIÓN FDA USO EN EMBARAZO: D\"<br><br>Análisis de Distractores: Las opciones B, C y D están explícitamente clasificadas en la tabla oficial de la guía como Categoría C para su uso durante el embarazo.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Anexos, Página 36." 
+            },
+            {
+                id: 30, 
+                question: "En una mujer con antecedente psiquiátrico de esquizofrenia o trastorno bipolar que acude para planeación reproductiva, ¿cuál es la conducta inicial obligatoria antes de autorizar el embarazo?", 
+                options: ["Terapia farmacológica profiláctica", "Consejería previa a la concepción", "Vigilancia ultrasonográfica seriada", "Suspensión total de psicofármacos"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, los antecedentes de enfermedad mental grave representan el mayor riesgo psicosocial periparto. La directriz de oro es la evaluación integral y el soporte en centros especializados antes de la gestación para adecuar tratamientos y prevenir episodios graves.<br><br>Perla ENARM: \"Las mujeres con antecedentes de una enfermedad mental grave requerirán evaluación integral de la salud mental antes de la concepción o en el período prenatal y apoyo adicional.\"<br><br>Análisis de Distractores: La opción A es imprudente sin una evaluación psiquiátrica completa por el riesgo de toxicidad. La opción C es una técnica diagnóstica fetal, no preventiva materna. La opción D aumenta drásticamente el riesgo de un brote psicótico agudo por descompensación.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Rehabilitación, Página 24." 
+            },
+            {
+                id: 31, 
+                question: "Al prescribir Venlafaxina (Inhibidor de la recaptura de serotonina-noradrenalina) en el tratamiento de la depresión gestacional, ¿cuál es el evento adverso obstétrico más relevante asociado y que además es dosis-dependiente?", 
+                options: ["Aborto espontáneo", "Anomalía de Ebstein", "Desprendimiento prematuro", "Defectos del tubo neural"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, aunque no eleva el riesgo de malformaciones congénitas mayores comprobadas, este antidepresivo dual exige precaución y consentimiento informado por su impacto temprano en la viabilidad del embarazo.<br><br>Perla ENARM: \"Venlafaxina: Posible aumento del riesgo de Aborto espontáneo relacionado con la dosis. La prematuridad es posible. La mayoría de los estudios controlados no encuentran un aumento en el riesgo de malformaciones.\"<br><br>Análisis de Distractores: La opción B es un riesgo atribuible al Litio. La opción C está ligada a estados hipertensivos, tabaquismo o uso de cocaína. La opción D es atribuible a la exposición al Ácido Valproico o déficit de folato.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Pronóstico, Página 26." 
+            },
+            {
+                id: 32, 
+                question: "Sumado a la Escala de Edimburgo, ¿qué otra herramienta de evaluación psicosocial prenatal se menciona en el documento normativo para aumentar el nivel de sospecha diagnóstica del médico?", 
+                options: ["Inventario de Beck", "Escala PHQ-2", "Cuestionario de Hamilton", "Evaluación psicosocial ALPHA"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, el uso combinado de instrumentos autoadministrados amplía la visión del clínico sobre el entorno y vulnerabilidad psicosocial de la paciente, complementando la detección pura de síntomas anímicos.<br><br>Perla ENARM: \"[...] el uso de herramientas de evaluación psicosocial prenatal, EDPE y Evaluación de salud psicosocial prenatal (ALPHA), puede aumentar la conciencia del médico sobre el riesgo psicosocial.\"<br><br>Análisis de Distractores: La opción A (Beck) se utiliza para graduar la severidad, no como escrutinio psicosocial primario de riesgo. Las opciones B y C son instrumentos válidos en psiquiatría general, pero no son los instrumentos nombrados específicamente en esta GPC obstétrica para la valoración conjunta.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Detección, Página 19." 
+            },
+            {
+                id: 33, 
+                question: "A pesar de que la intervención no farmacológica es la primera línea, ¿en qué condición específica la GPC avala prescribir antidepresivos desde el inicio del manejo en primer nivel?", 
+                options: ["Tristeza materna mayor a 7 días", "Falla terapéutica de 1 semana", "Síntomas moderados a graves", "Antecedente de embarazo ectópico"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, el riesgo de daño materno-fetal en la depresión instaurada severa supera ampliamente el riesgo teratogénico de los ISRS. La limitación de medicación es estricta solo para los cuadros leves o de bajo riesgo suicida.<br><br>Perla ENARM: \"Los antidepresivos, en la paciente embarazada, deben restringirse cuando existen posibles efectos adversos y cuando las intervenciones no farmacológicas resulten poco efectivas. Se recomienda su uso en la depresión con síntomas moderados, su uso debe reservarse para trastornos mentales graves.\"<br><br>Análisis de Distractores: La opción A (tristeza) es fisiológica y de alivio espontáneo sin fármacos. La opción B da un tiempo muy corto; la falla terapéutica a TCC se evalúa a los 4 y 6 meses, no en una semana. La opción D es un duelo gestacional, no amerita antidepresivos inmediatos por regla.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Tratamiento, Página 23." 
+            },
+            {
+                id: 34, 
+                question: "Respecto a la incidencia basal (0.1 a 0.2%) de hipertensión pulmonar persistente en recién nacidos, ¿cuál es la magnitud del impacto adverso si la madre utilizó inhibidores selectivos de la recaptura de serotonina durante el embarazo?", 
+                options: ["Disminuye a la mitad", "Se mantiene inalterado", "Aumenta el doble", "Aumenta cuatro veces"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, este dato epidemiológico es clave para la monitorización neonatal en la Unidad de Cuidados Intensivos, ya que la vasculatura pulmonar in utero es altamente reactiva a los niveles circulantes de serotonina de origen materno.<br><br>Perla ENARM: \"Existe un pequeño riesgo de hipertensión pulmonar persistente para todos los ISRS (incidencia 0.3%; esperado 0.1-0.2%), aproximadamente el doble del riesgo de fondo.\"<br><br>Análisis de Distractores: La opción A y B son falsas, el riesgo es inequívoco. La opción D exagera la magnitud estadística reportada por la guía, siendo \"el doble\" la cifra exacta exigida.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Pronóstico, Página 25." 
+            },
+            {
+                id: 35, 
+                question: "¿Cuál es el defecto estructural teratogénico comprobado y estadísticamente más frecuente asociado al consumo materno de Sertralina y Fluoxetina durante el desarrollo embrionario?", 
+                options: ["Defectos del tubo neural", "Defectos septales cardíacos", "Hipoplasia pulmonar fetal", "Craneosinostosis simple"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, a pesar de que el riesgo general de malformaciones mayores con los ISRS es bajo, existe una afinidad específica por las estructuras endocárdicas durante el primer trimestre, elevando marginalmente pero de forma constante la tasa esperada de defectos de pared interventricular o interauricular.<br><br>Perla ENARM: \"Sertralina: existe un posible riesgo pequeño de malformaciones cardíacas (incidencia 2%, esperado 1%) específicamente en defectos septales (incidencia 1.5%, esperado 0.5%).\"<br><br>Análisis de Distractores: La opción A es inducida por el Ácido Valproico. La opción C puede ocurrir secundario a oligoamnios o rotura prematura de membranas, no por ISRS. La opción D no tiene asociación comprobada descrita en la guía.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Pronóstico, Página 26." 
+            },
+            {
+                id: 36, 
+                question: "A nivel epidemiológico y de monitoreo ambulatorio, ¿en qué lapso de tiempo ocurre el pico de máxima aparición (incidencia) de casos nuevos de depresión posparto?", 
+                options: ["Primeros 7 días posparto", "Primeros 3 meses posparto", "Entre 6 y 9 meses posparto", "Después del primer año"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, aunque el trastorno puede instaurarse en cualquier momento del primer año, las primeras 12 semanas concentran los cambios más drásticos de adaptación biológica y privación del sueño, siendo la ventana crítica de escrutinio.<br><br>Perla ENARM: \"La aparición de DPP es más alta en los primeros tres meses posparto, pero puede comenzar en cualquier momento hasta los 12 meses.\"<br><br>Análisis de Distractores: La opción A capta exclusivamente alteraciones transitorias (Baby blues). Las opciones C y D describen tiempos donde la incidencia decae significativamente, aunque la prevalencia general persista.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Detección, Página 17." 
+            },
+            {
+                id: 37, 
+                question: "Al evaluar el espectro general de salud mental perinatal, ¿qué porcentaje aproximado de las mujeres padecerán algún tipo de alteración emocional, abarcando desde el \"baby blues\" transitorio hasta el espectro de la depresión severa?", 
+                options: ["Cerca del 20%", "Cerca del 40%", "Cerca del 60%", "Cerca del 80%"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, esta cifra revela que la inestabilidad anímica es la norma y no la excepción durante el puerperio, enfatizando la importancia de saber distinguir las respuestas de adaptación de la verdadera patología clínica psiquiátrica.<br><br>Perla ENARM: \"Durante el embarazo y puerperio cerca del 80% de las mujeres padecen algún tipo de alteración, las cuales pueden ir desde molestias leves y transitorias como la tristeza y llanto [...] hasta situaciones graves.\"<br><br>Análisis de Distractores: Las opciones A, B y C son valores extremadamente bajos para el total de alteraciones en esta población según la evidencia citada. El 20% aplica exclusivamente para depresión mayor en países en desarrollo, no para la totalidad de los síndromes anímicos.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Introducción, Página 7." 
+            },
+            {
+                id: 38, 
+                question: "Entre las complicaciones teratogénicas producidas por el consumo gestacional de Ácido Valproico, ¿cuáles son los hallazgos morfológicos y de desarrollo característicos del denominado \"Síndrome fetal del valproato\"?", 
+                options: ["Macrosomía y polihidramnios temprano", "Hipospadias y dedos largos y delgados", "Ano imperforado y atresia esofágica", "Transposición de grandes vasos"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, este eutimizante genera un patrón malformativo inconfundible con rasgos dismórficos faciales, esqueléticos y urológicos bien descritos, lo cual justifica su prohibición absoluta en este grupo poblacional.<br><br>Perla ENARM: \"Otras anomalías reportadas son: El “síndrome fetal del valproato” que incluye anomalías faciales distintivas, defectos del tubo neural, dedos de manos y pies largos y delgados, hipospadias y un desarrollo neuroconductual posiblemente deficiente.\"<br><br>Análisis de Distractores: La opción A se asocia a diabetes gestacional. La opción C es típica de síndromes VACTERL no necesariamente farmacológicos. La opción D no es el defecto cardinal del valproato.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Pronóstico, Página 28." 
+            },
+            {
+                id: 39, 
+                question: "En el marco del manejo farmacológico con inhibidores de la recaptura de serotonina-noradrenalina (Duloxetina), ¿cuál es la interacción medicamentosa que se considera una contraindicación absoluta para su inicio?", 
+                options: ["Administración con sulfato ferroso", "Uso junto con ácido acetilsalicílico", "Uso con inhibidores monoaminooxidasa", "Administración con anticonvulsivantes"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, la combinación de estos agentes induce una crisis de toxicidad letal; por ello, la normativa marca un periodo de \"lavado\" obligatorio de 14 días al transicionar de un IMAO a la Duloxetina.<br><br>Perla ENARM: \"Contraindicaciones: Hipersensibilidad al fármaco. La duloxetina no debe usarse en combinación con un inhibidor de la monoaminooxidasa, ni dentro de los 14 días siguientes a la suspensión del tratamiento con un IMAO.\"<br><br>Análisis de Distractores: Las opciones A, B y D son combinaciones de uso frecuente en el control prenatal (suplementación, preeclampsia, epilepsia) que requieren precaución metabólica, pero no tienen el nivel de contraindicación fatal absoluta.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Anexos (Cuadros de medicamentos), Página 41." 
+            },
+            {
+                id: 40, 
+                question: "¿Qué rango numérico obtenido mediante la aplicación del Inventario de Depresión de Beck indica el diagnóstico de \"Depresión leve\", justificando plenamente el inicio del manejo de primera línea con psicoterapia exclusiva?", 
+                options: ["0 a 9 puntos", "10 a 18 puntos", "19 a 29 puntos", "30 a 63 puntos"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de depresión prenatal y posparto, este puntaje confirma sintomatología depresiva pero sin la gravedad que justifique la exposición a los riesgos de los psicofármacos. Es el paciente diana ideal para la Terapia Cognitivo Conductual con alta tasa de recuperación.<br><br>Perla ENARM: \"Inventario de Depresión de Beck: consiste en una escala auto aplicable de 21 ítems [...] 10-18 = Depresión leve.\"<br><br>Análisis de Distractores: La opción A carece de peso estadístico para establecer un cuadro de depresión. La opción C y D corresponden a estratos de moderada y severa, que exigen intervención psiquiátrica de tercer nivel o farmacoterapia.", 
+                source: "GPC-SS-666-21, Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención, 2021, Anexos, Página 36." 
+            }
+        ];
+
+        // ==========================================
+        // ==========================================
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('gyoGLastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('gyoGProgress');
+                localStorage.removeItem('gyoGLastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-pink-500 shadow-md z-10 border-pink-500 dark:border-pink-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-rose-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "GINECOLOGÍA Y OBSTETRICIA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "GPC-SS-666-21 • Prevención, diagnóstico y manejo de la depresión prenatal y posparto en el primer y segundo niveles de atención";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="HS83121GYOE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-pink-100 dark:border-pink-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-pink-50 has-[:checked]:border-pink-400 dark:has-[:checked]:bg-pink-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-pink-600 dark:hover:bg-pink-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('gyoGProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('gyoGLastQId', currentQuestionId);
+                else localStorage.removeItem('gyoGLastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('gyoGProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

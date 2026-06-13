@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================
+        // =========================================================
+        const questionsData = [
+    {
+        id: 1,
+        question: "¿A partir de qué volumen de pérdida sanguínea se define de forma absoluta una hemorragia obstétrica mayor en ausencia inicial de signos clínicos de hipoperfusión tisular?",
+        options: ["≥ 500 ml", "> 1000 ml", "≥ 1500 ml", "> 2000 ml"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, la definición cuantitativa estricta categoriza la gravedad de la pérdida de volumen circulante para activar alertas. Las pérdidas menores son de 500 a 1000 ml, pero superar el litro marca el umbral de riesgo inminente, aun si la paciente está compensada.<br><br>Perla ENARM: \"La hemorragia obstétrica es dividida en menor cuando la perdida oscila entre los 500 y los 1000 ml y mayor cuando es más de 1000 ml\".<br><br>Análisis de Distractores: La opción A (≥ 500 ml) define hemorragia obstétrica general, no la \"mayor\". La opción C (≥ 1500 ml) no es un punto de corte clasificatorio en esta guía. La opción D (> 2000 ml) corresponde específicamente a la subclasificación de hemorragia severa.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Introducción, Página 19."
+    },
+    {
+        id: 2,
+        question: "¿Qué hallazgo en el examen neurológico clasifica a la paciente inmediatamente en un grado de choque hemorrágico severo, indicando una pérdida de volumen superior al 40%?",
+        options: ["Ansiedad", "Confusión", "Estupor", "Letargia"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, la perfusión cerebral es uno de los últimos mecanismos en fallar gracias a la redistribución de flujo. Cuando el estado de alerta decae a estupor o coma, la pérdida hemática ha rebasado el 40% (> 2800 ml), representando un colapso inminente.<br><br>Perla ENARM: \"Choque severo: Pérdida > 40%, frecuencia cardíaca > 140 lpm, presión sistólica < 90 mmHg, estupor o coma\".<br><br>Análisis de Distractores: La ansiedad (A) y la confusión (B) se presentan en etapas más tempranas de hipoperfusión (choque leve a moderado). La letargia (D) sugiere hipoperfusión, pero el \"estupor o coma\" (escala de Glasgow ≤ 10) es el criterio clínico absoluto para choque severo en la tabla de severidad.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Cuadro 3, Página 41."
+    },
+    {
+        id: 3,
+        question: "¿A qué dosis inicial y de primera elección está indicada la infusión de cristaloides balanceados para la reanimación hídrica de la paciente inestable?",
+        options: ["10 ml/kg", "20 ml/kg", "30 ml/kg", "40 ml/kg"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, la reanimación inicial exige una restitución de la precarga que no desencadene coagulopatía dilucional ni sobrecarga pulmonar. La dosis estándar para el bolo inicial es precisa.<br><br>Perla ENARM: \"Se recomienda el empleo de solucion cristaloide a una dosis de 30ml/kg en la fase de resucitación en el manejo de la paciente con hemorragia obstetrica y choque hipovolemico\".<br><br>Análisis de Distractores: Las dosis de 10 ml/kg (A) y 20 ml/kg (B) son subóptimas para el estado de hipervolemia basal modificado por el embarazo. La dosis de 40 ml/kg (D) incrementa el riesgo de edema agudo pulmonar y edema tisular sin mejorar la sobrevida.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 31."
+    },
+    {
+        id: 4,
+        question: "¿A qué etiología específica corresponde la letra \"T\" de Tejido dentro de la evaluación nemotécnica primaria del origen del sangrado obstétrico?",
+        options: ["Atonía uterina", "Laceración cervical", "Retención de restos", "Desórdenes de coagulación"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, organizar la etiología permite enfocar rápidamente el manejo médico o quirúrgico. La regla de las 4 T abarca las causas más frecuentes en order secuencial.<br><br>Perla ENARM: \"En la mujer con hemoragia obstétrica es conveniente evaluar su causa utilizando la nomotécnica de las “4 T”: Tono (atonia uterina), Tejido (retención de restos placentarios), Trauma (lesion cervical o vaginal durante el parto) y Trombosis (desordenes de coagulación)\".<br><br>Análisis de Distractores: La atonía uterina (A) corresponde a Tono. La laceración cervical (B) corresponde a Trauma. Los desórdenes de coagulación (D) corresponden a Trombosis (o Trombina).",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 18."
+    },
+    {
+        id: 5,
+        question: "Durante la fase de reanimación temprana con fluidoterapia, ¿cuál es la meta terapéutica de presión arterial sistólica que debe mantenerse en la paciente?",
+        options: ["70 a 80 mmHg", "80 a 90 mmHg", "90 a 100 mmHg", "100 a 110 mmHg"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, la hipotensión permisiva temporal previene que el aumento hidrostático \"bote\" el coágulo en formación, garantizando simultáneamente perfusión a órganos vitales.<br><br>Perla ENARM: \"Se recomienda que durante la fase de resucitación se alcancen cifras de presion arterial sistólica de 80-90 mmHg y mantener el índice de choque menor de 0.9\".<br><br>Análisis de Distractores: Un rango de 70 a 80 mmHg (A) es insuficiente para asegurar el flujo renal y cerebral (riesgo de Sheehan o necrosis tubular). Valores de 90 a 100 mmHg (C) y 100 a 110 mmHg (D) son normales pre-sangrado, pero buscarlos activamente con sobrecarga hídrica causa hemodilución severa y sangrado por rebote.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 32."
+    },
+    {
+        id: 6,
+        question: "En una paciente en la que ya se detuvo el sangrado y no existe evidencia de hipoperfusión tisular aguda, ¿cuál es el umbral estricto de hemoglobina para indicar estrategias restrictivas de transfusión?",
+        options: ["6 a 8 g/dl", "7 a 9 g/dl", "8 a 10 g/dl", "> 10 g/dl"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, si la paciente ya no cursa con hemorragia activa, transfundir para normalizar la hemoglobina a cifras fisiológicas es innecesario e incrementa las tasas de infección y lesión pulmonar (TRALI).<br><br>Perla ENARM: \"En las pacientes que no tengan sangrado activo, recomendamos transfusión de concentrados eritrocitarios para mantener una meta de hemoglobina de entre 7 a 9 g / dl\".<br><br>Análisis de Distractores: Los rangos menores a 7 g/dl (A) comprometen la oxigenación tisular. Mantener valores de 8 a 10 g/dl (C) o mayores a 10 g/dl (D) correspondía a estrategias liberales obsoletas, las cuales demostraron mayor mortalidad perioperatoria.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 35."
+    },
+    {
+        id: 7,
+        question: "¿Qué fármaco específico se recomienda administrar de forma profiláctica inmediatamente después de la salida del hombro anterior fetal durante el nacimiento?",
+        options: ["Ergonovina", "Misoprostol", "Oxitocina", "Ácido tranexámico"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, el manejo activo de la tercera etapa reduce drásticamente el riesgo de atonía. La oxitocina (o carbetocina) es el uterotónico preventivo de elección y actúa favoreciendo la contracción sostenida del miometrio.<br><br>Perla ENARM: \"Administración profiláctica de uterotónicos posterior a la expulsión del hombro anterior del producto, por ejemplo, oxitocina o carbetocina\".<br><br>Análisis de Distractores: La ergonovina (A) tiene riesgos hipertensivos severos (contraindicada en preeclampsia). El misoprostol (B) es de segunda línea y genera picos febriles. El ácido tranexámico (D) es un antifibrinolítico usado en tratamiento de hemorragia instalada, no de rutina profiláctica para atonía.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 18."
+    },
+    {
+        id: 8,
+        question: "¿Qué complicación orgánica grave contraindica explícitamente el uso de expansores plasmáticos sintéticos tipo hidroxietilalmidón en el manejo de estas pacientes?",
+        options: ["Insuficiencia cardiaca", "Insuficiencia hepática", "Insuficiencia respiratoria", "Insuficiencia renal"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, los almidones impactan directamente a nivel del glomérulo, depositándose y precipitando el fracaso orgánico en el enfermo crítico sin aportar beneficios hemodinámicos sobre los cristaloides.<br><br>Perla ENARM: \"No se recomienda emplear soluciones de hidroxietilalmidon en la reanimación de la paciente criticamente enferma, debido a que su uso se asocia a una mayor morbimortalidad por insuficiencia renal\".<br><br>Análisis de Distractores: La insuficiencia cardiaca (A) y la insuficiencia respiratoria (C) se asocian a la sobrecarga por exceso de volumen en general (TACO, edema agudo), no exclusivamente al efecto tóxico del almidón. La falla hepática (B) no es el daño limitante principal dictado en la normativa.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 31."
+    },
+    {
+        id: 9,
+        question: "En el control del sangrado mediante abordaje vaginal, ¿cuánto tiempo máximo debe mantenerse el pinzamiento de arterias uterinas por la técnica de Zea mientras inician su acción los uterotónicos?",
+        options: ["5 a 10 minutos", "10 a 20 minutos", "20 a 30 minutos", "30 a 40 minutos"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, esta maniobra interrumpe de manera transitoria la principal afluencia arterial al lecho endometrial. Se utiliza como terapia puente para permitir que los fármacos contraigan la fibra muscular.<br><br>Perla ENARM: \"En caso de atonia uterina, a fin de esperar el efecto de los fármacos uterotónicos, es recomendable mantener el pinzamiento por técnica Zea por 10-20 minutos\".<br><br>Análisis de Distractores: Un periodo de 5 a 10 minutos (A) no otorga tiempo suficiente para la vida media de inicio de acción farmacológica (ej. misoprostol rectal). Sobrepasar los 20 minutos (C y D) incrementa el riesgo de necrosis del tejido urológico o vaginal comprimido sin control visual directo.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 26."
+    },
+    {
+        id: 10,
+        question: "¿Qué patología documentada en el embarazo representa el principal factor de riesgo preoperatorio e independiente para requerir una transfusión sanguínea masiva durante una cesárea?",
+        options: ["Macrosomía", "Preeclampsia", "Polihidramnios", "Placenta previa"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, la invasión anómala del trofoblasto en el segmento uterino inferior (zona de baja contractilidad) garantiza un lecho sangrante de difícil control médico post-alumbramiento.<br><br>Perla ENARM: \"La anemia preoperatoria (hematrocrito <25%), la anestesia general y placenta previa, aumentan la posibilidad de transfusión en pacientes sometidas a nacimiento por operación cesárea\".<br><br>Análisis de Distractores: La macrosomía (A) y el polihidramnios (C) favorecen la sobredistensión uterina y la posterior atonía, pero no requieren rutinariamente cruce globular preoperatorio masivo. La preeclampsia (B) requiere control tensional, no es per se la entidad de mayor hemorragia masiva directa intraquirúrgica frente a una placenta previa.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 17."
+    },
+    {
+        id: 11,
+        question: "Durante la corrección de la coagulopatía dilucional, ¿cuál es el valor mínimo de laboratorio específico para fibrinógeno que predice hemostasia adecuada y se establece como meta?",
+        options: ["> 100 mg/dl", "> 150 mg/dl", "> 200 mg/dl", "> 300 mg/dl"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, el fibrinógeno se agota rápidamente debido al estado procoagulante del embarazo. Niveles debajo de 200 mg/dl correlacionan directamente con falla para formar el coágulo firme e incremento de la mortalidad.<br><br>Perla ENARM: \"En pacientes con hemorragia obstétrica y choque hipovolémico moderado a severo se recomienda mantener un nivel de fibrinogeno mayor a 200 mg / dl\".<br><br>Análisis de Distractores: Las cifras de 100 (A) o 150 mg/dl (B) se usan para pacientes en cirugía general o trauma adulto, pero son insuficientes en la mujer gestante. Un nivel superior a 300 mg/dl (D) es normal en el embarazo sano, pero como meta crítica emergente se exigen los 200 mg/dl mediante crioprecipitados.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 36."
+    },
+    {
+        id: 12,
+        question: "Ante el fracaso del manejo farmacológico, ¿en qué condición clínica se encuentra contraindicada explícitamente la histerectomía subtotal debido a su ineficacia para detener el sangrado?",
+        options: ["Atonía uterina", "Acretismo placentario", "Laceración vaginal", "Hematoma vulvar"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, el espectro de placenta acreta envuelve al segmento inferior y el cérvix. Una histerectomía supracervical (subtotal) deja el lecho vascularizado intacto, perpetuando el estado de choque fatal.<br><br>Perla ENARM: \"Es recomendable realizar histerectomia total en casos de: Placenta previa central o total, Sospecha de acretismo placentario... La histerectomia subtotal no se recomienda en estos casos\".<br><br>Análisis de Distractores: En una atonía uterina pura (A), remover el cuerpo es curativo en la mayoría de los casos y es técnicamente más rápido. Las laceraciones (C) y hematomas (D) se suturan localmente y drenan, y no justifican una extirpación del órgano pélvico superior.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 28."
+    },
+    {
+        id: 13,
+        question: "En una paciente estable hemodinámicamente y diagnosticada con anemia secundaria durante el puerperio, ¿cuál es la dosis oral estándar recomendada de sulfato ferroso (hierro elemental)?",
+        options: ["120 mg/día", "150 mg/día", "180 mg/día", "200 mg/día"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, el pilar de seguimiento extrahospitalario busca revertir la depleción de depósitos férricos que precipitan morbilidad crónica.<br><br>Perla ENARM: \"Es recomendable ofrecer siempre que sea posible la administración de sulfato ferroso por vía oral, la dosis con base al hierro elemental es: 180 mg/día dividido en tres dosis\".<br><br>Análisis de Distractores: Las otras dosis (120, 150 y 200 mg/día) corresponden a pautas desactualizadas o empíricas. La GPC homologada nacional estipula los 180 mg diarios (lejos de los lácteos) como recomendación universal sustentada en evidencia.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 38."
+    },
+    {
+        id: 14,
+        question: "Como estrategia final de reanimación en cirugía de control de daños (empaquetamiento pélvico tipo Mikulicz), ¿cuál es el intervalo temporal preciso indicado para realizar su retiro en quirófano?",
+        options: ["12 a 24 horas", "24 a 48 horas", "48 a 72 horas", "72 a 96 horas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, este tiempo asegura que la acidosis, la hipotermia y la coagulopatía hayan revertido en Terapia Intensiva, consolidando la hemostasia. Retirarlo antes provoca resangrado, dejarlo más tiempo asegura sepsis.<br><br>Perla ENARM: \"El empaquetamiento tipo Mikculicz debe retirarse entre 48 a 72 horas despues de su aplicación, siempre y cuando el estado de la paciente lo permita\".<br><br>Análisis de Distractores: 12-24 hrs (A) o 24-48 hrs (B) son tiempos cortos para normalizar perfiles de coagulación severos en CID. Tiempos > 72 hrs (D) elevan exponencialmente el riesgo de choque séptico intraabdominal.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 29."
+    },
+    {
+        id: 15,
+        question: "Dentro de las metas rigurosas del protocolo de transfusión masiva, ¿cuál es el umbral de recuento plaquetario mínimo que debe mantenerse mientras exista inestabilidad refractaria persistente?",
+        options: ["> 25x10⁹/l", "> 50x10⁹/l", "> 75x10⁹/l", "> 100x10⁹/l"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, el sangrado continuo diluye y consume el factor plaquetario en tiempo real. En hemorragia activa no controlada el experto debe adelantarse a esta caída masiva subiendo el umbral mínimo seguro.<br><br>Perla ENARM: \"Pacientes con choque hipovolémico severo con hemorragia activa, las plaquetas deben ser transfundidas cuando el recuento es inferior a 75x10⁹/l basado en la monitorización de laboratorio\".<br><br>Análisis de Distractores: Cifras de > 25 (A) son muy bajas. La meta general de 50x10⁹/l (B) es para pacientes cuyo sangrado ya se detuvo (control postquirúrgico), pero la pregunta especifica hemorragia \"activa\". Los 100x10⁹/l (D) sería ideal, pero imposible de sostener en trauma sin sobrecargar volumen (TACO).",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 36."
+    },
+    {
+        id: 16,
+        question: "Al definir el plan de intervención, ¿qué abordaje anestésico cuenta con indicación absoluta recomendada para brindar estabilidad y control en la paciente con pérdida severa de volumen?",
+        options: ["Anestesia epidural", "Anestesia raquídea", "Anestesia local", "Anestesia general"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, las técnicas neuroaxiales causan simpatectomía y caída súbita de la precarga, un evento letal en pacientes hipovolémicos.<br><br>Perla ENARM: \"Se recomienda la anestesia general para: Asegurar la protección de la vía aérea y Coadyuvar a la estabilidad hemodinámica en la paciente con hemorragia obstetrica y choque hipovolemico\".<br><br>Análisis de Distractores: La epidural (A) y la raquídea (B) exacerban profundamente el choque mediante el bloqueo simpático. La anestesia local (C) es inefectiva e impráctica para una laparotomía exploradora de rescate.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 22."
+    },
+    {
+        id: 17,
+        question: "En caso de requerir terapias de puente con coloides debido a hipotensión extrema refractaria a cristaloides, ¿qué solución ofrece el mejor perfil de seguridad con dosis máxima de 20 ml/kg?",
+        options: ["Albúmina al 4%", "Gelatina al 4%", "Dextrano al 6%", "Poligelina al 3.5%"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, aunque los coloides no son primera línea, en emergencias catastróficas donde urge un expansor osmótico, las gelatinas presentan menos nefrotoxicidad comparadas con otros sintéticos.<br><br>Perla ENARM: \"En la paciente con hemorragia obstetrica que necesite una rápida expansión de volumen, se recomienda considerar el empleo de gelatina al 4%; por su mejor perfil de seguridad, no se debe superar la dosis de 20ml/kg\".<br><br>Análisis de Distractores: La albúmina (A) requiere indicaciones específicas y es sumamente cara/escasa. El dextrano (C) daña el glomérulo y altera crónicamente la agregación plaquetaria. La poligelina (D) posee más reacciones de anafilaxia o toxicidad renal de acuerdo a cuadros comparativos.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 32."
+    },
+    {
+        id: 18,
+        question: "¿Cuál es el método inicial practicado rutinariamente que subestima la pérdida real de la volemia entre un 33% y un 50% originando un retraso letal en el diagnóstico del choque?",
+        options: ["Fotocolorimetría", "Gravimetría", "Índice de choque", "Estimación visual"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, el \"ojímetro\" médico carece de bases analíticas frente al derrame amniótico, coágulos densos ocultos y la superficie de absorción de sábanas quirúrgicas.<br><br>Perla ENARM: \"El método visual subestima la pérdida sanguinea entre un 33-50%... demostró una diferencia significativa entre la pérdida sanguinea determinada por método gravimetrico\".<br><br>Análisis de Distractores: La fotocolorimetría (A) es hiper-exacta pero inviable en la clínica general por costo. La gravimetría (B) tiene un error mínimo del 4% y es la técnica que sí se recomienda. El índice de choque (C) no calcula mililitros, predice inestabilidad hemodinámica.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 24."
+    },
+    {
+        id: 19,
+        question: "¿Cuál es la proporción numérica de hemoderivados (Plaquetas : Plasma Fresco Congelado : Concentrados Eritrocitarios) que sustenta el protocolo de transfusión masiva?",
+        options: ["1:1:1", "1:2:1", "1:1:2", "2:1:1"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, se debe simular la restauración de oxígeno priorizando al eritrocito, mientras se evita diluir letalmente los perfiles de trombina. La obstétrica difiere sutilmente del trauma civil convencional en la GPC.<br><br>Perla ENARM: \"Guardando una relación de una unidad de concentrado de plaquetas, por una unidad de plasma fresco congelado y dos unidades de concentrados eritrocitarios como parte del protocolo de transfusión masiva (1:1:2)\".<br><br>Análisis de Distractores: La proporción 1:1:1 (A) es común en normativas internacionales extra-obstétricas (PROPPR), pero la guía del IMSS establece 1:1:2 como dogma local. Las variantes hiper-plasmáticas (B) o hiper-plaquetarias (D) no están validadas y precipitan edema agudo de pulmón por sobrecarga proteica.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 35."
+    },
+    {
+        id: 20,
+        question: "Como prevención y escrutinio en toda paciente sobreviviente a hemorragia severa, ¿cuál es el periodo en años en que habitualmente se manifiesta y diagnostica el Síndrome de Sheehan?",
+        options: ["1 a 3 años", "4 a 10 años", "11 a 15 años", "> 15 años"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, el panhipopituitarismo avascular (necrosis isquémica de la glándula pituitaria hipertrofiada) presenta sintomatología tardía insidiosa tras el alta post-parto. Requiere un gran porcentaje de masa destruida antes de notarse clínica.<br><br>Perla ENARM: \"El seguimiento para el diagnostico de sindrome de Sheehan es en promedio de 4 a 10 años\".<br><br>Análisis de Distractores: Etapas más tempranas (A) son infrecuentes porque la necrosis avascular parcial permite una suplencia endocrina marginal inicial. Periodos superiores a una década (C y D) subestiman el cuadro completo franco de fatiga persistente, agalactia instalada y amenorrea total o precoz.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 38."
+    },
+    {
+        id: 21,
+        question: "¿Cuál es el punto de corte en la concentración sérica de hemoglobina para definir la anemia en la mujer durante el periodo de puerperio?",
+        options: ["< 10 g/dl", "< 10.5 g/dl", "< 11 g/dl", "< 12 g/dl"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, el diagnóstico de anemia postparto exige una vigilancia estricta debido a que condiciona alteraciones en la cicatrización, inmunidad y lactancia. Este es el umbral para iniciar la suplementación férrica a dosis terapéuticas.<br><br>Perla ENARM: \"La anemia en la mujer en periodo de puerperio esta definida por cifras de hemoglobina <11g/dl.\"<br><br>Análisis de Distractores: Las opciones < 10 g/dl (A) y < 10.5 g/dl (B) subestiman la deficiencia de oxígeno tisular basal en el puerperio. El corte de < 12 g/dl (D) es normal para mujeres no gestantes o en otras etapas de la vida reproductiva, pero en el puerperio inmediato el límite oficial normado es 11.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Seguimiento, Página 110."
+    },
+    {
+        id: 22,
+        question: "Durante el manejo inicial de la reanimación (ABCDEF), ¿cuál es la meta mínima de saturación y la fracción inspirada de oxígeno (FiO2) requerida para asegurar el aporte celular?",
+        options: ["SaO2 > 90% con FiO2 > 40%", "SaO2 > 92% con FiO2 > 30%", "SaO2 > 94% con FiO2 > 50%", "SaO2 > 95% con FiO2 > 60%"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, optimizar el contenido arterial de oxígeno (CaO2) es vital mientras se restituye la volemia y la hemoglobina. El aporte suplementario debe ser rápido e intensivo mediante mascarilla reservorio o intubación temprana.<br><br>Perla ENARM: \"B: Vía respiratoria (Oxígeno FiO2 >40% y/o asegurar la vía aérea, SaO2 >90%).\"<br><br>Análisis de Distractores: Las otras opciones proponen combinaciones de FiO2 subóptimas o umbrales de saturación arbitrarios (B, C y D). En trauma y choque masivo obstétrico, la meta protocolizada exige al menos 40% de FiO2 inicial para evitar la hipoxia cerebral y miocárdica.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 50."
+    },
+    {
+        id: 23,
+        question: "Al aplicar la regla clínica rápida de evaluación paramétrica, si la presión sistólica cae 30% y la frecuencia respiratoria es > 30 por minuto, ¿qué porcentaje de volumen sanguíneo se estima perdido?",
+        options: ["15%", "20%", "30%", "40%"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, la \"regla de 30\" es un artificio clínico que sirve para inferir el volumen deplecionado rápidamente en un escenario crítico sin necesidad de gravimetría inicial o estudios invasivos.<br><br>Perla ENARM: \"La \"regla de 30\" ayuda a estimar la pérdida sangruínea, ésta consiste en: si la presión arterial sistólica... disminuye en un 30%, la frecuencia cardiaca aumenta en un 30%... la hemoglobina cae un 30%... es probable que la paciente haya perdido el 30% de su volumen de sangre.\"<br><br>Análisis de Distractores: 15% (A) suele ser asintomático. 20% (B) no genera la alteración de 30% global en los signos. Una caída del 40% (D) genera alteraciones neurológicas severas y bradicardia pre-paro, superando los parámetros de esta regla básica.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 44."
+    },
+    {
+        id: 24,
+        question: "¿Cuál es el principal evento adverso documentado que proscribe el uso profiláctico o rutinario del Factor VII activado recombinante en estas pacientes?",
+        options: ["Eventos tromboembólicos venosos", "Eventos tromboembólicos arteriales", "Edema agudo pulmonar", "Falla hepática fulminante"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, el embarazo en sí mismo es un estado de hipercoagulabilidad severa. La adición indiscriminada de rFVIIa desencadena trombosis sistémicas catastróficas, motivo por el cual solo se autoriza como rescate extremo bajo protocolos experimentales.<br><br>Perla ENARM: \"Un estudio que investiga la seguridad de Factor VII activado... encontró un aumento significativo en el riesgo de eventos tromboembólicos arteriales, pero no venosos, en comparación con placebo (5,5% versus 3,2%).\"<br><br>Análisis de Distractores: La trombosis venosa profunda (A) no fue la complicación predominante frente al placebo en el estudio pivote de seguridad citado. El edema pulmonar (C) es secundario a fluidos o transfusión (TACO/TRALI). La falla hepática (D) no es el efecto tóxico inherente del fármaco.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 102."
+    },
+    {
+        id: 25,
+        question: "Para garantizar un flujo de reanimación masiva efectivo (225 a 330 ml/min), ¿cuál es el calibre de los catéteres intravenosos periféricos recomendados como estándar?",
+        options: ["Calibres 14 G y 16 G", "Calibres 16 G y 18 G", "Calibres 18 G y 20 G", "Calibres 20 G y 22 G"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, la velocidad de infusión está dictada por la Ley de Poiseuille (a mayor radio, mayor flujo). Un calibre pequeño colapsaría eritrocitos y retrasaría críticamente el control de la hipovolemia severa.<br><br>Perla ENARM: \"Canalizar 2 venas con catéteres #14 que garantice un flujo de 330 mL/min o #16 flujo de 225ml/minuto.\"<br><br>Análisis de Distractores: Los catéteres 18 G (B y C) o más pequeños (20-22 G) tienen una luz insuficiente para transfundir hemoderivados espesos o cristaloides a la velocidad agresiva que requiere el código rojo.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 48."
+    },
+    {
+        id: 26,
+        question: "¿En qué escenario clínico específico del algoritmo está justificado el empleo intravenoso de albúmina al 4% como expansor de volumen?",
+        options: ["Choque leve sin hipoperfusión", "Choque severo de primera línea", "Choque moderado refractario a cristaloides", "Hemorragia postparto ya controlada"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, los coloides naturales no se usan por rutina debido a su escasez y costo, pero son invaluables cuando el endotelio fuga tras administrar agua libre masiva y el choque persiste.<br><br>Perla ENARM: \"...recomendamos su empleo en pacientes con choque hipovolémico moderado que persisten con datos de hipoperfusión tisular posterior a una carga de cristaloides de 30ml/kg como terapia puente hasta la obtención de hemoderivados.\"<br><br>Análisis de Distractores: En un choque leve (A) o controlado (D), el volumen se compensa con cristaloides o vía oral. En el choque severo inicial (B), la guía exige transfundir paquete globular tipo O negativo inmediatamente, no escalar a coloides puros.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 79."
+    },
+    {
+        id: 27,
+        question: "Durante el manejo activo, si se emplean pruebas convencionales de coagulación (TP y TTPa) para guiar la transfusión de plasma, ¿cuál es el límite máximo permitido respecto al valor de control normal?",
+        options: ["Menores a 1.2 veces", "Menores a 1.5 veces", "Menores a 2.0 veces", "Menores a 2.5 veces"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, prolongar los tiempos de coagulación más de un 50% por arriba de la base celular indica una coagulopatía de consumo o dilucional franca que impide el arresto quirúrgico o médico del sangrado.<br><br>Perla ENARM: \"La transfusión de plasma fresco congelado se recomienda para mantener niveles de tiempo de protrombina (TP) y tiempo de tromboplastina parcial (TTP) menores a 1.5 veces el control normal.\"<br><br>Análisis de Distractores: Exigir menos de 1.2 (A) generaría sobretransfusión innecesaria con riesgo de TACO (sobrecarga). Esperar hasta que sean 2.0 (C) o 2.5 veces (D) significa intervenir demasiado tarde, cuando la coagulopatía ya es refractaria y la mortalidad es altísima.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 89."
+    },
+    {
+        id: 28,
+        question: "Para calcular la reposición fisiológica en la paciente convaleciente, ¿cuál es la relación directa estimada entre la sangre perdida y el hierro deplecionado?",
+        options: ["1 ml de sangre por 0.5 mg", "1 ml de sangre por 1.0 mg", "1 ml de sangre por 1.5 mg", "1 ml de sangre por 2.0 mg"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, la correcta titulación del hierro vía oral post-evento requiere entender las reservas corporales perdidas para prevenir secuelas en la calidad de vida y la lactogénesis de la madre puerpera.<br><br>Perla ENARM: \"Se estima que la relación entre la sangre y el hierro perdido es de aproximadamente 1 ml de sangre: 0.5 mg hierro. Por cada mililitro de sangre perdida, 0.5 mg de hierro se pierde del organismo.\"<br><br>Análisis de Distractores: Las opciones B (1.0 mg), C (1.5 mg) y D (2.0 mg) sobreestiman la carga de Fe contenido en la hemoglobina, lo que provocaría cálculos erróneos en dosis restrictivas o toxicidad oral prolongada.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 109."
+    },
+    {
+        id: 29,
+        question: "Al utilizar técnicas de sutura compresiva uterina (ej. B-Lynch) para hemostasia, ¿cuál complicación grave puede presentarse paradójicamente si se combinan con ligaduras vasculares simultáneas?",
+        options: ["Ruptura uterina espontánea", "Isquemia uterina aparente", "Inversión uterina aguda", "Adherencias pélvicas severas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, el útero grávido tolera bien las suturas, pero si al mismo tiempo se ligan sus pedículos vasculares principales, se supera el umbral de perfusión colateral originando necrosis del órgano.<br><br>Perla ENARM: \"Una revisión sistemática concluye que las suturas compresivas... pueden tener un riesgo elevado de isquemia uterina aparente cuando el procedimiento es combinado con ligaduras vasculares.\"<br><br>Análisis de Distractores: La ruptura (A) e inversión uterina (C) son etiologías del sangrado obstétrico intraparto, no complicaciones directas de la sutura compresiva. Las adherencias (D) pueden ocurrir, pero la complicación tisular inmediata reportada por ligadura múltiple es la isquemia.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 64."
+    },
+    {
+        id: 30,
+        question: "Para optimizar la biodisponibilidad y absorción del sulfato ferroso en el tratamiento ambulatorio, ¿cuál es la instrucción dietética recomendada respecto a su ingesta?",
+        options: ["Consumir junto a los alimentos", "15 a 30 minutos antes", "60 minutos después", "Consumir junto con lácteos"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, el pH gástrico ácido es fundamental para mantener el hierro en estado ferroso absorbible. Los alimentos y los cationes bivalentes (calcio) quelan el hierro e impiden su absorción duodenal.<br><br>Perla ENARM: \"Es recomendable la ingesta de hierro 15 a 30 minutos antes de los alimentos y no acompñarlos con lácteos.\"<br><br>Análisis de Distractores: Ingerirlo con alimentos (A) o después (C) amortigua el ácido gástrico, inhibiendo su absorción. Administrarlo con lácteos (D) inactiva el mineral por la unión competitiva con el calcio.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 112."
+    },
+    {
+        id: 31,
+        question: "En el abordaje médico intensivo de la atonía uterina, ¿cuál es la dosis exacta y la vía de administración recomendada para el uterotónico misoprostol?",
+        options: ["600 mcg vía sublingual", "800 mcg vía oral", "1000 mcg vía intrarrectal", "1200 mcg vía vaginal"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, en un contexto de hemorragia aguda masiva, la vía oral y sublingual pueden estar limitadas por intubación u obnubilación. La mucosa rectal provee una absorción rápida y sostenida para lograr el tono uterino.<br><br>Perla ENARM: \"Medicamentos uterotónicos de primera línea. Misoprostol 1.000 mcg intrarrectal\".<br><br>Análisis de Distractores: Aunque las guías de la OMS (extra-GPC) proponen dosis sublinguales (600-800 mcg), la GPC del IMSS estipula explícitamente en su tabla oficial de dosificación que el misoprostol se administre a 1000 mcg (5 tabletas de 200 mcg) por vía intrarrectal.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Cuadro 14 (Uterotónicos), Página 134."
+    },
+    {
+        id: 32,
+        question: "Si se opta por usar carbetocina como agente preventivo uterotónico posterior a la expulsión fetal, ¿cuál es la dosis única intravenosa estipulada en el cuadro básico?",
+        options: ["50 mcg en un minuto", "100 mcg en un minuto", "150 mcg en un minuto", "200 mcg en un minuto"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, la carbetocina es un análogo sintético de oxitocina de vida media prolongada (sin requerir infusión continua). Se aplica una sola vez para prevenir la relajación uterina postparto.<br><br>Perla ENARM: \"Dosis recomendada. Carbetocina 100 mcg en un minuto. Dosis única\".<br><br>Análisis de Distractores: Dosis menores (50 mcg) (A) no garantizan la hemostasia preventiva. Dosis mayores (150 o 200 mcg) (C y D) incrementan la incidencia de efectos adversos como hipotensión, bochornos, náuseas severas y cefalea sin aportar mayor beneficio contráctil.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Cuadro Básico de Medicamentos, Página 139."
+    },
+    {
+        id: 33,
+        question: "¿Qué combinación hemostática está estrictamente contraindicada de manera concurrente debido al riesgo de desencadenar trombosis sistémica fulminante?",
+        options: ["Ácido tranexámico y oxitocina", "Fibrinógeno y crioprecipitados", "Plasma fresco y plaquetas", "Complejo protrombínico y Factor VII"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, ambos agentes procoagulantes actúan sobrecendiendo las vías de la cascada y carecen de un control de retroalimentación negativo (feedback). Su uso empírico conjunto precipita trombosis irrevesible.<br><br>Perla ENARM: \"No se debe usar Factor VII activado y complejo protrombinico al mismo tiempo. Punto de buen práctica\".<br><br>Análisis de Distractores: Ácido tranexámico y oxitocina (A) son rutinarios y complementarios. Fibrinógeno y crioprecipitados (B) son sinérgicos (uno purificado y otro mixto). Plasma y plaquetas (C) son el pilar fundamental del protocolo de reanimación masiva.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 106."
+    },
+    {
+        id: 34,
+        question: "Durante el protocolo de reanimación (ABCDEF) y vigilancia hemodinámica estrecha, ¿qué calibre de sonda urinaria tipo Foley debe instalarse en la paciente grávida?",
+        options: ["12 Fr", "14 Fr", "16 Fr", "18 Fr"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, la sonda no solo permite evaluar el gasto urinario como marcador sensible de perfusión tisular (1-2 ml/kg/hr), sino que un grosor adecuado facilita el vaciado vesical previniendo lesiones quirúrgicas y atonía secundaria.<br><br>Perla ENARM: \"La piedra angular de la reanimación... incluye: Colocación de sonda foley número 16 Fr.\"<br><br>Análisis de Distractores: Las sondas muy delgadas 12-14 Fr (A y B) se obstruyen fácilmente con sedimentos o sangre uterina que escurra cerca del meato. Una sonda 18 Fr (D) o mayor resulta excesivamente traumática para la uretra femenina sin un beneficio adicional en esta entidad.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 49."
+    },
+    {
+        id: 35,
+        question: "En un evento de choque hipovolémico intraparto aún no resuelto, ¿cuál es el rango de frecuencia cardiaca fetal meta para avalar que la resucitación materna está siendo exitosa?",
+        options: ["100 a 140 latidos", "110 a 160 latidos", "120 a 170 latidos", "130 a 180 latidos"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, la paciente encinta responde al choque desviando sangre de la circulación esplácnica (uterina) hacia los órganos vitales centrales. El feto es el biomarcador temprano del sufrimiento tisular sistémico.<br><br>Perla ENARM: \"F: Frecuencia cardiaca fetal en rangos de 110–160 latidos por minuto. Recordar que la supervivencia fetal depende de la supervivencia materna.\"<br><br>Análisis de Distractores: Rangos inferiores (100 a 140) (A) asumen bradicardia fetal perjudicial como normal. Rangos superiores (hasta 170 o 180) (C y D) indican taquicardia compensatoria fetal franca por hipoxia (sufrimiento inminente) y ameritan la resolución urgente del embarazo.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 51."
+    },
+    {
+        id: 36,
+        question: "Durante la restitución con hemoderivados masivos, si se transfunde un (1) concentrado de crioprecipitado, ¿cuántos mg/dl se espera que incremente el fibrinógeno sérico?",
+        options: ["5 mg/dl", "10 mg/dl", "15 mg/dl", "20 mg/dl"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, los crioprecipitados son el concentrado vital rico en Factor VIII, Von Willebrand y fibrinógeno. Conocer la capacidad de elevación permite titular las dosis en emergencias.<br><br>Perla ENARM: \"Se espera que 1 concentrado de crioprecipitado aumentará el nivel de fibrinógeno en aproximadamente 10 mg/dl.\"<br><br>Análisis de Distractores: Elevaciones de 5 mg/dl (A) corresponden al uso de plasma fresco (muy diluido). Elevaciones mayores de 15 o 20 mg/dl (C y D) subestiman la dosis necesaria. Por eso, en sangrados masivos severos, se infunden de forma rutinaria paquetes de hasta 10 unidades juntas para subir 100 mg/dl efectivos.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 99."
+    },
+    {
+        id: 37,
+        question: "Al categorizar en el Triage Obstétrico, ¿cuál de los siguientes cortes de temperatura corporal indica directamente alerta y clasificación visual como Código Rojo?",
+        options: ["Mayor a 38 °C o menor a 36 °C", "Mayor a 38.5 °C o menor a 35.5 °C", "Mayor a 39 °C o menor a 35 °C", "Mayor a 39.5 °C o menor a 34 °C"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, la alteración extrema del termostato indica un proceso de disociación en la perfusión central severa (hipotermia por vaciamiento) o sepsis instalada, lo cual detona una urgencia inminente pre-paro.<br><br>Perla ENARM: \"Signos vitales con cambios graves en sus cifras... Temperatura mayor a 39 °C, o menor a 35 °C.\"<br><br>Análisis de Distractores: Elevaciones como 38 o 38.9 °C (A y B) clasifican únicamente como urgencia calificada (Código Amarillo), que tolera cierta ventana temporal de abordaje antes de la cirugía o terapia masiva.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Cuadro 7, Página 125."
+    },
+    {
+        id: 38,
+        question: "Al solicitar el Paquete de Transfusión Masiva a banco de sangre, ¿cuántas unidades exactas de concentrados eritrocitarios y de plasma incluye preestablecidamente la remesa?",
+        options: ["4 eritrocitos y 4 plasmas", "6 eritrocitos y 6 plasmas", "8 eritrocitos y 4 plasmas", "10 eritrocitos y 10 plasmas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, el \"cooler\" o paquete obstétrico predeterminado evita que el personal pierda tiempo reescribiendo órdenes. Debe entregarse en los primeros 10 minutos.<br><br>Perla ENARM: \"Los paquetes de transfusión masiva contiene 6 unidades de concentrados eritrocitarios, 6 unidades de plasma y 6 unidad de aferesis plaquetaria... y 10 unidades de crioprecipitados y estan diseñados para minimizar los efectos de la coagulopatía.\"<br><br>Análisis de Distractores: Las configuraciones de 4 y 4 (A) u 8 y 4 (C) son dosis de resucitación civil estándar que no corresponden al volumen demandado en el útero grávido exanguinante. Las 10 unidades (D) saturarían inútilmente la línea provocando enfriamiento si se piden todas en el primer bote.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 95."
+    },
+    {
+        id: 39,
+        question: "¿Cuál es el manejo radiológico intervencionista recomendado por su alto rendimiento y conservación del órgano en caso de sangrado persistente intrauterino?",
+        options: ["Colocación de derivación pélvica", "Embolización de arterias uterinas", "Pinzamiento aórtico endovascular", "Angioplastia de arterias hipogástricas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, en hospitales con hemodinamia, inyectar material obstructivo en las ramas terminales frena rápidamente el flujo letal respetando la posibilidad futura de nuevos embarazos sin abrir el abdomen.<br><br>Perla ENARM: \"La embolización de las arterias uterinas como tratamiento de la hemorragia obstetrica, debido a la sencillez de implementación y alto rendimiento de sus resultados y bajas complicaciones, debe ser tomado en cuenta...\"<br><br>Análisis de Distractores: La derivación pélvica (A) y el pinzamiento aórtico transitorio endovascular (REBOA) (C) son intervenciones muy complejas e infrecuentes de la cirugía de trauma vascular bélico. La angioplastia (D) dilata, no obstruye la arteria, lo que empeoraría masivamente el choque.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Evidencias y Recomendaciones, Página 69."
+    },
+    {
+        id: 40,
+        question: "¿Qué alteración ácido-base o electrolítica documentada representa una contraindicación absoluta para la administración extensa de solución Hartmann?",
+        options: ["Acidosis metabólica severa", "Hiponatremia dilucional", "Alcalosis grave e hipercalcemia", "Hipocaliemia refractaria"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Choque Hemorrágico en Obstetricia, la solución Hartmann aporta calcio y lactato (precursor hepático de bicarbonato). Si la paciente cursa crónicamente con exceso de bases o de iones de calcio, esta solución exacerba el problema neurológico y arrítmico.<br><br>Perla ENARM: \"Solución Hartmann. Contraindicaciones: Alcalosis grave e hipercalcemia.\"<br><br>Análisis de Distractores: La acidosis severa (A) es de hecho la principal indicación para dar Ringer/Hartmann (efecto tampón) sobre la Solución Salina. La hiponatremia (B) y la hipocaliemia (D) responden positivamente o neutralmente, ya que la solución provee ambos electrolitos en concentraciones fisiológicas.",
+        source: "IMSS-162-09, Diagnóstico y Tratamiento del Choque Hemorrágico en Obstetricia, 2017, Cuadro Básico de Medicamentos, Página 144."
+    }
+        ];
+
+        // ==========================================
+        // ==========================================
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('gyoAULastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('gyoAUProgress');
+                localStorage.removeItem('gyoAULastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-pink-500 shadow-md z-10 border-pink-500 dark:border-pink-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-rose-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "GINECOLOGÍA Y OBSTETRICIA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "GPC IMSS-162-09 • Diagnóstico y tratamiento del choque hemorrágico en obstetricia";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="BU27218GYOE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-pink-100 dark:border-pink-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-pink-50 has-[:checked]:border-pink-400 dark:has-[:checked]:bg-pink-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-pink-600 dark:hover:bg-pink-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('gyoAUProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('gyoAULastQId', currentQuestionId);
+                else localStorage.removeItem('gyoAULastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('gyoAUProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const questionsData = [
+    {
+        id: 1,
+        question: "¿Cuál es la edad gestacional a partir de la cual la presencia de hipertensión y proteinuria establece el diagnóstico clínico de preeclampsia?",
+        options: ["12 semanas", "16 semanas", "20 semanas", "24 semanas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de preeclampsia en segundo nivel, la fisiopatología de la enfermedad recae en una falla en la invasión trofoblástica de las arterias espirales, manifestándose sistémicamente solo después de alcanzar las 20 semanas de gestación.<br><br>Perla ENARM: \"Preeclampsia: Es el estado que se caracteriza por la presencia de hipertensión y proteinuria significativa, lo que ocurre por primera vez después de la semana 20 del embarazo, durante el parto o en el puerperio\".<br><br>Análisis de Distractores: Las 12 y 16 semanas son ventanas preventivas o de escrutinio, y cualquier hipertensión diagnosticada antes de las 20 semanas define a la hipertensión arterial crónica. Las 24 semanas marcan el inicio de la viabilidad fetal extrauterina, no el punto de corte diagnóstico.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Aspectos Generales, Página 14."
+    },
+    {
+        id: 2,
+        question: "¿Cuál es el límite máximo de semanas de gestación para iniciar profilaxis con 100 mg diarios de ácido acetilsalicílico en pacientes con alto riesgo?",
+        options: ["12 semanas", "14 semanas", "16 semanas", "20 semanas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de preeclampsia en segundo nivel, la intervención primaria para modular la cascada inflamatoria y la agregación plaquetaria debe instaurarse de forma temprana, perdiendo su efectividad si se difiere más allá de las 16 semanas.<br><br>Perla ENARM: \"Las intervenciones preventivas para la forma de preeclampsia con presentación temprana, se recomiendan en población con riesgo aumentado de preeclampsia, iniciándolas antes de las 16 semanas de gestación\".<br><br>Análisis de Distractores: Las semanas 12 y 14 son ideales, pero el límite explícito dictado por las recomendaciones es antes de la semana 16. Iniciar a las 20 semanas carece de beneficio profiláctico probado contra la mala adaptación placentaria.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 24."
+    },
+    {
+        id: 3,
+        question: "En la evaluación de daño a órgano blanco, ¿cuál es el nivel de trombocitopenia que se considera criterio absoluto de preeclampsia con datos de severidad?",
+        options: ["< 150,000", "< 100,000", "< 50,000", "< 20,000"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de preeclampsia en segundo nivel, la destrucción plaquetaria microangiopática secundaria al daño endotelial clasifica inmediatamente a la enfermedad como severa e incrementa el riesgo de morbilidad al rebasar el umbral de las 100,000 células.<br><br>Perla ENARM: \"Alteraciones de laboratorio: Elevación de creatinina sérica (> 1.1 mg/dL), incremento de AST o ALT (> 70 IU/L) o deshidrogenasa láctica; disminución de plaquetas < 100,000/ mm³\".<br><br>Análisis de Distractores: Una cifra < 150,000 es sugestiva de trombocitopenia gestacional o consumo leve, pero no cumple la definición de severidad. Las cifras < 50,000 y < 20,000 son críticas e indican alto riesgo de sangrado y contraindican anestesia neuroaxial, pero el corte oficial inicial es < 100,000.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Aspectos Generales, Página 14."
+    },
+    {
+        id: 4,
+        question: "Ante la imposibilidad de recolectar orina de 24 horas en urgencias, ¿cuál es el valor del cociente proteína/creatinina urinaria al azar que confirma proteinuria significativa?",
+        options: ["≥ 0.15 mg/dL", "≥ 0.28 mg/dL", "≥ 0.45 mg/dL", "≥ 1.00 mg/dL"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de preeclampsia en segundo nivel, el cociente proteína/creatinina es el método subrogado más veloz y confiable en contextos de emergencia, estableciéndose su positividad en ≥ 0.28 mg/dL para correlacionar con los 300 mg diarios.<br><br>Perla ENARM: \"Se recomienda establecer diagnostico de proteinuria cuando: [...] Cociente proteínas/Creatinina urinaria en una muestra de orina al azar mayor o igual a 0.28\".<br><br>Análisis de Distractores: El valor ≥ 0.15 mg/dL es normal en el embarazo debido a la hiperfiltración fisiológica. Los cortes de ≥ 0.45 mg/dL o ≥ 1.00 mg/dL están muy por encima del requerimiento diagnóstico y retrasarían la intervención si se esperan estos niveles.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 19."
+    },
+    {
+        id: 5,
+        question: "Para integrar la preeclampsia con datos de severidad por hipertensión descontrolada, ¿cuál es el intervalo temporal mínimo requerido entre las 2 tomas de tensión arterial de ≥ 160/110 mmHg?",
+        options: ["5 minutos", "15 minutos", "4 horas", "6 horas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de preeclampsia en segundo nivel, a diferencia de la hipertensión leve que puede requerir horas, las cifras en rangos de emergencia requieren confirmación veloz en 15 minutos de reposo para iniciar neuroprotección inmediata.<br><br>Perla ENARM: \"Sistema Nervioso Central: ≥160 de presión sistólica y/o ≥110 mm Hg de presión diastólica. En dos ocasiones con al menos 15 minutos de diferencia en el mismo brazo, con la paciente en reposo\".<br><br>Análisis de Distractores: Esperar 4 o 6 horas en una paciente con 160/110 mmHg la expone a un evento vascular cerebral o eclampsia. 5 minutos es insuficiente para garantizar el reposo hemodinámico basal.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Anexos, Página 77."
+    },
+    {
+        id: 6,
+        question: "¿Cuál es el fármaco antihipertensivo de primera línea recomendado para el tratamiento ambulatorio en pacientes con preeclampsia sin datos de severidad?",
+        options: ["Hidralazina", "Nifedipino", "Labetalol", "Alfametildopa"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de preeclampsia en segundo nivel, los agonistas alfa-2 de acción central han acumulado la mayor evidencia de seguridad sobre el flujo uteroplacentario crónico, haciéndolos ideales para el tratamiento de base no urgente.<br><br>Perla ENARM: \"La prescripción de antihipertensivos orales será de acuerdo a las características clínicas de la paciente [...] siendo de primer línea el uso de metildopa sola o asociado a otros fármacos\".<br><br>Análisis de Distractores: Hidralazina y labetalol destacan en su presentación intravenosa para la resolución rápida de crisis hipertensivas hospitalarias. El nifedipino oral también es útil en crisis o segunda línea, pero la metildopa es el estándar ambulatorio explícito.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 34."
+    },
+    {
+        id: 7,
+        question: "¿Qué grupo de fármacos antihipertensivos se encuentra absolutamente contraindicado durante la gestación por el alto riesgo de anomalías renales y oligohidramnios fetal?",
+        options: ["Betabloqueadores", "Agonistas alfa centrales", "Bloqueadores de canales de calcio", "Inhibidores de enzima convertidora"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de preeclampsia en segundo nivel, la interrupción exógena del eje renina-angiotensina altera críticamente la perfusión tubular fetal y la nefrogénesis, generando anuria fetal, oligohidramnios severo y falla renal letal.<br><br>Perla ENARM: \"Los inhibidores de la enzima convertidora de angiotensina y los bloqueadores del receptor de angiotensina no son recomendados utilizarlos durante el embarazo\".<br><br>Análisis de Distractores: Los betabloqueadores, los agonistas alfa centrales (alfametildopa) y los bloqueadores de canales de calcio (nifedipino) conforman la piedra angular del tratamiento antihipertensivo seguro y validado en la mujer embarazada.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 42."
+    },
+    {
+        id: 8,
+        question: "¿Cuál es el fármaco de primera elección indicado para la prevención y control de las crisis convulsivas en una paciente con preeclampsia con datos de severidad?",
+        options: ["Diazepam", "Fenitoína", "Sulfato de magnesio", "Valproato de magnesio"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de preeclampsia en segundo nivel, el magnesio actúa como neuroprotector bloqueando los receptores NMDA y la entrada de calcio, superando a todos los anticonvulsivantes clásicos en la reducción de mortalidad y recurrencia.<br><br>Perla ENARM: \"El sulfato de magnesio está recomendado como primera línea para prevención de eclampsia en la paciente con preeclampsia con datos de severidad\".<br><br>Análisis de Distractores: El diazepam y la fenitoína se asocian con peores resultados fetales (depresión respiratoria) y maternos comparados con el magnesio. El valproato es teratogénico y no tiene utilidad en el entorno obstétrico agudo.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 44."
+    },
+    {
+        id: 9,
+        question: "Durante la infusión continua de neuroprotección intravenosa, ¿cuál es el signo clínico más precoz que advierte sobre una intoxicación inminente?",
+        options: ["Disminución de reflejos tendinosos", "Parálisis flácida respiratoria", "Alteración del estado mental", "Arritmia ventricular letal"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de preeclampsia en segundo nivel, la acumulación progresiva de magnesio deprime gradualmente la unión neuromuscular, siendo la hiporreflexia el primer indicador reversible (niveles entre 7 a 10 mEq/L) antes del colapso respiratorio.<br><br>Perla ENARM: \"Vigilar signos de intoxicación: El signo clínico más precoz de toxicidad es la disminución o ausencia de reflejos tendinosos profundos\".<br><br>Análisis de Distractores: La parálisis flácida respiratoria y la arritmia letal (paro cardíaco) ocurren en etapas muy tardías y fatales (concentraciones >12 a 15 mEq/L). La alteración del estado mental ocurre en rangos variables, pero la abolición patelar siempre la precede.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Anexos, Página 79."
+    },
+    {
+        id: 10,
+        question: "En caso de documentarse toxicidad clínica progresiva por el esquema de Zuspan, ¿cuál es el antídoto antagonista de elección a administrar de forma intravenosa?",
+        options: ["Bicarbonato de sodio", "Cloruro de potasio", "Gluconato de calcio", "Flumazenil"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de preeclampsia en segundo nivel, el calcio revierte directamente el bloqueo del magnesio en la membrana celular y la placa neuromuscular motora, restaurando de manera veloz la excitabilidad muscular.<br><br>Perla ENARM: \"En caso de niveles >7 descontinuar la infusión Administrar Gluconato de calcio 1 ámpula = 4.64 mEq IV x 1 dosis\".<br><br>Análisis de Distractores: El flumazenil revierte benzodiacepinas. El bicarbonato se usa en acidosis o intoxicación por antidepresivos tricíclicos. El cloruro de potasio exacerbaría el riesgo de una arritmia cardíaca en lugar de antagonizar al magnesio.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Anexos, Página 80."
+    },
+    {
+        id: 11,
+        question: "En el contexto del daño a órgano blanco, ¿cuál es el nivel de deshidrogenasa láctica que confirma la hemólisis microangiopática en el síndrome de HELLP?",
+        options: ["> 200 UI/mL", "> 400 UI/mL", "> 600 UI/mL", "> 1000 UI/mL"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de preeclampsia en segundo nivel, la disrupción eritrocitaria al atravesar el endotelio estenótico libera concentraciones plasmáticas elevadas de esta enzima, estableciéndose el corte en más de 600 unidades para diagnosticar clínicamente hemólisis severa.<br><br>Perla ENARM: \"Órgano o Sistema Afectado: Hepático [...] Elevación de Deshidrogenasa láctica >600UI/ml\".<br><br>Análisis de Distractores: Los cortes de 200 y 400 UI/mL son valores bajos y carecen de especificidad para el diagnóstico de destrucción globular masiva y daño hepático simultáneo requerido en el HELLP.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Anexos, Página 78."
+    },
+    {
+        id: 12,
+        question: "En una paciente de 30 semanas de gestación que requiere estabilización por síndrome de HELLP, ¿cuál es el esquema corticoideo de elección para la madurez pulmonar fetal?",
+        options: ["Dexametasona 10 mg cada 12 horas", "Betametasona 12 mg cada 24 horas", "Hidrocortisona 100 mg dosis única", "Metilprednisolona 1 g cada 24 horas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de preeclampsia en segundo nivel, acelerar la producción de factor surfactante antes del nacimiento prematuro inminente exige regímenes obstétricos probados que penetran la barrera placentaria de forma consistente.<br><br>Perla ENARM: \"En pacientes con síndrome de hellp y gestación <34 semanas se recomienda la aplicación de inductores de madurez pulmonar. Los esquemas recomendados son: Betametasona 12 mg intramuscular cada 24 horas 2 dosis\".<br><br>Análisis de Distractores: La dexametasona es una opción válida, pero el esquema obstétrico GPC es de 6 mg cada 12 horas (no 10 mg). La dexametasona 10 mg cada 12h IV es un protocolo cuestionado para tratar el HELLP materno, no para el pulmón. Hidrocortisona y metilprednisolona no tienen indicación aquí.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 52."
+    },
+    {
+        id: 13,
+        question: "En la evaluación por ultrasonido Doppler en una preeclampsia, ¿cuál hallazgo representa una causa fetal absoluta para la resolución inmediata del embarazo vía abdominal?",
+        options: ["Índice de pulsatilidad uterina elevado", "Disminución del líquido amniótico", "Onda A reversa del ductus venoso", "Restricción simétrica del crecimiento"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de preeclampsia en segundo nivel, el flujo invertido es el marcador terminal del fallo cardíaco derecho fetal por hipoxia progresiva, anunciando un óbito intrauterino inminente si no se interviene.<br><br>Perla ENARM: \"Causas fetales de resolución del embarazo vía abdominal en mujeres con preeclampsia: Onda A reversa del ductus venoso\".<br><br>Análisis de Distractores: El índice uterino elevado predice enfermedad materna pero no asfixia terminal. El oligohidramnios y la restricción del crecimiento ordenan monitoreo estrecho y eventual resolución, pero toleran espera si las pruebas biofísicas se mantienen estables.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Anexos, Página 83."
+    },
+    {
+        id: 14,
+        question: "De los antecedentes médicos, ¿cuál condición o síndrome materno preexistente confiere estadísticamente el mayor riesgo relativo para desarrollar preeclampsia?",
+        options: ["Diabetes pregestacional", "Hipertensión arterial crónica", "Síndrome anticuerpos antifosfolípidos", "Índice de masa corporal mayor de 35"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de preeclampsia en segundo nivel, el ambiente protrombótico y el rechazo vascular inmunomediado destrozan tempranamente la interfaz uteroplacentaria, otorgando un devastador riesgo relativo calculado de 9.72, superior al resto.<br><br>Perla ENARM: \"Factores de Riesgo... Anticuerpos antifosfolípido 9.72 (4.34-21.75)\".<br><br>Análisis de Distractores: Diabetes pregestacional (RR 3.56), hipertensión crónica e IMC >35 (RR 2.47) son factores potentes, pero matemáticamente quedan por debajo de las trombofilias adquiridas.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Anexos, Página 84."
+    },
+    {
+        id: 15,
+        question: "En el manejo farmacológico de la paciente sin complicaciones severas, ¿cuál es el rango de presión arterial sistólica que debe mantenerse como meta terapéutica de control?",
+        options: ["110 a 120 mmHg", "120 a 129 mmHg", "130 a 155 mmHg", "140 a 160 mmHg"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de preeclampsia en segundo nivel, no se recomienda normalizar drásticamente la tensión arterial ya que se requiere de una presión de perfusión basal sostenida para vencer las altas resistencias uterinas y oxigenar al feto.<br><br>Perla ENARM: \"En pacientes con preeclampsia sin co-morbilidad la terapia antihipertensiva se recomienda para mantener presión diastólica entre 105 y 80 mm Hg, y sistólica entre 155 a 130 mm Hg\".<br><br>Análisis de Distractores: Cifras de 110-129 generarían hipoperfusión isquémica al producto. Cifras ≥ 160 rebasan el umbral de emergencia por riesgo de sangrado o evento vascular.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 33."
+    },
+    {
+        id: 16,
+        question: "De acuerdo a los criterios de edad gestacional en pacientes con preeclampsia, ¿en qué período se sugiere de manera estricta el traslado a tercer nivel con unidad de cuidados intensivos neonatales?",
+        options: ["Menos de 20 semanas", "24 a 31 semanas", "32 a 36 semanas", "Más de 37 semanas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de preeclampsia en segundo nivel, la interrupción prematura en esta ventana genera extrema morbimortalidad respiratoria, ameritando soporte ventilatorio y surfactante que solo los hospitales de máxima complejidad pueden asegurar.<br><br>Perla ENARM: \"Se sugiere trasladar a tercer nivel de atención que cuenten con unidad de cuidados intensivos neonatales a: Pacientes con preeclampsia y embarazo entre las 24-31 semanas de gestación\".<br><br>Análisis de Distractores: A las 32-36 semanas, a menudo se asume manejo en un nivel secundario si se retrasa 48h la resolución para ganar ventana de madurez. Pacientes > 37 semanas se resuelven de urgencia localmente sin excusa. < 20 semanas no entran en diagnóstico típico feto-viable.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 44."
+    },
+    {
+        id: 17,
+        question: "¿Cuál rasgo diagnóstico de laboratorio diferencia de manera absoluta a la hipertensión gestacional pura de la preeclampsia?",
+        options: ["Ausencia de cefalea occipital", "Presión sistólica < 160 mmHg", "Ausencia de proteinuria cuantificada", "Disminución de ácido úrico"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de preeclampsia en segundo nivel, el diagnóstico de trastorno hipertensivo temporal descansa sobre una elevación tensional solitaria post-20 semanas sin compromiso sistémico ni fuga capilar renal medible.<br><br>Perla ENARM: \"Hipertensión gestacional: hipertensión que se presenta por primera vez posterior a las 20 semanas de gestación con ausencia proteinuria demostrada por recolección de orina de 24 horas\".<br><br>Análisis de Distractores: La cefalea y la presión grave diferencian severidad, no preeclampsia de hipertensión gestacional de facto. La hiperuricemia no es el marcador divisor maestro como lo es la negatividad de las proteínas.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Aspectos Generales, Página 14."
+    },
+    {
+        id: 18,
+        question: "Durante la vigilancia en el puerperio inmediato, ¿en qué período de tiempo se agrupa la mayor incidencia para el desarrollo súbito de complicaciones hipertensivas?",
+        options: ["Primeras 48 horas", "Séptimo al décimo día", "Tercera semana", "Sexta semana"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de preeclampsia en segundo nivel, los cambios expansivos del volumen intravascular por el retorno posparto sin la capacitancia vascular del embarazo predisponen dramáticamente a sobrecargas y vasoespasmo fulminante.<br><br>Perla ENARM: \"La elevación de la presión posparto es más frecuente durante los primeros tres a seis días posparto [...] La mayoría de los casos se desarrollan dentro de las 48 h siguientes al parto\".<br><br>Análisis de Distractores: Las complicaciones más allá de la primera semana o en la sexta semana resultan residuales y progresan estadísticamente hacia cronicidad, pero no engloban el pico de emergencias neurológicas críticas.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 48."
+    },
+    {
+        id: 19,
+        question: "¿Cuál es el estudio hemodinámico de imagen recomendado durante la semana 11 a 13.6 para la evaluación y predicción temprana del riesgo de preeclampsia?",
+        options: ["Flujometría de arteria cerebral media", "Índice de pulsatilidad uterina", "Flujometría de arteria umbilical", "Ultrasonido estructural fetal"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de preeclampsia en segundo nivel, evaluar las resistencias vasculares maternas maternas precoces permite advertir el fracaso de la remodelación en las arterias espirales antes del desarrollo clínico adverso.<br><br>Perla ENARM: \"En pacientes con embarazo y alto riesgo de preeclampsia, es recomendable realizar determinación del IP de la arteria uterina en primer y segundo trimestre\".<br><br>Análisis de Distractores: Las flujometrías umbilicales y cerebrales se reservan para el tercer trimestre para diagnosticar hipoxia fetal, restricción o redistribución de flujo. El ultrasonido estructural valora morfología, no gasto hemodinámico materno.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 23."
+    },
+    {
+        id: 20,
+        question: "Independientemente de la estabilización clínica intensiva de la paciente con datos de severidad, ¿cuál es el único tratamiento comprobado y definitivo del trastorno fisiopatológico?",
+        options: ["Interrupción del embarazo", "Control hemodinámico con labetalol", "Infusión de sulfato de magnesio", "Terapia con plasmaféresis"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de preeclampsia en segundo nivel, al retirar la placenta isquémica y productora de sustancias tóxicas endoteliales, se elimina de raíz el desencadenante inmunológico principal de la enfermedad multisistémica.<br><br>Perla ENARM: \"El nacimiento del feto en pacientes con preeclampsia es la unica intervención ha resultado ser eficaz para inciar la resolución de este trastorno hipertensivo\".<br><br>Análisis de Distractores: El labetalol evita derrames hemorrágicos y el magnesio previene la actividad ectópica convulsiva (eclampsia); ambos ganan tiempo, pero son terapias paliativas agudas, no de resolución curativa como la extracción trofoblástica.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 42."
+    },
+    {
+        id: 21,
+        question: "En una gestante con hipertensión de nueva aparición después de la semana 20 pero sin proteinuria, ¿cuál hallazgo clínico permite establecer el diagnóstico confirmatorio de preeclampsia?",
+        options: ["Trombocitopenia leve aislada", "Edema maleolar con fóvea", "Epigastralgia y dolor hepático", "Elevación de ácido úrico"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Preeclampsia en segundo nivel, la ausencia de fuga capilar renal no excluye la disfunción endotelial masiva si existe franca inflamación o edema de otros órganos nobles, siendo el hígado uno de los más susceptibles a isquemia.<br><br>Perla ENARM: \"En ausencia de proteinuria, el diagnostico de preeclampsia podría establecerse cuando la hipertensión gestacional es asociada con síntomas cerebrales persisistentes, epigastralgia o dolor en cuadrante superior derecho con nausea o vómito\".<br><br>Análisis de Distractores: La trombocitopenia leve no es criterio absoluto; debe ser menor a 100,000 para clasificar la severidad. El edema fue retirado de las guías internacionales y mexicanas como criterio por ser un hallazgo fisiológico común. El ácido úrico es marcador de hemoconcentración pero no define el diagnóstico por sí solo sin daño orgánico.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Aspectos Generales, Página 10."
+    },
+    {
+        id: 22,
+        question: "Tras la resolución de un embarazo complicado con preeclampsia, ¿a las cuántas semanas de puerperio se debe citar a la paciente para evaluar la resolución de la proteinuria?",
+        options: ["2 semanas", "4 semanas", "6 semanas", "12 semanas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Preeclampsia en segundo nivel, los riñones de la paciente requieren un periodo de desinflamación y barrido de la fisiología del embarazo para normalizar la membrana basal glomerular, fijando el punto de control al término exacto del puerperio tardío.<br><br>Perla ENARM: \"A toda mujer con diagnóstico de preeclampsia se les deberá medir la presión arterial y pedir un análisis de orina para valorar proteinuria a las 6 semanas\".<br><br>Análisis de Distractores: A las 2 o 4 semanas, la paciente aún puede mostrar trazas fisiológicas residuales de la depuración o estar bajo ajuste de antihipertensivos. A las 12 semanas el daño podría progresar a cronicidad si no se revaluó oportunamente.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 46."
+    },
+    {
+        id: 23,
+        question: "Si una paciente con eclampsia presenta antecedente de miastenia gravis o bloqueo neuromuscular que contraindique el uso de sulfato de magnesio, ¿cuál es el fármaco de elección?",
+        options: ["Fenobarbital", "Fenitoína", "Levetiracetam", "Ácido valproico"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Preeclampsia en segundo nivel, aunque el magnesio es el máximo protector neurológico, bloquea la unión neuromuscular; en caso de miopatías preexistentes, se prefiere la estabilización de los canales de sodio neuronales para inhibir los focos ectópicos corticales.<br><br>Perla ENARM: \"En el caso de la paciente con embarazo y eclampsia que presente contraindicación para el uso de sulfato de magnesio, se recomienda considerar el uso de fenitoína\".<br><br>Análisis de Distractores: El fenobarbital es depresor respiratorio materno-fetal de tercera línea. El levetiracetam no cuenta con recomendación GPC para emergencias obstétricas agudas. El valproato es teratogénico y no está en los protocolos de neuroprotección para la embarazada.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 42."
+    },
+    {
+        id: 24,
+        question: "En el laboratorio de control de una paciente hipertensa gestacional, ¿a partir de qué nivel de aspartato o alanino aminotransferasa (AST/ALT) se integra el diagnóstico de preeclampsia con datos de severidad?",
+        options: ["Mayor a 30 IU/L", "Mayor a 50 IU/L", "Mayor a 70 IU/L", "Mayor a 100 IU/L"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Preeclampsia en segundo nivel, la necrosis del hepatocito por congestión isquémica microvascular libera enzimas al torrente; el doble del valor normal fisiológico marca el inicio de falla orgánica.<br><br>Perla ENARM: \"Alteraciones de laboratorio: Elevación de creatinina sérica (> 1.1 mg/dL), incremento de AST o ALT (> 70 IU/L) o deshidrogenasa láctica\".<br><br>Análisis de Distractores: Valores de 30 o 50 IU/L pueden presentarse por variaciones hepáticas crónicas leves o colestasis transitoria, pero el corte diagnóstico absoluto que cambia el abordaje clínico exige superar las 70 unidades.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Aspectos Generales, Página 14."
+    },
+    {
+        id: 25,
+        question: "Además de los bloqueadores del sistema renina-angiotensina, ¿cuál betabloqueador está contraindicado en la gestación por causar muerte fetal y bajo peso al nacimiento?",
+        options: ["Labetalol", "Metoprolol", "Atenolol", "Propranolol"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Preeclampsia en segundo nivel, la actividad cardioselectiva específica prolongada del medicamento genera una alta reducción del gasto cardiaco placentario, derivando en restricción extrema del lecho vascular fetal.<br><br>Perla ENARM: \"El atenolol, el prazosín y los diureticos no están recomendados durante el embarazo, ya que incrementan el riesgo de muerte fetal y bajo peso para la edad gestacional\".<br><br>Análisis de Distractores: El labetalol (bloqueador mixto) es una de las drogas insignia para rescatar pacientes en crisis y está ampliamente recomendado por su seguridad. Metoprolol y propranolol tienen perfiles aceptables pero no forman parte del texto prohibitivo explícito de la GPC.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 38."
+    },
+    {
+        id: 26,
+        question: "En la vigilancia de una puérpera cursando las horas iniciales tras una preeclampsia sin datos de severidad, ¿cuál es el intervalo de monitoreo tensional recomendado?",
+        options: ["Cada 2 horas", "Cada 4 a 6 horas", "Cada 8 horas", "Cada 12 horas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Preeclampsia en segundo nivel, las pacientes con enfermedad base sin complicaciones de daño orgánico ameritan evaluación sistematizada de signos vitales para detectar oportunamente el rebote hipertensivo del tercer espacio por retorno venoso agudo sin saturar la atención de enfermería.<br><br>Perla ENARM: \"El monitoreo de la presión arterial en el puerperio de paciente que cursaron con preeclampsia sin datos de severidad, se realiza a intervalos de 4 a 6 horas\".<br><br>Análisis de Distractores: El monitoreo cada 2 horas es excesivo en un piso sin severidad y se reserva para terapias intensivas. Evaluar cada 8 o 12 horas es insuficiente durante el periodo crítico donde ocurre el mayor índice de eventos vasculares cerebrales tardíos.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 44."
+    },
+    {
+        id: 27,
+        question: "En una paciente con preeclampsia ingresada a labor de parto sin alteraciones en las pruebas de coagulación, ¿cuál es el manejo analgésico de elección sugerido?",
+        options: ["Opioides intravenosos", "Bloqueo de nervio pudendo", "Catéter peridural temprano", "Analgesia por inhalación"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Preeclampsia en segundo nivel, anular la cascada catecolaminérgica inducida por el dolor del parto frena la taquicardia secundaria y el vasoespasmo reflejo materno, estabilizando las cifras tensionales desde la fase activa.<br><br>Perla ENARM: \"La inserción temprana de un catéter epidural (en ausencia de contraindicaciones) se recomienda para el control del dolor en la paciente en trabajo de parto y preeclampsia\".<br><br>Análisis de Distractores: Los opioides IV se utilizan exclusivamente si hay caída severa de plaquetas (<50,000) o defectos hemostáticos que impidan puncionar neuroeje por riesgo de hematoma. El pudendo y la inhalación no abaten la respuesta vasoconstrictora central.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 43."
+    },
+    {
+        id: 28,
+        question: "En el tamizaje de orina de una comunidad rural, la tira reactiva visual reporta 1+ de proteinuria. Según el cuadro referencial, ¿a qué valor excretado en miligramos equivale este hallazgo?",
+        options: ["15 a 30 mg/dl", "30 a 100 mg/dl", "100 a 300 mg/dl", "Mayor a 300 mg/dl"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Preeclampsia en segundo nivel, las concentraciones de proteínas séricas alteran la colorimetría en la orina progresivamente, donde una sola cruz ya refleja patología endotelial pero no reemplaza la cuantificación final.<br><br>Perla ENARM: \"CUADRO 5. RELACIÓN DEL ANÁLISIS DE ORINA POR TIRA REACTIVA Y EXCRECIÓN DE PROTEINAS... 1+ Entre 30 a 100 mg/dl\".<br><br>Análisis de Distractores: Las \"trazas\" corresponden a valores ínfimos de 15 a 30 mg/dl. Los valores de 100 a 300 mg equivalen a 2+, y por encima de los 300 mg de excreción ya marcan una reacción de 3+ y patología franca.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Anexos, Página 61."
+    },
+    {
+        id: 29,
+        question: "Durante la reevaluación ambulatoria al egreso de una paciente con tratamiento hipotensor crónico, ¿en qué rango de tensión arterial a las 2 semanas se justifica reducir la dosis de los medicamentos?",
+        options: ["Menor a 110/70 mmHg", "Menor a 120/80 mmHg", "130-140 / 80-90 mmHg", "140-150 / 90-100 mmHg"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Preeclampsia en segundo nivel, buscar niveles de hipotensión relativa genera caída del flujo placentario. Alcanzar estabilidad en el límite superior de la normotensión ya indica respuesta correcta y exige desescalar el medicamento para evitar colapso hemodinámico materno o fetal.<br><br>Perla ENARM: \"El tratamiento antihipertensivo debe ser reducida cuando la presión arterial alcance valores entre 130-140/80-90 a las 2 semanas de tratamiento\".<br><br>Análisis de Distractores: Buscar descensos por debajo de 110/70 o 120/80 mmHg induce insuficiencia uteroplacentaria por pérdida de resistencia, y mantener cifras de 150/100 refleja fracaso del manejo, obligando a aumentar o asociar los fármacos, no reducirlos.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 46."
+    },
+    {
+        id: 30,
+        question: "Ante una gestante eclampsia que presenta una convulsión recurrente tónico clónica a pesar de ya contar con infusión continua de magnesio, ¿cuál es el rescate farmacológico indicado?",
+        options: ["Fenitoína 15 mg/kg IV", "Diazepam 10 mg IV", "Bolos de sulfato de magnesio", "Infusión de propofol rápido"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Preeclampsia en segundo nivel, el control de una eclampsia refractaria no exige cambiar de familia farmacológica inmediatamente, sino garantizar la saturación tisular del ion reponiendo bolos adicionales de 2 a 4 gramos para rebloquear los receptores NMDA excitatorios corticales.<br><br>Perla ENARM: \"La recurrencia de convulsiones puede ser tratada con bolos de sufato de magnesio. Si no responde a sulfato de magnesio, pueden ser tratados con benzodiacepinas (diacepam) o fenitoina\".<br><br>Análisis de Distractores: La fenitoína y el diazepam son drogas eficaces para apagar focos en neurocirugía, pero en preeclampsia se emplean únicamente si el magnesio fracasa tras la optimización de los bolos extras. Propofol requiere intubación de la vía aérea en quirófano.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 41."
+    },
+    {
+        id: 31,
+        question: "En la consulta preventiva, ¿cuál es el porcentaje de prevalencia de complicaciones cardiovasculares que se espera desarrollar a futuro en pacientes que cursaron un Síndrome de HELLP?",
+        options: ["2%", "6%", "12%", "25%"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Preeclampsia en segundo nivel, las pacientes que presentan hemólisis masiva y alteración hepática sufren un impacto sistémico prolongado sobre sus vasos sanguíneos, triplicando la prevalencia poblacional normal y duplicando el riesgo base de las preeclampsias puras a lo largo de su vida posterior.<br><br>Perla ENARM: \"Existe una alta prevalencia en las complicaciones cardiovasculares en mujeres afectadas por preeclampsia presentándose en un 6%, y si se asocia con síndrome de HELLP aumenta a un 12%\".<br><br>Análisis de Distractores: El 6% de probabilidad cardiovascular a largo plazo es el esperado para cualquier cuadro genérico de preeclampsia sin evolución a daño en microangiopatía trombótica. 2% y 25% son cifras inexactas sin sustento en el seguimiento de cohorte referido por la revisión.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 45."
+    },
+    {
+        id: 32,
+        question: "En el manejo del tercer periodo del parto de una paciente preeclámptica sin contraindicación con el fin de evitar hipovolemia por atonía uterina, ¿qué uterotónico puede emplearse como opción profiláctica?",
+        options: ["Ergonovina", "Carbetocina", "Dinoprostona", "Terbutalina"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Preeclampsia en segundo nivel, los análogos sintéticos potentes de la oxitocina confieren prevención hemorrágica excelente en el alumbramiento, sin generar el estímulo vasoconstrictor periférico peligroso que presentan los derivados del cornezuelo.<br><br>Perla ENARM: \"El uso de carbetocina puede ser considerado como una opción (si se cuenta con el recurso) en el manejo del tercer estadio de trabajo de parto y en pacientes con hemorragia obstetrica que cursaron con preeclampsia\".<br><br>Análisis de Distractores: La ergonovina tiene acción sobre los receptores alfa adrenérgicos en músculo liso periférico desencadenando crisis hipertensivas letales y evento vascular hemorrágico. La dinoprostona y terbutalina no tienen indicación directa de primera línea para esta fase específica en preeclampsia descrita en el algoritmo GPC.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 45."
+    },
+    {
+        id: 33,
+        question: "Durante la reanimación de una eclampsia, ¿qué presentación neurológica obliga de inmediato a suspender el tratamiento ambulatorio y solicitar un estudio de imagen craneal (TAC o resonancia)?",
+        options: ["Cefalea pulsátil", "Escotomas visuales", "Hiperreflexia patelar", "Déficit neurológico focal"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Preeclampsia en segundo nivel, una disfunción anatómica localizada como hemiparesia o asimetría motora no corresponde a la descarga global idiopática de eclampsia; indica ruptura capilar, infarto cerebral subyacente o malformación vascular que exige diagnóstico estructural.<br><br>Perla ENARM: \"Los estudios de imagen cerebral están indicados en pacientes con deficit neurológico focal, coma prolongado, así como en pacientes con presentación atípica de eclampsia\".<br><br>Análisis de Distractores: La cefalea, la hiperreflexia y los escotomas (luces brillantes) son pródromos funcionales vasoespásticos de la preeclampsia severa clásica. Son esperados, prevenibles y no traducen directamente muerte celular o infarto hasta progresar a daño de neurona motora.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 41."
+    },
+    {
+        id: 34,
+        question: "Para la estratificación de laboratorio en la evaluación del daño tisular endotelial en la paciente, ¿a partir de qué nivel de creatinina sérica se categoriza la enfermedad como severa?",
+        options: ["Mayor a 0.8 mg/dL", "Mayor a 1.1 mg/dL", "Mayor a 1.5 mg/dL", "Mayor a 2.0 mg/dL"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Preeclampsia en segundo nivel, la hiperfiltración es propia de la madre en gestación (por tanto tienen valores fisiológicamente menores al adulto normal); un nivel ligeramente por arriba de 1 ya implica una reducción masiva del 50% de la tasa de filtración glomerular.<br><br>Perla ENARM: \"Alteraciones de laboratorio: Elevación de creatinina sérica (> 1.1 mg/dL), incremento de AST o ALT (> 70 IU/L) o deshidrogenasa láctica\".<br><br>Análisis de Distractores: Valores de 0.8 mg/dL entran en el rango tolerado del embarazo sano. Cortes tan altos como 1.5 y 2.0 mg/dL se considerarían falla aguda intrínseca, pero esperar a que la paciente llegue a esos niveles retrasaría de forma fatal la catalogación e interrupción de la GPC.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Aspectos Generales, Página 14."
+    },
+    {
+        id: 35,
+        question: "Cuando una paciente cursa una crisis hipertensiva extrema y se demuestra refractaria total al labetalol, nifedipino e hidralazina, ¿cuál medicamento de rescate avanzado está indicado para prevenir ruptura vascular?",
+        options: ["Esmolol en bomba", "Nitroprusiato de sodio", "Diltiazem intravenoso", "Furosemida en infusión"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Preeclampsia en segundo nivel, a pesar de sus metabolitos secundarios como tiocianatos que afectan al feto, el uso del potente vasodilatador endovenoso queda justificado única y exclusivamente en escenarios catastróficos para salvaguardar la vida materna de eventos cerebrovasculares no controlables.<br><br>Perla ENARM: \"Como última alternativas en caso de no contar con los fármacos de primer línea intravenosos (Hidralazina, nifedipina, labetalol esta indicado el uso oral de metildopa, clonidina o en casos refractarios severos nitroprusiato de sodio\".<br><br>Análisis de Distractores: El esmolol es útil pero restringido en áreas obstétricas no especializadas. El diltiazem carece del mismo poder de relajación microcapilar que el nitrito en estas pacientes. La furosemida se reserva para estados de sobrecarga o edema agudo pulmonar, no como antihipertensivo primario.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 39."
+    },
+    {
+        id: 36,
+        question: "Independientemente de la medición confirmatoria de la proteinuria en las 24 horas siguientes, ¿qué cifra de presión sistólica y diastólica es diagnóstico inmediato y obliga a resolución urgente?",
+        options: ["Mayor a 140/90 mmHg", "Mayor a 150/100 mmHg", "Mayor a 160/110 mmHg", "Mayor a 180/120 mmHg"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Preeclampsia en segundo nivel, un vasoespasmo sostenido en esos rangos reprime mecánicamente los puentes de resistencia vascular; la perfusión se pierde por completo y expone al endotelio a desgarros focales sin necesidad de otros factores asociados.<br><br>Perla ENARM: \"Preeclampsia severa o preeclampsia con criterios de severidad: Es la preeclampsia con uno o más de los siguientes criterios: ... en caso de hipertensión severa (sistólica ≥160 y/ó diastólica ≥110 mm Hg)\".<br><br>Análisis de Distractores: Las tensiones de 140/90 a 150/100 son el piso de la enfermedad sin severidad intrínseca, requiriendo manejo ambulatorio o internamiento basal. Requerir ≥ 180/120 es una urgencia vital, pero el protocolo marca el límite diagnóstico 20 mmHg antes.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Aspectos Generales, Página 14."
+    },
+    {
+        id: 37,
+        question: "Como parte integral del abordaje de rutina en la salud feto-placentaria sin compromiso absoluto, ¿cuáles son los dos parámetros primarios que se evalúan mediante ecografía obstétrica simple modo B?",
+        options: ["Circulación del ductus venoso", "Crecimiento fetal y líquido amniótico", "Resistencias arteriales uterinas", "Onda de la cerebral media"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Preeclampsia en segundo nivel, para medir la adaptación crónica de un feto a la insuficiencia placentaria base, la evaluación anatómica directa del percentil de peso y el volumen hídrico es el estándar que determina si se prosigue con un embarazo expectante o Doppler avanzado.<br><br>Perla ENARM: \"Ultrasonido obstétrico para evaluar crecimiento fetal y líquido amniótico si las condiciones maternas lo permiten\".<br><br>Análisis de Distractores: El ductus venoso, arterias uterinas y arteria cerebral media requieren mapeo vascular complejo con tecnología Doppler a color (flujometría vascular) de tercer nivel, no perteneciendo a las herramientas bidimensionales o modo B.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 31."
+    },
+    {
+        id: 38,
+        question: "Dentro de las intervenciones nutricionales en el primer control prenatal temprano para mujeres gestantes, ¿en qué pacientes justifica y avala la GPC la suplementación terapéutica con calcio?",
+        options: ["Universales para todas", "Diabéticas descontroladas", "Población con baja ingesta", "Con insuficiencia renal"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Preeclampsia en segundo nivel, la adición artificial de calcio exógeno previene la paratohormona inducida y frena la entrada de iones a la musculatura lisa celular, disminuyendo los riesgos prohipertensivos únicamente si hay déficit basal documentado del catión en la dieta de la gestante.<br><br>Perla ENARM: \"Algoritmo 1. Identificación y prevención de preeclampsia... Suplementación de calcio en población con baja ingesta\".<br><br>Análisis de Distractores: No ha demostrado costo-beneficio como medida universal a todas las gestantes de primera vez. No es una medida de indicación nefrológica pura ni un abordaje que modifique la fisiopatología en una madre con reservas óseas normales o sobrepeso nutricional diabético sin hipocalcemia.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Anexos, Página 67."
+    },
+    {
+        id: 39,
+        question: "Tras realizar una cesárea resolutiva en un cuadro materno caracterizado por daño a órgano blanco, ¿por cuántas horas mínimas se debe extender la profilaxis neuroprotectora intravenosa en el puerperio?",
+        options: ["6 horas", "12 horas", "24 horas", "48 horas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Preeclampsia en segundo nivel, el desalumbramiento frena la producción de toxinas, pero la excitabilidad cerebral y la disfunción reticular tardan un día completo en resolverse por arrastre renal; interrumpir antes el sulfato reiniciaría el umbral clónico neuronal.<br><br>Perla ENARM: \"En pacientes que cursaron con preeclampsia con datos de severidad, además de los anterior debe mantenerse la terapia con sulfato de magnesio las primeras 24 horas como prevención de eclampisa\".<br><br>Análisis de Distractores: Tiempos cortos de 6 a 12 horas desprotegen a la madre en la fase pico del edema posparto, derivando en convulsiones de inicio tardío. Un manejo de 48 horas incrementa severamente la depresión miocárdica y fatiga muscular sin agregar beneficio profiláctico neto frente al de un solo día.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 44."
+    },
+    {
+        id: 40,
+        question: "En el control estricto cardiopulmonar en la unidad hospitalaria para la paciente con falla multisistémica, ¿cuál es el porcentaje de oximetría capilar que marca el desarrollo de edema agudo pulmonar?",
+        options: ["Menor a 99%", "Menor a 97%", "Menor a 94%", "Menor a 90%"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Preeclampsia en segundo nivel, la paciente embarazada presenta cambios hiperventilatorios con un gradiente alcalótico crónico para el feto; la mínima claudicación de la barrera alvéolo-capilar o engrosamiento por extravasación hídrica se manifiesta rápido, siendo el rango de <97% motivo absoluto de maniobra activa.<br><br>Perla ENARM: \"Vigilancia monitoreo estrecho de presión arterial y datos de vasoespasmo... Oximetría de pulso (SpO2 <97%)... Vigilancia cardiorespiratoria (datos de edema agudo pulmonar)\".<br><br>Análisis de Distractores: Los valores menores a 94% o 90% representan cuadros francamente instaurados de hipoxemia tisular sistémica severa donde la reanimación es mucho más riesgosa y reactiva. Un valor de 98-99% es la saturación esperada óptima fisiológica en la embarazada joven normal.",
+        source: "S-020-08, Prevención, diagnóstico y tratamiento de la Preeclampsia en segundo y tercer nivel de atención, 2017, Evidencias y Recomendaciones, Página 63."
+    }
+        ];
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('gyoDULastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('gyoDUProgress');
+                localStorage.removeItem('gyoDULastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-pink-500 shadow-md z-10 border-pink-500 dark:border-pink-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-rose-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "GINECOLOGÍA Y OBSTETRICIA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "GPC S-020-08 • Prevención, diagnóstico y tratamiento de la preeclampsia en el segundo y tercer niveles de atención";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="EU44618GYOE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-pink-100 dark:border-pink-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-pink-50 has-[:checked]:border-pink-400 dark:has-[:checked]:bg-pink-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-pink-600 dark:hover:bg-pink-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('gyoDUProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('gyoDULastQId', currentQuestionId);
+                else localStorage.removeItem('gyoDULastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('gyoDUProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

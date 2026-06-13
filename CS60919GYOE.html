@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================
+        // =========================================================
+        const questionsData = [
+            {
+                id: 1, 
+                question: "¿Cuál es el grupo etario de mujeres que concentra la tasa de incidencia más alta de Candidosis Vulvovaginal en México?", 
+                options: ["15 a 19 años", "20 a 24 años", "25 a 34 años", "35 a 44 años"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, la epidemiología local demuestra que la etapa de mayor riesgo coincide con el pico inicial de la edad reproductiva y sexual activa en la población femenina.<br><br>Perla ENARM: \"En México, esta enfermedad afecta a mujeres de diferentes grupos etarios; las tasas de incidencia... la tasa más alta corresponde al grupo etario de mujeres adultas jóvenes, entre 20-24 años de edad\".<br><br>Análisis de Distractores: La opción A incluye el inicio de vida sexual pero no el pico máximo. Las opciones C y D son grupos de alta prevalencia, pero estadísticamente inferiores al grupo de 20 a 24 años según el Boletín Epidemiológico citado.", 
+                source: "GPC-IMSS-609-19, Diagnóstico y Tratamiento de Candidosis Vulvovaginal, 2019, Justificación, Página 17." 
+            },
+            {
+                id: 2, 
+                question: "¿Qué porcentaje de los aislamientos microbiológicos en mujeres con patología vulvovaginal fúngica corresponde a la especie Candida albicans?", 
+                options: ["50 a 60%", "65 a 75%", "85 a 95%", "95 a 100%"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, comprender la dominancia etiológica justifica el uso empírico de esquemas cortos con azoles (altamente efectivos contra esta cepa) en episodios no complicados, dejando la sospecha de cepas minoritarias solo para los fracasos terapéuticos.<br><br>Perla ENARM: \"En la CVV entre 85 y 95% de las levaduras aisladas de vagina, pertenecen a la especie C. albicans, siguiéndole en frecuencia C. glabrata\".<br><br>Análisis de Distractores: Las opciones A y B subestiman la inmensa mayoría de la etiología clásica. La opción D excluye al 5-15% restante que es vital reconocer, integrado por las especies \"no albicans\" como C. glabrata o C. tropicalis.", 
+                source: "GPC-IMSS-609-19, Diagnóstico y Tratamiento de Candidosis Vulvovaginal, 2019, Justificación, Página 16." 
+            },
+            {
+                id: 3, 
+                question: "A nivel nacional, ¿qué lugar ocupa la Candidosis Vulvovaginal entre las causas más comunes de vaginitis infecciosa?", 
+                options: ["Primera causa", "Segunda causa", "Tercera causa", "Cuarta causa"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, el reconocimiento epidemiológico permite establecer prioridades en el algoritmo mental diferencial frente a una paciente con leucorrea.<br><br>Perla ENARM: \"Se considera la segunda causa más común de vaginitis después de la vaginosis bacteriana\".<br><br>Análisis de Distractores: La opción A pertenece a la vaginosis bacteriana (Gardnerella vaginalis). Las opciones C y D corresponderían a etiologías menos prevalentes como la tricomoniasis.", 
+                source: "GPC-IMSS-609-19, Diagnóstico y Tratamiento de Candidosis Vulvovaginal, 2019, Justificación, Página 18." 
+            },
+            {
+                id: 4, 
+                question: "¿Cuál es la probabilidad epidemiológica de que una mujer experimente al menos un episodio sintomático de Candidosis Vulvovaginal durante su vida?", 
+                options: ["50%", "75%", "85%", "95%"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, el contacto universal con la levadura colonizadora la vuelve una de las patologías más frecuentes en la consulta de primer nivel, impactando directamente en la morbilidad y calidad de vida.<br><br>Perla ENARM: \"Se estima que un 75% de las mujeres experimentan al menos un episodio sintomático durante su vida y 6 a 9% experimentará candidosis vulvovaginal recurrente\".<br><br>Análisis de Distractores: La opción A es la probabilidad de que una mujer infectada inicialmente sufra un segundo evento. Las opciones C y D son los porcentajes correspondientes a la prevalencia de la cepa albicans, no al riesgo poblacional de enfermar.", 
+                source: "GPC-IMSS-609-19, Diagnóstico y Tratamiento de Candidosis Vulvovaginal, 2019, Justificación, Página 20." 
+            },
+            {
+                id: 5, 
+                question: "Ante el hallazgo incidental de un cultivo positivo para Candida sp en el exudado vaginal de una paciente asintomática, ¿cuál es la conducta terapéutica indicada?", 
+                options: ["Fluconazol oral profiláctico", "Nistatina tópica en óvulos", "No prescribir tratamiento", "Repetir toma de cultivo"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, la levadura forma parte de la biota normal en un 10-15% de las mujeres sanas. Sin una respuesta inflamatoria activa evidenciada por clínica (prurito, ardor, leucorrea), no existe indicación para erradicar la colonización comensal.<br><br>Perla ENARM: \"En mujeres asintomáticas con cultivo positivo para Candida sp., no prescribir tratamiento\".<br><br>Análisis de Distractores: Las opciones A y B representan iatrogenia y sobreúso de antimicóticos en estados de colonización. La opción D genera un gasto innecesario de recursos ante un hallazgo que no dictará cambio de conducta.", 
+                source: "GPC-IMSS-609-19, Diagnóstico y Tratamiento de Candidosis Vulvovaginal, 2019, Tratamiento Farmacológico, Página 45." 
+            },
+            {
+                id: 6, 
+                question: "Durante la gestación, ¿cuál es el mecanismo fisiopatológico directo mediado por los estrógenos que favorece la infección clínica por Candida?", 
+                options: ["Disminución del pH vaginal", "Depleción de lactobacilos protectores", "Aumento de glucógeno tisular", "Aumento de avidez celular epitelial"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, la fisiopatología en el embarazo obedece a un daño bimodal: la progesterona incrementa los nutrientes (glucógeno), mientras que los estrógenos alteran físicamente las células de la mucosa para permitir el anclaje micótico.<br><br>Perla ENARM: \"Además, los estrógenos en el embarazo aumentan la avidez de las células epiteliales vaginales por la adherencia de Candida y la formación de micelios de levadura\".<br><br>Análisis de Distractores: La opción A y C son mecanismos generados por la dominancia de progesterona, no estrogénica. La opción B es un concepto asociado a la génesis de vaginosis bacteriana, no candidosis.", 
+                source: "GPC-IMSS-609-19, Diagnóstico y Tratamiento de Candidosis Vulvovaginal, 2019, Prevención Primaria: Factores de riesgo, Página 33." 
+            },
+            {
+                id: 7, 
+                question: "Clínicamente, ¿en qué momento anatómico o ciclo hormonal suele exacerbarse el espectro sintomático de la Candidosis Vulvovaginal aguda?", 
+                options: ["Durante la menstruación", "Fase folicular temprana", "Fase ovulatoria media", "Semana previa a la menstruación"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, las fluctuaciones hormonales cíclicas (pico de progesterona en fase lútea) propician un ambiente vaginal rico en sustratos energéticos, provocando un rápido estallido de germinación del hongo justo antes del sangrado.<br><br>Perla ENARM: \"La CVV aguda es la presentación clínica más usual... el espectro clínico suele exacerbarse durante la semana previa a la menstruación\".<br><br>Análisis de Distractores: Las opciones A, B y C corresponden a momentos anatómicos donde predomina el descame endotelial o los picos estrogénicos puros, los cuales no generan la carga máxima de glucógeno progestágeno que detona los síntomas agudos.", 
+                source: "GPC-IMSS-609-19, Diagnóstico y Tratamiento de Candidosis Vulvovaginal, 2019, Definición, Página 24." 
+            },
+            {
+                id: 8, 
+                question: "Al preparar un examen en fresco para el escrutinio en consultorio de una probable vulvovaginitis fúngica, ¿cuál es la solución química estandarizada que debe añadirse a la muestra?", 
+                options: ["Peróxido de hidrógeno al 3%", "Solución de Lugol al 2%", "Ácido acético al 5%", "Hidróxido de potasio al 10%"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, la lisis de células epiteliales y detritos celulares es necesaria para despejar el campo visual microscópico, dejando intactas las paredes quitinosas del hongo.<br><br>Perla ENARM: \"Examen en fresco con observación directa al microscopio de muestra del exudado vaginal... con una preparación con solución salina al 10% de KOH\".<br><br>Análisis de Distractores: La opción A se usa en la prueba de aminas para vaginosis. Las opciones B y C son soluciones de tinción in vivo empleadas en colposcopia (Pruebas de Schiller y Schiller-acético) para tamizaje cervical, no para visualización micológica en fresco.", 
+                source: "GPC-IMSS-609-19, Diagnóstico y Tratamiento de Candidosis Vulvovaginal, 2019, Diagnóstico y paraclínicos, Página 39." 
+            },
+            {
+                id: 9, 
+                question: "En el abordaje diagnóstico paraclínico de la CVV, ¿cuál es la sensibilidad diagnóstica esperada al observar levaduras o pseudohifas empleando un frotis teñido con Gram?", 
+                options: ["40 a 50%", "65%", "85%", "95 a 100%"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, el Gram es la alternativa superior de tinción rápida en el consultorio, logrando fijar las estructuras fúngicas con mayor contraste que la simple evaluación salina, aunque aún por debajo del estándar de oro.<br><br>Perla ENARM: \"Observación de levaduras o pseudohifas en el frotis de exudado vaginal teñido con tinción de Gram (65% de sensibilidad)\".<br><br>Análisis de Distractores: La opción A corresponde a la sensibilidad del examen en fresco básico. Las opciones C y D reflejan las altísimas eficacias clínicas de los azoles o la sensibilidad del cultivo, no del frotis de escrutinio.", 
+                source: "GPC-IMSS-609-19, Diagnóstico y Tratamiento de Candidosis Vulvovaginal, 2019, Diagnóstico y paraclínicos, Página 36." 
+            },
+            {
+                id: 10, 
+                question: "¿Cuál es la sensibilidad clínica máxima esperada al utilizar exclusivamente el examen en fresco (con KOH) para la detección de levaduras?", 
+                options: ["10 a 20%", "40 a 60%", "70 a 80%", "90 a 95%"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, a pesar de ser la herramienta clínica inicial de elección por su rapidez y nulo costo, su baja capacidad diagnóstica intrínseca es la razón por la cual un resultado negativo no descarta la enfermedad si la sospecha clínica es alta.<br><br>Perla ENARM: \"Observación de levaduras o pseudohifas en el examen en fresco del exudado vaginal (40- 60% de sensibilidad)\".<br><br>Análisis de Distractores: La opción A subestima el valor de la prueba, volviéndola inútil. Las opciones C y D sobrestiman peligrosamente el método, atribuyéndole eficacias que solo logra el cultivo de Sabouraud.", 
+                source: "GPC-IMSS-609-19, Diagnóstico y Tratamiento de Candidosis Vulvovaginal, 2019, Diagnóstico y paraclínicos, Página 36." 
+            },
+            {
+                id: 11, 
+                question: "En una mujer con episodio no complicado en quien se prefiere o indica manejo tópico intravaginal, ¿cuál es el esquema de primera línea sugerido por la Guía?", 
+                options: ["Clotrimazol crema por 7 días", "Nistatina óvulos por 14 días", "Isoconazol óvulos por 3 días", "Ácido bórico óvulos por 21 días"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, cuando se opta por evitar la vía sistémica (fluconazol oral), el polieno tópico representa el estándar de duración moderada para asegurar el barrido micótico en la pared vaginal en un episodio episódico.<br><br>Perla ENARM: \"En la CVV no complicada: leve a moderada o periódica considerar regímenes farmacológicos cortos o de dosis única... Nistatina 100 000 U, una tableta u óvulo vaginal, por vía vaginal durante 14 días\".<br><br>Análisis de Distractores: Las opciones A y C son manejos alternativos cortos no marcados como la pauta principal de 14 días en la tabla de medicamentos. La opción D se reserva exclusivamente para inducciones difíciles en especies C. glabrata o cuadros complicados fallidos.", 
+                source: "GPC-IMSS-609-19, Diagnóstico y Tratamiento de Candidosis Vulvovaginal, 2019, Tratamiento Farmacológico, Página 54." 
+            },
+            {
+                id: 12, 
+                question: "En el tratamiento farmacológico de un episodio clasificado como \"Grave\" (extenso eritema, edema y fisuras), ¿cuál es el esquema terapéutico oral indicado?", 
+                options: ["Fluconazol 150 mg dosis única", "Itraconazol 200 mg dosis única", "Fluconazol 150 mg repetir a las 72 horas", "Fluconazol 150 mg semanal por 6 meses"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, ante la destrucción celular importante y la carga inflamatoria severa, la vida media de una sola dosis de fluconazol es insuficiente para mantener los niveles fungistáticos tisulares; escalar a dos dosis asegura la penetración profunda y erradicación.<br><br>Perla ENARM: \"En la CCV complicada indicar Fluconazol 150 mg por vía bucal una dosis y repetir a las 72 h una segunda dosis\".<br><br>Análisis de Distractores: Las opciones A y B son las pautas cortas para formas no complicadas o leves. La opción D es la fase supresiva o de mantenimiento estricta para formas recurrentes crónicas, no para resolver la gravedad aguda.", 
+                source: "GPC-IMSS-609-19, Diagnóstico y Tratamiento de Candidosis Vulvovaginal, 2019, Tratamiento Farmacológico, Página 58." 
+            },
+            {
+                id: 13, 
+                question: "Durante la fase inicial de inducción en el manejo bifásico de una Candidosis Vulvovaginal Recurrente, ¿qué esquema oral se debe prescribir para alcanzar la remisión micológica?", 
+                options: ["Fluconazol 150 mg repetir a las 72 horas", "Fluconazol 150 mg en los días 1, 4 y 7", "Fluconazol 150 mg semanal durante 1 mes", "Itraconazol 200 mg cada 12 horas por 3 días"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, la paciente con más de 4 eventos anuales requiere un golpe fungistático triple y sostenido para llevar la biomasa levaduriforme a niveles indetectables antes de transicionar al mantenimiento crónico.<br><br>Perla ENARM: \"Tratamiento de inducción... O Fluconazol 100 mg, 150 mg o 200 mg por vía bucal cada tercer día por 3 dosis (días 1, 4 y 7)\".<br><br>Análisis de Distractores: La opción A es el manejo exclusivo del episodio agudo severo. La opción C es una mezcla incorrecta de dosis. La opción D usa un azol con mayores efectos adversos sistémicos no justificados aquí como primera línea de inducción.", 
+                source: "GPC-IMSS-609-19, Diagnóstico y Tratamiento de Candidosis Vulvovaginal, 2019, Tratamiento Farmacológico, Página 60." 
+            },
+            {
+                id: 14, 
+                question: "En el contexto del manejo de una paciente con diagnóstico confirmado de patología vulvovaginal fúngica, ¿cuál es la conducta terapéutica normativa para su pareja masculina asintomática?", 
+                options: ["Administrar Fluconazol dosis única", "Aplicar Clotrimazol crema profiláctica", "Solicitar cultivo de secreción uretral", "No requiere recibir ningún tratamiento"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, al no considerarse primariamente una Infección de Transmisión Sexual (ITS) clásica, la presencia de la levadura en el hombre sin datos de balanitis no altera la tasa de curación ni la recurrencia de la mujer.<br><br>Perla ENARM: \"La pareja masculina no requiere tratamiento si está asintomática\".<br><br>Análisis de Distractores: Las opciones A y B someten al paciente a fármacos injustificados, aumentando costos y riesgos adversos sin beneficio comprobado. La opción C es un gasto innecesario que no cambiará la conducta expectante.", 
+                source: "GPC-IMSS-609-19, Diagnóstico y Tratamiento de Candidosis Vulvovaginal, 2019, Tratamiento Farmacológico, Página 45." 
+            },
+            {
+                id: 15, 
+                question: "En pacientes con fallas terapéuticas múltiples a azoles y cultivos positivos recurrentes, ¿qué hallazgo microbiológico específico sugiere fuertemente la presencia de resistencia antifúngica?", 
+                options: ["Crecimiento de biomasa abundante", "Coinfección fúngica y bacteriana", "Aislamiento de cepa albicans serotipo B", "Aislamiento repetido de la misma especie no albicans"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, la supervivencia sostenida de una variante genotípica rara (como C. glabrata o krusei) tras múltiples asaltos farmacológicos evidencia mutaciones adaptativas de bomba de flujo o alteraciones de la diana enzimática.<br><br>Perla ENARM: \"El aislamiento repetido de la misma especie de Candida no albicans puede indicar resistencia a antifúngicos\".<br><br>Análisis de Distractores: La opción A (abundante) denota carga, no resistencia intrínseca. La opción C es el serotipo salvaje más común a nivel mundial, típicamente sensible a todo esquema estándar.", 
+                source: "GPC-IMSS-609-19, Diagnóstico y Tratamiento de Candidosis Vulvovaginal, 2019, Diagnóstico y paraclínicos, Página 37." 
+            },
+            {
+                id: 16, 
+                question: "¿Cuál de las siguientes pacientes con patología vulvovaginal cumple el criterio estricto de la guía para ser enviada al servicio de Infectología en el tercer nivel de atención?", 
+                options: ["Falla terapéutica al primer esquema empírico con azoles", "Cuadro grave en paciente gestante del primer trimestre", "Aislamiento etiológico sin recursos para medir susceptibilidad", "Cuadro recurrente en paciente pediátrica sana"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, las unidades de medicina familiar o ginecología básica agotan su capacidad cuando se requiere fenotipar y genotipar resistencias complejas (antibiogramas fúngicos), requiriendo la intervención del máximo escalón infectológico.<br><br>Perla ENARM: \"Las pacientes con CVV recurrente que debieran ser enviadas... al tercer nivel de atención, son aquellas... en las que se ha identificado el agente causal pero se carece de recursos de laboratorio para identificación de la especie... así como la imposibilidad de determinación de resistencia\".<br><br>Análisis de Distractores: La opción A se envía a Ginecología (segundo nivel) para abordaje y colposcopia. La opción B se maneja in situ con clotrimazol tópico sin derivación alta.", 
+                source: "GPC-IMSS-609-19, Diagnóstico y Tratamiento de Candidosis Vulvovaginal, 2019, Criterios de Referencia, Página 67." 
+            },
+            {
+                id: 17, 
+                question: "De acuerdo a los ensayos pivotales citados, ¿qué porcentaje de pacientes logra mantenerse en remisión al finalizar un esquema de mantenimiento semestral con fluconazol?", 
+                options: ["42.9%", "66.7%", "81.6%", "90.8%"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, el éxito terapéutico de la supresión prolongada es rotundo mientras dura la impregnación farmacológica, logrando inactivar la germinación esporádica del comensal.<br><br>Perla ENARM: \"Al termino del tratamiento, 90.8 % del grupo de tratamiento con fluconazol y 35.9 % del grupo placebo estaban en remisión\".<br><br>Análisis de Distractores: La opción A (42.9%) es el porcentaje de mujeres que sigue asintomática 6 meses DESPUÉS de haber terminado la terapia. La opción B corresponde al éxito del Itraconazol oral. La opción C es la cura inicial clínica a 28 días con dosis única.", 
+                source: "GPC-IMSS-609-19, Diagnóstico y Tratamiento de Candidosis Vulvovaginal, 2019, Tratamiento Farmacológico, Página 60." 
+            },
+            {
+                id: 18, 
+                question: "Durante la inspección vulvoperineal, ¿cuál es el hallazgo dermatológico que apoya sólidamente el diagnóstico de Candidosis, formando parte de sus elementos clínicos diferenciales?", 
+                options: ["Cérvix en frambuesa o fresa", "Múltiples lesiones satélites", "Vesículas y pápulas agrupadas", "Úlceras indoloras de fondo limpio"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, el proceso inflamatorio erosivo generado por el micelio levaduriforme tiende a extenderse más allá de las mucosas principales, \"salpicando\" pequeñas placas o pústulas rojas en la periferia de la lesión mayor, lo que es patognomónico de infecciones por Candida sp.<br><br>Perla ENARM: \"Los elementos diferenciales de CVV son: características del flujo vulvovaginal, prurito, escoriación vulvar, lesiones satélites\".<br><br>Análisis de Distractores: La opción A es patognomónica de Tricomoniasis. La opción C orienta a primoinfección o reactivación por virus del Herpes Simple. La opción D describe el chancro duro sifilítico.", 
+                source: "GPC-IMSS-609-19, Diagnóstico y Tratamiento de Candidosis Vulvovaginal, 2019, Diagnóstico y paraclínicos, Página 41." 
+            },
+            {
+                id: 19, 
+                question: "Si los datos clínicos orientan decididamente hacia una patología bacteriana (vaginosis) en lugar de un cuadro micótico, ¿por qué está contraindicada la realización rutinaria de cultivos de exudado vaginal?", 
+                options: ["Elevado costo del medio de trasporte", "Alto riesgo de diseminación iatrogénica", "Presencia de infección polimicrobiana", "Ausencia de crecimiento in vitro"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, la vaginosis es primariamente una disbiosis (caos ecológico de la microbiota normal) y no una infección por un agente único absoluto; cultivar resultará en el aislamiento confuso de múltiples gérmenes anaerobios y aerobios que no cambian el manejo metronidazólico.<br><br>Perla ENARM: \"Se recomienda no realizar cultivos ante la sospecha de vulvovaginitis bacteriana debido a la posibilidad de un espectro de infección poli microbiana\".<br><br>Análisis de Distractores: Las opciones A, B y D son argumentos logísticos o microbiológicos falsos. La principal limitante es el valor predictivo nulo de ver crecer decenas de bacterias que normalmente coexisten ahí.", 
+                source: "GPC-IMSS-609-19, Diagnóstico y Tratamiento de Candidosis Vulvovaginal, 2019, Diagnóstico y paraclínicos, Página 42." 
+            },
+            {
+                id: 20, 
+                question: "Al considerar Itraconazol (200 mg cada 12 horas por un día) en vez del tratamiento convencional de primera línea para CVV, ¿cuál es la principal desventaja documentada en la GPC?", 
+                options: ["Inducción rápida de resistencia", "Mayor tiempo de inicio de acción", "Menor tasa de curación clínica global", "Significativamente más efectos secundarios"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, aunque posee buena eficacia micológica y es una alternativa válida de corto curso, su perfil de seguridad, interacciones (citocromo P450) y hepatotoxicidad limitan su uso rutinario frente al fluconazol.<br><br>Perla ENARM: \"El itraconazol causa significativamente más efectos secundarios durante el tratamiento sistémico comparado con el fluconazol, por ejemplo, reacciones anafilácticas, cefalea, etc.\".<br><br>Análisis de Distractores: Las opciones A, B y C son incorrectas ya que el fármaco es igual de potente, con tasas de curación micológica altísimas e idénticas a los otros azoles de amplio espectro, pero falla drásticamente en el rubro de tolerabilidad.", 
+                source: "GPC-IMSS-609-19, Diagnóstico y Tratamiento de Candidosis Vulvovaginal, 2019, Tratamiento Farmacológico, Página 53." 
+            },
+            {
+                id: 21, 
+                question: "¿Cuál es una de las principales complicaciones clínicas de la Candidosis Vulvovaginal cuando esta patología no recibe diagnóstico y tratamiento oportuno?", 
+                options: ["Carcinoma cervicouterino", "Fístula rectovaginal", "Embarazo ectópico", "Prolapso pélvico"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, subestimar esta patología conlleva riesgos reproductivos severos. El proceso inflamatorio crónico secundario a una infección no tratada puede ascender y dañar la integridad funcional y anatómica del tracto reproductivo superior, favoreciendo alteraciones tubáricas.<br><br>Perla ENARM: \"Particularmente cuando la CVV no es tratada, puede complicarse en enfermedad inflamatoria pélvica, infertilidad, embarazo ectópico, absceso pélvico, aborto espontáneo y trastornos menstruales\".", 
+                source: "GPC-IMSS-609-19, Diagnóstico y tratamiento de candidosis vulvovaginal en mujeres mayores a 12 años de edad, 2019, Justificación, Página 19." 
+            },
+            {
+                id: 22, 
+                question: "En el primer nivel de atención, ¿qué criterio clínico obliga al médico a referir de forma protocolaria a una paciente con Candidosis Vulvovaginal al servicio de Ginecología?", 
+                options: ["Falla a tratamiento empírico", "Gestación en primer trimestre", "Presencia de 2 episodios anuales", "Cultivo positivo a levaduras"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, la medicina de primer contacto asume cuadros no complicados utilizando esquemas de corta duración sin necesidad de cultivo. Si no existe mejoría, la etiología debe ser reevaluada en el segundo nivel para un abordaje ginecológico y confirmación microbiológica.<br><br>Perla ENARM: \"Las mujeres con CVV que debieran ser enviadas del primer nivel de atención al segundo nivel de atención al servicio de Ginecología, son aquellas con CVV no complicada que recibieron tratamiento empírico y no hubo respuesta\".", 
+                source: "GPC-IMSS-609-19, Diagnóstico y tratamiento de candidosis vulvovaginal en mujeres mayores a 12 años de edad, 2019, Criterios de Referencia, Página 66." 
+            },
+            {
+                id: 23, 
+                question: "Según la clasificación de severidad, ¿qué hallazgos a la exploración física definen estructuralmente a un cuadro como Candidosis Vulvovaginal grave?", 
+                options: ["Leucorrea fétida abundante", "Presencia de múltiples hifas", "Más de 4 episodios anuales", "Edema, escoriaciones y fisuras"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, la clínica grave se caracteriza por un grado extremo de reacción inflamatoria vulvar que compromete la integridad del epitelio escamoso, exigiendo modificar el esquema de dosis única a un esquema repetido a las 72 horas para asegurar la erradicación en un tejido ulcerado.<br><br>Perla ENARM: \"La CVV complicada se puede presentar como CVV grave: cuando a la exploración se encuentran signos intensos de eritema vulvar extenso, edema, escoriaciones y fisuras\".", 
+                source: "GPC-IMSS-609-19, Diagnóstico y tratamiento de candidosis vulvovaginal en mujeres mayores a 12 años de edad, 2019, Prevención Primaria: Factores de riesgo y Clasificación, Página 29." 
+            },
+            {
+                id: 24, 
+                question: "En una paciente con Candidosis Vulvovaginal no complicada, si se opta por Itraconazol oral en lugar de Fluconazol, ¿cuál es el esquema posológico normado de primera línea?", 
+                options: ["100 mg cada 24 horas por 7 días", "200 mg cada 12 horas por 1 día", "150 mg en dosis única", "400 mg cada 24 horas por 3 días"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, aunque el fluconazol es preferido por su menor tasa de efectos adversos, el itraconazol se posiciona como una opción sistémica altamente eficaz en cursos ultracortos para maximizar la biodisponibilidad tisular rápida sin prolongar la exposición metabólica.<br><br>Perla ENARM: \"En la CVV no complicada: leve a moderada o periódica considerar regímenes farmacológicos cortos... Itraconazol 200 mg por vía oral, dos veces al día, durante un día\".", 
+                source: "GPC-IMSS-609-19, Diagnóstico y tratamiento de candidosis vulvovaginal en mujeres mayores a 12 años de edad, 2019, Tratamiento Farmacológico, Página 54." 
+            },
+            {
+                id: 25, 
+                question: "¿Cuál es el tratamiento antimicótico de elección para una paciente en el primer trimestre de gestación que cursa con un cuadro agudo de Candidosis Vulvovaginal?", 
+                options: ["Clotrimazol crema por 14 días", "Fluconazol oral en dosis única", "Ketoconazol óvulos por 5 días", "Isoconazol crema dosis única"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, los azoles sistémicos cruzan la barrera placentaria y tienen reportes teratogénicos, por lo que están estrictamente prohibidos en la embriogénesis temprana. El manejo es exclusivamente tópico y de duración estándar para barrer el exceso de germinación fúngica.<br><br>Perla ENARM: \"En el embarazo, únicamente los azoles tópicos pueden ser utilizados en el primer trimestre de la gestación: Clotrimazol crema por 14 días\".", 
+                source: "GPC-IMSS-609-19, Diagnóstico y tratamiento de candidosis vulvovaginal en mujeres mayores a 12 años de edad, 2019, Tratamiento Farmacológico, Página 64." 
+            },
+            {
+                id: 26, 
+                question: "¿Cuál es la duración exacta exigida para el tratamiento local de inducción con Nistatina cuando se aísla la especie Candida glabrata en un cultivo?", 
+                options: ["7 días", "14 días", "21 días", "28 días"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, Candida glabrata carece de la sensibilidad inherente de albicans a los esquemas cortos de azoles. Al ser un hongo testarudo, demanda el uso de un antifúngico poliánico tópico y prolongar el tiempo de impregnación para depletar totalmente la carga micótica previo a una fase supresiva.<br><br>Perla ENARM: \"Tratamiento de inducción: Nistatina 100 000 U, una tableta u óvulo vaginal, por vía vaginal durante 14 días, o durante 21 días en caso de enfermedad por C. glabrata\".", 
+                source: "GPC-IMSS-609-19, Diagnóstico y tratamiento de candidosis vulvovaginal en mujeres mayores a 12 años de edad, 2019, Tratamiento Farmacológico, Página 60." 
+            },
+            {
+                id: 27, 
+                question: "En el contexto del embarazo, ¿cuál es el mecanismo anatómico y metabólico mediado principalmente por la progesterona que detona el crecimiento de la levadura?", 
+                options: ["Aumenta avidez celular", "Aumenta glucógeno tisular", "Disminuye lactobacilos protectores", "Incrementa pH vaginal"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, la progesterona altera drásticamente el medio vaginal, engrosando la mucosa y saturándola de carbohidratos, lo que funciona como un sustrato energético (fuente de carbono) perfecto para que el hongo germine agresivamente.<br><br>Perla ENARM: \"La alta concentración de progesterona también es responsable del aumento del contenido de glucógeno en el tejido vaginal, que proporciona una fuente de carbono para el crecimiento y la germinación de Candida\".", 
+                source: "GPC-IMSS-609-19, Diagnóstico y tratamiento de candidosis vulvovaginal en mujeres mayores a 12 años de edad, 2019, Prevención Primaria: Factores de riesgo y Clasificación, Página 33." 
+            },
+            {
+                id: 28, 
+                question: "Independientemente de los recursos de consultorio, ¿cuál estudio de gabinete se establece normativamente como el estándar de oro para el diagnóstico de la infección vulvovaginal fúngica?", 
+                options: ["Frotis con tinción Gram", "Examen directo en fresco", "Prueba de aminas positiva", "Cultivo para levadura"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, solo el aislamiento microbiológico in vitro en agar selectivo (Sabouraud) proporciona un diagnóstico irrefutable de certeza y, fundamentalmente, permite fenotipar a la cepa (aislar glabrata vs albicans) ante fracasos terapéuticos.<br><br>Perla ENARM: \"El cultivo de la levadura se considera el estándar de oro para el diagnóstico de CVV\".", 
+                source: "GPC-IMSS-609-19, Diagnóstico y tratamiento de candidosis vulvovaginal en mujeres mayores a 12 años de edad, 2019, Diagnóstico clínico y pruebas diagnósticas, Página 37." 
+            },
+            {
+                id: 29, 
+                question: "Clínicamente, ¿cuáles son los principales factores ambientales documentados que propician y exacerban el espectro inflamatorio de la Candidosis Vulvovaginal?", 
+                options: ["Uso de baños de asiento", "Aplicación de jabón perfumado", "Humedad y fricción", "Uso prolongado de tampones"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, el entorno físico local interviene fuertemente; el uso de prendas sintéticas muy ajustadas altera la termorregulación perineal, provocando maceración de las células epidérmicas y anclaje de esporas fúngicas que reaccionan a nivel inflamatorio o alérgico.<br><br>Perla ENARM: \"Se dice que algunos factores ambientales favorecen la CVV como la humedad, calor, maceración crónica y fricción\".", 
+                source: "GPC-IMSS-609-19, Diagnóstico y tratamiento de candidosis vulvovaginal en mujeres mayores a 12 años de edad, 2019, Prevención Primaria: Factores de riesgo y Clasificación, Página 34." 
+            },
+            {
+                id: 30, 
+                question: "En una paciente con recurrencia, si la terapia supresiva con Fluconazol oral semanal no es posible de aplicar, ¿cuál es el régimen de mantenimiento alternativo altamente recomendado?", 
+                options: ["Clotrimazol tópico 2 veces por semana", "Nistatina óvulos 1 vez por semana", "Isoconazol crema cada 14 días", "Ketoconazol oral 1 vez al mes"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, cuando existe contraindicación a los azoles sistémicos o falta de tolerancia gástrica durante un esquema de seis meses, mantener al epitelio impregnado de azoles tópicos de forma constante previene que las esporas latentes retomen su crecimiento germinativo sintomático.<br><br>Perla ENARM: \"Los regímenes de mantenimiento incluyen fluconazol vía bucal (100, 150 o 200 mg) una vez por semana durante 6 meses o, si no es factible, 200 mg de crema tópica de clotrimazol 2 veces por semana\".", 
+                source: "GPC-IMSS-609-19, Diagnóstico y tratamiento de candidosis vulvovaginal en mujeres mayores a 12 años de edad, 2019, Tratamiento Farmacológico, Página 61." 
+            },
+            {
+                id: 31, 
+                question: "¿Qué manifestación clínica temporal establece el diagnóstico terminológico específico de Candidosis Vulvovaginal 'Crónica'?", 
+                options: ["4 o más episodios al año", "Síntomas persistentes sin remisiones", "Resistencia comprobada a azoles", "Exacerbación severa premenstrual"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, hay una diferencia sustancial entre los episodios recurrentes (cuadros que inician y se curan) y el estado crónico; en este último, la paciente cursa con una vaginitis tórpida, dolor y prurito constante que nunca cede, afectando permanentemente su calidad de vida y descartando terapias cortas.<br><br>Perla ENARM: \"La presencia de manifestaciones clínicas persistentes (sin remisiones entre eventos infecciosos), define a la candidosis vulvovaginal crónica (CVVC)\".", 
+                source: "GPC-IMSS-609-19, Diagnóstico y tratamiento de candidosis vulvovaginal en mujeres mayores a 12 años de edad, 2019, Definición, Página 24." 
+            },
+            {
+                id: 32, 
+                question: "¿Cuál de las siguientes alteraciones metabólicas de base contraindica drásticamente el uso de tratamientos antifúngicos de curso corto para erradicación?", 
+                options: ["Hipotiroidismo primario", "Hipertensión arterial sistémica", "Obesidad grado III", "Diabetes mellitus"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, el entorno hiperglucémico y el defecto de la quimiotaxis de los neutrófilos impiden que el cuerpo colabore en el aclaramiento fúngico. En estas pacientes, los regímenes de \"dosis única\" fallan invariablemente, reclasificando a la paciente como \"complicada\" desde el diagnóstico inicial.<br><br>Perla ENARM: \"La CVV en hospederos con enfermedades subyacentes: diabetes, VIH, manejo con corticoesteroides, ya identificada: Control de la comorbilidad enfermedad. No prescribir tratamiento corto\".", 
+                source: "GPC-IMSS-609-19, Diagnóstico y tratamiento de candidosis vulvovaginal en mujeres mayores a 12 años de edad, 2019, Tratamiento Farmacológico, Página 58." 
+            },
+            {
+                id: 33, 
+                question: "A pesar de ser utilizadas de forma empírica como remedio 'limpiador', ¿cuál complicación grave está estadísticamente asociada al uso crónico de duchas vaginales?", 
+                options: ["Enfermedad inflamatoria pélvica", "Atrofia de la mucosa vaginal", "Falla hepática fulminante", "Carcinoma epidermoide de cérvix"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, la inserción a presión de líquidos en el canal pélvico no erradica las colonias, sino que empuja patógenos mixtos a través del canal cervical hacia el endometrio y trompas, además de alterar catastróficamente el pH vaginal fisiológico.<br><br>Perla ENARM: \"ensayos clínicos aleatorizados que compararan la duchas intravaginales con otras intervenciones... sugieren una posible asociación con efectos adversos graves, como enfermedad inflamatoria pélvica, endometritis y embarazo ectópico\".", 
+                source: "GPC-IMSS-609-19, Diagnóstico y tratamiento de candidosis vulvovaginal en mujeres mayores a 12 años de edad, 2019, Tratamiento Farmacológico, Página 63." 
+            },
+            {
+                id: 34, 
+                question: "Al prescribir de forma protocolaria una dosis única de 150 mg de Fluconazol oral, ¿cuál es la tasa de eficacia clínica que se documenta al día 28 de evolución?", 
+                options: ["40.5%", "66.7%", "74.7%", "90.8%"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, comprender el comportamiento clínico de la terapia estándar es vital; una dosis rápida es capaz de frenar el crecimiento enzimático, permitiendo al sistema inmune local de una mujer sana eliminar cerca de 3/4 partes de la patología en 4 semanas.<br><br>Perla ENARM: \"La tasa de eficacia para el resultado terapéutico: eficacia clínica y micológica en forma individual por paciente fue del 74,7% (74/99) en el día 28\".", 
+                source: "GPC-IMSS-609-19, Diagnóstico y tratamiento de candidosis vulvovaginal en mujeres mayores a 12 años de edad, 2019, Tratamiento Farmacológico, Página 48." 
+            },
+            {
+                id: 35, 
+                question: "Según los criterios de clasificación fisiopatológica, ¿cuáles entidades de salud definen a una paciente con Candidosis como un 'hospedero susceptible'?", 
+                options: ["Multiparidad y obesidad central", "Embarazo y diabetes mellitus", "Uso de dispositivo intrauterino", "Edad extrema y desnutrición"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, las formas complicadas se categorizan así debido a las condiciones de fondo que perpetúan el daño. Estas alteraciones incluyen el bombardeo hormonal, el exceso de glucógeno y la incompetencia inmunitaria, lo cual hace mandatorio prolongar los esquemas terapéuticos.<br><br>Perla ENARM: \"La CVV recurrente o persistente se presentan en hospederos susceptibles con una condición subyacente como: embarazo, diabetes mellitus, infección por VIH...\".", 
+                source: "GPC-IMSS-609-19, Diagnóstico y tratamiento de candidosis vulvovaginal en mujeres mayores a 12 años de edad, 2019, Prevención Primaria: Factores de riesgo y Clasificación, Página 29." 
+            },
+            {
+                id: 36, 
+                question: "En el tratamiento de mantenimiento prolongado a 6 meses para un cuadro persistente, si se utiliza Itraconazol de 200 mg bid en vez de Fluconazol semanal, ¿cuál es la frecuencia de administración indicada?", 
+                options: ["Una vez por semana", "Dos veces por semana", "Diariamente sin interrupción", "Un día por mes"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, la farmacocinética del Itraconazol en tejido epitelial permite que una dosis abrumadora y concentrada durante 24 horas mantenga un efecto residual en el tejido vaginal suficiente para evitar reactivaciones en las siguientes semanas.<br><br>Perla ENARM: \"El tratamiento adecuado incluye fluconazol vía bucal 150 mg una vez por semana durante seis meses o itraconazol vía bucal 200 mg 2 veces por día, un día por mes durante seis meses\".", 
+                source: "GPC-IMSS-609-19, Diagnóstico y tratamiento de candidosis vulvovaginal en mujeres mayores a 12 años de edad, 2019, Tratamiento Farmacológico, Página 59." 
+            },
+            {
+                id: 37, 
+                question: "De acuerdo a los estudios observacionales citados como referencia diagnóstica, ¿cuál es el síntoma primario reportado con mayor frecuencia por las pacientes?", 
+                options: ["Leucorrea", "Dispareunia", "Disuria", "Sangrado transvaginal"], 
+                answer: 0, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, la hiperproducción de moco defensivo, sumada a la lisis celular y presencia de la biomasa fungosa misma, hacen de la secreción anormal el principal pivote que preocupa a la usuaria, debiendo caracterizarse siempre en el interrogatorio.<br><br>Perla ENARM: \"En un estudio retrospectivo... se reportó que la leucorrea fue el síntoma más frecuente (72,25%), seguida del malestar vulvar (63,23%), dispareunia (32,25%) y disuria (24,92%)\".", 
+                source: "GPC-IMSS-609-19, Diagnóstico y tratamiento de candidosis vulvovaginal en mujeres mayores a 12 años de edad, 2019, Diagnóstico clínico y pruebas diagnósticas, Página 38." 
+            },
+            {
+                id: 38, 
+                question: "Para el manejo tópico de primera línea en una Candidosis Vulvovaginal no complicada, ¿cuál es la dosificación estándar evaluada para el uso del óvulo de Isoconazol?", 
+                options: ["100 mg por 7 días", "200 mg por 3 días", "600 mg dosis única", "1200 mg dosis única"], 
+                answer: 2, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, los esquemas locales para cuadros leves priorizan la adherencia de la paciente. Otorgar una dosis masiva intravaginal que actúe como un dispositivo de liberación prolongada es altamente resolutivo y favorecido en la práctica obstétrica actual.<br><br>Perla ENARM: \"En la CVV no complicada: leve a moderada o periódica considerar regímenes farmacológicos cortos o de dosis única de acuerdo a los medicamento disponibles como:... Isoconazol 600 mg óvulo vaginal, dosis única\".", 
+                source: "GPC-IMSS-609-19, Diagnóstico y tratamiento de candidosis vulvovaginal en mujeres mayores a 12 años de edad, 2019, Tratamiento Farmacológico, Página 54." 
+            },
+            {
+                id: 39, 
+                question: "En el seguimiento clínico de recurrencia, ¿qué porcentaje de las mujeres sometidas a fluconazol logran estar asintomáticas a los 6 meses posteriores a finalizar el mantenimiento?", 
+                options: ["21.9%", "42.9%", "74.7%", "90.8%"], 
+                answer: 1, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, es fundamental comprender que las infecciones micóticas crónicas no desaparecen permanentemente una vez suspendida la supresión; el reservorio intestinal o reexposición causa que más de la mitad de las mujeres experimenten eventualmente nuevas recaídas en el siguiente semestre.<br><br>Perla ENARM: \"Al termino del tratamiento, 90.8 % del grupo de tratamiento con fluconazol... estaban en remisión. 6 meses después de terminada la terapia, 42.9 % del grupo de tratamiento fue asintomático frente al 21,9 % del grupo placebo\".", 
+                source: "GPC-IMSS-609-19, Diagnóstico y tratamiento de candidosis vulvovaginal en mujeres mayores a 12 años de edad, 2019, Tratamiento Farmacológico, Página 60." 
+            },
+            {
+                id: 40, 
+                question: "Si el médico carece del equipo necesario para realizar el examen en fresco ante una paciente que presenta francos datos clínicos de Candidosis Complicada, ¿cuál es el proceder normativo indicado?", 
+                options: ["Administrar esquema corto tópico", "Solicitar prueba de aminas urgente", "Realizar colposcopia de escrutinio", "Envío al siguiente nivel de atención"], 
+                answer: 3, 
+                justification: "Justificación: De acuerdo a la GPC de Candidosis Vulvovaginal, ante un proceso con ulceración grave o persistencia temporal asintomática (complicada), el tratamiento empírico de un solo día genera resistencia y daño sistémico innecesario. Confirmar la etiología, medir el riesgo y evitar lesiones irreversibles obligan a la referencia si el equipo local es inadecuado.<br><br>Perla ENARM: \"Cuando se trata de pacientes con CVV complicada y se carece de los recursos de personal, insumos y equipo para realizar el examen en fresco, se recomienda su envío al siguiente nivel de atención\".", 
+                source: "GPC-IMSS-609-19, Diagnóstico y tratamiento de candidosis vulvovaginal en mujeres mayores a 12 años de edad, 2019, Diagnóstico clínico y pruebas diagnósticas, Página 43." 
+            }        
+        ];
+
+        // ==========================================
+        // ==========================================
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('gyoCLastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('gyoCProgress');
+                localStorage.removeItem('gyoCLastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-pink-500 shadow-md z-10 border-pink-500 dark:border-pink-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-rose-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "GINECOLOGÍA Y OBSTETRICIA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "GPC IMSS-609-19 • Diagnóstico y tratamiento de candidosis vulvovaginal en mujeres mayores a 12 años de edad";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="DS00108GYOE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-pink-100 dark:border-pink-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-pink-50 has-[:checked]:border-pink-400 dark:has-[:checked]:bg-pink-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-pink-600 dark:hover:bg-pink-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('gyoCProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('gyoCLastQId', currentQuestionId);
+                else localStorage.removeItem('gyoCLastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('gyoCProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>
