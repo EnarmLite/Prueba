@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const questionsData = [
+    {
+        id: 1,
+        question: "De acuerdo a la GPC, ¿cuál es el porcentaje de indicaciones de inducción del trabajo de parto que corresponde a los síndromes hipertensivos?",
+        options: ["20%", "75%", "5%", "2.5%"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de inducción del trabajo de parto, los trastornos hipertensivos del embarazo son la causa número uno para requerir la terminación asistida de la gestación. Le siguen la diabetes con 20% y la ruptura prematura de membranas con 5%.<br><br>Perla ENARM: \"Un meta análisis concluyó que las principales indicaciones para la inducción del parto son: síndromes hipertensivos 75%, diabetes 20%, ruptura prematura de membranas 5%, gestación prolongada 2.5% y el líquido amniótico disminuido 2.5%.\"<br><br>Análisis de Distractores: La opción A (20%) corresponde a la diabetes. La opción C (5%) a la ruptura prematura de membranas. La opción D (2.5%) a la gestación prolongada o al oligohidramnios.",
+        source: "SS-799-17, Intervenciones de enfermería para la atención de la mujer en inducción del trabajo de parto, 2017, Intervenciones de enfermería, Página 14."
+    },
+    {
+        id: 2,
+        question: "¿Qué puntuación en la escala de Bishop determina que un cuello uterino es favorable y tiene alta probabilidad de parto espontáneo?",
+        options: ["≥ 8 puntos", "≥ 6 puntos", "≤ 5 puntos", "≤ 3 puntos"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de inducción del trabajo de parto, la evaluación del cérvix mediante la escala de Bishop es el paso inicial ineludible. Un puntaje alto indica madurez cervical, reduciendo la necesidad de prostaglandinas y permitiendo el paso a oxitocina o amniotomía.<br><br>Perla ENARM: \"Una puntuación de 8 o más en general indica que el cuello uterino está maduro, o favorable, es decir, cuando hay alta probabilidad de parto espontáneo, o respuesta favorable a las intervenciones realizadas para inducir el parto.\"<br><br>Análisis de Distractores: La opción C (≤ 5 puntos) define estrictamente a un cuello inmaduro o desfavorable que requiere maduración farmacológica o mecánica inicial. Las opciones B y D no son puntos de corte diagnósticos establecidos en el documento.",
+        source: "SS-799-17, Intervenciones de enfermería para la atención de la mujer en inducción del trabajo de parto, 2017, Intervenciones de enfermería, Página 15."
+    },
+    {
+        id: 3,
+        question: "De acuerdo a la GPC, ¿qué punto de corte en la edad materna es considerado como un factor de riesgo para el fracaso de la inducción?",
+        options: ["> 30 años", "> 35 años", "> 40 años", "> 45 años"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de inducción del trabajo de parto, la edad materna avanzada se asocia fisiológicamente a una menor respuesta de los receptores miometriales a los uterotónicos, incrementando la tasa de cesáreas por falta de progresión.<br><br>Perla ENARM: \"Existen varios factores que se asocian con un porcentaje menor de éxito en el trabajo de parto con una cesárea previa: cesárea anterior que no progreso o no hubo dilatación completa, historia de dos cesáreas, edad materna >40 años, índice de masa corporal >30, embarazo prolongado con más de 41 semanas y el peso al nacer >4000 gr.\"<br><br>Análisis de Distractores: Aunque la edad > 35 años (opción B) se considera riesgosa para cromosomopatías, para el fracaso específico de la inducción el riesgo documentado es > 40 años.",
+        source: "SS-799-17, Intervenciones de enfermería para la atención de la mujer en inducción del trabajo de parto, 2017, Factores de riesgo en la mujer embarazada, Página 12."
+    },
+    {
+        id: 4,
+        question: "¿Qué técnica no farmacológica carece de evidencia clínica para ser recomendada rutinariamente en la inducción del trabajo de parto?",
+        options: ["Deambulación asistida", "Técnicas de respiración", "Uso de acupuntura", "Apoyo emocional continuo"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de inducción del trabajo de parto, existen prácticas empíricas que las pacientes suelen demandar pero que no han demostrado alterar favorablemente las contracciones o el acortamiento del trabajo de parto y pueden retrasar la atención médica oportuna.<br><br>Perla ENARM: \"La evidencia disponible no admite los siguientes métodos para la inducción del trabajo de parto: suplementos de hierbas, acupuntura, homeopatía, aceite de castor, baños calientes, enemas o las relaciones sexuales.\"<br><br>Análisis de Distractores: La deambulación (A), las técnicas de respiración (B) y el apoyo emocional (D) sí forman parte activa de las medidas de confort plenamente apoyadas para mejorar la experiencia materna.",
+        source: "SS-799-17, Intervenciones de enfermería para la atención de la mujer en inducción del trabajo de parto, 2017, Intervenciones de enfermería, Página 23."
+    },
+    {
+        id: 5,
+        question: "Durante la vigilancia de la frecuencia cardíaca fetal, ¿qué valor indica taquicardia fetal sugerente de hipoxia leve?",
+        options: ["> 140 latidos por minuto", "> 150 latidos por minuto", "> 160 latidos por minuto", "> 170 latidos por minuto"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de inducción del trabajo de parto, el monitoreo intermitente o continuo es el indicador principal de bienestar. Una frecuencia elevada puede ser la primera respuesta compensatoria ante una hiperestimulación uterina.<br><br>Perla ENARM: \"Valores entre 100 a 119 latidos por minuto señalan bradicardia y valores por arriba de 160 latidos por minuto indican taquicardia, ambos signos de hipoxia leve.\"<br><br>Análisis de Distractores: Las opciones A y B entran dentro del rango basal normal (120 a 160 latidos por minuto). La opción D es taquicardia, pero el límite clínico inicial de alarma dictado por la referencia técnica es a partir de > 160 latidos por minuto.",
+        source: "SS-799-17, Intervenciones de enfermería para la atención de la mujer en inducción del trabajo de parto, 2017, Intervenciones de enfermería, Página 22."
+    },
+    {
+        id: 6,
+        question: "De acuerdo a la GPC, ¿cuál es un efecto adverso esperado que exige vigilancia tras la administración de misoprostol vaginal?",
+        options: ["Hipertensión arterial sistémica", "Diarrea y dolor abdominal", "Retención urinaria aguda", "Bloqueo auriculoventricular"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de inducción del trabajo de parto, las prostaglandinas tienen efecto a nivel de la musculatura lisa no solo miometrial, sino gastrointestinal, lo que explica sus efectos adversos sistémicos más comunes.<br><br>Perla ENARM: \"Por consenso del grupo desarrollador se concluyó que el personal de enfermería deberá vigilar la presencia de reacciones adversas al misoprostol como: diarrea, dolor abdominal, nauseas, flatulencias, dispepsia, cefalea, vomito, estreñimiento y mareo.\"<br><br>Análisis de Distractores: La hipertensión (A) es un efecto adverso de alcaloides del cornezuelo de centeno (ergonovina), no de prostaglandinas. El misoprostol no ocasiona efectos urológicos (C) ni bloqueos cardíacos directos (D).",
+        source: "SS-799-17, Intervenciones de enfermería para la atención de la mujer en inducción del trabajo de parto, 2017, Intervenciones de enfermería, Página 18-19."
+    },
+    {
+        id: 7,
+        question: "¿Qué antecedente materno representa el principal factor de riesgo uterino y contraindica de manera absoluta la inducción?",
+        options: ["Cicatrices uterinas previas", "Índice de masa corporal > 30", "Diabetes gestacional descontrolada", "Ruptura prematura de membranas"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de inducción del trabajo de parto, someter a estrés farmacológico a un útero con miometrio cicatrizado eleva dramáticamente el riesgo de ruptura uterina catastrófica (de 0.2 a 0.8%).<br><br>Perla ENARM: \"En los países desarrollados, las cicatrices uterinas son el principal factor de riesgo uterino además de la inserción placentaria anormal (placenta previa y acreta).\"<br><br>Análisis de Distractores: La obesidad (B) es solo un factor de riesgo de fracaso, no una contraindicación. La diabetes (C) y la ruptura de membranas (D) son, por el contrario, indicaciones principales para iniciar la inducción del parto.",
+        source: "SS-799-17, Intervenciones de enfermería para la atención de la mujer en inducción del trabajo de parto, 2017, Factores de riesgo en la mujer embarazada, Página 12."
+    },
+    {
+        id: 8,
+        question: "Antes de realizar un barrido de membranas como método complementario, ¿qué condición clínica debe descartarse estrictamente?",
+        options: ["Placenta fúndica", "Placenta previa o baja", "Cérvix con dilatación de 2 cm", "Macrosomía fetal asimétrica"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de inducción del trabajo de parto, introducir los dedos para despegar las membranas amnióticas del segmento inferior puede causar una hemorragia masiva y letal si se manipula una inserción placentaria anómala.<br><br>Perla ENARM: \"El personal de enfermería verificará que no haya datos de placenta baja antes del barrido de membrana y de la inducción del trabajo de parto.\"<br><br>Análisis de Distractores: La placenta fúndica (A) es la inserción normal. Un cérvix con 2 cm (C) es, de hecho, el escenario ideal para lograr acceder con el dedo y realizar el barrido. La macrosomía (D) influye en la vía de parto, pero no prohíbe mecánicamente el barrido.",
+        source: "SS-799-17, Intervenciones de enfermería para la atención de la mujer en inducción del trabajo de parto, 2017, Intervenciones de enfermería, Página 16."
+    },
+    {
+        id: 9,
+        question: "Tras administrar la dosis inicial de dinoprostona, ¿en qué intervalo de horas debe revalorarse el índice de Bishop?",
+        options: ["1 a 2 horas", "3 a 5 horas", "6 a 24 horas", "48 a 72 horas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de inducción del trabajo de parto, las prostaglandinas requieren un periodo de latencia celular para reorganizar las fibras de colágeno cervical y absorber agua antes de observar un borramiento físico real.<br><br>Perla ENARM: \"El índice de Bishop debe ser revalorado de 6 a 24 horas después de la administración de PGE2, para monitorear el progreso.\"<br><br>Análisis de Distractores: Explorar antes de las 6 horas (A y B) expone a la paciente a tactos vaginales innecesarios, dolor y riesgo de infección intraamniótica sin otorgar información útil. Después de 24 horas (D), se considera un periodo demasiado prolongado de riesgo de isquemia fetal sin monitoreo.",
+        source: "SS-799-17, Intervenciones de enfermería para la atención de la mujer en inducción del trabajo de parto, 2017, Intervenciones de enfermería, Página 19."
+    },
+    {
+        id: 10,
+        question: "De acuerdo a la GPC, ¿a partir de qué edad gestacional el embarazo se clasifica como prolongado e indica una inducción inminente?",
+        options: ["≥ 39 semanas", "≥ 40 semanas", "≥ 41 semanas", "≥ 42 semanas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de inducción del trabajo de parto, la insuficiencia placentaria senil inicia fisiológicamente a partir de esta edad, elevando los riesgos de oligohidramnios, sufrimiento fetal y aspiración de meconio.<br><br>Perla ENARM: \"Son indicaciones para inducción del parto: síndrome de hipertensión durante la gestación, edad gestacional mayor o igual a 41 semanas y la ruptura prematura de membranas.\"<br><br>Análisis de Distractores: Inducir de forma rutinaria a las 39 (A) o 40 semanas (B) incrementa riesgos iatrogénicos sin indicación formal. Esperar deliberadamente hasta las 42 semanas (D) se considera obsoleto por el alto índice de mortalidad perinatal.",
+        source: "SS-799-17, Intervenciones de enfermería para la atención de la mujer en inducción del trabajo de parto, 2017, Intervenciones de enfermería, Página 15."
+    },
+    {
+        id: 11,
+        question: "¿Qué complicación uterina aguda aumenta su prevalencia de manera dosis-dependiente al utilizar oxitocina intravenosa?",
+        options: ["Prolapso de cordón umbilical", "Hiperestimulación uterina", "Infección intraamniótica", "Desprendimiento prematuro de placenta"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de inducción del trabajo de parto, la infusión rápida y no calculada de oxitocina satura los receptores miometriales provocando polisistolia, taquisistolia o hipertonía que cortan el flujo sanguíneo placentario.<br><br>Perla ENARM: \"El uso de altas dosis de oxitocina aumenta el riesgo de hiperestimulación uterina.\"<br><br>Análisis de Distractores: El prolapso de cordón (A) se asocia a la ruptura artificial de membranas con presentación libre. La infección (C) se relaciona a múltiples tactos o membranas rotas de larga evolución.",
+        source: "SS-799-17, Intervenciones de enfermería para la atención de la mujer en inducción del trabajo de parto, 2017, Detección oportuna de complicaciones, Página 24."
+    },
+    {
+        id: 12,
+        question: "¿En qué lapso máximo de tiempo debe ocurrir el nacimiento para catalogar estadísticamente una inducción como satisfactoria?",
+        options: ["6 horas posteriores", "12 horas posteriores", "24 horas posteriores", "48 horas posteriores"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de inducción del trabajo de parto, el éxito del manejo farmacológico y mecánico se mide en lograr un parto vaginal efectivo sin alargar la estancia hospitalaria a un límite de agotamiento o riesgo de sepsis.<br><br>Perla ENARM: \"Se considera como satisfactorio cuando el parto se produce dentro de las 24 horas posteriores a la inducción.\"<br><br>Análisis de Distractores: Un límite de 6 a 12 horas (A y B) es irreal, ya que solo la maduración cervical puede tomar hasta 24 horas. Exceder las 24 horas (D) se considera clínicamente fallido y requiere replantear la vía de nacimiento.",
+        source: "SS-799-17, Intervenciones de enfermería para la atención de la mujer en inducción del trabajo de parto, 2017, Intervenciones de enfermería, Página 17."
+    },
+    {
+        id: 13,
+        question: "En la fase activa del trabajo de parto inducido, ¿cuántas horas sin cambios en la dilatación establecen la indicación para realizar cesárea?",
+        options: ["> 1 hora", "> 2 horas", "> 3 horas", "> 5 horas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de inducción del trabajo de parto, la detención del progreso con dinámica uterina adecuada y cuello ya borrado refleja una desproporción cefalopélvica o fatiga miometrial intratable médicamente.<br><br>Perla ENARM: \"En la fase activa, se recomienda que la duración total de la falta de progreso no exceda de 3 horas; en ese punto, se deberá realizar una cesárea.\"<br><br>Análisis de Distractores: Tomar decisiones antes de las 3 horas (A y B) aumenta intervenciones innecesarias. Permitir 5 horas o más de estancamiento (D) eleva la morbimortalidad por hipoxia, edema del canal y hemorragia postparto.",
+        source: "SS-799-17, Intervenciones de enfermería para la atención de la mujer en inducción del trabajo de parto, 2017, Intervenciones de enfermería, Página 17."
+    },
+    {
+        id: 14,
+        question: "De acuerdo a la GPC, ¿con qué frecuencia mínima en minutos debe monitorizarse el patrón de frecuencia cardíaca fetal y las contracciones?",
+        options: ["Cada 10 a 15 minutos", "Cada 15 a 20 minutos", "Cada 30 a 45 minutos", "Cada 60 a 90 minutos"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de inducción del trabajo de parto, establecer periodos de control estandarizados permite asegurar el bienestar sin saturar de intervenciones invasivas a la mujer que requieren deambular y descansar.<br><br>Perla ENARM: \"La frecuencia cardiaca fetal debe auscultarse antes, durante y después de las contracciones y se sugiere un control cada 30 a 45 minutos.\"<br><br>Análisis de Distractores: Mediciones muy cortas (A y B) solo aplican ante pérdida del bienestar fetal comprobada o en etapa expulsiva inminente. Prolongarlo a más de una hora (D) incrementa la incapacidad de detectar desaceleraciones tempranas.",
+        source: "SS-799-17, Intervenciones de enfermería para la atención de la mujer en inducción del trabajo de parto, 2017, Intervenciones de enfermería, Página 22."
+    },
+    {
+        id: 15,
+        question: "¿Qué beneficio clínico comprobado otorgan los métodos de inducción mecánicos (como catéteres con balón) sobre los métodos farmacológicos?",
+        options: ["Aceleran el inicio del borramiento", "Reducen el riesgo de hiperestimulación", "Disminuyen el dolor materno reportado", "Previenen la infección del tracto urinario"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de inducción del trabajo de parto, la dilatación por compresión directa sobre el cérvix promueve la liberación de prostaglandinas endógenas suaves, sin generar los picos agresivos de contracciones de los fármacos.<br><br>Perla ENARM: \"Los métodos mecánicos como tapones de laminaria o catéter con balón, reducen el riesgo de hiperestimulación uterina con o sin cambios en la frecuencia cardíaca fetal.\"<br><br>Análisis de Distractores: No aceleran sistemáticamente los tiempos totales de parto (A) respecto a las hormonas. Son a menudo asociados con disconfort físico a la inserción (C) y no previenen infecciones de ningún tipo (D).",
+        source: "SS-799-17, Intervenciones de enfermería para la atención de la mujer en inducción del trabajo de parto, 2017, Intervenciones de enfermería, Página 22."
+    },
+    {
+        id: 16,
+        question: "De acuerdo a la GPC, ¿qué índice de masa corporal aumenta estadísticamente el riesgo de un procedimiento de inducción fallido?",
+        options: ["> 25", "> 28", "> 30", "> 40"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de inducción del trabajo de parto, la obesidad interfiere tanto en la biodisponibilidad y farmacocinética de los inductores tisulares como en la mecánica muscular expulsiva de la pelvis.<br><br>Perla ENARM: \"El personal de enfermería valorará los antecedentes obstétricos desde la consulta prenatal, en particular antecedentes de cesárea, edad materna, índice de masa corporal >30, embarazo prolongado con más de 41 semanas y peso del producto al nacer >4000 gr.\"<br><br>Análisis de Distractores: El sobrepeso leve (A y B) no ha mostrado un umbral de fracaso clínico contundente en los estudios que sustentan la guía.",
+        source: "SS-799-17, Intervenciones de enfermería para la atención de la mujer en inducción del trabajo de parto, 2017, Factores de riesgo en la mujer embarazada, Página 12."
+    },
+    {
+        id: 17,
+        question: "¿Qué complicación materna o fetal obliga al personal de salud a suspender toda infusión o aplicación para inducción de forma inmediata?",
+        options: ["Datos de acidosis metabólica", "Borramiento cervical del 80%", "Descenso de la presentación a +1", "Dinámica de 4 contracciones en 10 min"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de inducción del trabajo de parto, la asfixia intrauterina manifestada bioquímicamente es la señal definitiva de insuficiencia placentaria e hipoxia grave que puede evolucionar a encefalopatía hipóxico-isquémica severa.<br><br>Perla ENARM: \"El personal de enfermería deberá suspender y notificar inmediatamente la presencia de complicaciones como la insuficiencia útero-placentaria, datos de acidosis metabólica o depresión fetal.\"<br><br>Análisis de Distractores: Las opciones B, C y D (4 en 10 min) son, en realidad, los hallazgos y objetivos exitosos que indican una excelente evolución y progresión del trabajo de parto inducido.",
+        source: "SS-799-17, Intervenciones de enfermería para la atención de la mujer en inducción del trabajo de parto, 2017, Detección oportuna de complicaciones, Página 26."
+    },
+    {
+        id: 18,
+        question: "¿Qué límite superior de estimación de peso fetal se considera un criterio favorable para el inicio seguro de la inducción del parto?",
+        options: ["< 3200 g", "< 3500 g", "< 4000 g", "< 4500 g"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de inducción del trabajo de parto, sospechar macrosomía fetal impone el riesgo de impactación del diámetro bisacromial (distocia de hombros) en el canal de parto si se insiste en forzar contracciones.<br><br>Perla ENARM: \"Se consideran como criterios para la inducción del parto: embarazo único, presentación cefálica, el peso fetal estimado <4.000 g, membranas intactas, patrón de la frecuencia cardíaca fetal reactivo, y un cuello inmad.\"<br><br>Análisis de Distractores: Fetos de 3200 o 3500 gramos (A y B) entran en el rango de normalidad sin presentar riesgo distócico. Superar los 4000 g se cruza la línea a factor de falla o macrosomía.",
+        source: "SS-799-17, Intervenciones de enfermería para la atención de la mujer en inducción del trabajo de parto, 2017, Intervenciones de enfermería, Página 14."
+    },
+    {
+        id: 19,
+        question: "Si una paciente presenta una primera etapa del trabajo de parto prolongada con dinámica deficiente, ¿cuántas horas se aconseja infundir oxitocina?",
+        options: ["1 a 2 horas", "2 a 4 horas", "4 a 6 horas", "6 a 8 horas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de inducción del trabajo de parto, este es el tiempo farmacocinético óptimo para regularizar la actividad del marcapasos uterino (tono, intensidad y frecuencia) sin llevar al músculo liso a fatiga extrema.<br><br>Perla ENARM: \"Se recomienda la utilización de la oxitocina para 2 o 4 horas aún cuando el trabajo de parto haya sido prolongado en la primera etapa.\"<br><br>Análisis de Distractores: Una hora (A) suele ser insuficiente para alcanzar el pico sérico estable efectivo. Más de 4 horas de rescate inefectivo (C y D) eleva drásticamente el riesgo de ruptura uterina y sufrimiento fetal.",
+        source: "SS-799-17, Intervenciones de enfermería para la atención de la mujer en inducción del trabajo de parto, 2017, Intervenciones de enfermería, Página 16."
+    },
+    {
+        id: 20,
+        question: "De acuerdo a la GPC, ¿qué documento médico-legal se requiere estrictamente antes de efectuar intervenciones mecánicas o farmacológicas invasivas?",
+        options: ["Partograma debidamente graficado", "Registro de monitoreo fetal", "Valoración de riesgo anestésico", "Consentimiento informado documentado"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de inducción del trabajo de parto, alterar el curso biológico del embarazo conlleva morbilidades potenciales que la usuaria debe comprender (tasas de cesárea, ruptura uterina) asumiendo su autonomía.<br><br>Perla ENARM: \"Se recomienda obtener el consentimiento informado antes de realizar procedimientos invasivos.\"<br><br>Análisis de Distractores: El partograma (A) y el monitoreo (B) se abren una vez iniciado el procedimiento y el trabajo de parto. La valoración preanestésica (C) se solicita específicamente si la vía final decidida o de emergencia es abdominal.",
+        source: "SS-799-17, Intervenciones de enfermería para la atención de la mujer en inducción del trabajo de parto, 2017, Intervenciones de enfermería, Página 17."
+    }
+        ];
+
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('ENF3LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('ENF3Progress');
+                localStorage.removeItem('ENF3LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-pink-500 shadow-md z-10 border-pink-500 dark:border-pink-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-rose-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "GINECOLOGÍA Y OBSTETRICIA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "SS-799-17 • Intervenciones de enfermería para la atención de la mujer en inducción del trabajo de parto en el primero y segundo nivel de atención";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="D80317GYOE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-pink-100 dark:border-pink-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-pink-50 has-[:checked]:border-pink-400 dark:has-[:checked]:bg-pink-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-pink-600 dark:hover:bg-pink-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('ENF3Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('ENF3LastQId', currentQuestionId);
+                else localStorage.removeItem('ENF3LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('ENF3Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>
