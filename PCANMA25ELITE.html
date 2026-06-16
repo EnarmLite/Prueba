@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-cyan-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const questionsData = [
+    {
+        id: 1,
+        question: "Edad indicada para iniciar el tamizaje con resonancia magnética de mama en pacientes portadoras de la variante patogénica BRCA1.",
+        options: ["30 años", "35 años", "40 años", "25 años"],
+        answer: 3,
+        justification: "Justificación: La detección temprana es una herramienta indispensable en poblaciones de alto riesgo genético debido a la elevada penetrancia de mutaciones germinales. De acuerdo al PRONAM de Cáncer de mama, el escrutinio en este grupo debe anticiparse significativamente en comparación con la población de riesgo promedio, integrando la resonancia magnética por su alta sensibilidad.<br><br>Perla ENARM: Variante patogénica en BRCA1 o BRCA2: RM de mama con contraste + mastografía digital alternadas cada 6 meses, iniciando RM desde los 25 años en portadoras BRCA1.<br><br>Análisis de Distractores: La opción de 30 años está indicada para el inicio de mastografía en síndrome de Li-Fraumeni y otras mutaciones (PALB2). Los 40 años corresponden al inicio de tamizaje en población de riesgo promedio. Los 35 años marcan la edad para considerar quimioprevención o cirugía reductora de riesgo ovárico.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Tamizaje, Página 11 y 12."
+    },
+    {
+        id: 2,
+        question: "Valor Predictivo Positivo (VPP) que otorga un reporte mastográfico categorizado como BI-RADS 3.",
+        options: ["< 2 %", "0 %", "2 - ≤ 10 %", "> 95 %"],
+        answer: 0,
+        justification: "Justificación: La asignación de la categoría BI-RADS 3 implica un hallazgo con alta probabilidad de benignidad, justificando una conducta conservadora. De acuerdo al PRONAM de Cáncer de mama, este porcentaje define la indicación de no realizar procedimientos invasivos inmediatos y optar por la vigilancia clínica e imagenológica estrecha.<br><br>Perla ENARM: BI-RADS 3 Probablemente benigno presenta un VPP < 2 % y amerita seguimiento con imagen a corto plazo (6 meses) en ausencia de signos y síntomas.<br><br>Análisis de Distractores: El VPP de 0 % corresponde a las categorías BI-RADS 1 y 2. El rango de 2 a ≤ 10 % es específico del BI-RADS 4A, el cual ya obliga a realizar biopsia. El > 95 % define al BI-RADS 5, altamente sugestivo de malignidad.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) de Cáncer de mama, 2026, Abordaje diagnóstico, Página 24 y 25."
+    },
+    {
+        id: 3,
+        question: "Fármaco y dosis de elección indicados para quimioprevención en pacientes postmenopáusicas con alto riesgo de desarrollar carcinoma mamario.",
+        options: ["Tamoxifeno 5 mg/día", "Raloxifeno 60 mg/día", "Exemestano 20 mg/día", "Anastrozol 5 mg/día"],
+        answer: 1,
+        justification: "Justificación: El manejo farmacológico para la reducción de riesgo difiere según el estado menopáusico de la persona. De acuerdo al PRONAM de Cáncer de mama, el uso de moduladores selectivos de receptores estrogénicos está justificado para impactar en la incidencia de lesiones invasoras en perfiles específicos.<br><br>Perla ENARM: Intervención Farmacológica: raloxifeno a dosis de 60 mg/día en pacientes postmenopáusicas, por un total de 5 años.<br><br>Análisis de Distractores: El tamoxifeno a 5 mg/día es válido por 3 años, pero principalmente en otros escenarios de bajo riesgo u otras edades. El exemestano se utiliza a 25 mg/día (no 20 mg) y el anastrozol a 1 mg/día (no 5 mg).",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Quimioprevención, Página 15."
+    },
+    {
+        id: 4,
+        question: "Tiempo máximo de isquemia fría permitido antes de la inmersión de una biopsia mamaria en formol al 10 %.",
+        options: ["30 minutos", "2 horas", "1 hora", "6 horas"],
+        answer: 2,
+        justification: "Justificación: El manejo preanalítico del tejido es crítico para garantizar la fidelidad de la evaluación morfológica y la inmunohistoquímica. De acuerdo al PRONAM de Cáncer de mama, los retrasos en la fijación provocan la degradación de proteínas, resultando en pérdida de la expresión de receptores hormonales y falsos negativos en HER2.<br><br>Perla ENARM: El tiempo de isquemia fría, tiempo entre la toma de la muestra y la inmersión en formol al 10 % amortiguado con pH 7, debe ser menor de 1 hora.<br><br>Análisis de Distractores: 30 minutos es un tiempo excelente pero el límite técnico estricto es 1 hora. Tiempos prolongados como 2 o 6 horas causan daño tisular irreversible e invalidan los estudios moleculares predictivos. Las 6 horas representan el tiempo mínimo (no máximo) recomendado de fijación.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Tipos de Biopsia, Página 27."
+    },
+    {
+        id: 5,
+        question: "Subtipo histológico de cáncer de mama caracterizado por patrón celular \"en fila india\" y pérdida de E-cadherina.",
+        options: ["Carcinoma medular", "Carcinoma tubular", "Carcinoma mucinoso", "Carcinoma lobulillar invasor"],
+        answer: 3,
+        justification: "Justificación: La arquitectura tisular define patrones de infiltración y diseminación. De acuerdo al PRONAM de Cáncer de mama, la mutación en el gen CDH1 provoca la disfunción de las moléculas de adhesión celular, originando fenotipos morfológicos infiltrantes singulares y multifocales.<br><br>Perla ENARM: El Carcinoma lobulillar invasor se caracteriza por células pequeñas, monomorfas, dispuestas en patrón lineal o “en fila india”, con pérdida de E-cadherina por alteración del gen CDH1.<br><br>Análisis de Distractores: El carcinoma medular presenta láminas sólidas con linfocitos infiltrantes. El carcinoma tubular muestra estructuras glandulares bien formadas (> 90 %). El carcinoma mucinoso exhibe lagos de mucina extracelular.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Subtipos de cáncer de mama y biomarcadores, Página 29."
+    },
+    {
+        id: 6,
+        question: "Intervención clínica obligatoria ante un estudio de imagen reportado como BI-RADS 5.",
+        options: ["Biopsia con aguja de corte", "Resonancia magnética", "Mastectomía profiláctica", "Seguimiento en 6 meses"],
+        answer: 0,
+        justification: "Justificación: Toda lesión altamente sugestiva de malignidad (> 95 % de VPP) requiere comprobación histológica para guiar el tratamiento definitivo. De acuerdo al PRONAM de clasificación BI-RADS, la aspiración con aguja fina o el tratamiento empírico están contraindicados sin un diagnóstico de certeza previo.<br><br>Perla ENARM: Categoría BI-RADS 5 Altamente sugestivo de malignidad: Biopsia obligatoria con aguja de corte guiada por imagen.<br><br>Análisis de Distractores: La resonancia magnética no sustituye a la biopsia diagnóstica ante la alta sospecha. La mastectomía sin reporte histopatológico es una mala praxis clínica absoluta. El seguimiento a 6 meses es la indicación exclusiva para el BI-RADS 3.",
+        source: "Clasificación BI-RADS, 2026, Tabla Categoría Hallazgos, Página 2."
+    },
+    {
+        id: 7,
+        question: "Criterio clínico considerado como contraindicación absoluta para realizar una cirugía conservadora de mama.",
+        options: ["Tumor luminal de 2 cm", "Microcalcificaciones extensas y difusas", "Axila clínicamente positiva (cN1)", "Antecedente heredofamiliar de cáncer"],
+        answer: 1,
+        justification: "Justificación: El objetivo de la preservación glandular es lograr el control oncológico local con un resultado estético óptimo. De acuerdo al PRONAM de Cáncer de mama, cuando las lesiones afectan extensamente el parénquima y es técnicamente imposible obtener márgenes negativos, el procedimiento pierde su sustento terapéutico.<br><br>Perla ENARM: Contraindicaciones absolutas para Cirugía conservadora de mama: Microcalcificaciones extensas y difusas, afectación cutánea difusa, imposibilidad de recibir radioterapia.<br><br>Análisis de Distractores: Un tumor de 2 cm (T1c) suele ser candidato ideal a cirugía conservadora. Una axila cN1 no contraindica el procedimiento mamario per se. Un antecedente familiar no es una restricción quirúrgica local.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Cirugía conservadora de mama, Página 39."
+    },
+    {
+        id: 8,
+        question: "Tiempo máximo recomendado para que una persona con alteración clínica sospechosa reciba abordaje diagnóstico completo en una unidad médica.",
+        options: ["15 días", "30 días", "10 días", "60 días"],
+        answer: 2,
+        justification: "Justificación: La reducción en los tiempos de tránsito clínico impacta directamente en la supervivencia de las pacientes. De acuerdo al PRONAM de Cáncer de mama, el envío debe ser inmediato y la confirmación debe agilizarse sin tratamientos empíricos de por medio.<br><br>Perla ENARM: Una vez identificada una lesión sospechosa de cáncer de mama, debe referirse a la persona a una unidad de acto único para realizar el abordaje diagnóstico en un periodo menor a 10 días.<br><br>Análisis de Distractores: 15 días es el tiempo para entregar resultados de imagen BI-RADS. 60 días es la meta general del pilar de Diagnóstico Oportuno para iniciar el tratamiento. 30 días no representa un punto de corte estándar en esta etapa específica del flujograma.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Exploración clínica de mamas, Página 20."
+    },
+    {
+        id: 9,
+        question: "Procedimiento diagnóstico considerado como el estándar actual para el abordaje inicial de lesiones mamarias sospechosas.",
+        options: ["Biopsia por aspiración con aguja fina", "Biopsia escisional directa", "Resección quirúrgica guiada", "Biopsia con aguja gruesa"],
+        answer: 3,
+        justification: "Justificación: La obtención de tejido debe asegurar la preservación arquitectural para estudios complementarios precisos. De acuerdo al PRONAM de Cáncer de mama, los métodos citológicos carecen de la capacidad de distinguir invasión, por lo cual están en desuso para el diagnóstico de tumores primarios mamarios.<br><br>Perla ENARM: La biopsia con aguja gruesa (BAG) es el método estándar actual para el diagnóstico inicial de lesiones sospechosas en la mama ya que permite preservar la arquitectura del tejido y realizar inmunohistoquímica.<br><br>Análisis de Distractores: La aspiración con aguja fina no distingue in situ de invasor y actualmente no se recomienda. La biopsia quirúrgica o escisional directa está prohibida de primera intención, limitándose solo a casos de discordancia clínica o imagenológica severa.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Tipos de Biopsia, Página 26 y 27."
+    },
+    {
+        id: 10,
+        question: "Conducta obligatoria ante el reporte de un estudio mastográfico categorizado como BI-RADS 0.",
+        options: ["Repetir o completar con otra técnica de imagen", "Iniciar tratamiento quirúrgico conservador", "Referir para biopsia con aguja de corte", "Mantener conducta expectante por 6 meses"],
+        answer: 0,
+        justification: "Justificación: La ausencia de visualización adecuada o la superposición de tejidos impiden una catalogación de riesgo concluyente. De acuerdo al PRONAM de clasificación BI-RADS, un estudio incompleto exige maniobras técnicas adicionales (como compresión focal, ultrasonido) dentro de un marco de 15 días para poder clasificar verdaderamente la lesión.<br><br>Perla ENARM: BI-RADS 0 Incompleto: Repetir estudio o completar con otra técnica como ultrasonido. La persona deberá ser citada a revisión en un máximo de 15 días naturales.<br><br>Análisis de Distractores: La biopsia con aguja se realiza a partir de la categoría 4A. La vigilancia a 6 meses pertenece exclusivamente a la categoría 3. El abordaje quirúrgico no se justifica sin una categorización final y posterior confirmación tisular.",
+        source: "Clasificación BI-RADS, 2026, Tabla Categoría Hallazgos, Página 1."
+    },
+    {
+        id: 11,
+        question: "Fármaco de primera línea para el tratamiento sistémico de pacientes con cáncer de mama HER2 positivo y metástasis activas sintomáticas en sistema nervioso central.",
+        options: ["Pertuzumab", "Trastuzumab deruxtecan", "Trastuzumab emtansina", "Lapatinib"],
+        answer: 1,
+        justification: "Justificación: La penetración al tejido cerebral y la alta eficacia intracraneal han posicionado a las nuevas generaciones de conjugados anticuerpo-fármaco. De acuerdo al PRONAM de Cáncer de mama, el cambio de paradigma exige el uso de este agente específico ante actividad neurológica secundaria a enfermedad metastásica.<br><br>Perla ENARM: En el caso de enfermedad a Sistema Nervioso Central activa (sintomática) se recomienda como primera línea de tratamiento sistémico el uso de Trastuzumab deruxtecan (T-DXd).<br><br>Análisis de Distractores: Trastuzumab emtansina (T-DM1) es una alternativa de segunda línea o ante contraindicación, pero no la primera elección sintomática. Pertuzumab se emplea en primera línea sistémica en ausencia de crisis central activa. Lapatinib se reserva para combinaciones tardías.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Pacientes con metástasis en sistema nervioso central, Página 56."
+    },
+    {
+        id: 12,
+        question: "Duración del uso de terapia hormonal de reemplazo identificada como factor de riesgo modificable para desarrollar cáncer de mama.",
+        options: ["Uso intermitente por 2 años", "Uso continuo durante el embarazo", "Uso por 5 años continuos o más", "Uso exclusivo de progestágenos"],
+        answer: 2,
+        justification: "Justificación: La exposición prolongada a estrógenos exógenos altera el ciclo de proliferación epitelial del tejido mamario. De acuerdo al PRONAM de Cáncer de mama, la ventana temporal de daño clínico está claramente establecida dentro de los factores hormonales y reproductivos.<br><br>Perla ENARM: Los factores no modificables/hormonales incluyen: menarca temprana, menopausia tardía, y terapia hormonal de reemplazo por 5 años continuos o más.<br><br>Análisis de Distractores: El riesgo significativo y documentado en las guías se consolida a partir de los 5 años continuos de exposición hormonal sustitutiva. Periodos más cortos o usos no especificados no se clasifican como el factor clínico principal de riesgo epidemiológico en este apartado.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Factores de riesgo, Página 6."
+    },
+    {
+        id: 13,
+        question: "Intervención reductora de riesgo fuertemente recomendada en pacientes portadoras de la mutación BRCA1 entre los 35 y 40 años.",
+        options: ["Resonancia magnética pélvica anual", "Mastectomía bilateral profiláctica", "Tratamiento continuo con letrozol", "Salpingo-ooforectomía bilateral"],
+        answer: 3,
+        justification: "Justificación: La profilaxis quirúrgica en gónadas extirpa el sitio primario de las neoplasias pélvicas hereditarias. De acuerdo al PRONAM de Cáncer de mama, esta conducta impacta dramáticamente en la morbimortalidad al evitar la progresión de enfermedades serosas de alto grado ocultas.<br><br>Perla ENARM: La salpingo-ooforectomía bilateral reductora de riesgo (RRSO) está fuertemente recomendada en personas portadoras del gen BRCA1 entre los 35-40 años, disminuyendo en un 80 % el riesgo.<br><br>Análisis de Distractores: La mastectomía profiláctica se valora de manera individualizada y no exige este rango etario estricto. La resonancia pélvica no es un método de reducción de riesgo. El letrozol no está validado para profilaxis primaria ovárica en estas mutaciones.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Genética y prevención, Página 14."
+    },
+    {
+        id: 14,
+        question: "Significado clínico establecido para la categoría mastográfica BI-RADS 1.",
+        options: ["Negativo sin hallazgos anormales", "Benigno con hallazgos típicos", "Sospecha baja de malignidad", "Estudio incompleto"],
+        answer: 0,
+        justification: "Justificación: El sistema de reporte radiológico unifica el lenguaje para estandarizar la conducta a seguir. De acuerdo al PRONAM de clasificación BI-RADS, el estudio completamente limpio de alteraciones obliga al médico tratante a continuar el seguimiento rutinario dependiente de la edad.<br><br>Perla ENARM: BI-RADS 1 se define como Negativo (sin hallazgos anormales) con 0 % VPP, y la indicación es continuar tamizaje habitual en ausencia de signos y síntomas.<br><br>Análisis de Distractores: La descripción de \"Benigno\" es específica para la categoría BI-RADS 2. \"Incompleto\" define a la categoría BI-RADS 0. La \"sospecha baja\" no existe, el equivalente conceptual sería el BI-RADS 3 (Probablemente benigno) o BI-RADS 4A (Sospecha baja).",
+        source: "Clasificación BI-RADS, 2026, Tabla Categoría Hallazgos, Página 1."
+    },
+    {
+        id: 15,
+        question: "Criterio inmunohistoquímico que define al subrogado molecular clasificado como Luminal A.",
+        options: ["RE/RP+, HER2-, Ki-67 > 20 %", "RE/RP+, HER2-, Ki-67 < 20 %", "RE+, RP < 20 %, HER2+", "RE-, RP-, HER2+"],
+        answer: 1,
+        justification: "Justificación: La clasificación molecular aproxima el comportamiento del tumor para definir el pronóstico y predecir el beneficio de la quimioterapia. De acuerdo al PRONAM de Cáncer de mama, la baja tasa de proliferación celular discrimina a las neoplasias de menor grado de agresividad y alta sensibilidad endocrina.<br><br>Perla ENARM: La clasificación subrogada tipo Luminal A se define por Receptores Hormonales Positivos, HER2 negativo y Ki-67 < 20 %.<br><br>Análisis de Distractores: Un Ki-67 ≥ 20 % o Receptores de Progesterona bajos (< 20 %) reclasifica al tumor como Luminal B. El estatus RE-, RP-, HER2+ define al HER2-sobre-expresado (no luminal).",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Subtipos de cáncer de mama y biomarcadores, Página 31."
+    },
+    {
+        id: 16,
+        question: "Tratamiento endocrino adyuvante de primera elección indicado en mujeres posmenopáusicas con cáncer de mama etapa temprana y receptores hormonales positivos.",
+        options: ["Goserelina intramuscular", "Fulvestrant mensual", "Inhibidores de aromatasa", "Tamoxifeno a dosis altas"],
+        answer: 2,
+        justification: "Justificación: El bloqueo de la conversión periférica de andrógenos a estrógenos es la diana farmacológica idónea tras el cese de la función ovárica. De acuerdo al PRONAM de Cáncer de mama, la superioridad de este mecanismo frente a los moduladores de receptores ha establecido una nueva línea de estándar de atención clínica.<br><br>Perla ENARM: En etapas posmenopáusicas con subtipo luminal, los inhibidores de aromatasa (letrozol, anastrozol, exemestano) son la opción de elección.<br><br>Análisis de Distractores: La goserelina es un análogo LHRH utilizado en mujeres premenopáusicas para supresión ovárica. El fulvestrant se reserva para líneas paliativas de enfermedad metastásica. El tamoxifeno se utiliza preferentemente en premenopáusicas o como segunda línea en posmenopáusicas intolerantes.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Tratamiento sistémico, Página 45."
+    },
+    {
+        id: 17,
+        question: "Esquema de radioterapia hipofraccionada recomendado para el alivio del dolor provocado por metástasis óseas.",
+        options: ["50 Gy en 25 fracciones", "2 Gy en 1 fracción", "40 Gy en 15 fracciones", "8 Gy en 1 fracción"],
+        answer: 3,
+        justification: "Justificación: La terapia local para enfermedad metastásica es fundamental para el control sintomático rápido y la mejora de la calidad de vida. De acuerdo al PRONAM de Cáncer de mama, la administración concentrada de dosis única ha demostrado eficacia analgésica equiparable a esquemas prolongados.<br><br>Perla ENARM: Para metástasis óseas, los esquemas frecuentes de radioterapia paliativa indicados son 8 Gy en una fracción, 20 Gy en 5 fracciones o 30 Gy en 10 fracciones.<br><br>Análisis de Distractores: Las dosis largas como 50 Gy en 25 fracciones se utilizan en contextos adyuvantes curativos de lecho mamario, no en paliación ósea rápida. 40 Gy en 15 fracciones es un esquema adyuvante hipofraccionado mamario. 2 Gy no alcanza el rango terapéutico paliativo único.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Radioterapia en enfermedad metastásica, Página 60."
+    },
+    {
+        id: 18,
+        question: "Frecuencia y timing clínico recomendado para realizar la autoexploración mamaria en mujeres con ausencia de periodo menstrual.",
+        options: ["Un día fijo al mes", "Cada tres meses", "Los primeros 5 días del mes", "Diariamente durante el baño"],
+        answer: 0,
+        justification: "Justificación: La constancia en la exploración promueve el conocimiento de la anatomía y detecta cambios morfológicos incipientes. De acuerdo al PRONAM de Cáncer de mama, en ausencia de ciclo hormonal activo que dicte los días de menor congestión glandular, se estandariza el abordaje para mantener adherencia.<br><br>Perla ENARM: En personas sin periodo menstrual debe elegirse un día fijo del mes para la autoexploración mamaria, realizándose de forma mensual.<br><br>Análisis de Distractores: La frecuencia \"cada tres meses\" es deficiente para la detección oportuna. Diariamente genera confusión anatómica y disminuye la percepción de cambios reales. Los \"primeros 5 días\" no tiene base fisiológica en ausencia de ciclo menstrual.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Detección temprana, Página 19."
+    },
+    {
+        id: 19,
+        question: "Porcentaje de Valor Predictivo Positivo para malignidad que corresponde a la categoría mastográfica BI-RADS 4B.",
+        options: ["2 - ≤ 10 %", "> 10 - ≤ 50 %", "> 50 - ≤ 95 %", "> 95 %"],
+        answer: 1,
+        justification: "Justificación: La subdivisión de la categoría 4 estratifica estadísticamente el riesgo para moderar la urgencia y correlación patológica. De acuerdo al PRONAM de clasificación BI-RADS, este rango intermedio de sospecha exige biopsia con aguja de corte obligatoria sin llegar a catalogarse como alta malignidad.<br><br>Perla ENARM: BI-RADS 4 Sospechoso de malignidad se divide en: 4A (2 - ≤ 10 %), 4B (> 10 - ≤ 50 %) y 4C (> 50 - ≤ 95 %).<br><br>Análisis de Distractores: El VPP de 2 a 10 % corresponde exclusivamente a la subcategoría 4A. El rango de 50 a 95 % es propio de la subcategoría 4C. Los valores superiores al 95 % son definitorios de la categoría 5.",
+        source: "Clasificación BI-RADS, 2026, Tabla Categoría Hallazgos, Página 2."
+    },
+    {
+        id: 20,
+        question: "Fármaco indicado para continuar el tratamiento adyuvante en pacientes con cáncer de mama triple negativo y enfermedad residual tras neoadyuvancia, que NO portan variantes patogénicas BRCA.",
+        options: ["Pembrolizumab exclusivo", "Trastuzumab emtansina", "Capecitabina", "Olaparib"],
+        answer: 2,
+        justification: "Justificación: La persistencia de tejido tumoral viabiliza el escalamiento terapéutico para erradicar la enfermedad micrometastásica resistente. De acuerdo al PRONAM de Cáncer de mama, la quimioterapia oral de rescate en este escenario ha demostrado incrementar la supervivencia libre de enfermedad en la población salvaje (wild-type) para BRCA.<br><br>Perla ENARM: En pacientes con enfermedad residual posneoadyuvancia, no portadoras de una variante patogénica en el gen BRCA1/2, el uso de capecitabina adyuvante está recomendado.<br><br>Análisis de Distractores: El olaparib está indicado estrictamente si la paciente porta la variante patogénica BRCA1/2. El Trastuzumab emtansina (T-DM1) es exclusivo para el escenario de enfermedad residual en tumores HER2 positivos. El Pembrolizumab exclusivo se usa postneoadyuvancia si hubo RPC tras usarlo previamente.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Tratamiento triple negativo, Página 49 y 50."
+    },
+    {
+        id: 21,
+        question: "Edad recomendada para iniciar el tamizaje con resonancia magnética en mujeres portadoras de la variante patogénica TP53 (síndrome de Li-Fraumeni).",
+        options: ["20 años", "25 años", "30 años", "35 años"],
+        answer: 0,
+        justification: "Justificación: La extrema penetrancia de mutaciones en genes supresores de tumores exige estrategias de escrutinio excepcionalmente tempranas. De acuerdo al PRONAM de Cáncer de mama, el protocolo radiológico en el síndrome de Li-Fraumeni se desdobla temporalmente, comenzando con imagen por resonancia para evitar la radiación ionizante en la segunda década de la vida.<br><br>Perla ENARM: En portadoras de variante patogénica en TP53 (síndrome Li-Fraumeni), se indica RM de mama con contraste desde los 20 años; y la mastografía desde los 30 años.<br><br>Análisis de Distractores: A los 25 años se inicia la resonancia en portadoras de BRCA1 o antecedentes de radioterapia torácica. A los 30 años se inicia la mastografía complementaria en este mismo síndrome (Li-Fraumeni) y la RM en portadoras de BRCA2 o riesgo alto inespecífico. 35 años es edad para evaluar cirugía reductora de riesgo ovárico.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Tamizaje, Página 12."
+    },
+    {
+        id: 22,
+        question: "Tiempo máximo permitido para la fijación en formol de una biopsia mamaria con el objetivo de preservar adecuadamente los biomarcadores.",
+        options: ["24 horas", "48 horas", "72 horas", "96 horas"],
+        answer: 2,
+        justification: "Justificación: El manejo del tejido tras su escisión es un paso crítico para evitar alteraciones en los resultados de inmunohistoquímica. De acuerdo al PRONAM de Cáncer de mama, la inmersión de la muestra exige ventanas de tiempo precisas para evitar falsos negativos en receptores y HER2 derivados de una sobre-fijación o infra-fijación tisular.<br><br>Perla ENARM: El tiempo de isquemia fría debe ser menor de 1 hora y la fijación de la muestra en formol al 10 % amortiguado debe realizarse en un tiempo de 6 a 72 horas máximo.<br><br>Análisis de Distractores: 24 y 48 horas son tiempos óptimos y dentro del rango permitido, pero el límite técnico máximo estricto es de 72 horas. 96 horas produce daño irreversible por sobre-fijación o enmascaramiento antigénico irrecuperable.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Tipos de Biopsia, Página 27."
+    },
+    {
+        id: 23,
+        question: "Categoría mastográfica asignada a una paciente que cuenta con diagnóstico histopatológico previo confirmatorio de malignidad mamaria.",
+        options: ["BI-RADS 4C", "BI-RADS 5", "BI-RADS 0", "BI-RADS 6"],
+        answer: 3,
+        justification: "Justificación: El sistema de reporte y base de datos de imagen mamaria clasifica el estatus evolutivo de las lesiones. De acuerdo al PRONAM de clasificación BI-RADS, cuando existe certeza de cáncer probada mediante patología antes de un estudio de imagen (ej. para estadificación o respuesta a neoadyuvancia), se le adjudica esta categoría definitiva.<br><br>Perla ENARM: Categoría BI-RADS 6: Malignidad confirmada por biopsia, con Valor Predictivo Positivo del 100 %. La indicación es iniciar o continuar tratamiento oncológico.<br><br>Análisis de Distractores: BI-RADS 4C refleja sospecha alta (50 - 95 %) sin biopsia. BI-RADS 5 indica una lesión altamente sugestiva (> 95 %) pero aún requiere confirmación tisular. BI-RADS 0 amerita estudios complementarios por ser inconcluso.",
+        source: "Clasificación BI-RADS, 2026, Tabla Categoría Hallazgos, Página 2."
+    },
+    {
+        id: 24,
+        question: "Escenario clínico posquirúrgico que permite omitir la linfadenectomía axilar en una paciente sometida a cirugía conservadora de mama.",
+        options: ["Presencia de 4 ganglios centinelas con macrometástasis", "Reporte de 1 a 2 ganglios con macrometástasis (criterios Z0011)", "Presencia de extensión extracapsular masiva ganglionar", "Tumor primario mayor de 5 cm (T3) con ganglios negativos"],
+        answer: 1,
+        justification: "Justificación: La desescalada del tratamiento axilar busca reducir la morbilidad sin comprometer el control oncológico. De acuerdo al PRONAM de Cáncer de mama, la radioterapia adyuvante a la mama entera proporciona un control locorregional equiparable a la disección quirúrgica en un perfil muy seleccionado de baja carga tumoral.<br><br>Perla ENARM: Si existen 1 a 2 ganglios positivos y la persona es candidata a cirugía conservadora más radioterapia de mama completa (criterios Z0011), se debe omitir la disección axilar.<br><br>Análisis de Distractores: En presencia de 4 ganglios positivos se exige linfadenectomía y radioterapia regional. La extensión extracapsular obliga a considerar radioterapia o cirugía axilar adicional. Un tumor T3 con ganglios negativos no entra en los criterios de omisión por micrometástasis/macrometástasis baja.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Tratamiento en etapas clínicas tempranas, Página 41."
+    },
+    {
+        id: 25,
+        question: "Biomarcador inmunohistoquímico que identifica un subgrupo de mejor pronóstico en cáncer de mama triple negativo y HER2 positivo.",
+        options: ["Linfocitos infiltrantes tumorales (TILs)", "Ki-67 mayor a 20 %", "Receptor de andrógenos", "PD-L1 (CPS) menor a 10"],
+        answer: 0,
+        justification: "Justificación: La respuesta inmunológica del huésped frente al tumor tiene un valor predictivo y pronóstico validado. De acuerdo al PRONAM de Cáncer de mama, una alta densidad de infiltrado linfoide en el estroma tumoral refleja una inmunogenicidad que se traduce en mayor sensibilidad a la quimioterapia y supervivencia a largo plazo en fenotipos agresivos.<br><br>Perla ENARM: Los linfocitos infiltrantes tumorales (TILs) identifican un grupo de mejor pronóstico en cáncer de mama triple negativo y HER2-positivo.<br><br>Análisis de Distractores: El Ki-67 alto (> 20 %) es marcador de agresividad y proliferación, no de buen pronóstico per se. El receptor de andrógenos define subtipos apócrinos específicos sin ser un marcador universal de buen pronóstico. PD-L1 bajo (< 10) predice nula respuesta a inmunoterapia (pembrolizumab).",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Utilidad clínica de la inmunohistoquímica, Página 34."
+    },
+    {
+        id: 26,
+        question: "Tratamiento endocrino adyuvante sistémico de elección indicado en mujeres premenopáusicas con cáncer de mama etapa temprana (luminal) y alto riesgo de recurrencia.",
+        options: ["Fulvestrant intramuscular mensual", "Tamoxifeno exclusivo por 10 años", "Supresión ovárica con análogos LHRH combinada", "Raloxifeno oral por 5 años"],
+        answer: 2,
+        justification: "Justificación: En mujeres con función ovárica conservada y tumores agresivos o con carga ganglionar, el bloqueo periférico de receptores es insuficiente. De acuerdo al PRONAM de Cáncer de mama, la inducción de un estado posmenopáusico bioquímico permite maximizar la privación estrogénica y abre la puerta al uso de inhibidores de aromatasa.<br><br>Perla ENARM: En personas de alto riesgo, en etapa premenopáusica, el estándar recomendado es la supresión ovárica (ablación o análogos LHRH) combinada con un inhibidor de aromatasa o tamoxifeno.<br><br>Análisis de Distractores: El tamoxifeno exclusivo es el estándar solo para el bajo riesgo en premenopáusicas. El fulvestrant pertenece al algoritmo de enfermedad metastásica. El raloxifeno es exclusivo para quimioprevención en pacientes postmenopáusicas sin diagnóstico de cáncer.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Tratamiento sistémico, Página 45."
+    },
+    {
+        id: 27,
+        question: "Esquema sistémico adyuvante con menor toxicidad recomendado para pacientes con cáncer de mama HER2 positivo, etapa T1b-c y ganglios negativos.",
+        options: ["Trastuzumab emtansina continuo", "Doxorrubicina liposomal más ciclofosfamida", "Pertuzumab más docetaxel", "Paclitaxel semanal más Trastuzumab (APT)"],
+        answer: 3,
+        justification: "Justificación: La sobre-exposición a esquemas poli-quimioterápicos en tumores HER2 pequeños aumenta la morbilidad sin mejorar significativamente el beneficio absoluto. De acuerdo al PRONAM de Cáncer de mama, los regímenes desescalados mantienen tasas de curación superiores al 95 % eliminando las antraciclinas y minimizando el bloqueo dual.<br><br>Perla ENARM: En pacientes con tumores pequeños, ≤ 2 cm y ganglios negativos, el esquema APT (paclitaxel semanal + trastuzumab) es una estrategia de tratamiento adyuvante con menor toxicidad.<br><br>Análisis de Distractores: El T-DM1 se reserva exclusivamente para enfermedad residual post-neoadyuvancia o en enfermedad metastásica. El docetaxel más pertuzumab/trastuzumab (doble bloqueo) se indica si hay ganglios positivos. Las antraciclinas se evitan en estos tamaños por riesgo cardiotóxico injustificado.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Tratamiento sistémico HER2 positivo, Página 48."
+    },
+    {
+        id: 28,
+        question: "Duración mínima recomendada para la terapia endocrina neoadyuvante en pacientes adultas mayores, frágiles o con contraindicación para quimioterapia.",
+        options: ["1 a 2 meses", "4 a 6 meses", "8 a 10 meses", "12 a 24 meses"],
+        answer: 1,
+        justification: "Justificación: La respuesta tumoral a la privación estrogénica es un proceso biológicamente lento frente a la citotoxicidad. De acuerdo al PRONAM de Cáncer de mama, para asegurar la máxima citorreducción preoperatoria y permitir un descenso del estadiaje quirúrgico (downstaging), la intervención hormonal exige este umbral temporal mínimo.<br><br>Perla ENARM: La terapia endocrina neoadyuvante (letrozol, exemestano o anastrozol) se utiliza durante un periodo mínimo de 4 a 6 meses, con seguimiento clínico estrecho en pacientes frágiles o no candidatas a quimioterapia.<br><br>Análisis de Distractores: Períodos cortos de 1 a 2 meses no permiten alcanzar la máxima respuesta clínica y radiológica. Períodos prolongados de 8 o 12 meses retrasan injustificadamente la consolidación quirúrgica si la lesión ya es resecable.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Tratamiento sistémico, Página 45."
+    },
+    {
+        id: 29,
+        question: "Hallazgo en patología que establece la indicación absoluta de iniciar radioterapia adyuvante posterior a una mastectomía.",
+        options: ["4 o más ganglios axilares positivos", "Presencia de 1 ganglio positivo (N1) sin factores adversos", "Tumor primario de 2 cm (T1c)", "Carcinoma in situ luminal A"],
+        answer: 0,
+        justification: "Justificación: La alta carga tumoral linfática posquirúrgica refleja un riesgo inminente de recaída locorregional severa y diseminación. De acuerdo al PRONAM de Cáncer de mama, la radioterapia dirigida al lecho torácico y áreas ganglionares impacta directamente en la reducción de mortalidad en este estrato anatómico de riesgo.<br><br>Perla ENARM: La radioterapia postmastectomía (RT-PM) está indicada en pacientes con tumores T3 o T4, o con ≥ 4 ganglios axilares positivos (N2–N3).<br><br>Análisis de Distractores: Con 1 a 3 ganglios (N1) la indicación es relativa y depende de factores adversos adicionales (edad < 40, invasión linfovascular). Un tumor T1c (< 2 cm) no tiene indicación de radioterapia postmastectomía. El carcinoma in situ no requiere radiación tras mastectomía total.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Radioterapia, Página 51."
+    },
+    {
+        id: 30,
+        question: "Tratamiento de primera línea recomendado para cáncer de mama triple negativo avanzado/metastásico con expresión de PD-L1 (CPS) ≥ 10.",
+        options: ["Eribulina monodroga", "Olaparib sistémico", "Pembrolizumab más quimioterapia", "Sacituzumab govitecan"],
+        answer: 2,
+        justification: "Justificación: La inmunogenicidad del cáncer triple negativo permite aprovechar inhibidores de puntos de control inmunitario. De acuerdo al PRONAM de Cáncer de mama, el perfilamiento con el score positivo combinado (CPS) define la sensibilidad al bloqueo de PD-1, transformando la supervivencia global al sinergizar con citotóxicos.<br><br>Perla ENARM: El tratamiento de primera línea para pacientes con un porcentaje de PD-L1 por CPS ≥ 10 % es pembrolizumab más quimioterapia (paclitaxel, o gemcitabina con carboplatino).<br><br>Análisis de Distractores: El olaparib se indica en primera línea solo si hay mutación BRCA1/2 y CPS < 10. El sacituzumab govitecan es estándar en segunda línea tras progresión. Eribulina es una opción citotóxica en ausencia de biomarcadores accionables (CPS < 10 y BRCAwt).",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Triple Negativo Etapa IV, Página 57."
+    },
+    {
+        id: 31,
+        question: "Intervención clínica obligatoria ante el reporte de un estudio mastográfico categorizado como BI-RADS 4C.",
+        options: ["Referencia a seguimiento anual", "Biopsia obligatoria con aguja de corte", "Resonancia magnética de protocolo", "Seguimiento con imagen a 6 meses"],
+        answer: 1,
+        justification: "Justificación: La subcategoría 4C conlleva un riesgo de malignidad muy elevado (> 50 - ≤ 95 %). De acuerdo al PRONAM de clasificación BI-RADS, toda la categoría 4 y 5 requiere diagnóstico histopatológico inmediato, siendo mandatorio el uso de sistemas de preservación arquitectural para correlacionar los hallazgos.<br><br>Perla ENARM: Para cualquier subcategoría BI-RADS 4 (A, B o C), la intervención es la biopsia obligatoria con aguja de corte guiada por imagen y colocación de marcador.<br><br>Análisis de Distractores: El seguimiento a 6 meses aplica únicamente para BI-RADS 3. La resonancia no sustituye la necesidad de histología ante alta sospecha. El seguimiento anual es la indicación para hallazgos benignos (BI-RADS 1 y 2).",
+        source: "Clasificación BI-RADS, 2026, Tabla Categoría Hallazgos, Página 2."
+    },
+    {
+        id: 32,
+        question: "Modalidad quirúrgica autóloga de primera elección para la reconstrucción mamaria inmediata.",
+        options: ["Colgajo de músculo dorsal ancho", "Lipotransferencia seriada", "Reconstrucción aloplástica prepectoral", "Colgajo de perforante epigástrica inferior profunda (DIEP)"],
+        answer: 3,
+        justification: "Justificación: La evolución de las técnicas microquirúrgicas prioriza la morbilidad mínima de la zona donante y resultados naturales. De acuerdo al PRONAM de Cáncer de mama, la preservación del músculo recto abdominal utilizando exclusivamente tejido adiposo y cutáneo vascularizado posiciona a esta técnica como el gold standard autólogo.<br><br>Perla ENARM: En la reconstrucción mamaria autóloga, el colgajo DIEP (perforante epigástrica inferior profunda) es la modalidad preferente.<br><br>Análisis de Distractores: El dorsal ancho se utiliza pero no es la preferencia absoluta debido a menor volumen y sacrificio muscular. La lipotransferencia se utiliza para defectos de contorno complementarios, no como colgajo primario masivo. La vía aloplástica no es \"autóloga\" (usa implantes/matrices).",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Reconstrucción mamaria, Página 43."
+    },
+    {
+        id: 33,
+        question: "Combinación farmacológica de primera línea paliativa de elección en cáncer de mama metastásico con receptores hormonales positivos y HER2 negativo, sin crisis visceral.",
+        options: ["Inhibidor CDK4/6 más terapia endocrina", "Quimioterapia citotóxica en doblete", "Fulvestrant y everolimus", "Trastuzumab deruxtecan y anastrozol"],
+        answer: 0,
+        justification: "Justificación: El manejo de la enfermedad sistémica hormonal busca retrasar el uso de quimioterapia para preservar calidad de vida y prolongar supervivencia. De acuerdo al PRONAM de Cáncer de mama, la sinergia metabólica lograda al bloquear el ciclo celular junto con la inhibición estrogénica constituye el tratamiento cardinal.<br><br>Perla ENARM: Los inhibidores de quinasa dependientes de ciclinas 4/6 (ribociclib, abemaciclib o palbociclib) en combinación con terapia endocrina son los medicamentos de elección en la primera línea de tratamiento paliativo.<br><br>Análisis de Distractores: La quimioterapia se reserva para alta carga tumoral o crisis visceral inminente. Everolimus más fulvestrant es una opción de segunda línea tras falla a CDK4/6. Trastuzumab deruxtecan actúa sobre el blanco HER2 o HER2-bajo en líneas más avanzadas, no en primera línea puramente luminal.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Etapa Clínica IV/Recurrente, Página 52."
+    },
+    {
+        id: 34,
+        question: "Criterio clínico que justifica prescribir estudios de extensión sistémica (tomografía y gamagrama) en pacientes de reciente diagnóstico sin síntomas.",
+        options: ["Tumor primario de 1.5 cm (T1c) y ganglios negativos", "Edad menor a 35 años al momento del diagnóstico", "Tumor primario mayor a 5 cm (T3) o ganglios positivos", "Diagnóstico inicial de carcinoma ductal in situ"],
+        answer: 2,
+        justification: "Justificación: La búsqueda de enfermedad a distancia asintomática requiere una alta probabilidad pretest para ser costo-efectiva y evitar falsos positivos. De acuerdo al PRONAM de Cáncer de mama, los estadios precoces rara vez debutan diseminados, reservando los métodos de alta tecnología para volúmenes locorregionales considerables.<br><br>Perla ENARM: Se deben indicar estudios de extensión en pacientes con etapa clínica IIB, tumores mayores de 5 cm (T3) o ganglios axilares clínicamente positivos.<br><br>Análisis de Distractores: En tumores T1-T2 con ganglios negativos y sin síntomas, los estudios de extensión están contraindicados. La edad joven no es una justificación universal de estadificación anatómica extensa. El carcinoma in situ (T0) carece de capacidad invasiva metastásica a distancia.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Estadificación, Página 35."
+    },
+    {
+        id: 35,
+        question: "Tratamiento sistémico estándar de primera línea paliativa indicado en pacientes con cáncer de mama HER2 positivo metastásico de novo.",
+        options: ["Lapatinib combinado con capecitabina", "Trastuzumab deruxtecan exclusivo", "Trastuzumab emtansina", "Pertuzumab, trastuzumab y taxanos"],
+        answer: 3,
+        justification: "Justificación: El doble bloqueo del dominio extracelular del receptor HER2, acoplado a la estabilización de microtúbulos, proporciona la mayor tasa de supervivencia a largo plazo en la historia del padecimiento. De acuerdo al PRONAM de Cáncer de mama, el estudio CLEOPATRA posicionó este trío como irreemplazable al momento del debut metastásico.<br><br>Perla ENARM: La combinación de pertuzumab + trastuzumab + taxanos mejora la supervivencia global y libre de progresión por lo que debe ser el tratamiento de elección en primera línea HER2 positivo.<br><br>Análisis de Distractores: Trastuzumab deruxtecan es el tratamiento de elección para la segunda línea tras progresión. T-DM1 es una alternativa de segunda línea si T-DXd no está disponible. Lapatinib-capecitabina se relega a terceras o cuartas líneas de rescate.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Tratamiento Etapa IV HER2 positivo, Página 54."
+    },
+    {
+        id: 36,
+        question: "Fármaco dirigido indicado en primera línea paliativa para cáncer de mama triple negativo, con PD-L1 (CPS) menor a 10 y mutación germinal en BRCA1.",
+        options: ["Olaparib", "Pembrolizumab", "Sacituzumab govitecan", "Vinorelbina"],
+        answer: 0,
+        justification: "Justificación: La inestabilidad genómica inducida por fallos en la recombinación homóloga hace a las células tumorales altamente susceptibles a la inhibición del daño monocatenario. De acuerdo al PRONAM de Cáncer de mama, el atrapamiento del ADN polimerasa con este fármaco causa \"letalidad sintética\" en los portadores mutados, superando a la quimioterapia.<br><br>Perla ENARM: En pacientes con PD-L1 (CPS) < 10 %, y portadoras de una variante patogénica germinal o somática del gen BRCA1/2, el tratamiento de primera línea paliativa es olaparib.<br><br>Análisis de Distractores: Pembrolizumab requiere CPS ≥ 10 para estar indicado en primera línea TNBC. Sacituzumab govitecan es estándar para la segunda línea sin importar el estado de BRCA si falló la previa. Vinorelbina es un citotóxico reservado cuando no existen blancos moleculares (BRCAwt y CPS <10).",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Triple Negativo Etapa IV, Página 57."
+    },
+    {
+        id: 37,
+        question: "Tiempo clínico que debe persistir una lesión o alteración mamaria sin resolución para considerarse sospechosa de malignidad y referirse prioritariamente.",
+        options: ["8 semanas", "12 semanas", "3 semanas", "1 semana"],
+        answer: 2,
+        justification: "Justificación: La evasión de diagnósticos tardíos requiere sospecha oportuna ante procesos inflamatorios o quísticos aparentes. De acuerdo al PRONAM de Cáncer de mama, el tratamiento empírico ciego tiene un límite restrictivo de tiempo; si el tejido no recupera la normalidad, la biopsia/imagen debe precipitarse.<br><br>Perla ENARM: Cualquier enfermedad mamaria que persista y no se haya resuelto después de 3 semanas debe de considerarse sospechosa de malignidad e investigarse prioritariamente.<br><br>Análisis de Distractores: Tiempos largos como 8 o 12 semanas están proscritos ya que documentan retrasos severos en las rutas oncológicas nacionales. 1 semana es un tiempo muy corto que no permite valorar la involución natural de mastitis agudas tras antibiótico.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Manejo de lesiones sospechosas por imagen, Página 28."
+    },
+    {
+        id: 38,
+        question: "Límite máximo de lesiones permitidas para considerar la aplicación de radiocirugía estereotáctica (SRS) en pacientes con metástasis cerebrales de cáncer de mama.",
+        options: ["5 lesiones", "10 lesiones", "3 lesiones", "15 lesiones"],
+        answer: 1,
+        justification: "Justificación: El objetivo primario en la diseminación central es evitar el deterioro cognitivo asociado a la irradiación total del encéfalo y lograr un control ablativo en puntos precisos. De acuerdo al PRONAM de Cáncer de mama, el volumen total y la cantidad de metástasis delimitan la frontera donde la toxicidad supera al beneficio local.<br><br>Perla ENARM: La radiocirugía estereotáctica (SRS) se prefiere en pacientes con hasta 10 lesiones menores de 3 cm, buen estado funcional y control sistémico.<br><br>Análisis de Distractores: 3 y 5 lesiones caían en protocolos antiguos altamente restrictivos; las guías actuales han expandido el margen gracias a las técnicas VMAT. Si las lesiones superan el número de 10 o son de mayor volumen, la indicación migra a la radioterapia holocraneal (WBRT).",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Radioterapia en enfermedad metastásica, Página 60."
+    },
+    {
+        id: 39,
+        question: "Indicación patológica específica para añadir Olaparib adyuvante en pacientes con cáncer triple negativo, mutación en BRCA1/2, tratadas con cirugía primaria directa (sin neoadyuvancia).",
+        options: ["Tumores in situ con márgenes cercanos", "Tumores T1c N0", "Respuesta clínica parcial", "Tumores > pT2 o > pN1"],
+        answer: 3,
+        justification: "Justificación: La terapia adyuvante sistémica dirigida busca erradicar clonas quimiorresistentes postoperatorias en grupos genéticamente inestables. De acuerdo al PRONAM de Cáncer de mama, el beneficio de supervivencia en el estudio OlympiA definió claramente los umbrales de alto riesgo que justifican la prescripción de inhibidores de PARP profilácticos.<br><br>Perla ENARM: Si la persona portadora de variante patogénica del gen BRCA1/2 fue llevada a cirugía primaria, el olaparib debe de indicarse en pacientes con tumores > pT2 o > pN1.<br><br>Análisis de Distractores: Tumores muy pequeños T1c sin afección ganglionar no ameritan escalamiento a Olaparib en el contexto quirúrgico primario. \"Respuesta clínica parcial\" aplica a contexto neoadyuvante (en neoadyuvancia se da Olaparib solo si hubo tumor residual postoperatorio). El in situ nunca es indicación sistémica ablativa genómica.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Tratamiento triple negativo, Página 50."
+    },
+    {
+        id: 40,
+        question: "Umbral del riesgo calculado a lo largo de la vida que define a una persona como perteneciente a la población de \"Alto Riesgo\" de padecer cáncer de mama.",
+        options: ["Mayor o igual al 10 %", "Mayor o igual al 20 %", "Mayor o igual al 15 %", "Mayor o igual al 30 %"],
+        answer: 1,
+        justification: "Justificación: La estratificación epidemiológica predice intervenciones contundentes (estudios de resonancia magnética complementarios o fármacos reductores). De acuerdo al PRONAM de Cáncer de mama, las calculadoras genéticas o antecedentes familiares pesados consolidan el criterio cuando se cruza este límite estadístico porcentual.<br><br>Perla ENARM: La población de alto riesgo se define como las personas que tienen más o igual al 20 % de riesgo de padecer un cáncer de mama a lo largo de la vida.<br><br>Análisis de Distractores: El umbral del 15 % al 19 % clasifica a la paciente en \"Riesgo Moderado\" y no amerita de entrada resonancia magnética. Menos del 15 % engloba a la población de \"Riesgo Promedio\". El 30 % pertenece al estrato alto pero omite el segmento límite correcto del 20 %.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Cáncer de mama, 2026, Tamizaje (Tabla 1), Página 8 y 9."
+    }
+        ];
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('CAMAPROLastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('CAMAPROProgress');
+                localStorage.removeItem('CAMAPROLastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-blue-500 shadow-md z-10 border-blue-500 dark:border-blue-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-cyan-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "Cáncer de Mama y Sistema BI-RADS";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "Protocolo Nacional de Atención Médica (PRONAM) - 2026";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="loginlite.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="loginlite.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-blue-100 dark:border-blue-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 dark:has-[:checked]:bg-blue-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('CAMAPROProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('CAMAPROLastQId', currentQuestionId);
+                else localStorage.removeItem('CAMAPROLastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('CAMAPROProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+
+</body>
+</html>

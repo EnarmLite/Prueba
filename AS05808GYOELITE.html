@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================
+        // =========================================================
+        const questionsData = [
+            {
+                id: 1, 
+                question: "Para clasificar clínicamente un cuadro como Hipertensión Gestacional, la elevación de las cifras tensionales debe documentarse obligatoriamente a partir de la semana:", 
+                options: ["12 de gestación", "16 de gestación", "20 de gestación", "24 de gestación"], 
+                answer: 2, 
+                justification: "Justificación: El pilar temporal que divide la patología preexistente de la inducida por la placenta se ubica a la mitad del embarazo. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, toda cifra tensional elevada identificada previamente a este punto se cataloga como crónica, mientras que su inicio posterior, sin acompañarse de fuga de proteínas, define al padecimiento gestacional.<br><br>Perla ENARM: \"Hipertensión gestacional: Está definida como la hipertensión que se desarrolla por primera vez después de la semana 20 de gestación con presión arterial sistólica mayor a 140mmHg y/o presión arterial diastólica mayor a 90mmHg.\"<br><br>Análisis de Distractores: Las 12 semanas (A) marcan la edad gestacional para tamizaje con ultrasonido Doppler. Las 16 semanas (B) son el límite superior de efectividad para iniciar la profilaxis con ácido acetilsalicílico. Las 24 semanas (D) no representan un punto de corte diagnóstico universal para separar la clasificación de la enfermedad.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Anexos, Página 38." 
+            },
+            {
+                id: 2, 
+                question: "¿Cuál es la comorbilidad materna que confiere el Riesgo Relativo más alto para el desarrollo de trastornos hipertensivos del embarazo?", 
+                options: ["Diabetes pregestacional", "Hipertensión arterial crónica", "Obesidad mayor a 30", "Lupus eritematoso sistémico"], 
+                answer: 3, 
+                justification: "Justificación: El terreno inmunológico es un determinante absoluto en el rechazo trofoblástico temprano. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, condiciones como el lupus eritematoso sistémico o el síndrome de anticuerpos antifosfolípidos incrementan drásticamente el daño endotelial materno, otorgando un peso estadístico muy superior a los factores de riesgo convencionales.<br><br>Perla ENARM: \"Enfermedades autoinmunes (lupus eritematoso sistémico, síndrome de anticuerpos anti-fosfolípidos) confieren el mayor riesgo con 9.72.\"<br><br>Análisis de Distractores: La diabetes pregestacional (A) otorga un riesgo relativo de 3.56. La hipertensión crónica (B) condiciona un riesgo de 3.6. La obesidad con índice de masa corporal mayor a 30 kg/m2 (C) presenta un riesgo relativo de 2.47. Ninguna supera a las enfermedades autoinmunes.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Anexos (Cuadro 1), Página 37." 
+            },
+            {
+                id: 3, 
+                question: "¿Cuál es la herramienta de tamizaje de primera elección recomendada entre las semanas 11 a 13.6 para predecir el riesgo de preeclampsia temprana?", 
+                options: ["Flujometría de arteria umbilical", "Índice de pulsatilidad uterina", "Perfil biofísico temprano", "Flujometría de arteria cerebral"], 
+                answer: 1, 
+                justification: "Justificación: La resistencia vascular en el primer trimestre refleja un fracaso incipiente en la placentación. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, su evaluación por ecografía permite instituir estrategias preventivas a tiempo, logrando una tasa de detección superior al 80% cuando se combina con factores maternos.<br><br>Perla ENARM: \"Se recomienda la medición del índice de pulsatilidad de las arterias uterinas y cálculo de IP medio entre la semana 11-13.6, en caso de contar con los recursos.\"<br><br>Análisis de Distractores: La flujometría de arteria umbilical (A) y cerebral (D) se usan en la evaluación de la restricción del crecimiento intrauterino y la redistribución hemodinámica fetal en el tercer trimestre, no como cribado inicial materno. El perfil biofísico (C) valora asfixia en fetos viables de mayor edad gestacional.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Predicción, Página 19." 
+            },
+            {
+                id: 4, 
+                question: "En pacientes con alto riesgo de preeclampsia, la profilaxis con 80 a 150 mg de ácido acetilsalicílico nocturno debe iniciarse idealmente antes de la semana:", 
+                options: ["16 de gestación", "12 de gestación", "20 de gestación", "24 de gestación"], 
+                answer: 0, 
+                justification: "Justificación: La modulación del equilibrio entre tromboxano y prostaciclina inhibiendo selectivamente las plaquetas favorece la dilatación de las arterias espirales. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, el inicio de esta medida profiláctica en la ventana de oportunidad anatómica reduce la incidencia de la enfermedad hasta en un 50%.<br><br>Perla ENARM: \"Se recomienda el uso de AAS a dosis bajas (80-150mg) administración nocturna, en pacientes de alto riesgo ó con screening positivo para preeclampsia antes de la semana 16.\"<br><br>Análisis de Distractores: Iniciar antes de la semana 12 (B) incrementa ligeramente la asociación teórica con defectos congénitos de la pared abdominal. Un inicio a partir de la semana 20 (C) o 24 (D) pierde la ventana angiogénica principal, resultando en ineficacia clínica demostrada.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Promoción a la salud, Página 24." 
+            },
+            {
+                id: 5, 
+                question: "¿En qué momento de la gestación debe suspenderse la profilaxis con ácido acetilsalicílico para evitar alteraciones en la capacidad de coagulación del recién nacido?", 
+                options: ["Semana 34", "Semana 36", "Semana 38", "Al inicio del parto"], 
+                answer: 1, 
+                justification: "Justificación: El mantenimiento de la terapia antiagregante hasta el término absoluto expone al binomio a un riesgo hemorrágico injustificado. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, para permitir la depuración del fármaco y la restauración de la función plaquetaria neonatal, es mandatorio su retiro anticipado al parto.<br><br>Perla ENARM: \"El uso de AAS se debe suspenderse a la semana 36 de gestación debido a sus efectos en la capacidad de coagulación neonatal.\"<br><br>Análisis de Distractores: Suspender en la semana 34 (A) es prematuro y desprotege a la madre durante el pico de mayor riesgo de descompensación vascular. Suspender en la semana 38 (C) o al inicio del parto (D) eleva la incidencia de sangrado intraventricular neonatal y prolongación del tiempo de hemorragia materna.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Promoción a la salud, Página 25." 
+            },
+            {
+                id: 6, 
+                question: "La suplementación profiláctica con 1 g diario de calcio está indicada exclusivamente en pacientes cuya ingesta dietética basal sea menor o igual a:", 
+                options: ["400 mg diarios", "1000 mg diarios", "600 mg diarios", "800 mg diarios"], 
+                answer: 2, 
+                justification: "Justificación: El calcio estabiliza el tono del músculo liso vascular periférico. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, la suplementación masiva no confiere beneficio universal, limitando su prescripción preventiva estricta a la subpoblación que cursa con una depleción nutricional real documentada.<br><br>Perla ENARM: \"Las recomendaciones para la suplementación de calcio, se basan en ensayos controlados aleatorios que incluyen al menos 1 g/ d de suplementos orales para las mujeres con una ingesta dietética baja de calcio, definida como menor o igual a 600 mg / día.\"<br><br>Análisis de Distractores: Las cifras de 400 mg (A), 800 mg (D) o 1000 mg (B) no son el punto de corte epidemiológico validado por los consensos nutricionales de la norma para definir deficiencia. La población general sin esta deficiencia basal no recibe prevención con calcio.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Promoción a la salud, Página 25." 
+            },
+            {
+                id: 7, 
+                question: "Durante el tamizaje prenatal, ¿cuál es el resultado mínimo en tira reactiva de orina que obliga a solicitar una prueba confirmatoria cuantitativa?", 
+                options: ["Trazas", "2+", "3+", "1+"], 
+                answer: 3, 
+                justification: "Justificación: La evaluación en consultorio a través de métodos semicuantitativos es clave para la sospecha inicial. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, este grado de positividad equivale a un umbral de 30 a 100 mg/dl, lo cual resulta sospechoso de franca endoteliosis glomerular, disparando la recolección horaria obligatoria.<br><br>Perla ENARM: \"Un resultado por tira reactiva de 1+ requiere confirmación a través de recolección de orina de 24 horas para cuantificar la cantidad de proteinuria.\"<br><br>Análisis de Distractores: Las trazas de proteínas (A) equivalen a 15-30 mg/dl y se consideran hallazgos normales o inespecíficos por aumento del filtrado en la gestante. Los resultados de 2+ (B) o 3+ (C) son francamente diagnósticos de daño avanzado, pero el protocolo de confirmación inicia obligatoriamente desde el 1+.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Diagnóstico, Página 21." 
+            },
+            {
+                id: 8, 
+                question: "¿Cuál es el estudio considerado estándar de oro para confirmar el diagnóstico de proteinuria significativa en una paciente con sospecha de preeclampsia?", 
+                options: ["Recolección de 24 horas", "Índice proteína creatinina", "Depuración de creatinina", "Microalbúmina en muestra aislada"], 
+                answer: 0, 
+                justification: "Justificación: La evaluación integral del daño renal requiere solventar las fluctuaciones hídricas diurnas de la mujer. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, la medición total acumulada de la pérdida de proteínas igual o mayor a 300 mg diarios establece la certeza definitiva de la fisiopatología en evolución.<br><br>Perla ENARM: \"Actualmente existen tres métodos de estimación de proteinuria... la segunda es el 'patrón oro' cuantificación de proteínas en orina de 24 horas.\"<br><br>Análisis de Distractores: El índice proteína/creatinina (B) es un método validado y sumamente rápido, pero se ubica como alternativo ante la falta de tiempo. La depuración de creatinina (C) evalúa la filtración general, no cuantifica las proteínas. La microalbúmina (D) se usa primordialmente en el tamizaje de nefropatía diabética temprana.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Diagnóstico, Página 21." 
+            },
+            {
+                id: 9, 
+                question: "Dentro de la clasificación de preeclampsia, ¿cuál de las siguientes alteraciones cardiorrespiratorias se cataloga como una complicación severa que indica el nacimiento inminente?", 
+                options: ["Edema agudo pulmonar", "Dolor torácico atípico", "Disnea de medianos esfuerzos", "Derrame pleural leve"], 
+                answer: 0, 
+                justification: "Justificación: El aumento dramático de la resistencia periférica total genera insuficiencia cardiaca con extravasación alveolar aguda. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, esto representa una inestabilidad sistémica máxima con hipoxia materna crítica, siendo un motivo absoluto para extraer al feto sin considerar la prematurez.<br><br>Perla ENARM: \"Complicaciones Severas (Que indican el nacimiento): Cardiorrespiratorio... Saturación de oxigeno de menos del 90%, intubación, edema pulmonar.\"<br><br>Análisis de Distractores: La disnea de medianos esfuerzos (C) es común mecánicamente en el tercer trimestre. Un derrame pleural leve (D) puede existir por hipoalbuminemia sin amenazar la vida agudamente. El dolor torácico atípico (B) amerita abordaje, pero no consolida diagnóstico de interrupción per se sin isquemia documentada.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Anexos (Cuadro 3), Página 40." 
+            },
+            {
+                id: 10, 
+                question: "¿Cuál es el punto de corte en el conteo plaquetario que la normativa establece para clasificar a la preeclampsia con una complicación hematológica severa e indicación de nacimiento?", 
+                options: ["Menor a 150,000", "Menor a 100,000", "Menor a 75,000", "Menor a 50,000"], 
+                answer: 3, 
+                justification: "Justificación: La microangiopatía trombótica induce la agregación y destrucción plaquetaria acelerada. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, si bien la disminución bajo cien mil denota inicio del síndrome HELLP, un agotamiento tan extremo eleva el riesgo de hemorragia masiva intracraneal o hepática, obligando a la cesárea/parto urgente.<br><br>Perla ENARM: \"Complicaciones Severas (Que indican el nacimiento): Hematológico... Conteo plaquetario menor a 50,000.\"<br><br>Análisis de Distractores: Un nivel menor a 150,000 (A) se considera trombocitopenia leve o gestacional. Un nivel menor a 100,000 (B) es una \"Condición adversa\" que advierte riesgo y apoya el diagnóstico de severidad, pero la complicación terminal catalogada como indicación perentoria de interrupción pura es caer de 50,000.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Anexos (Cuadro 3), Página 41." 
+            },
+            {
+                id: 11, 
+                question: "Para definir la presencia de daño renal agudo como complicación severa de la preeclampsia, el valor de creatinina sérica debe ser mayor a:", 
+                options: ["0.8 mg/dl", "0.9 mg/dl", "1.1 mg/dl", "1.5 mg/dl"], 
+                answer: 2, 
+                justification: "Justificación: En un embarazo fisiológico, la hiperfiltración condiciona valores de creatinina sumamente bajos (0.4 - 0.7 mg/dl). De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, rebasar este límite preciso indica pérdida mayor al 50% de la función renal materna atribuible al vasoespasmo sostenido de la arteria aferente renal.<br><br>Perla ENARM: \"Condiciones Adversas (Que incrementan el riesgo de complicaciones severas): Renal... Daño renal agudo (creatinina mayor a 1.1 mg/dl o una duplicación de la concentración de creatinina sérica sin enfermedad renal previa).\"<br><br>Análisis de Distractores: Valores de 0.8 o 0.9 mg/dl (A y B) se mantienen como sospechosos pero subdiagnósticos normativamente. Exigir 1.5 mg/dl (D) retrasaría excesivamente el diagnóstico de lesión renal aguda en una mujer gestante.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Anexos (Cuadro 3), Página 41." 
+            },
+            {
+                id: 12, 
+                question: "¿Qué síntoma se considera una condición adversa de origen hepático que advierte un deterioro clínico y riesgo de ruptura capsular?", 
+                options: ["Náusea matutina", "Dolor en epigastrio", "Ictericia conjuntival", "Prurito generalizado"], 
+                answer: 1, 
+                justification: "Justificación: La isquemia en el lecho vascular hepático causa infartos y hemorragia subcapsular progresiva. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, la distensión aguda de la cápsula de Glisson genera dolor exquisito en los cuadrantes superiores y antecede a eventos fatales, justificando hospitalización urgente incondicional.<br><br>Perla ENARM: \"Amerita hospitalización urgente aquella paciente que presente: hipertensión severa, dolor en epigastrio, dolor en hipocondrio derecho, náusea y vómito...\"<br><br>Análisis de Distractores: La náusea matutina (A) es atribuible a la gonadotropina coriónica en el primer trimestre. La ictericia franca (C) advierte falla hepática terminal, pero el dolor es el síntoma clínico de inminencia clásica. El prurito (D) sugiere colestasis intrahepática del embarazo.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Criterios de Hospitalización, Página 34." 
+            },
+            {
+                id: 13, 
+                question: "¿Cuál es el agente antihipertensivo recomendado como primera línea para el control farmacológico de mantenimiento en la hipertensión gestacional?", 
+                options: ["Labetalol", "Nifedipino", "Alfametildopa", "Hidralazina"], 
+                answer: 2, 
+                justification: "Justificación: La protección a largo plazo del lecho placentario y del desarrollo del neonato dicta la elección farmacológica. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, la acción central moduladora de este medicamento carece de teratogenicidad y no altera las pruebas cognitivas o de salud posteriores, sustentando su posición como estándar de oro ambulatorio.<br><br>Perla ENARM: \"Por su seguridad para el uso durante el embarazo, se recomienda la metildopa como medicamento de primera línea en el tratamiento de hipertensión gestacional.\"<br><br>Análisis de Distractores: El Nifedipino (B) se categoriza como de segunda línea o alternativa eficaz. El Labetalol (A) es validado externamente, pero no siempre figura como primer escalón en las guías del sector por disponibilidad. La Hidralazina (D) queda relegada para mantenimiento por eventos adversos autoinmunes a largo plazo.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Tratamiento farmacológico, Página 26." 
+            },
+            {
+                id: 14, 
+                question: "¿Cuál de las siguientes entidades clínicas representa una contraindicación absoluta para el uso de Alfametildopa en el embarazo?", 
+                options: ["Bloqueo auriculoventricular", "Hepatitis aguda o cirrosis", "Asma bronquial activa", "Lupus eritematoso sistémico"], 
+                answer: 1, 
+                justification: "Justificación: El fármaco sufre biotransformación hepática y provoca toxicidad intrínseca. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, su administración en hígados enfermos desencadena falla fulminante o eleva artificialmente transaminasas, enmascarando u originando falsos positivos de Síndrome HELLP.<br><br>Perla ENARM: \"Contraindicaciones (Metildopa): Hipersensibilidad al fármaco, tumores cromafines, hepatitis aguda, cirrosis hepática, insuficiencia renal y con IMAO.\"<br><br>Análisis de Distractores: El bloqueo auriculoventricular (A) contraindica beta y calcio bloqueadores. El asma activa (C) prohíbe específicamente bloqueadores beta como labetalol. El lupus eritematoso (D) advierte contra la prescripción de hidralazina crónica, no de metildopa.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Anexos (Cuadro 5), Página 45." 
+            },
+            {
+                id: 15, 
+                question: "Ante la falta de disponibilidad de Alfametildopa, ¿cuál es el fármaco de segunda línea vía oral recomendado para el manejo de la hipertensión gestacional?", 
+                options: ["Losartán", "Hidroclorotiazida", "Nifedipino", "Prazosina"], 
+                answer: 2, 
+                justification: "Justificación: Las alternativas deben probar su capacidad de reducir la tensión sin alterar la reserva circulatoria hacia el útero. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, la formulación de liberación prolongada de este calcioantagonista logra estabilizar cifras medias y proteger la filtración glomerular sin limitar los flujos de la arteria umbilical.<br><br>Perla ENARM: \"Los bloqueadores de canales de calcio constituyen la segunda línea de fármacos antihipertensivos administrados durante la gestación.\"<br><br>Análisis de Distractores: Losartán (A) es un ARA-II totalmente teratogénico. La Hidroclorotiazida (B) abate el volumen plasmático precipitando la insuficiencia placentaria. La Prazosina (D) es un bloqueador alfa adrenérgico que no está validado por norma como segunda línea rutinaria.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Tratamiento farmacológico, Página 28." 
+            },
+            {
+                id: 16, 
+                question: "¿Qué grupo de fármacos antihipertensivos se encuentra absolutamente contraindicado durante todo el embarazo debido al riesgo de inducir falla renal y oligohidramnios fetal?", 
+                options: ["Calcioantagonistas", "Inhibidores enzima convertidora", "Bloqueadores beta adrenérgicos", "Vasodilatadores directos"], 
+                answer: 1, 
+                justification: "Justificación: El riñón fetal en desarrollo depende funcionalmente del eje angiotensina normoactivo para su formación celular. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, la exposición materno-fetal a estos agentes anula la perfusión nefrogénica del embrión, condicionando anuria intrauterina, compresión fetal y muerte.<br><br>Perla ENARM: \"Los Inhibidores de la enzima convertidora de angiotensina y los antagonistas de receptores de angiotensina NO se deben de usar durante el embarazo.\"<br><br>Análisis de Distractores: Los calcioantagonistas (A) y vasodilatadores como la hidralazina (D) se usan ampliamente. Los bloqueadores beta (C), aunque se asocian a restricción del crecimiento, son alternativas de control, no están formalmente proscritos bajo absoluta contraindicación como los IECA.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Anexos (Cuadro 5), Página 45." 
+            },
+            {
+                id: 17, 
+                question: "¿Cuál es la meta terapéutica estricta de presión arterial en una gestante con hipertensión crónica y comorbilidades como nefropatía o diabetes?", 
+                options: ["Menor a 130/80 mmHg", "Menor a 140/90 mmHg", "Menor a 135/85 mmHg", "Menor a 120/80 mmHg"], 
+                answer: 0, 
+                justification: "Justificación: La lesión vascular previa (arteriosclerosis, microangiopatía) aumenta el riesgo de eventos si se suma el daño placentario. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, la permisividad tensional se descarta en esta subpoblación, fijando metas menores para evitar isquemia en órgano blanco pre-enfermo.<br><br>Perla ENARM: \"Cuando existen condiciones comórbidas el objetivo debe ser mantener la presión arterial menor a 130/80 mmHg.\"<br><br>Análisis de Distractores: Menor a 140/90 (B) aplica sólo a crónicas de bajo riesgo o gestacional aislada. Menor a 135/85 (C) diagnostica bata blanca por MAPA, no es meta. Menor a 120/80 (D) arriesga hipoperfusión placentaria severa y no forma parte del algoritmo protector actual.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Pronóstico, Página 30." 
+            },
+            {
+                id: 18, 
+                question: "En una paciente con preeclampsia severa, si el ultrasonido reporta un Perfil Biofísico de 0/10, ¿cuál es la tasa de mortalidad fetal esperada sin intervención a una semana?", 
+                options: ["89 de cada 1000", "125 de cada 1000", "91 de cada 1000", "600 de cada 1000"], 
+                answer: 3, 
+                justification: "Justificación: Un puntaje ausente traduce una abolición neuronal profunda en respuesta a acidemia extrema. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, las posibilidades de sobrevida intracavitaria ante este hallazgo son mínimas, precipitando el imperativo ético obstétrico de interrupción expedita.<br><br>Perla ENARM: \"0/10 Alta certeza de asfixia fetal. Mortalidad fetal sin intervención a 1 semana: 600/1000. Manejo: Nacimiento por indicación fetal.\"<br><br>Análisis de Distractores: 89/1000 (A) equivale a puntaje equívoco de 6/10. 125/1000 (B) predice el puntaje trágico de 2/10. 91/1000 (C) refleja puntaje de 4/10. Solo la ausencia total biológica marca las catastróficas 600 muertes.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Anexos (Cuadro 6), Página 46." 
+            },
+            {
+                id: 19, 
+                question: "En pacientes con trastorno hipertensivo controlado, ¿a partir de qué semana de gestación se recomienda iniciar la vigilancia semanal con prueba fetal sin estrés (NST)?", 
+                options: ["28 a 30 semanas", "32 a 34 semanas", "30 a 32 semanas", "36 a 38 semanas"], 
+                answer: 1, 
+                justification: "Justificación: El daño microvascular silente altera la oxigenación crónica del feto. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, instaurar un control rutinario semanal en el tercer trimestre tardío permite adelantarse a una descompensación fatal sin generar alertas falsas inmaduras.<br><br>Perla ENARM: \"Se recomienda el inicio de pruebas de bienestar fetal a partir de las 32-34 semanas en pacientes con trastorno hipertensivo del embarazo controlado, y se puede considerar realizarlas a edades gestacionales menores si existen condiciones de muy alto riesgo.\"<br><br>Análisis de Distractores: Iniciar semanas previas (28-32, A y C) no confiere beneficios costo-efectivos poblacionales sin signos de alarma de severidad explícita previa. Iniciar a las 36 semanas (D) es un abordaje retrasado para la biología de la insuficiencia placentaria preeclámptica.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Cuidados Ambulatorios, Página 32." 
+            },
+            {
+                id: 20, 
+                question: "En una mujer con hipertensión crónica y embarazo bien controlada de forma ambulatoria, ¿en qué intervalo de tiempo se recomienda considerar la resolución del nacimiento?", 
+                options: ["34 a 36 semanas", "36 a 37 semanas", "37 a 38 semanas", "38 a 39.6 semanas"], 
+                answer: 3, 
+                justification: "Justificación: El manejo de la hipertensión crónica que no ha sobreagregado daño a órganos blancos debe priorizar la madurez neurológica y pulmonar completa. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, interrumpir iatrogénicamente a una mujer sin descompensación somete al feto a un estrés neonatal innecesario, permitiendo el alcance de este punto para iniciar el parto.<br><br>Perla ENARM: \"Se recomienda que en mujeres con hipertensión crónica y embarazo bien controladas el nacimiento sea considerado entre las 38 y 39+6 semanas de gestación, favoreciendo la vía vaginal.\"<br><br>Análisis de Distractores: Las semanas 34 a 37 (A y B) se reservan ineludiblemente para pacientes con descontrol tensional, síndrome HELLP, o RCIU profundo. La semana 37-38 (C) era antiguamente el estándar, pero se desplazó normativamente a las 38 cumplidas para consolidar adaptación fisiológica extrauterina total.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Terminación del embarazo, Página 33." 
+            },
+            {
+                id: 21, 
+                question: "¿Cuál es la meta terapéutica de presión arterial recomendada para una paciente con diagnóstico de hipertensión gestacional sin condiciones comórbidas asociadas?", 
+                options: ["≤120/80 mmHg", "≤130/80 mmHg", "≤140/90 mmHg", "≤150/100 mmHg"], 
+                answer: 2, 
+                justification: "Justificación: El objetivo primario del tratamiento en pacientes de bajo riesgo es prevenir episodios de severidad sin comprometer la perfusión placentaria basal. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, relajar la meta en ausencia de daño a órgano blanco o patología sistémica asegura un volumen sistólico adecuado hacia el lecho trofoblástico, evitando la isquemia iatrogénica del feto.<br><br>Perla ENARM: \"Para las mujeres con hipertensión gestacional tratada con antihipertensivos, se recomienda mantener la presión arterial ≤140/90 mmHg.\"<br><br>Análisis de Distractores: La meta de ≤130/80 mmHg (B) se reserva estrictamente para mujeres con hipertensión crónica y comorbilidades (diabetes, daño renal). Cifras menores a 120/80 mmHg (A) incrementan el riesgo de hipoperfusión placentaria severa. Cifras de 150/100 mmHg (D) representan un control subóptimo que precede a complicaciones graves.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Pronóstico, Página 30." 
+            },
+            {
+                id: 22, 
+                question: "Al emplear el índice de proteína/creatinina en muestra de orina al azar para el diagnóstico de preeclampsia, ¿cuál es el punto de corte mínimo significativo?", 
+                options: ["≥0.15 mg/dL", "≥0.28 mg/dL", "≥0.35 mg/dL", "≥0.45 mg/dL"], 
+                answer: 1, 
+                justification: "Justificación: Cuando la recolección de orina de 24 horas no es factible por falta de tiempo ante una urgencia obstétrica, se recurre a cocientes bioquímicos rápidos. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, la proporción entre la filtración de proteínas y la excreción de creatinina en una muestra aislada permite extrapolar el daño endotelial glomerular, siendo este valor equivalente a los 300 mg diarios requeridos para el diagnóstico.<br><br>Perla ENARM: \"Preeclampsia... Relación proteína/creatinina ≥0.28 mg/dL en ausencia de otro método cuantitativo.\"<br><br>Análisis de Distractores: El valor de 0.15 mg/dL (A) es subdiagnóstico y normal en el embarazo por hiperfiltración. Los valores de 0.35 (C) y 0.45 mg/dL (D) son positivos, pero el umbral normativo validado para establecer el diagnóstico inicial en México es 0.28.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Anexos (Cuadro 2), Página 39." 
+            },
+            {
+                id: 23, 
+                question: "¿Cuál es el síntoma neurooftalmológico clasificado en la normativa como \"Complicación Severa\" que exige interrupción inmediata del embarazo?", 
+                options: ["Cefalea frontoparietal", "Escotomas centelleantes", "Ceguera cortical", "Visión borrosa"], 
+                answer: 2, 
+                justification: "Justificación: Existe una diferencia clínica fundamental entre la irritación del sistema nervioso central y su infarto o isquemia franca. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, la pérdida total de la visión originada en el lóbulo occipital traduce un edema vasogénico extremo o leucoencefalopatía posterior reversible (PRES), representando una falla orgánica inminente a la muerte.<br><br>Perla ENARM: \"Complicaciones Severas (Que indican el nacimiento): Escala de coma de Glasgow... Síndrome de leucoencefalopatía posterior reversible (PRES), Ceguera o desprendimiento de Retina.\"<br><br>Análisis de Distractores: La cefalea (A), los escotomas (B) y la visión borrosa (D) se catalogan como \"Condiciones Adversas\"; son avisos críticos de vasoespasmo que requieren vigilancia y manejo hospitalario, pero no constituyen una complicación terminal que dicte por sí sola la extracción fetal inmediata si logran ser controladas.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Anexos (Cuadro 3), Página 40." 
+            },
+            {
+                id: 24, 
+                question: "En una paciente con sospecha de \"Hipertensión enmascarada\", ¿qué cifra tensional obtenida en monitoreo domiciliario establece el diagnóstico al contrastar con valores normales en consultorio?", 
+                options: ["> 120/80 mmHg", "> 130/85 mmHg", "> 135/85 mmHg", "> 140/90 mmHg"], 
+                answer: 2, 
+                justification: "Justificación: Las variaciones ambientales y autonómicas pueden ocultar un tono vascular patológico basal. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, una paciente que se muestra normotensa frente al médico (< 140/90) pero que en casa mantiene un régimen vascular persistentemente elevado cruza el umbral de riesgo diagnóstico a partir de esta cifra, exponiéndose a complicaciones silentes.<br><br>Perla ENARM: \"Efecto hipertensivo enmascarado: La presión sanguínea es consistentemente normal en el consultorio... pero se eleva consistentemente fuera del consultorio (Mayor a 135/85 mmHg) por monitoreo ambulatorio o monitoreo en casa.\"<br><br>Análisis de Distractores: Valores como > 120/80 (A) y > 130/85 (B) se consideran dentro del espectro pre-hipertensivo u óptimo, sin definir el trastorno enmascarado. Exigir > 140/90 (D) en casa aplicaría a una hipertensión gestacional franca si también estuviera elevada en la clínica, pero el punto de corte específico para definir la modalidad enmascarada domiciliaria es 135/85.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Anexos (Cuadro 2), Página 39." 
+            },
+            {
+                id: 25, 
+                question: "¿A partir de qué edad gestacional se considera que el estudio Doppler de la arteria umbilical pierde su valor clínico para predecir complicaciones?", 
+                options: ["32 semanas", "34 semanas", "36 semanas", "38 semanas"], 
+                answer: 2, 
+                justification: "Justificación: La flujometría umbilical evalúa la resistencia de la microvasculatura placentaria ante un crecimiento fetal restringido. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, al acercarse al término, la hemodinamia fetoplacentaria alcanza un estado de maduración y distensibilidad donde los índices de resistencia pierden sensibilidad predictiva para asfixia, debiendo priorizarse otras pruebas biofísicas.<br><br>Perla ENARM: \"La velocimetría Doppler de la arteria umbilical es de valor limitado después de 36 semanas.\"<br><br>Análisis de Distractores: A las 32 (A) y 34 (B) semanas el Doppler es la herramienta estándar de oro absoluta para decidir el manejo conservador vs activo en RCIU por preeclampsia. A las 38 semanas (D) la prueba lleva ya dos semanas de ineficacia relativa clínica.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Cuidados Ambulatorios, Página 32." 
+            },
+            {
+                id: 26, 
+                question: "¿Cuál es la complicación autoinmune clásica asociada al uso prolongado de Hidralazina a dosis mayores de 200 mg/día en la paciente gestante?", 
+                options: ["Vasculitis leucocitoclástica", "Síndrome Lupus-like", "Púrpura trombocitopénica", "Hepatitis autoinmune"], 
+                answer: 1, 
+                justification: "Justificación: La Hidralazina es un vasodilatador arterial directo cuyo metabolismo hepático por acetilación genera metabolitos inmunógenos en pacientes susceptibles. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, cruzar la barrera de dosis de seguridad o usarla crónicamente precipita la formación de autoanticuerpos, desarrollando un cuadro reumatológico reversible pero grave.<br><br>Perla ENARM: \"El uso de dosis altas de hidralazina (>200 mg/día) o cuando se utiliza en forma prolongada a dosis bajas... puede asociarse a lupus like y neuropatía periférica.\"<br><br>Análisis de Distractores: La púrpura (C) orienta al síndrome HELLP. La hepatitis autoinmune (D) y la vasculitis leucocitoclástica (A) no son reacciones adversas canónicas de este vasodilatador.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Tratamiento farmacológico, Página 28." 
+            },
+            {
+                id: 27, 
+                question: "En pacientes con Síndrome de Ovario Poliquístico preexistente, ¿qué manejo farmacológico reduce el riesgo de preeclampsia en un 50% si se continúa durante el embarazo?", 
+                options: ["Insulina NPH nocturna", "Citrato de clomifeno", "Metformina vía oral", "Medroxiprogesterona"], 
+                answer: 2, 
+                justification: "Justificación: La resistencia a la insulina y la hiperinsulinemia compensatoria son gatillos fisiopatológicos directos del daño endotelial materno. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, el mantenimiento del sensibilizador insulínico disminuye drásticamente la impedancia de la arteria uterina al modular el ambiente metabólico, confiriendo un factor protector vital.<br><br>Perla ENARM: \"En mujeres con SOP quienes continuaron la terapia con metformina, ésta reduce el riesgo de preeclampsia en al menos 50%... Es recomendable continuarlo durante la gestación.\"<br><br>Análisis de Distractores: La Insulina NPH (A) controla la glucemia franca pero no revierte mecánicamente la resistencia en SOP ni disminuye el riesgo de preeclampsia directamente por este mecanismo. El Clomifeno (B) se usa para inducción de ovulación y se suspende al concebir. La Medroxiprogesterona (D) no posee rol metabólico protector endotelial.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Promoción a la salud, Página 16." 
+            },
+            {
+                id: 28, 
+                question: "¿Cuál es el punto de corte patológico de transaminasas (AST/ALT) utilizado para definir daño hepático como condición adversa o progresión a Síndrome HELLP?", 
+                options: ["> 40 IU/L", "> 50 IU/L", "> 70 IU/L", "> 100 IU/L"], 
+                answer: 2, 
+                justification: "Justificación: La necrosis de los hepatocitos por microtrombos en los sinusoides hepáticos libera enzimas intracelulares a la circulación. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, la duplicación del valor máximo normal marca el límite bioquímico operativo para confirmar que el órgano blanco está claudicando estructuralmente.<br><br>Perla ENARM: \"Alteraciones de laboratorio: Elevación de creatinina sérica (> 1.1 mg/dL), incremento de AST o ALT (> 70 IU/L) o deshidrogenasa láctica.\"<br><br>Análisis de Distractores: Valores de 40 (A) y 50 (B) pueden observarse incidentalmente o representar el límite superior estricto del laboratorio, pero no integran el criterio estandarizado de falla hepática obstétrica. Exigir 100 (D) retrasaría la identificación del Síndrome HELLP en etapa temprana de rescate.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Glosario, Página 57." 
+            },
+            {
+                id: 29, 
+                question: "El uso temprano (antes de las 12 semanas) de Ácido Acetilsalicílico como profilaxis está limitado debido a su asociación con la siguiente malformación fetal:", 
+                options: ["Cierre prematuro del ductus", "Defectos de pared abdominal", "Agenesia renal bilateral", "Defectos del tubo neural"], 
+                answer: 1, 
+                justification: "Justificación: La inhibición de las ciclooxigenasas durante la embriogénesis crítica altera la perfusión y el cierre anatómico de las estructuras ventrales. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, el inicio demasiado precoz de esta profilaxis interfiere con el plegamiento de la hernia umbilical fisiológica fetal, favoreciendo la gastrosquisis.<br><br>Perla ENARM: \"El inicio tardío... se asocia con desprendimiento prematuro de placenta normoinserta y antes de las 12 semanas se asocia con defectos congénitos de pared abdominal.\"<br><br>Análisis de Distractores: El cierre prematuro del ductus arterioso (A) es un riesgo real de los AINEs, pero ocurre en el tercer trimestre, no en la semana 12. La agenesia renal (C) se asocia al uso de IECA/ARA-II. Los defectos del tubo neural (D) se originan por deficiencia de ácido fólico u homocisteína elevada.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Prevención, Página 24." 
+            },
+            {
+                id: 30, 
+                question: "Dentro de las recomendaciones no farmacológicas iniciales en pacientes con riesgo bajo, la GPC recomienda la indicación de una dieta:", 
+                options: ["Hiposódica estricta", "Restricción calórica", "Normosódica libre", "Hiperproteica severa"], 
+                answer: 2, 
+                justification: "Justificación: Históricamente se creía que la deprivación de sal evitaba el edema y la hipertensión gestacional. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, la restricción hídrica y de sodio reduce peligrosamente el volumen intravascular circulante que la gestante necesita fisiológicamente para expandir la perfusión placentaria, por lo que la sal no debe limitarse de forma profiláctica.<br><br>Perla ENARM: \"Se recomienda la ingesta de dietas normosódicas en mujeres de riesgo bajo.\"<br><br>Análisis de Distractores: La dieta hiposódica (A) está obsoleta y proscrita en embarazadas por inducir hipovolemia. La restricción calórica (B) advierte un riesgo inminente de provocar cetosis fetal y está formalmente contraindicada. La hiperproteica (D) no ha demostrado modificar el curso de la preeclampsia a nivel endotelial.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Tratamiento no farmacológico, Página 25." 
+            },
+            {
+                id: 31, 
+                question: "¿Hasta qué momento del periodo de puerperio se considera clínicamente que una paciente se encuentra en riesgo de desarrollar Eclampsia?", 
+                options: ["48 horas posparto", "7o día posparto", "10o día posparto", "14o día posparto"], 
+                answer: 2, 
+                justification: "Justificación: Aunque la extracción placentaria elimina el origen de los mediadores angiogénicos aberrantes, el lavado sistémico de estas toxinas y la resolución de la leucoencefalopatía toman tiempo. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, la irritabilidad cortical máxima persiste y puede desencadenar convulsiones tardías incluso más de una semana tras el nacimiento.<br><br>Perla ENARM: \"Eclampsia: Es una complicación de la pre-eclampsia severa... puede aparecer hasta el décimo día postparto.\"<br><br>Análisis de Distractores: Aunque la mayoría de las convulsiones posparto ocurren en las primeras 48 horas (A), el límite formal de vigilancia del espectro eclámptico puro alcanza hasta el día 10 (C). El día 14 (D) o el séptimo (B) no son los topes fisiológicos normados de esta definición clínica en urgencias.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Clasificación, Página 7." 
+            },
+            {
+                id: 32, 
+                question: "¿Qué síntoma materno temprano (primer trimestre) advierte bioquímicamente una posible preeclampsia al asociarse con niveles altos de homocisteína y requerir modificación dietética?", 
+                options: ["Polihidramnios temprano", "Deficiencia de folatos", "Náusea hiperemética", "Resistencia insulínica"], 
+                answer: 1, 
+                justification: "Justificación: El estrés oxidativo endotelial es favorecido por el metabolismo deficiente de la metionina. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, la hiperhomocisteinemia triplica el riesgo de padecer la patología vascular; esta condición es intrínsecamente prevenible mediante la corrección de su cofactor metabólico principal.<br><br>Perla ENARM: \"Durante el embarazo temprano los niveles altos de homocisteína incrementan el riesgo de preeclampsia 2 a 3 veces. Una dieta baja en folatos favorece el incremento... Su modificación requiere de altas dosis de folatos.\"<br><br>Análisis de Distractores: La náusea hiperemética (C) causa alteraciones electrolíticas pero no se vincula primariamente al metabolismo de homocisteína. La resistencia insulínica (D) afecta mediante la cascada metabólica, no focalizada por folatos. El polihidramnios (A) es tardío y suele asociarse a diabetes o defectos congénitos, no a marcadores tempranos maternos de homocisteína.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Promoción a la salud, Página 17." 
+            },
+            {
+                id: 33, 
+                question: "¿Cuál de las siguientes interacciones medicamentosas dietéticas se describe para el Nifedipino en el tratamiento de los trastornos hipertensivos del embarazo?", 
+                options: ["Jugo de naranja", "Leche de vaca", "Jugo de toronja", "Té verde concentrado"], 
+                answer: 2, 
+                justification: "Justificación: El bloqueo de canales de calcio depende de un metabolismo hepático e intestinal estricto mediado por el citocromo P450 3A4. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, compuestos como las furanocumarinas de los cítricos inhiben esta enzima, disparando de manera tóxica la biodisponibilidad del fármaco y causando choque o colapso hemodinámico materno.<br><br>Perla ENARM: \"Con bloqueadores beta se favorece la hipotensión e insuficiencia cardíaca... y con jugo de toronja puede aumentar su efecto hipotensor.\"<br><br>Análisis de Distractores: El jugo de naranja (A) no posee las enzimas específicas para bloquear el CYP3A4. La leche de vaca (B) antagoniza la absorción de hierro y tetraciclinas. El té verde (D) interfiere con el ácido fólico pero no potencia los bloqueadores de calcio.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Anexos (Cuadro de medicamentos), Página 45." 
+            },
+            {
+                id: 34, 
+                question: "De acuerdo a la clasificación de la GPC, para que el diagnóstico de \"Hipertensión Gestacional\" se valide y no se reclasifique como crónica retrospectivamente, ¿en qué plazo máximo posparto deben normalizarse las cifras tensionales?", 
+                options: ["6 semanas", "8 semanas", "10 semanas", "12 semanas"], 
+                answer: 3, 
+                justification: "Justificación: El sistema cardiovascular experimenta cambios adaptativos masivos que tardan en revertirse tras el alumbramiento. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, si el endotelio mantiene un tono vascular elevado tres meses después de haber cesado el insulto placentario, se concluye que el embarazo solo desenmascaró una enfermedad sistémica preexistente.<br><br>Perla ENARM: \"Hipertensión gestacional... En el postparto (12 semanas) cifra tensionales normales (Hipertensión Transitoria). Cifras elevadas (Hipertensión crónica).\"<br><br>Análisis de Distractores: A las 6 semanas (A) culmina el puerperio tradicional, pero el criterio cardiovascular estricto otorga mayor tolerancia funcional. Las 8 (B) y 10 (C) semanas son intervalos temporales insuficientes para definir cronicidad en la reclasificación obstétrica mundial.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Clasificación, Página 7." 
+            },
+            {
+                id: 35, 
+                question: "¿Cuál es el riesgo o asociación clínica documentada al utilizar medicamentos Beta Bloqueadores (ej. Metoprolol) durante el embarazo para control antihipertensivo?", 
+                options: ["Defectos de tubo neural", "Restricción del crecimiento", "Hemorragia intraventricular neonatal", "Hepatotoxicidad materna aguda"], 
+                answer: 1, 
+                justification: "Justificación: El tono adrenérgico sostiene el flujo de los vasos del lecho uterino. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, el uso sostenido de este grupo farmacológico deprime la respuesta inotrópica y vasodilatadora placentaria, limitando críticamente el aporte nutricional y oxigenatorio, derivando en fetos con bajo peso.<br><br>Perla ENARM: \"El mecanismo propuesto para el bajo peso para edad gestacional es la disminución del flujo útero-placentario mediado por una vasoconstricción selectiva de los vasos placentarios sin una actividad simpaticomimética intrínseca (con el uso de Beta bloqueadores).\"<br><br>Análisis de Distractores: Los defectos del tubo neural (A) obedecen a fallas tempranas de ácido fólico, no a beta bloqueadores. La hemorragia intraventricular (C) puede exacerbarse si no se retira la aspirina a tiempo. La hepatotoxicidad (D) es la reacción adversa característica de la Alfametildopa.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Tratamiento farmacológico, Página 29." 
+            },
+            {
+                id: 36, 
+                question: "Durante el escrutinio de presión arterial para tamizaje de riesgo, la \"Pre-hipertensión\" del primer trimestre eleva al doble el riesgo de preeclampsia y se define por cifras a partir de:", 
+                options: ["Sistólica 130 o diastólica 80", "Sistólica 122 o diastólica 72", "Sistólica 135 o diastólica 85", "Sistólica 120 o diastólica 80"], 
+                answer: 1, 
+                justification: "Justificación: Fisiológicamente, el primer trimestre cursa con una vasodilatación mediada por progesterona y óxido nítrico, induciendo hipotensión normal en la madre. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, la incapacidad de lograr esta relajación basal y presentar valores sutilmente altos desenmascara un defecto endotelial precoz que predice fuertemente la enfermedad futura.<br><br>Perla ENARM: \"El punto de corte para una alta sensibilidad y especificidad para el desarrollo de pre-eclampsia fueron cifras sistólicas de 122 mmHg correspondiente al rango de pre-hipertensión, y diastólicas de 72mmHg.\"<br><br>Análisis de Distractores: Las cifras clásicas de 130/80 (A) o 120/80 (D) aplican a clasificaciones cardiológicas de la población adulta general, pero no ostentan la sensibilidad y especificidad predictiva obstétrica calculada a la milésima que establece la norma en la semana doce. Cifras de 135/85 (C) denotan efecto de bata blanca domiciliario.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Promoción a la salud, Página 14." 
+            },
+            {
+                id: 37, 
+                question: "En una paciente con cuadro clínico neurológico por Preeclampsia severa, se documenta una escala de coma de Glasgow disminuida. ¿Cuál es el puntaje de la escala que clasifica a la enfermedad como \"Complicación Severa\" para indicación absoluta de nacimiento?", 
+                options: ["Menor a 15", "Menor a 14", "Menor a 13", "Menor a 12"], 
+                answer: 2, 
+                justification: "Justificación: El letargo y la confusión marcan una encefalopatía difusa. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, la pérdida progresiva del estado de alerta en este umbral evidencia daño tisular que antecede a herniación cerebral, eclampsia inminente o hemorragia intracraneal, debiendo terminarse la gestación de manera forzada sin importar el desarrollo pulmonar fetal.<br><br>Perla ENARM: \"Complicaciones Severas (Que indican el nacimiento): Escala de coma de Glasgow menor a 13.\"<br><br>Análisis de Distractores: Un Glasgow de 15 o 14 (A y B) permite una observación neurológica continua. Un Glasgow de 12 (D) ya requiere manejo avanzado de la vía aérea en anestesiología pero retrasa la toma de decisión que por norma debe dictarse desde que el paciente desciende de los trece puntos.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Anexos (Cuadro 3), Página 40." 
+            },
+            {
+                id: 38, 
+                question: "¿Qué síntoma materno forma parte del espectro clásico de \"Condiciones Adversas\" en el embarazo y refleja la inminencia de un estado convulsivo (Eclampsia)?", 
+                options: ["Polidipsia refractaria", "Dolor retroesternal tipo opresivo", "Cefalea frontoparietal persistente", "Disnea de medianos esfuerzos"], 
+                answer: 2, 
+                justification: "Justificación: La falla en la autorregulación de la vasculatura cerebral condiciona isquemia, edema e hipertensión endocraneana sutil. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, este síntoma neurológico pulsátil, que no cede con analgésicos habituales, avisa a la clínica que la corteza se encuentra a escaso margen temporal de descargar ráfagas convulsivas incontrolables.<br><br>Perla ENARM: \"Condiciones Adversas (Que incrementan el riesgo de complicaciones severas): Dolor de cabeza / síntomas visuales.\"<br><br>Análisis de Distractores: El dolor retroesternal (B) advierte isquemia miocárdica (que es complicación severa directa, no condición adversa). La disnea (D) es fisiológica en muchas pacientes salvo que haya edema pulmonar. La polidipsia (A) se asocia a diabetes, no a reactividad endotelial por preeclampsia.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Anexos (Cuadro 3), Página 40." 
+            },
+            {
+                id: 39, 
+                question: "¿Cuál es el punto límite en la presión arterial que cataloga a la paciente en estado de \"Preeclampsia con criterios de severidad\", independientemente de sus síntomas?", 
+                options: ["≥150/100 mmHg", "≥160/110 mmHg", "≥170/110 mmHg", "≥180/120 mmHg"], 
+                answer: 1, 
+                justification: "Justificación: Las arteriolas humanas no están capacitadas para resistir un régimen de cizallamiento hipertenso prolongado. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, sobrepasar este umbral en dos tomas con diferencia de cuatro horas precipita el riesgo mecánico directo de disección aórtica o infarto cerebral, constituyendo una emergencia vital que amerita terapia intravenosa aguda (semáforo rojo).<br><br>Perla ENARM: \"Complicaciones Severas (Que indican el nacimiento): Presión sanguínea sistólica igual o mayor a 160 mmHg o presión sanguínea diastólica igual o mayor a 110.\"<br><br>Análisis de Distractores: Los valores de 150/100 (A) se catalogan como descontrol intermedio. Esperar a los regímenes de 170/110 (C) o 180/120 (D) sometería a la paciente a la posibilidad altísima de evento vascular cerebral hemorrágico irreversible.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Anexos (Cuadro 3), Página 40." 
+            },
+            {
+                id: 40, 
+                question: "En una gestante con hipertensión crónica moderada confirmada, ¿cuál es el porcentaje de probabilidad general documentado de que el producto curse con restricción del crecimiento intrauterino (RCIU) y cambie a la forma severa?", 
+                options: ["15 a 20%", "25 a 30%", "8 a 15%", "40 a 45%"], 
+                answer: 3, 
+                justification: "Justificación: El daño microvascular previo y silente derivado de la esclerosis de los vasos pélvicos asfixia paulatinamente al feto desde su nidación. De acuerdo GPC de Enfermedades Hipertensivas del Embarazo, en la subpoblación portadora de la variante severa, casi la mitad de los embarazos fallará en nutrir adecuadamente el tamaño genético ideal del recién nacido, requiriendo Doppler periódico estricto.<br><br>Perla ENARM: \"El riesgo de restricción del crecimiento intrauterino es de 8 a 15% en pacientes con hipertensión sistémica crónica moderada, sin embargo la incidencia incrementa a 40% en pacientes con hipertensión arterial sistémica crónica severa.\"<br><br>Análisis de Distractores: El porcentaje de 8 a 15% (C) corresponde puramente a las pacientes con enfermedad moderada o leve bien controlada, no a la progresión severa. Las ventanas de 15 a 20% (A) o 25 a 30% (B) minimizan el devastador impacto asfixiante de la cronicidad vascular sistémica sobre la red uterina materna estresada.", 
+                source: "IMSS-058-08, Detección, Diagnóstico y Tratamiento de las Enfermedades Hipertensivas del Embarazo, 2017, Cuidados Ambulatorios, Página 32." 
+            }        
+        ];
+
+        // ==========================================
+        // ==========================================
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('gyoALastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('gyoAProgress');
+                localStorage.removeItem('gyoALastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-pink-500 shadow-md z-10 border-pink-500 dark:border-pink-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-rose-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "GINECOLOGÍA Y OBSTETRICIA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "GPC IMSS-058-08 • Detección, diagnóstico y tratamiento de las enfermedades hipertensivas del embarazo";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="loginlite.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="https://wa.me/message/BGXX3YWVI5A4B1" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-pink-100 dark:border-pink-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-pink-50 has-[:checked]:border-pink-400 dark:has-[:checked]:bg-pink-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-pink-600 dark:hover:bg-pink-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('gyoAProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('gyoALastQId', currentQuestionId);
+                else localStorage.removeItem('gyoALastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('gyoAProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-cyan-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const questionsData = [
+    {
+        id: 1,
+        question: "¿A partir de qué edad está indicado el escrutinio universal para diabetes en la población general asintomática?",
+        options: ["Mayor de 35 años", "Mayor de 40 años", "Mayor de 45 años", "Mayor de 50 años"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, la edad avanzada es un factor de riesgo independiente para resistencia a la insulina que amerita búsqueda intencionada incluso sin comorbilidades.<br><br>Perla ENARM: \"Solicitar glucosa de ayuno y hemoglobina glucosilada en toda persona mayor de 45 años\".<br><br>Análisis de Distractores: Las edades de 35 y 40 años corresponden a guías internacionales ajenas al escrutinio nacional actual. Esperar a los 50 años retrasa el diagnóstico oportuno de una patología altamente prevalente.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección II. Detección de diabetes, Página 1."
+    },
+    {
+        id: 2,
+        question: "¿Cuál es el punto de corte exacto de circunferencia de cintura para diagnosticar síndrome metabólico en personas de 6 a 18 años?",
+        options: ["> 80 cm", "> 85 cm", "≥ 90 cm", "> 90 cm"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, en la población pediátrica y adolescente los criterios de riesgo cardiovascular se unifican sin distinción de sexo biológico, difiriendo de los cortes para adultos.<br><br>Perla ENARM: \"En personas 6-18 años establecer diagnóstico con 3 condiciones: 1. Circunferencia de cintura > 90 cm\".<br><br>Análisis de Distractores: > 80 cm es el límite superior de riesgo aplicable únicamente para mujeres adultas. Las opciones con el símbolo \"≥\" (mayor o igual) son incorrectas, ya que el protocolo exige que la medición supere estrictamente la cifra marcada.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección II. Detección de diabetes, Página 2."
+    },
+    {
+        id: 3,
+        question: "¿Cuál es el volumen máximo de agua simple permitido para la correcta administración oral de semaglutida?",
+        options: ["120 ml", "100 ml", "250 ml", "50 ml"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, la absorción gástrica de este péptido requiere un ambiente con dilución mínima para evitar la degradación del fármaco.<br><br>Perla ENARM: \"Semaglutida oral requiere que el estómago este vacío. Debe tomarse 30 minutos antes del desayuno, con un sorbo de agua simple, (no más de 120 ml) y sin administrarse con ningún otro medicamento\".<br><br>Análisis de Distractores: Las opciones de 50 ml y 100 ml subestiman el margen de seguridad volumétrica permitido. La ingesta de 250 ml (un vaso estándar) reduce la biodisponibilidad del arGLP-1 hasta niveles subterapéuticos.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Tratamiento farmacológico, Página 9."
+    },
+    {
+        id: 4,
+        question: "¿Qué límite de tasa de filtración glomerular estimada establece el criterio absoluto de referencia inmediata a segundo nivel?",
+        options: ["≤ 45 ml/min/1.73m²", "≤ 30 ml/min/1.73m²", "< 60 ml/min/1.73m²", "< 15 ml/min/1.73m²"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, alcanzar un estadio avanzado de enfermedad renal crónica limita críticamente el arsenal terapéutico y requiere manejo nefrológico especializado.<br><br>Perla ENARM: \"Referir a la brevedad a segundo nivel a paciente que presente... Pacientes con tasa de filtración glomerular ≤ 30 ml/min/1.73 m²\".<br><br>Análisis de Distractores: El nivel < 60 ml/min amerita flexibilizar metas pero se maneja en el primer nivel. El corte de ≤ 45 ml/min obliga a suspender sulfonilureas y ajustar otros fármacos, pero no indica derivación urgente. El valor < 15 ml/min (diálisis) sobrepasa por mucho el umbral de referencia temprana.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Referencia oportuna de pacientes, Página 7."
+    },
+    {
+        id: 5,
+        question: "¿Qué rango paramétrico de hemoglobina glucosilada fundamenta el diagnóstico categórico de prediabetes?",
+        options: ["5.7 a 6.4 %", "6.0 a 6.5 %", "5.5 a 6.4 %", "5.7 a 6.9 %"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, este rango porcentual refleja el deterioro de la homeostasis glucémica en los últimos tres meses antes del debut franco de la enfermedad.<br><br>Perla ENARM: \"Establecer el diagnóstico de prediabetes basado en... Hemoglobina glucosilada 5.7 a 6.4 %\".<br><br>Análisis de Distractores: El nivel de 6.5 % o superior ya establece diagnóstico de diabetes. El rango a partir de 6.0 % ignora a pacientes en riesgo temprano que sí están contemplados en la norma mexicana. El corte de 5.5 % corresponde a pacientes sanos.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección II. Detección de diabetes, Página 1."
+    },
+    {
+        id: 6,
+        question: "Tras iniciar tratamiento antidepresivo empírico, ¿en qué lapso exacto se debe evaluar obligatoriamente la respuesta clínica?",
+        options: ["2 semanas", "4 semanas", "6 semanas", "12 semanas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, los inhibidores de recaptura de serotonina requieren este periodo mínimo de impregnación sináptica para determinar si el fármaco amerita ajuste, continuación o referencia psiquiátrica.<br><br>Perla ENARM: \"Evaluación en 6 semanas. Mucho mejor, levemente mejor, o sin cambios/empeoramiento\".<br><br>Análisis de Distractores: Las semanas 2 y 4 son muy prematuras para observar una remisión afectiva completa. A las 12 semanas se habría retrasado inaceptablemente la intervención en un paciente sin respuesta favorable.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Tratamiento de depresión, Página 13."
+    },
+    {
+        id: 7,
+        question: "De acuerdo con el semáforo nutricional, ¿cuál de las siguientes verduras se clasifica como \"medible\" y debe limitarse a máximo dos tazas?",
+        options: ["Champiñón fresco", "Nopal asado", "Espinaca cocida", "Zanahoria cruda"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, aunque la mayoría de los vegetales son de libre demanda, existe un grupo selecto con mayor carga de carbohidratos que requiere restricción volumétrica.<br><br>Perla ENARM: \"Verduras medibles: no consumir más de 2 tazas; cebolla, jícama, zanahoria, brócoli y betabel\".<br><br>Análisis de Distractores: El champiñón, el nopal y la espinaca se encuentran en el listado explícito de verduras catalogadas como de consumo libre en la guía alimentaria, sin límite de tazas al día.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Anexos de alimentación, Página 3."
+    },
+    {
+        id: 8,
+        question: "¿A partir de qué nivel de triglicéridos en ayuno se deben iniciar fibratos de manera simultánea al control glucémico intensivo?",
+        options: ["≥ 300 mg/dl", "≥ 500 mg/dl", "> 150 mg/dl", "≥ 400 mg/dl"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, la hipertrigliceridemia grave confiere un alto riesgo de pancreatitis aguda, lo que transforma este parámetro en una urgencia relativa de abordaje combinado inmediato.<br><br>Perla ENARM: \"Cuando los niveles de triglicéridos son ≥ 500 mg/dl, iniciar fibratos de manera simultánea a la indicación de cambios en el estilo de vida y al control glucémico\".<br><br>Análisis de Distractores: Los valores mayores a 150 mg/dl representan dislipidemia que inicialmente se aborda logrando la meta de hemoglobina glucosilada (la hiperglucemia es el motor de los triglicéridos). Solo si persiste >150 mg/dl tras la meta, se valora el fibrato.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Control de triglicéridos, Página 12."
+    },
+    {
+        id: 9,
+        question: "¿Cuál es la meta porcentual mínima de reducción ponderal que se debe plantear cada 3 a 6 meses en pacientes con sobrepeso u obesidad?",
+        options: ["> 5 %", "> 10 %", "≥ 7 %", "> 15 %"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, plantear objetivos progresivos y realistas a corto plazo fomenta el apego del paciente y genera un impacto metabólico demostrado en la sensibilidad insulínica.<br><br>Perla ENARM: \"En personas con sobrepeso u obesidad, plantear como meta la reducción > 5% del peso cada 3 a 6 meses\".<br><br>Análisis de Distractores: Las disminuciones de >10% o >15% son deseables a largo plazo pero no representan la meta escalonada a nivel trimestral o semestral. La reducción del 7% es propia de guías preventivas de prediabetes, no la recomendación general del protocolo.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Metas de control a evaluar, Página 7."
+    },
+    {
+        id: 10,
+        question: "¿Qué límite de la tasa de filtración glomerular establece la contraindicación absoluta para la prescripción de metformina?",
+        options: ["< 45 ml/min", "≤ 45 ml/min", "< 30 ml/min", "< 60 ml/min"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, el deterioro avanzado de la función renal anula el aclaramiento de las biguanidas, aumentando logarítmicamente el riesgo de acidosis láctica fatal.<br><br>Perla ENARM: \"Contraindicaciones de Metformina: En pacientes con TFG < 30 ml/min o exacerbación de trastornos gastrointestinales\".<br><br>Análisis de Distractores: Una filtración entre 30 y 45 ml/min exige reducir la dosis máxima a 1000 mg diarios, pero no proscribe el medicamento. Una TFG menor a 60 ml/min no representa contraindicación inicial para la metformina.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Tratamiento de hiperglucemia, Página 10."
+    },
+    {
+        id: 11,
+        question: "En paciente asintomático con tensión arterial de 135/85 mmHg y relación albúmina/creatinina ≥ 30 mg/g, ¿cuál es el abordaje inicial indicado?",
+        options: ["Monoterapia con IECA o ARA2", "Terapia dual con tiazida", "Monitoreo en una semana", "Monoterapia con calcioantagonista"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, la detección de nefropatía incipiente obliga a bloquear el sistema renina-angiotensina-aldosterona como nefroprotección, aunque la tensión no alcance cifras de inicio dual.<br><br>Perla ENARM: \"TA 130/80 a <140/90 mmHg: Si la Relación albúmina/creatinina es ≥ 30 mg/g iniciar IECA o ARA2\".<br><br>Análisis de Distractores: El monitoreo durante una semana aplica únicamente si la relación es < 30 mg/g. La terapia dual con tiazida es la indicación de primera línea exclusiva para pacientes que superan los 140/90 mmHg. Los calcioantagonistas no ofrecen el mismo perfil antiproteinúrico primario.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Tratamiento de la hipertensión arterial sistémica, Página 11."
+    },
+    {
+        id: 12,
+        question: "¿Cuál es el antecedente de peso al nacimiento (programación fetal) que justifica el escrutinio temprano de diabetes?",
+        options: ["< 2.0 kg", "< 3.0 kg", "< 2.8 kg", "< 2.5 kg"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, la restricción del crecimiento intrauterino condiciona adaptaciones epigenéticas que favorecen el acúmulo de grasa visceral y síndrome metabólico en la vida posnatal.<br><br>Perla ENARM: \"Solicitar glucosa de ayuno en cualquier persona que tenga una de las siguientes condiciones: Bajo peso al nacer (< 2.5 kg)\".<br><br>Análisis de Distractores: Los valores de 2.0, 2.8 y 3.0 kg no corresponden al punto de corte universal utilizado para definir al recién nacido de bajo peso en la norma oficial.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección II. Detección de diabetes, Página 1."
+    },
+    {
+        id: 13,
+        question: "¿Cuál criterio diagnóstico de hiperglucemia sella la enfermedad sin requerir repetición en una segunda muestra?",
+        options: ["Glucemia de ayuno ≥ 126 mg/dl", "Curva de tolerancia ≥ 200 mg/dl", "Hemoglobina glucosilada ≥ 6.5 %", "Glucemia al azar ≥ 200 mg/dl con síntomas"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, la concurrencia de francos datos de descompensación (poliuria, polidipsia, pérdida de peso) y cifras aleatorias elevadas descarta errores de laboratorio y define la patología de forma inmediata.<br><br>Perla ENARM: \"Todos los criterios deben repetirse para corroborar el diagnóstico con un segundo método o muestra, excepto ≥ 200 mg/dl en cualquier medición con síntomas\".<br><br>Análisis de Distractores: La glucosa de ayuno alterada, la hemoglobina glucosilada ≥ 6.5% y la curva de tolerancia positiva son pruebas estrictamente dependientes de reevaluación confirmatoria en pacientes sin datos de descompensación clínica.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección II. Detección de diabetes, Página 1."
+    },
+    {
+        id: 14,
+        question: "¿Cuál es la dosis tope de sitagliptina ajustada para pacientes con tasa de filtración glomerular entre 30 y 45 ml/min?",
+        options: ["25 mg al día", "100 mg al día", "50 mg al día", "75 mg al día"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, la excreción renal de este inhibidor de la DPP-4 amerita una reducción del 50% de la dosis terapéutica estándar para prevenir toxicidad al cruzar el umbral de daño renal moderado.<br><br>Perla ENARM: \"Sitagliptina: en pacientes con tasa de filtrado glomerular entre 30 y 45 ml/min la dosis es de 50 mg\".<br><br>Análisis de Distractores: La dosis plena de 100 mg se administra en pacientes con filtración conservada mayor a 45 ml/min. La dosis de 25 mg está reservada para pacientes con filtración menor a 30 ml/min o bajo terapia dialítica.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Tratamiento de hiperglucemia, Página 10."
+    },
+    {
+        id: 15,
+        question: "¿Cuál es la meta de glucemia capilar preprandial flexibilizada explícitamente para pacientes mayores de 65 años?",
+        options: ["80 a 130 mg/dl", "90 a 130 mg/dl", "100 a 150 mg/dl", "80 a 140 mg/dl"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, los adultos mayores tienen un riesgo incrementado de morbilidad letal secundaria a hipoglucemias, por lo que el nivel objetivo de glucosa se relaja hacia el límite superior.<br><br>Perla ENARM: \"En personas con evento cardiovascular, insuficiencia renal crónica... o edad > 65 años... considerar como metas de control glucemias capilares preprandiales 80 a 140 mg/dl\".<br><br>Análisis de Distractores: El rango de 80 a 130 mg/dl es la meta estricta para la población adulta joven general asintomática. Las opciones de 90-130 y 100-150 no existen como rangos de control validados en el protocolo nacional.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Metas de control a evaluar, Página 7."
+    },
+    {
+        id: 16,
+        question: "Al revisar el pie diabético en la consulta, ¿cuál característica anatómica define al calzado preventivo adecuado?",
+        options: ["Punta cuadrada o redonda", "Suela rígida y gruesa", "Horma ajustada estrecha", "Plantilla con elevación"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, evitar la compresión de los artejos es el pilar biomecánico principal para prevenir lesiones isquémicas y la hiperqueratosis en áreas de fricción.<br><br>Perla ENARM: \"Revisar tipo de calzado. Se considera adecuado cuando tiene punta cuadrada o redonda, horma ancha y material suave\".<br><br>Análisis de Distractores: La horma ajustada y estrecha genera deformidades como el hallux valgus y lesiones primarias. Aunque la suela debe brindar protección, el protocolo enfatiza la morfología de la punta, horma ancha y materiales suaves, nunca rígidos.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Aspectos de evaluación, Página 2."
+    },
+    {
+        id: 17,
+        question: "¿Cuál es la dosis inicial de insulina basal recomendada en pacientes con franco estado catabólico al momento del diagnóstico?",
+        options: ["10 unidades fijas al día", "0.3 unidades por kg", "0.5 unidades por kg", "0.1 unidades por kg"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, la deficiencia severa de insulina exige una dosis calculada por peso que suprima eficazmente la lipólisis, a diferencia del escalonamiento suave de pacientes asintomáticos.<br><br>Perla ENARM: \"Si presenta síntomas de desgaste, estado catabólico y/o deterioro del estado general, indicar metformina e insulina basal (NPH o análoga de larga duración 0.3 unidades por kg de peso)\".<br><br>Análisis de Distractores: La indicación de 10 unidades diarias aplica únicamente como adyuvante cuando falla la triple terapia oral en pacientes sin desgaste (descontrol crónico asintomático). La titulación llega hasta 0.5 unidades/kg, pero no es la de inicio.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Tratamiento farmacológico. Principios generales, Página 8."
+    },
+    {
+        id: 18,
+        question: "En el algoritmo de control de lípidos, ¿qué conducta se añade de forma inmediata al fracasar la dosis máxima recomendada de estatinas?",
+        options: ["Fibratos de acción prolongada", "Ácidos grasos omega 3", "Ezetimibe 10 mg/día", "Inhibidores de PCSK9"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, el bloqueo de la absorción intestinal del colesterol complementa la inhibición de su síntesis hepática en pacientes refractarios a estatina intensiva antes de referir al especialista.<br><br>Perla ENARM: \"Aumentar dosis (atorvastatina 40 mg/día) -> No alcanzó meta -> Agregar ezetimibe 10 mg/día\".<br><br>Análisis de Distractores: Los fibratos están indicados únicamente para el manejo específico de la hipertrigliceridemia y no para reducir el LDL de forma primaria. Los inhibidores de PCSK9 pertenecen a la terapéutica de alta especialidad que no se prescribe en el primer nivel de atención.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Tratamiento del colesterol, Página 12."
+    },
+    {
+        id: 19,
+        question: "¿Cuál es el punto de corte exacto de circunferencia de cintura estipulado para integrar síndrome metabólico en mujeres adultas?",
+        options: ["> 80 cm", "≥ 80 cm", "> 85 cm", "≥ 88 cm"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, la evaluación de la adiposidad visceral es un criterio mayor; los puntos de corte en México difieren de guías caucásicas por las características de nuestra población.<br><br>Perla ENARM: \"Establecer el diagnóstico de síndrome metabólico si cuenta con... Circunferencia de cintura > 80 cm en mujeres\".<br><br>Análisis de Distractores: El parámetro de ≥ 80 cm o ≥ 88 cm es inexacto según la redacción operativa mexicana que exige que la medida sobrepase la cifra (mayor a). El corte de 90 cm se reserva exclusivamente para los hombres y la población pediátrica en general.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección II. Detección de diabetes, Página 1."
+    },
+    {
+        id: 20,
+        question: "Si los resultados del tamizaje metabólico inicial asintomático resultan normales, ¿cada cuánto tiempo deben repetirse las pruebas?",
+        options: ["Cada 6 meses", "Cada 12 meses", "Cada 5 años", "Cada 3 años"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, descartar bioquímicamente la patología permite espaciar el protocolo preventivo optimizando recursos institucionales sin perder ventana terapéutica.<br><br>Perla ENARM: \"El tamizaje debe ser anual. Si los resultados son normales, se recomienda repetir cada 3 años\".<br><br>Análisis de Distractores: El escrutinio anual se realiza cuando existen factores de riesgo o alguna medición resultó cercana al límite diagnóstico sin cumplir los criterios absolutos. Repetir las pruebas a los 5 años es un intervalo excesivamente prolongado.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección II. Detección de diabetes, Página 1."
+    },
+    {
+        id: 21,
+        question: "¿Cuál es la meta estricta de tensión arterial que debe alcanzar un paciente con diagnóstico de diabetes tipo 2?",
+        options: ["≤ 130/85 mmHg", "≤ 130/80 mmHg", "< 140/90 mmHg", "< 140/80 mmHg"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, la protección del endotelio vascular en este grupo requiere un umbral más bajo que en la población general para prevenir la progresión de la enfermedad renal y cardiovascular.<br><br>Perla ENARM: \"Metas de control a evaluar... Control de tensión arterial ≤ 130/80 mm Hg\".<br><br>Análisis de Distractores: La cifra de 130/85 mmHg corresponde al criterio diagnóstico de síndrome metabólico, no a la meta de tratamiento. Los valores menores a 140/90 mmHg corresponden a guías internacionales antiguas y ya no se consideran un objetivo óptimo.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Metas de control a evaluar, Página 7."
+    },
+    {
+        id: 22,
+        question: "¿Cuál es el valor de corte de colesterol de alta densidad para integrar el diagnóstico de síndrome metabólico en hombres adultos?",
+        options: ["< 50 mg/dl", "< 45 mg/dl", "< 40 mg/dl", "< 35 mg/dl"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, el requerimiento lipídico protector difiere por sexo biológico en la edad adulta, exigiendo un nivel de escrutinio distinto para cada uno.<br><br>Perla ENARM: \"En adultos... Colesterol HDL < 50 mg/dl en mujeres y < 40 mg/dl en hombres\".<br><br>Análisis de Distractores: El nivel menor a 50 mg/dl es el criterio exclusivo para las mujeres adultas. Las cifras de 45 y 35 mg/dl no forman parte de la clasificación diagnóstica oficial de la norma.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección II. Detección de diabetes, Página 2."
+    },
+    {
+        id: 23,
+        question: "¿Cuál es el esquema de dosificación inicial de metformina indicado para minimizar los efectos adversos gastrointestinales?",
+        options: ["850 mg cada 12 horas desde el inicio", "500 mg cada 8 horas", "850 mg al día durante una semana", "1000 mg al día por dos semanas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, la titulación progresiva de las biguanidas es clave para generar tolerancia y asegurar el apego terapéutico a largo plazo.<br><br>Perla ENARM: \"Considerar inicio de tratamiento con metformina 850 mg al día durante 1 semana. Si no presenta síntomas gastrointestinales... aumentar a 850 mg cada 12 h\".<br><br>Análisis de Distractores: Iniciar con 850 mg cada 12 horas precipita el abandono por intolerancia gástrica aguda. La dosis de 500 mg cada 8 horas no es la pauta de inicio del algoritmo nacional. La dosis tope de 1000 mg se reserva para pacientes con daño renal moderado, no como dosis de impregnación general.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Tratamiento farmacológico. Principios generales, Página 8."
+    },
+    {
+        id: 24,
+        question: "¿A partir de qué porcentaje de hemoglobina glucosilada se debe omitir la monoterapia e iniciar directamente con tratamiento dual?",
+        options: ["≥ 8.0 %", "≥ 8.5 %", "≥ 9.0 %", "≥ 10.0 %"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, la glucotoxicidad severa sobrepasa la capacidad de un solo fármaco oral, obligando a combinar mecanismos de acción desde el primer contacto.<br><br>Perla ENARM: \"Si el paciente presenta hemoglobina glucosilada ≥ 9.0%, iniciar tratamiento combinado (metformina + inhibidor de DPP-4 o iSGLT-2)\".<br><br>Análisis de Distractores: Las cifras de 8.0% o 8.5% representan descontrol, pero el algoritmo aún permite ensayar la monoterapia o ajustar dosis si el paciente no cuenta con complicaciones u otros modificadores de riesgo. El 10.0% ya se encontraría dentro del criterio, pero el corte oficial de intervención es 9.0%.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Tratamiento farmacológico. Principios generales, Página 8."
+    },
+    {
+        id: 25,
+        question: "¿Cuál antecedente patológico proscribe el uso de inhibidores del co-transportador de sodio glucosa tipo 2?",
+        options: ["Enfermedad renal etapa 2", "Pancreatitis aguda", "Cetoacidosis diabética", "Cáncer medular de tiroides"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, este grupo farmacológico favorece la glucosuria, lo que predispone a un estado cetogénico que puede ser fatal en individuos susceptibles.<br><br>Perla ENARM: \"Contraindicaciones: En pacientes que presenten infecciones genitourinarias recurrentes o depleción de volumen o con antecedente de cetoacidosis\".<br><br>Análisis de Distractores: El cáncer medular de tiroides y la pancreatitis contraindican el uso de análogos de GLP-1, no de iSGLT-2. La enfermedad renal en etapa 2 no proscribe su uso; de hecho, tienen indicación de nefroprotección específica.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Tratamiento de hiperglucemia, Página 10."
+    },
+    {
+        id: 26,
+        question: "¿Qué puntaje mínimo en el cuestionario de salud del paciente obliga a realizar interrogatorio dirigido para el diagnóstico de trastorno afectivo?",
+        options: ["≥ 2", "≥ 3", "≥ 4", "≥ 5"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, la evaluación de la esfera emocional incide directamente en el apego, por lo que este corte de escrutinio detona la sospecha diagnóstica de depresión clínica.<br><br>Perla ENARM: \"En todo paciente evaluar estado emocional con el cuestionario sobre salud del paciente-2 (PHQ-2)... Si la suma de puntos es ≥ 3, hacer las siguientes preguntas y establecer diagnóstico\".<br><br>Análisis de Distractores: Un puntaje de 2 se considera riesgo bajo, no amerita diagnóstico formal. Los cortes de 4 y 5 retrasarían la intervención temprana en pacientes que ya cursan con sintomatología distímica.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Aspectos de evaluación, Página 6."
+    },
+    {
+        id: 27,
+        question: "En prevención primaria cardiovascular, ¿cuál es el esquema inicial indicado de rosuvastatina?",
+        options: ["5 mg al día", "10 mg al día", "20 mg al día", "40 mg al día"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, en ausencia de infarto agudo al miocardio o enfermedad vascular cerebral previos, la meta lipídica de primer contacto se logra con dosis moderadas de estatinas.<br><br>Perla ENARM: \"Paciente SIN evento cardiovascular... Iniciar estatina: atorvastatina 20 mg/día o rosuvastatina 10 mg/día\".<br><br>Análisis de Distractores: La dosis de 20 mg de rosuvastatina corresponde al escalón de intensificación si no se alcanzó la meta de LDL. Las estatinas a 40 mg son exclusivas de la atorvastatina. La dosis de 5 mg es subterapéutica para el protocolo.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Tratamiento del colesterol, Página 12."
+    },
+    {
+        id: 28,
+        question: "¿Cuál es la dosis máxima de sitagliptina permitida para pacientes con terapia de reemplazo renal o filtración severamente disminuida?",
+        options: ["100 mg al día", "50 mg al día", "25 mg al día", "Suspensión absoluta"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, el ajuste farmacológico es vital en medicamentos con excreción renal para evitar acúmulos tóxicos sin perder la inhibición de la dipeptidil peptidasa 4.<br><br>Perla ENARM: \"Sitagliptina... Entre ≥ 15 y < 30 ml/min, en diálisis peritoneal o hemodiálisis la dosis es de 25 mg\".<br><br>Análisis de Distractores: La suspensión absoluta no es necesaria, a diferencia de la metformina. La dosis de 50 mg se utiliza para filtrados entre 30 y 45 ml/min. La dosis de 100 mg es aplicable únicamente a riñones con filtración conservada.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Tratamiento de hiperglucemia, Página 10."
+    },
+    {
+        id: 29,
+        question: "¿Qué parámetro antropométrico establece una contraindicación absoluta para la prescripción de sulfonilureas?",
+        options: ["Índice de masa corporal > 25 kg/m²", "Índice de masa corporal > 30 kg/m²", "Circunferencia de cintura > 90 cm", "Índice de masa corporal > 35 kg/m²"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, los secretagogos de insulina estimulan fisiológicamente la lipogénesis, agravando la resistencia periférica en pacientes obesos.<br><br>Perla ENARM: \"Contraindicaciones: En pacientes con edad > 65 años o con índice de masa corporal > 30 kg/m² o con tasa del filtrado glomerular < 45ml/min\".<br><br>Análisis de Distractores: El sobrepeso (IMC > 25) no contraindica la sulfonilurea. La circunferencia de cintura es criterio diagnóstico metabólico, pero el documento estipula explícitamente el límite basado en el IMC > 30 kg/m² para proscribir esta familia de medicamentos.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Tratamiento de hiperglucemia, Página 11."
+    },
+    {
+        id: 30,
+        question: "En ausencia de limitación física, ¿cuál es la meta mínima diaria de pasos que se debe prescribir para fomentar la actividad aeróbica?",
+        options: ["> 10,000 pasos", "> 8,000 pasos", "> 5,000 pasos", "> 3,000 pasos"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, la indicación de volumen estructurado por tecnologías móviles aumenta drásticamente el apego al ejercicio frente al sedentarismo absoluto.<br><br>Perla ENARM: \"Si no hay limitación física, indicar la realización de >5,000 pasos al día\".<br><br>Análisis de Distractores: Aunque las guías de cardiólogos y relojes inteligentes promueven universalmente los 10,000 pasos, la meta realista y operativa del protocolo nacional para salir del sedentarismo de riesgo es superar la marca de los 5,000 diarios.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Aspectos de evaluación, Página 5."
+    },
+    {
+        id: 31,
+        question: "¿A partir de qué dosis diaria de metformina se vuelve obligatorio solicitar la medición anual de vitamina B12 sérica?",
+        options: ["≥ 1000 mg", "≥ 1500 mg", "≥ 2000 mg", "≥ 2250 mg"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, la absorción ileal intrínseca se deteriora proporcionalmente a la carga del fármaco, generando alteraciones hematológicas o simulando polineuropatía diabética.<br><br>Perla ENARM: \"Se recomienda medición anual de vitamina B12 en suero en personas con dosis ≥ 1500 mg de metformina\".<br><br>Análisis de Distractores: Las dosis menores a 1500 mg (ej. 1000 mg) no tienen la misma incidencia de depleción carencial. La dosis de 2250 mg es la dosis tope terapéutica y requerirá el estudio, pero el tamizaje debe iniciar un escalón antes.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Tratamiento farmacológico. Principios generales, Página 8."
+    },
+    {
+        id: 32,
+        question: "¿Qué síntoma visual agudo representa un criterio de derivación inmediata al segundo nivel de atención?",
+        options: ["Disminución de agudeza visual nocturna", "Dificultad para lectura de cerca", "Miodesopsias e imágenes flotantes", "Dolor ocular con los movimientos"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, la súbita aparición de estas alteraciones sugiere sangrado vítreo activo o desprendimiento de retina secundario a retinopatía proliferativa.<br><br>Perla ENARM: \"Referir a la brevedad a segundo nivel a paciente que presente... Visión borrosa súbita o progresiva y miodesopsias (imágenes flotantes)\".<br><br>Análisis de Distractores: La presbicia (dificultad para lectura), la nictalopía (mala visión nocturna) o el dolor al movimiento son síntomas no directamente correlacionados con las urgencias microvasculares destructivas que estipula el protocolo para envío inmediato.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Referencia oportuna de pacientes, Página 7."
+    },
+    {
+        id: 33,
+        question: "¿Cuál de las siguientes endocrinopatías se clasifica como causa de diabetes secundaria que amerita referencia especializada?",
+        options: ["Hipotiroidismo primario", "Hiperparatiroidismo", "Síndrome de ovarios poliquísticos", "Feocromocitoma"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, la secreción autónoma de catecolaminas induce una severa resistencia a la insulina con descontrol hipertensivo, requiriendo abordaje extrainstitucional primario.<br><br>Perla ENARM: \"Sospecha o diagnóstico de diabetes secundaria (hipercortisolismo, acromegalia, hemocromatosis, feocromocitoma, neoplasia pancreática)\".<br><br>Análisis de Distractores: El síndrome de ovarios poliquísticos es un factor de riesgo para tamizaje, pero se maneja primariamente en nivel básico. El hipotiroidismo primario y el hiperparatiroidismo no están listados explícitamente como causas prototípicas de diabetes secundaria en este documento.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Referencia oportuna de pacientes, Página 7."
+    },
+    {
+        id: 34,
+        question: "Si un paciente diabético debuta con tensión arterial de 145/95 mmHg, ¿cuál es la conducta farmacológica inicial dictada por el algoritmo?",
+        options: ["Monitoreo ambulatorio por una semana y reevaluar", "Iniciar monoterapia con bloqueador de canales de calcio", "Iniciar inhibidor de enzima convertidora y tiazida a dosis bajas", "Iniciar terapia triple antihipertensiva inmediatamente"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, cuando se superan los límites del estadio 2 de hipertensión, el enfoque debe ser intensivo y combinatorio para lograr nefroprotección y metas hemodinámicas.<br><br>Perla ENARM: \"TA ≥ 140/90: IECA o ARA2 + Diurético tiazida dosis bajas o calcioantagonista\".<br><br>Análisis de Distractores: El monitoreo o monoterapia aplica cuando la TA se encuentra limítrofe entre 130/80 y < 140/90 mmHg. La triple terapia se reserva exclusivamente como segundo escalón si falla la terapia dual de inicio.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Tratamiento de la hipertensión arterial sistémica, Página 11."
+    },
+    {
+        id: 35,
+        question: "¿Cuál es el nivel meta de colesterol de baja densidad que se debe alcanzar en pacientes con antecedente de infarto agudo al miocardio?",
+        options: ["≤ 100 mg/dl", "≤ 70 mg/dl", "≤ 55 mg/dl", "≤ 130 mg/dl"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, en el escenario de prevención secundaria, la estabilización de la placa ateromatosa exige una depuración drástica de los lípidos aterogénicos circulantes.<br><br>Perla ENARM: \"Si ha presentado algún evento cardiovascular (infarto agudo del miocardio, enfermedad vascular cerebral, insuficiencia arterial), colesterol LDL ≤ 70 mg/dl o no-HDL ≤ 100 mg/dl\".<br><br>Análisis de Distractores: El corte ≤ 100 mg/dl es la meta de prevención primaria (sin infartos previos). Las guías europeas recientes bajan la meta a ≤ 55 mg/dl, pero la normativa vigente nacional a la cual se sujeta el ENARM indica ≤ 70 mg/dl.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Metas de control a evaluar, Página 7."
+    },
+    {
+        id: 36,
+        question: "Si el tamizaje inicial reporta una relación albúmina/creatinina de 45 mg/g, ¿con qué frecuencia debe repetirse este estudio cuantitativo?",
+        options: ["Cada mes", "Cada 3 meses", "Cada 6 meses", "Cada 12 meses"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, rebasar el umbral de los 30 mg/g diagnostica albuminuria clínica que acorta el intervalo de vigilancia para prevenir la caída del filtrado glomerular.<br><br>Perla ENARM: \"Solicitar medición cuantitativa de la relación albúmina/creatinina (RAC)... una vez cada año o cada 6 meses si el resultado es ≥ 30 mg/g\".<br><br>Análisis de Distractores: La repetición cada 12 meses (anual) es el estándar de tamizaje para los pacientes sanos (resultado < 30 mg/g). Realizarlo mensualmente o trimestralmente no proporciona cambios terapéuticos inmediatos evaluables.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Aspectos de evaluación, Página 2."
+    },
+    {
+        id: 37,
+        question: "Clínicamente, ¿cómo se evalúa y define que el paciente ha alcanzado una intensidad de ejercicio aeróbico \"moderada\"?",
+        options: ["Presencia de sudoración profusa generalizada", "Incapacidad total para articular palabras", "Frecuencia cardiaca superior a 100 latidos por minuto", "Dificultad para decir su nombre completo tres veces seguidas"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, esta prueba pragmática de esfuerzo respiratorio (\"talk test\") exime del uso de costosos monitores de frecuencia y es útil para educación en consulta.<br><br>Perla ENARM: \"Recomendar ejercicio aeróbico... intensidad moderada (esta se puede evaluar si le implica cierta dificultad decir el nombre completo del paciente 3 veces seguidas)\".<br><br>Análisis de Distractores: La incapacidad para hablar denota intensidad vigorosa-severa. La sudoración o un pulso fijo no son parámetros dictados en la norma debido a la variabilidad individual y al uso frecuente de betabloqueadores.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Aspectos de evaluación, Página 6."
+    },
+    {
+        id: 38,
+        question: "¿Qué antecedente heredofamiliar contraindica absolutamente la prescripción de análogos del receptor del péptido similar al glucagón tipo 1?",
+        options: ["Adenoma hipofisario", "Cáncer medular de tiroides", "Cáncer papilar de tiroides", "Hiperplasia suprarrenal"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, este medicamento posee un mecanismo de acción que estimula teóricamente las células C tiroideas, proscribiéndose en neoplasias específicas.<br><br>Perla ENARM: \"Contraindicaciones de arGLP-1: En pacientes con historia familiar o personal de cáncer medular de tiroides y neoplasia endocrina múltiple tipo 2\".<br><br>Análisis de Distractores: El cáncer de tipo papilar (el más frecuente en tiroides) no posee contraindicación. Los adenomas hipofisarios y la hiperplasia suprarrenal no guardan relación con el riesgo tumorigénico del fármaco.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Tratamiento de hiperglucemia, Página 10."
+    },
+    {
+        id: 39,
+        question: "Ante el diagnóstico concomitante de insuficiencia cardíaca, ¿qué combinación farmacológica inicial se debe indicar independientemente del control glucémico?",
+        options: ["Metformina más análogo del péptido similar al glucagón tipo 1", "Metformina más inhibidor de dipeptidil peptidasa tipo 4", "Metformina más inhibidor del co-transportador de sodio glucosa tipo 2", "Metformina más insulina basal"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, este grupo actúa como agente cardioprotector y diurético, disminuyendo la congestión y las tasas de mortalidad por falla ventricular.<br><br>Perla ENARM: \"En pacientes con diagnóstico previo de insuficiencia cardíaca y/o cardiopatía isquémica, iniciar tratamiento combinado de metformina con iSGLT-2, independientemente de la cifra de hemoglobina glucosilada\".<br><br>Análisis de Distractores: Los iDPP-4 tienen impacto neutral o negativo en falla cardiaca. Los arGLP-1 protegen principalmente de isquemia aterosclerótica, pero no del fenotipo de insuficiencia. La insulina no reduce el riesgo cardiovascular agudo.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Tratamiento farmacológico. Principios generales, Página 8."
+    },
+    {
+        id: 40,
+        question: "Al iniciar tratamiento antidepresivo con fluoxetina, ¿cuál es el esquema de titulación que indica el algoritmo hacia el séptimo día?",
+        options: ["Iniciar 10 mg al día y aumentar a 20 mg", "Iniciar 20 mg al día y aumentar a 40 mg", "Iniciar 5 mg al día y aumentar a 10 mg", "Iniciar 25 mg al día y aumentar a 50 mg"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Diabetes tipo 2 y síndrome metabólico, los inhibidores selectivos de la recaptura de serotonina requieren un periodo de impregnación corto antes de escalar a la dosis terapéutica de sostén para mitigar efectos ansiogénicos.<br><br>Perla ENARM: \"Fluoxetina 10 mg/24 h, aumentar a 20 mg/24 h al día 7\".<br><br>Análisis de Distractores: Las dosis de 5 a 10 mg corresponden al inicio de escitalopram. Las dosis de 25 a 50 mg corresponden a la pauta escalonada de sertralina. Comenzar con 20 mg de fluoxetina evade la titulación preventiva.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM) Diabetes tipo 2 y síndrome metabólico, 2024, Sección III. Tratamiento de depresión, Página 13."
+    },
+
+
+
+        
+        ];
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('DT2LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('DT2Progress');
+                localStorage.removeItem('DT2LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-blue-500 shadow-md z-10 border-blue-500 dark:border-blue-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-cyan-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "Diabetes Tipo 2 y Síndrome Metabólico";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "Protocolo Nacional de Atención Médica (PRONAM) - 2026";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="loginlite.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="loginlite.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-blue-100 dark:border-blue-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 dark:has-[:checked]:bg-blue-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('DT2Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('DT2LastQId', currentQuestionId);
+                else localStorage.removeItem('DT2LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('DT2Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>
