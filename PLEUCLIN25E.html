@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-cyan-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const questionsData = [
+    {
+        id: 1,
+        question: "¿Cuál es el signo clínico más frecuentemente reportado al momento del diagnóstico de la leucemia linfoblástica aguda en la población pediátrica?",
+        options: ["Fiebre", "Hepatoesplenomegalia", "Adenomegalias generalizadas", "Dolor óseo severo"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, el cuadro clínico inicial se compone de múltiples síndromes por infiltración medular y extramedular. Por orden de frecuencia, la fiebre es el hallazgo dominante, presentándose en el 60% de los casos. La detección temprana exige alta sospecha ante síndromes febriles prolongados sin foco aparente.<br><br>Perla ENARM: \"Por orden de frecuencia, la presencia de signos y síntomas son: fiebre (60%), adenomegalias generalizadas (50%), hepato y esplenomegalia (40%)\".<br><br>Análisis de Distractores: Hepatoesplenomegalia: Es frecuente, pero ocupa el tercer lugar de presentación (40%). Adenomegalias generalizadas: Ocupan el segundo lugar en frecuencia al diagnóstico (50%). Dolor óseo severo: Forma parte del síndrome infiltrativo y obliga al diagnóstico diferencial, pero no supera la frecuencia del síndrome febril en esta patología.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Diagnóstico, Página 2."
+    },
+    {
+        id: 2,
+        question: "¿Qué porcentaje mínimo de blastos en el aspirado de médula ósea establece el diagnóstico morfológico confirmatorio de leucemia linfoblástica aguda?",
+        options: ["≥ 10 %", "≥ 15 %", "≥ 20 %", "≥ 25 %"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, el estándar de oro diagnóstico es el análisis citomorfológico de la médula ósea. La sustitución del tejido hematopoyético normal por una proliferación linfoide descontrolada alcanza el umbral de confirmación diagnóstica con un recuento blástico del 20% o superior, tipificándolos idealmente según sus características FAB.<br><br>Perla ENARM: \"El diagnóstico de leucemia linfoblástica aguda requiere de un aspirado de médula ósea en el que al menos el 20% o más de blastos presentan morfología L1, L2\".<br><br>Análisis de Distractores: ≥ 10 %: Corresponde a un infiltrado anormal que amerita vigilancia o estudios extendidos, pero no es el umbral diagnóstico de leucemia aguda. ≥ 15 %: No es un valor de corte estandarizado por la Organización Mundial de la Salud ni por el PRONAM para el diagnóstico definitivo. ≥ 25 %: Históricamente o en otros consensos antiguos se utilizaba este punto de corte, pero actualmente el criterio absoluto se fija en 20%.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Diagnóstico, Página 4."
+    },
+    {
+        id: 3,
+        question: "Para catalogar a un paciente pediátrico en remisión completa, además de ausencia de enfermedad extramedular y blastos medulares < 5 %, ¿cuál debe ser el recuento absoluto de neutrófilos mínimo?",
+        options: ["≥ 500 /µL", "≥ 1,000 /µL", "≥ 1,500 /µL", "≥ 2,000 /µL"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, la respuesta favorable a la terapia de inducción implica la erradicación morfológica de la clona leucémica y la reconstitución hematopoyética funcional. Este estado se define estrictamente cumpliendo los tres pilares de la remisión.<br><br>Perla ENARM: \"Estado en el cual los blastos en médula ósea son < 5%, no hay evidencia de enfermedad extramedular, recuento absoluto de neutrófilos ≥ 1000 /µL y plaquetas ≥ 100,000 /µL sin necesidad de transfusiones\".<br><br>Análisis de Distractores: ≥ 500 /µL: Corresponde al límite de neutropenia grave, no al criterio de reconstitución hematológica para remisión. ≥ 1,500 /µL: Es un valor normal en la población sana, pero el umbral mínimo exigido tras quimioterapia para definir remisión es más bajo. ≥ 2,000 /µL: Excede los requisitos numéricos estrictos establecidos para considerar éxito en la fase de inducción.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Definiciones, Página 18."
+    },
+    {
+        id: 4,
+        question: "En el sistema de clasificación morfológica Franco-americana-británica (FAB), ¿cuál hallazgo celular es distintivo del subtipo L3?",
+        options: ["Células pequeñas regulares", "Nucléolos poco visibles", "Escaso citoplasma basófilo", "Vacuolización citoplasmática prominente"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, la evaluación inicial del aspirado de médula ósea incluye la tipificación FAB. El subtipo L3 exhibe características fenotípicas agresivas y comparte morfología con el linfoma de Burkitt, destacando una basofilia profunda y vacuolas lipídicas en su citoplasma.<br><br>Perla ENARM: \"L3: Vacuolización citoplasmática prominente, basofilia citoplasmática profunda. La morfología L3 es parte de las características del linfoma de Burkitt\".<br><br>Análisis de Distractores: Células pequeñas regulares: Son la característica principal de la morfología L1. Nucléolos poco visibles: Corresponde a los nucléolos discretos observados típicamente en la variedad L1. Escaso citoplasma basófilo: Es un dato de la leucemia L1; la variante L3 tiene citoplasma abundante y sumamente basófilo.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Diagnóstico, Página 4."
+    },
+    {
+        id: 5,
+        question: "¿Cuál es la alteración electrolítica que caracteriza al síndrome de lisis tumoral de urgencia en estos pacientes?",
+        options: ["Hiperkalemia, hiperfosfatemia e hiperuricemia", "Hipokalemia, hipofosfatemia e hiperuricemia", "Hiperkalemia, hipofosfatemia e hipercalcemia", "Hipokalemia, hiperfosfatemia e hipercalcemia"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, la destrucción masiva y abrupta de células neoplásicas (frecuente en hiperleucocitosis) libera grandes cantidades de potasio, fósforo y ácidos nucleicos intracelulares hacia el torrente sanguíneo, precipitando una nefropatía obstructiva por cristales y arritmias letales. La hipocalcemia secundaria completa el cuadro metabólico.<br><br>Perla ENARM: \"Es importante recordar que los pacientes con leucemia y sobre todo aquellos que tienen hiperleucocitosis pueden cursar con síndrome de lisis tumoral, el cual se caracteriza por hiperkalemia, hiperfosfatemia e hiperuricemia\".<br><br>Análisis de Distractores: Hipokalemia, hipofosfatemia e hiperuricemia: Es incorrecto; la destrucción celular masiva libera iones intracelulares, por lo que el potasio y el fósforo se elevan, no disminuyen. Hiperkalemia, hipofosfatemia e hipercalcemia: La lisis celular genera hiperfosfatemia, la cual se une al calcio sérico libre, provocando hipocalcemia reactiva, no hipercalcemia. Hipokalemia, hiperfosfatemia e hipercalcemia: Combina alteraciones opuestas al perfil clásico de la lisis celular maligna.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Diagnóstico, Página 2."
+    },
+    {
+        id: 6,
+        question: "Una vez iniciados los síntomas vagos e inespecíficos, ¿cuál es el tiempo estimado de progresión para el desarrollo de un cuadro clínico significativo?",
+        options: ["1 a 2 semanas", "2 a 3 semanas", "3 a 4 semanas", "5 a 6 semanas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, la instauración de la enfermedad tiene una progresión temporal predecible impulsada por la alta tasa de replicación de los blastos medulares y el colapso consecuente de las líneas celulares hematopoyéticas normales.<br><br>Perla ENARM: \"El cuadro clínico más común, se caracteriza por una instauración sintomática progresiva, sin embargo, una vez iniciados los síntomas, la progresión suele ser rápida (en estimado tres a cuatro semanas para un cuadro clínico significativo)\".<br><br>Análisis de Distractores: 1 a 2 semanas: Período de incubación de infecciones virales agudas que sirven de diagnóstico diferencial, pero es un lapso corto para la ocupación medular total. 2 a 3 semanas: Aunque rápido, el tiempo de progresión documentado para la integración completa de los síndromes clínicos es ligeramente superior. 5 a 6 semanas: Sugiere un cuadro subagudo prolongado, el cual es infrecuente ante la agresividad biológica intrínseca de esta neoplasia no tratada.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Diagnóstico, Página 1."
+    },
+    {
+        id: 7,
+        question: "Durante el segundo año de vigilancia tras la finalización del tratamiento oncológico, ¿cada cuánto tiempo debe realizarse la consulta médica de seguimiento?",
+        options: ["Cada mes", "Cada 3 meses", "Cada 4 meses", "Cada 2 meses"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, el seguimiento sistemático escala en temporalidad conforme el paciente afianza la remisión clínica. El programa de vigilancia está diseñado para detectar recaídas tardías y evaluar toxicidad residual.<br><br>Perla ENARM: \"Programa de vigilancia: 1° año: consulta mensual, 2° año: consulta cada 2 meses, 3° año: consulta cada 3 meses, 4° año: consulta cada 4 meses, 5° año: consulta cada 5 meses\".<br><br>Análisis de Distractores: Cada mes: Corresponde a la frecuencia de citas de vigilancia únicamente durante el primer año postratamiento. Cada 3 meses: Es la frecuencia establecida para el seguimiento correspondiente al tercer año. Cada 4 meses: Es la periodicidad indicada exclusivamente durante el cuarto año de vigilancia clínica.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Seguimiento, Página 20."
+    },
+    {
+        id: 8,
+        question: "¿En qué periodo de tiempo desde el diagnóstico se define convencionalmente a una recaída como \"temprana\"?",
+        options: ["< 18 meses", "< 24 meses", "< 36 meses", "< 48 meses"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, la temporalidad del fracaso terapéutico es un factor pronóstico fundamental. Las recaídas que ocurren de forma veloz implican resistencia primaria a los fármacos y requieren un abordaje de rescate de extrema intensidad.<br><br>Perla ENARM: \"Recaída: Puede clasificarse como temprana (< 18 meses desde el diagnóstico) o tardía (≥ 18 meses), siendo la temprana de peor pronóstico\".<br><br>Análisis de Distractores: < 24 meses: Aunque clínicamente desfavorable, el punto de corte taxonómico institucional exacto se fija antes del año y medio. < 36 meses: Es un intervalo de tiempo donde las recaídas ya se catalogan y se comportan clínicamente como tardías, con mejor tasa de respuesta a reinducción. < 48 meses: No es un parámetro utilizado para la estadificación temporal de recaída.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Definiciones, Página 19."
+    },
+    {
+        id: 9,
+        question: "Según la clasificación de involucramiento neurológico, ¿cuál es el criterio celular en líquido cefalorraquídeo para categorizar a un paciente como SNC 3?",
+        options: ["Ausencia de blastos en líquido", "Blastos y < 5 leucocitos/µL", "Blastos y ≥ 5 leucocitos/µL", "Líquido francamente traumático"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, la invasión meningea requiere ser estadificada mediante punción lumbar para decidir la intensidad del manejo intratecal. La carga inflamatoria y blástica simultánea marca el estrato de mayor gravedad en neuroeje.<br><br>Perla ENARM: \"SNC 3: Clasificación de involucramiento del Sistema Nervioso Central. Cuenta de leucocitos ≥ 5 /µL y citológico con blastos en líquido cefalorraquídeo\".<br><br>Análisis de Distractores: Ausencia de blastos en líquido: Esto define al estado SNC 1, que es un espacio subaracnoideo libre de enfermedad evidente. Blastos y < 5 leucocitos/µL: Esta disociación (blastos con baja celularidad global) clasifica al paciente en el estadio SNC 2. Líquido francamente traumático: Si presenta blastos se clasifica provisionalmente como SNC 2, pero no otorga automáticamente el grado 3 si no cumple el recuento leucocitario.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Glosario, Página 2."
+    },
+    {
+        id: 10,
+        question: "¿A qué dosis está indicada la radioterapia en aquellos pacientes que desarrollan infiltración testicular documentada o recaída en sistema nervioso central?",
+        options: ["12 Gy", "24 Gy", "30 Gy", "36 Gy"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, el uso de irradiación focalizada ha disminuido drásticamente en los esquemas modernos por sus secuelas neurocognitivas y endocrinas, reservándose para nichos anatómicos que funcionan como \"santuarios\" frente a quimioterapia convencional o en refractariedad comprobada.<br><br>Perla ENARM: \"Refractariedad a SNC: fracaso para eliminar blastos en LCR [...] Tratamiento con 24 Gy de irradiación craneal. Aquellos pacientes con infiltración testicular (biopsia positiva) deberán administrarse a una dosis de 24 Gy\".<br><br>Análisis de Distractores: 12 Gy: Se utilizaba como dosis profiláctica cranial en protocolos antiguos, práctica hoy omitida en favor de optimizar la quimioterapia intratecal. 30 Gy: Excede el margen terapéutico para lechos linfoides y aumenta el daño estromal y germinal de forma inaceptable en pediatría. 36 Gy: Dosis utilizadas para radioterapia paliativa de tumores sólidos mayores, no justificada en enfermedad linfoblástica extramedular.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Asignación de esquema de tratamiento, Página 18."
+    },
+    {
+        id: 11,
+        question: "Durante el abordaje diagnóstico inicial del niño con sospecha clínica, ¿en qué porcentaje de los casos la biometría hemática reporta parámetros estrictamente normales?",
+        options: ["1 % a 2 %", "10 % a 15 %", "20 % a 25 %", "3 % a 5 %"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, el fallo de la función hematopoyética en etapas tempranas casi siempre se refleja de forma periférica en alguna línea celular, siendo excepcional el paciente leucémico sin traducción paraclínica inicial.<br><br>Perla ENARM: \"El estudio de biometría hemática es fundamental, la evidencia muestra que, en el momento del diagnóstico, sólo entre el 3% y el 5% de los casos presentan un resultado normal\".<br><br>Análisis de Distractores: 1 % a 2 %: Valor estadístico infrainstimado; hay una pequeña pero constante proporción de presentación extramedular primaria sin derramamiento sanguíneo todavía. 10 % a 15 %: Es un rango demasiado alto, la gran mayoría presentará anemia, trombocitopenia o alteración en los leucocitos. 20 % a 25 %: Implicaría que la citometría hemática es un estudio deficiente de escrutinio, lo cual es falso al ser el eje del tamizaje en sospecha diagnóstica.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Diagnóstico, Página 2."
+    },
+    {
+        id: 12,
+        question: "En México, la leucemia linfoblástica aguda representa la neoplasia más frecuente en pediatría. ¿Qué porcentaje del total del cáncer infantil agrupa esta patología?",
+        options: ["25 %", "50 %", "65 %", "80 %"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, el comportamiento epidemiológico en el territorio nacional exhibe una incidencia superior al promedio mundial, constituyendo el núcleo principal del volumen de atención en los centros oncológicos infantiles del país.<br><br>Perla ENARM: \"De acuerdo con el Registro de Cáncer en niñas, niños y adolescentes, la LLA representa alrededor del 50% de los casos de cáncer pediátrico\".<br><br>Análisis de Distractores: 25 %: Representa un porcentaje más acorde a las tasas reportadas de tumores del sistema nervioso central, que son la segunda causa. 65 %: Sobreestima la incidencia; ningún tumor agrupa esa cifra en solitario en la estadística global. 80 %: Porcentaje que abarca la LLA si solo se evalúan los diferentes subtipos de leucemias pediátricas (75%), pero no respecto al total de todos los cánceres.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Epidemiología, Página 1."
+    },
+    {
+        id: 13,
+        question: "En la población infantil que habita zonas agrícolas mexicanas cercanas a cuencas de ríos contaminados, ¿cuál exposición ambiental ha sido estrechamente asociada como factor de riesgo?",
+        options: ["Organofosforados y pesticidas", "Metales pesados industriales", "Radiación ultravioleta excesiva", "Asbesto y fibras minerales"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, la carcinogénesis secundaria a la interacción del huésped con agroquímicos es un problema de salud pública de alta prevalencia regional, produciendo daño genético y alteración del microambiente medular.<br><br>Perla ENARM: \"Estudios realizados en México, establecen que las niñas, niños y adolescentes que viven próximos a las cuencas de ríos contaminados por organofosforados y pesticidas cuentan con mayor riesgo de tener LLA\".<br><br>Análisis de Distractores: Metales pesados industriales: Aunque son nefro y neurotóxicos, su peso epidemiológico como inductores de LLA es menor frente a los pesticidas en cuencas de México. Radiación ultravioleta excesiva: Actúa como factor de daño para neoplasias cutáneas (melanoma), no así para alteraciones del sistema hematopoyético. Asbesto y fibras minerales: Tienen una asociación patognomónica con el desarrollo de mesotelioma pleural y asbestosis, no para leucemias de estirpe linfoide.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Factores de Riesgo, Página 1."
+    },
+    {
+        id: 14,
+        question: "Durante el abordaje molecular para estadificación, ¿qué panel de marcadores por citometría de flujo es esencial documentar para integrar la clasificación ETP (Early T-cell Precursor)?",
+        options: ["CD10, CD19, CD20 y CD22", "CD3, CD4, CD8 y CD25", "CD7, CD5, CD1a, CD8 y CD34", "CD13, CD33, CD117 y MPO"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, los pacientes con estirpe celular de precursores T tempranos (ETP) presentan un fenotipo biológico único que asocia marcadores mieloides y linfoides inmaduros, requiriendo esquemas más intensivos debido a su altísimo riesgo de fracaso a inducción.<br><br>Perla ENARM: \"Es esencial el Inmunofenotipo e índice de DNA por citometría de flujo, deberá incluir marcadores completos, con fines de clasificación ETP deberá integrar CD7, CD5, CD1a, CD8, CD34, CD13, CD33\".<br><br>Análisis de Distractores: CD10, CD19, CD20 y CD22: Son antígenos clásicos del linaje celular B, útiles para clasificar leucemias pre-B. CD3, CD4, CD8 y CD25: Son marcadores de linfocitos T maduros y de activación, no del fenotipo precursor ETP de mal pronóstico. CD13, CD33, CD117 y MPO: Es el perfil inmunofenotípico primario esperado en una leucemia mieloide aguda, no linfoide.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Diagnóstico, Página 5."
+    },
+    {
+        id: 15,
+        question: "Una vez cumplidas las 4 a 6 semanas del esquema de inducción inicial, ¿qué umbral de blastos persistentes en médula ósea define la refractariedad al tratamiento?",
+        options: ["≥ 1 %", "≥ 3 %", "≥ 10 %", "≥ 5 %"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, el fracaso morfológico de la inducción predice invariablemente un comportamiento biológico altamente resistente y confiere un pronóstico sombrío, exigiendo reevaluar el rescate con anticuerpos monoclonales o puentes a trasplante.<br><br>Perla ENARM: \"Refractariedad: Falta de respuesta al tratamiento de inducción inicial, definida como la persistencia de ≥ 5% de blastos en médula ósea después de completar la terapia de inducción estándar (generalmente 4-6 semanas)\".<br><br>Análisis de Distractores: ≥ 1 %: Corresponde a un nivel de positividad para la enfermedad mínima residual (EMR), pero no cruza el corte morfológico de la refractariedad macroscópica. ≥ 3 %: Nivel intermedio de enfermedad microscópica residual que requiere vigilancia y ajustes, pero no cumple la definición matemática clínica. ≥ 10 %: Es un valor patológico alto, pero la etiqueta de paciente refractario ya debe haberse activado desde el umbral inferior.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Definiciones, Página 19."
+    },
+    {
+        id: 16,
+        question: "Tras integrar la sospecha en primer nivel, realizar traslado y obtener la confirmación diagnóstica, ¿cuál es el tiempo máximo permisible antes de iniciar el tratamiento específico para la leucemia?",
+        options: ["24 horas", "2 días", "3 días", "5 días"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, la celeridad del abordaje previene complicaciones irreversibles por hiperleucocitosis, daño orgánico por lisis tumoral y progresión del compromiso en médula ósea. Por tanto, existen límites operacionales institucionales estrictos de \"cero retraso\" para el soporte y la citorreducción.<br><br>Perla ENARM: \"No deben pasar más de 7 días para la confirmación del diagnóstico y no más de 3 días entre el diagnóstico y el inicio de tratamiento específico para LLA\".<br><br>Análisis de Distractores: 24 horas: Es la ventana de manejo inmediato para corregir urgencias hematooncológicas (como síndrome de lisis tumoral), pero para la quimioterapia específica hay margen hasta los 3 días. 2 días: Es un tiempo ideal, pero el indicador máximo oficial que audita la norma se extiende un día más. 5 días: Supera el estándar de calidad y pone en riesgo vital al paciente, facilitando expansión tumoral masiva y fallo renal.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Algoritmo 1, Página 3."
+    },
+    {
+        id: 17,
+        question: "En el abordaje físico del síndrome infiltrativo extramedular, ¿a partir de qué diámetro una adenopatía asimétrica e indolora se considera un foco clínico anormal?",
+        options: ["> 2.5 cm", "> 1.0 cm", "> 1.5 cm", "> 2.0 cm"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, si bien las poliadenopatías reactivas son sumamente frecuentes en infantes sanos o con procesos virales, el crecimiento nodular desmedido que rebasa este diámetro específico (tamaño aproximado a un pulgar), especialmente si es indoloro o en sitios atípicos, obliga a descartar neoplasias.<br><br>Perla ENARM: \"Las manifestaciones por infiltración extramedular se presentan principalmente en ganglios linfáticos, con linfadenopatía indolora, unilateral o simétrico, ganglios de > 2.5 cm o en regiones donde habitualmente no son palpables\".<br><br>Análisis de Distractores: > 1.0 cm: Tamaño ganglionar considerado fisiológico y reactivo normal en la mayoría de las estaciones ganglionares de la población preescolar y escolar. > 1.5 cm: Aunque puede levantar suspicacia, no alcanza el criterio numérico de alarma del flujograma de referencia oncológico. > 2.0 cm: Es un dato limítrofe, pero el corte oficial dictado como tamaño equivalente a un pulgar de alto riesgo es superior.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Diagnóstico, Página 1."
+    },
+    {
+        id: 18,
+        question: "Para ser candidato a la asignación del régimen institucional \"Terapia Total XV\", ¿qué intervención debe tenerse como prioridad para su omisión terapéutica?",
+        options: ["Metotrexato intratecal", "Radioterapia", "Profilaxis con cotrimoxazol", "Quimioterapia de mantenimiento"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, el diseño filosófico y farmacológico del esquema Total XV se basa en potenciar la quimioterapia sistémica de alta intensidad y las múltiples aplicaciones intratecales para proteger el sistema nervioso central, prescribiendo evitar en lo posible la toxicidad inducida por los haces de radiación.<br><br>Perla ENARM: \"Recomendaciones generales para considerar uso de tratamiento basado en el esquema Terapia Total XV: Tener como prioridad la omisión de la radioterapia\".<br><br>Análisis de Distractores: Metotrexato intratecal: Al contrario, este fármaco es la piedra angular para lograr el objetivo de evitar la neuroeje, aplicándose desde la fase pre-fase en este esquema. Profilaxis con cotrimoxazol: Es obligatoria en todos los protocolos intensivos de leucemia para prevenir la neumonía por Pneumocystis jirovecii. Quimioterapia de mantenimiento: Es indispensable en cualquier protocolo de LLA; este esquema indica seguimiento del mantenimiento a 3 años.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Asignación de esquema de tratamiento, Página 6."
+    },
+    {
+        id: 19,
+        question: "Con el fin de detectar anomalías estructurales como el reordenamiento BCR-ABL, ¿qué prueba debe realizarse indispensablemente en las instituciones tratantes al diagnóstico?",
+        options: ["Hibridación in situ fluorescente", "Cariotipo con banda G", "Reacción en cadena de la polimerasa", "Secuenciación de próxima generación"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, identificar aberraciones genéticas como el cromosoma Philadelphia (Ph+) es mandatario ya que cambia la ruta terapéutica hacia el uso de inhibidores de tirosina cinasa. Esta técnica garantiza el nivel básico de estratificación biológica en el país.<br><br>Perla ENARM: \"Todas las instituciones que asignen tratamiento deben contar con la posibilidad (interna o por convenio) de realizar prueba de FISH (Hibridación in situ fluorescente) para evaluación de traslocaciones\".<br><br>Análisis de Distractores: Cariotipo con banda G: Es muy útil para identificar aneuploidías, pero su sensibilidad para traslocaciones crípticas y velocidad de resultado es inferior. Reacción en cadena de la polimerasa: La guía señala realizar el PCR (RT-PCR) solo \"una vez identificadas las mismas (las traslocaciones)\" por FISH, para cuantificación del transcrito. Secuenciación de próxima generación: Aunque es la herramienta más avanzada, la recomendación oficial indica que su incorporación será paulatina según \"la infraestructura hospitalaria\", no una obligación mínima inicial como el FISH.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Asignación de esquema de tratamiento, Página 18."
+    },
+    {
+        id: 20,
+        question: "Para documentar fehacientemente que el paciente pediátrico ha recuperado la suficiencia medular en la fase de remisión, ¿cuál debe ser el nivel plaquetario mínimo espontáneo (sin transfusión)?",
+        options: ["≥ 50,000 /µL", "≥ 150,000 /µL", "≥ 100,000 /µL", "≥ 200,000 /µL"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, alcanzar el umbral libre de enfermedad microscópica carece de validez clínica real si el estroma del paciente es incapaz de sostener la hemostasia primaria por cuenta propia. La independencia transfusional junto al corte mínimo de plaquetas en sangre periférica asegura la reversión del síndrome purpúrico.<br><br>Perla ENARM: \"Estado en el cual los blastos en médula ósea son < 5%, no hay evidencia de enfermedad extramedular, recuento absoluto de neutrófilos ≥ 1000 /µL y plaquetas ≥ 100,000 /µL sin necesidad de transfusiones\".<br><br>Análisis de Distractores: ≥ 50,000 /µL: Es un nivel seguro para evitar hemorragias espontáneas severas en fase de aplasia postquimioterapia, pero no cumple la definición de remisión hematológica. ≥ 150,000 /µL: Corresponde al límite inferior de la normalidad de un sujeto sano estándar, pero no es el requisito mínimo aceptado por la evaluación en oncología pediátrica para documentar respuesta. ≥ 200,000 /µL: Cifra excesiva para la exigencia de recuperación post-inducción, momento donde la reserva medular aún sufre estrés toxicológico.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Definiciones, Página 18."
+    },
+    {
+        id: 21,
+        question: "¿Cuál es el porcentaje de mortalidad temprana esperada durante las primeras 6 semanas de tratamiento oncológico en esta población en México?",
+        options: ["1 % a 5 %", "20 % a 25 %", "2 % a 4 %", "6 % a 15 %"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, el inicio de la inducción conlleva un alto riesgo de complicaciones fatales derivadas tanto de la lisis tumoral masiva como de la mielosupresión severa (infecciones y hemorragias). Esta ventana de vulnerabilidad inicial impacta significativamente la supervivencia global en el país.<br><br>Perla ENARM: \"Se calcula que la mortalidad temprana en México varía entre un 6 a 15% en las primeras 6 semanas del tratamiento, derivada de complicaciones inherentes al tratamiento como infecciones y sangrados\".<br><br>Análisis de Distractores: 1 % a 5 %: Son cifras esperadas en centros de excelencia en países de alto ingreso, pero subestiman la realidad epidemiológica nacional. 20 % a 25 %: Representa una mortalidad inaceptable que obligaría al cierre o reestructuración inmediata del programa oncológico del centro. 2 % a 4 %: Corresponde a la tasa de mortalidad global anualizada poblacional (2.5 a 4.0 por 100,000), no a la letalidad de las primeras 6 semanas.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Epidemiología, Página 3."
+    },
+    {
+        id: 22,
+        question: "Ante un cuadro clínico sugerente, ¿cuál es el tiempo máximo establecido para concretar la confirmación diagnóstica mediante aspirado de médula ósea?",
+        options: ["3 días", "7 días", "10 días", "14 días"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, el abordaje de esta neoplasia es una urgencia médica. Los procesos administrativos, traslados y toma de muestra no deben postergar el inicio del manejo específico, estableciendo un estándar de calidad estricto desde la captación hasta el resultado patológico.<br><br>Perla ENARM: \"Nota: No deben pasar más de 7 días para la confirmación del diagnóstico y no más de 3 días entre el diagnóstico y el inicio de tratamiento específico para LLA\".<br><br>Análisis de Distractores: 3 días: Es el tiempo máximo permitido entre la confirmación del diagnóstico y el inicio de la quimioterapia, no el lapso para el abordaje diagnóstico. 10 días: Retraso injustificado que aumenta exponencialmente el riesgo de complicaciones por infiltración masiva y lisis tumoral espontánea. 14 días: Lapso inaceptable en los estándares oncológicos pediátricos nacionales vigentes.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Algoritmo 1, Página 10."
+    },
+    {
+        id: 23,
+        question: "En el tamizaje de líquido cefalorraquídeo, ¿qué hallazgo celular define la estadificación neurológica como SNC 1?",
+        options: ["Ausencia de blastos", "Blastos con < 5 leucocitos/µL", "Líquido francamente traumático", "Blastos con ≥ 5 leucocitos/µL"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, la indemnidad del neuroeje debe documentarse citológicamente antes del inicio de la quimioterapia sistémica. El estado SNC 1 implica un compartimento meníngeo libre de siembra leucémica, requiriendo únicamente profilaxis intratecal estándar.<br><br>Perla ENARM: \"SNC 1: Clasificación de involucramiento del Sistema Nervioso Central. No se encuentran blastos en líquido cefalorraquídeo\".<br><br>Análisis de Distractores: Blastos con < 5 leucocitos/µL: Corresponde a la categoría SNC 2, evidenciando siembra tumoral sin respuesta inflamatoria medible. Líquido francamente traumático: Obliga a realizar ajustes estadísticos; si se detectan blastos en este líquido, se cataloga automáticamente como mínimo SNC 2. Blastos con ≥ 5 leucocitos/µL: Define al estadio de mayor gravedad e infiltración franca, SNC 3.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Glosario, Página 2."
+    },
+    {
+        id: 24,
+        question: "¿Cuál hallazgo en la biometría hemática inicial representa una indicación absoluta para realizar un aspirado de médula ósea?",
+        options: ["Linfocitosis reactiva del 40 %", "Leucocitosis de 15,000 /µL", "Bicitopenia o pancitopenia", "Anemia microcítica aislada"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, el fallo concomitante de dos o más líneas celulares refleja el reemplazo masivo del nicho hematopoyético por la clona neoplásica. Este colapso medular exige comprobación histológica inmediata.<br><br>Perla ENARM: \"Las indicaciones para realizar un aspirado de médula ósea (AMO) son: presencia de blastos en sangre periférica, alteraciones hematológicas en pacientes con infiltración linforreticular (adenopatías, hepatomegalia, esplenomegalia), bicitopenia o pancitopenia\".<br><br>Análisis de Distractores: Linfocitosis reactiva del 40 %: Es un hallazgo común en procesos virales pediátricos (ej. mononucleosis); el criterio de sospecha leucémica requiere elevación ≥ 70 %. Leucocitosis de 15,000 /µL: Es inespecífica y frecuentemente secundaria a focos infecciosos si no asocia blastos o falla en otras líneas. Anemia microcítica aislada: Sugiere deficiencia de hierro u otras carencias crónicas, no invasión medular aguda.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Diagnóstico, Página 9."
+    },
+    {
+        id: 25,
+        question: "Durante el tercer año de vigilancia tras culminar la quimioterapia, ¿con qué periodicidad debe programarse la consulta de seguimiento clínico?",
+        options: ["Cada mes", "Cada 2 meses", "Cada 4 meses", "Cada 3 meses"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, el espaciamiento de las revisiones oncológicas es inversamente proporcional al tiempo transcurrido desde la remisión, ajustándose a la curva de riesgo estadístico de recaída tardía.<br><br>Perla ENARM: \"Programa de vigilancia: 1° año: consulta mensual, 2° año: consulta cada 2 meses, 3° año: consulta cada 3 meses\".<br><br>Análisis de Distractores: Cada mes: Seguimiento estricto reservado exclusivamente para el primer año postratamiento. Cada 2 meses: Frecuencia de revisión indicada durante el segundo año. Cada 4 meses: Citación indicada hasta que el paciente alcanza su cuarto año libre de enfermedad.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Seguimiento, Página 30."
+    },
+    {
+        id: 26,
+        question: "En pacientes bajo el esquema BFM, ¿qué recuento blástico en sangre periférica al terminar la prefase define una mala respuesta inicial?",
+        options: ["> 1,000 /µL", "> 500 /µL", "> 2,000 /µL", "> 5,000 /µL"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, la evaluación de la respuesta a los esteroides (prefase) es uno de los predictores pronósticos más fuertes in vivo. El aclaramiento insuficiente de blastos en sangre periférica obliga a estratificar al paciente hacia bloques de quimioterapia mucho más intensivos.<br><br>Perla ENARM: \"Mala respuesta a la prefase: Biometría hemática con más de 1,000 blastos por µL al terminar la prefase\".<br><br>Análisis de Distractores: > 500 /µL: Valor considerado como aclaramiento limítrofe pero no cumple el criterio estricto institucional de falla. > 2,000 /µL: Aunque indicaría franca resistencia, el protocolo asume la mala respuesta desde un umbral más bajo para intervenir oportunamente. > 5,000 /µL: Excede ampliamente el punto de corte definitorio de fracaso inicial a esteroides.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Algoritmo 4, Página 13."
+    },
+    {
+        id: 27,
+        question: "En el abordaje terapéutico de consolidación, ¿qué hallazgo clínico-laboratorial es indicación formal para iniciar terapia puente con Blinatumomab?",
+        options: ["Cariotipo hiperdiploide", "Enfermedad mínima residual positiva", "Reordenamiento ETV6-RUNX1", "Morfología FAB L1"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, la persistencia submicroscópica de la clona tumoral predice indefectiblemente la recaída morfológica. Los anticuerpos biespecíficos (BiTE) acoplan las células T citotóxicas al antígeno CD19 de los blastos, erradicando la enfermedad oculta.<br><br>Perla ENARM: \"Indicación para remisión con EMR positiva (respuesta subóptima): Blinatumomab: Pacientes con peso menor a 45kg: 15 µg/m²/día en infusión continua\".<br><br>Análisis de Distractores: Cariotipo hiperdiploide: Generalmente confiere un pronóstico favorable y responde adecuadamente a quimioterapia estándar. Reordenamiento ETV6-RUNX1: Es la alteración genética más común asociada a un excelente pronóstico en pediatría. Morfología FAB L1: Es el fenotipo morfológico de presentación habitual, no un criterio de falla terapéutica por sí mismo.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Algoritmo 4, Página 17."
+    },
+    {
+        id: 28,
+        question: "Al ingreso a urgencias pediátricas con sospecha clínica de síndrome infiltrativo, ¿qué prioridad de triage se le debe asignar estrictamente al paciente?",
+        options: ["1 (Rojo)", "2 (Naranja)", "3 (Amarillo)", "4 (Verde)"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, la detección inicial demanda atención expedita sin retrasos administrativos para solicitar laboratorios urgentes y buscar datos de lisis tumoral o falla medular aguda. Su clasificación garantiza atención en los primeros minutos de arribo.<br><br>Perla ENARM: \"Nota: En Triage clasificar la prioridad de atención a partir de 3 (amarillo)\".<br><br>Análisis de Distractores: 1 (Rojo): Reservado para inestabilidad hemodinámica inminente o paro cardiorrespiratorio, salvo que el niño llegue en choque séptico o hemorrágico. 2 (Naranja): Podría aplicar si se asocian urgencias hematooncológicas francas y agudas, pero el protocolo general exige categorizar desde el nivel intermedio de urgencia. 4 (Verde): Es una negligencia grave, ya que retrasa el abordaje de una enfermedad de rápida progresión letal.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Algoritmo 1, Página 10."
+    },
+    {
+        id: 29,
+        question: "Independientemente de las fases de intensificación, ¿cuál es la duración mínima establecida para el tratamiento efectivo continuo de esta neoplasia?",
+        options: ["104 semanas", "52 semanas", "156 semanas", "80 semanas"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, erradicar la clona leucémica residual previene recaídas tardías. Los protocolos exigen al menos dos años íntegros de citotoxicidad mantenida (inducción, consolidaciones y mantenimiento extenso) para consolidar la cura clínica.<br><br>Perla ENARM: \"Recomendaciones generales: Duración de al menos 2 años (104 semanas) de tratamiento efectivo\".<br><br>Análisis de Distractores: 52 semanas: Un año es un periodo insuficiente; históricamente la suspensión temprana se asocia a un pico de recaídas devastadoras. 156 semanas: Tres años es el objetivo óptimo buscado en algunos esquemas como Terapia Total XV, pero la obligatoriedad mínima estructural es menor. 80 semanas: Duración aproximada de mantenimiento en esquemas cortos BFM, pero no suma el total del tratamiento global requerido.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Asignación de esquema, Página 23."
+    },
+    {
+        id: 30,
+        question: "Durante el tratamiento de mantenimiento ambulatorio, ¿cuál es la meta estricta de recuento leucocitario que debe mantenerse ajustando las dosis de quimioterapia?",
+        options: ["500 a 1,000 /µL", "1,000 a 1,500 /µL", "3,000 a 5,000 /µL", "1,500 a 3,000 /µL"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, el mantenimiento (usualmente con mercaptopurina y metotrexato) no utiliza dosis fijas, sino que se titula (modulación) buscando una mielosupresión leve pero controlada, la cual ha demostrado ser el biomarcador subrogado de exposición sistémica eficaz a los antimetabolitos.<br><br>Perla ENARM: \"Modulación de tratamiento durante el mantenimiento: Se debe buscar, mantener constantemente leucocitos entre 1,500 y 3,000/µL\".<br><br>Análisis de Distractores: 500 a 1,000 /µL: Induce neutropenia severa y eleva el riesgo de mortalidad por sepsis de forma inaceptable en atención ambulatoria. 1,000 a 1,500 /µL: Rozando el límite inferior de seguridad; a estos niveles se recomienda iniciar ajustes reductivos a razón 2.5:1. 3,000 a 5,000 /µL: Nivel demasiado alto que indica subdosificación o falta de apego al tratamiento oral, aumentando riesgo de recaída.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Algoritmo 4, Página 16."
+    },
+    {
+        id: 31,
+        question: "En la estratificación inicial del protocolo \"Terapia Total XV\", ¿qué alteración genómica clasifica automáticamente al paciente en el estrato de alto riesgo?",
+        options: ["Reordenamiento ETV6-RUNX1", "Fusión BCR-ABL", "Hiperdiploidía mayor a 50", "Mutación NUDT15"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, el cromosoma Philadelphia, originado por la traslocación t(9;22), confiere uno de los fenotipos de mayor agresividad y quimiorresistencia en leucemia linfoide, exigiendo desde el día 1 esquemas intensificados con adición de inhibidores de tirosina cinasa.<br><br>Perla ENARM: \"ALTO RIESGO: CUMPLE AL MENOS UNO DE t(9;22) fusión BCR ABL\".<br><br>Análisis de Distractores: Reordenamiento ETV6-RUNX1: Citogenética que confiere una excelente respuesta a drogas convencionales, clasificando usualmente en riesgo estándar. Hiperdiploidía mayor a 50: Anomalía cromosómica numérica con pronóstico altamente favorable en la edad pediátrica. Mutación NUDT15: Condiciona toxicidad severa a tiopurinas (mercaptopurina), obligando a ajuste de dosis, pero no es un marcador de agresividad neoplásica.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Algoritmo 3, Página 10."
+    },
+    {
+        id: 32,
+        question: "Además de exposición a pesticidas, ¿qué mecanismo fisiopatológico precoz se asocia al desarrollo de esta neoplasia en los primeros años de vida?",
+        options: ["Deleciones teloméricas somáticas", "Mutaciones mitocondriales de novo", "Daños epigenéticos germinales", "Rupturas de doble cadena por luz UV"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, se ha establecido que las alteraciones de metilación y configuración de la cromatina previas a la fertilización siembran una inestabilidad latente que precipita la transformación leucémica temprana tras estímulos inmunes postnatales.<br><br>Perla ENARM: \"El día de hoy existe evidencia de que daños epigenéticos precigóticos a nivel germinal, están asociados a leucemias en pacientes en los primeros años de vida\".<br><br>Análisis de Distractores: Deleciones teloméricas somáticas: Asociadas a síndromes de falla medular o envejecimiento, no como etiopatogenia central primaria de la leucemia infantil. Mutaciones mitocondriales de novo: Frecuentes en encefalomiopatías metabólicas pediátricas, ajenas al mecanismo linfoide. Rupturas de doble cadena por luz UV: Típico en patologías cutáneas como xeroderma pigmentoso o melanoma.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Factores de Riesgo, Página 4."
+    },
+    {
+        id: 33,
+        question: "De acuerdo con el sistema de clasificación morfológica (FAB), ¿cuál es una característica citológica primaria de los blastos tipo L1?",
+        options: ["Escaso citoplasma", "Células muy grandes", "Nucléolos prominentes", "Vacuolización profunda"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, la variedad L1 es históricamente la más común en pediatría, caracterizada por células de tamaño pequeño con altísima relación núcleo-citoplasma y cromatina densa, reflejando su inmadurez extrema.<br><br>Perla ENARM: \"Tabla 1. Clasificación morfológica Franco-americana-británica (FAB). L1: Células más pequeñas, Escaso citoplasma, Nucléolos discretos\".<br><br>Análisis de Distractores: Células muy grandes: Característica morfológica que define a la variante celular FAB L2. Nucléolos prominentes: Hallazgo nuclear predominante también en la morfología de la variante L2. Vacuolización profunda: Patrón tintorial propio de la variante L3 (leucemia tipo Burkitt).",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Diagnóstico, Página 12."
+    },
+    {
+        id: 34,
+        question: "Al concluir la fase de inducción a la remisión, ¿qué porcentaje de blastos residuales en médula ósea define clínicamente una \"respuesta subóptima\"?",
+        options: ["1 % a 3 %", "> 25 %", "< 5 %", "5 % a 25 %"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, un aclaramiento medular deficiente en este rango exige reintensificación o terapias de rescate de segunda línea sin llegar a etiquetar una falla total de la médula por reemplazo absoluto.<br><br>Perla ENARM: \"Respuesta Subóptima: [...] persistencia de blastos en médula ósea entre 5-25% al final de la inducción, o enfermedad residual mínima elevada\".<br><br>Análisis de Distractores: 1 % a 3 %: Cifra de remisión morfológica exitosa, aunque obliga a estudiar enfermedad mínima residual (EMR) microscópica o molecular. > 25 %: Implica una franca refractariedad al esquema de inducción estándar, no una simple respuesta lenta o subóptima. < 5 %: Definición canónica morfológica de remisión completa lograda.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Definiciones, Página 29."
+    },
+    {
+        id: 35,
+        question: "¿Qué tasa de defunción global asociada al tratamiento obliga a un centro médico a realizar modificaciones urgentes en sus recomendaciones del esquema BFM?",
+        options: ["Superior al 15 %", "Superior al 50 %", "Superior al 30 %", "Superior al 40 %"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, debido a la enorme disparidad en infraestructura de soporte entre hospitales, un margen de toxicidad letal tan grave exige adaptar (desescalar) el esquema quimioterapéutico, limitando dosis de antraciclinas o esteroides para no aniquilar al paciente.<br><br>Perla ENARM: \"En casos de centros con tasa global de defunción asociada a tratamiento superior a 50%, o tasa de defunción temprana... superior a 15%, se deberán considerar las modificaciones recomendadas al esquema\".<br><br>Análisis de Distractores: Superior al 15 %: Es el porcentaje límite para la mortalidad temprana (en los primeros 3 meses), pero no para el umbral de mortalidad global. Superior al 30 %: No corresponde a ninguno de los dos indicadores oficiales de auditoría terapéutica marcados por el programa. Superior al 40 %: Es inaceptable médicamente, pero el umbral textual del algoritmo nacional está fijado diez puntos más arriba para este escenario en particular.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Asignación de esquema, Página 19."
+    },
+    {
+        id: 36,
+        question: "En pacientes masculinos tratados con el régimen \"Terapia Total XV\", ¿hasta qué semana debe extenderse la fase de mantenimiento cíclico para reducir el riesgo de recaída testicular?",
+        options: ["100 semanas", "120 semanas", "146 semanas", "156 semanas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, el varón presenta santuarios anatómicos extracelulares, particularmente la barrera hematotesticular, que exigen casi medio año adicional de exposición farmacológica de baja dosis (mercaptopurina/metotrexato) para lograr erradicación sistémica equiparable a las mujeres.<br><br>Perla ENARM: \"A partir de la semana 101: Mantenimiento cíclico, bloques de 8 semanas, repetir hasta completar 120 semanas en px de sexo femenino y 146 semanas para px sexo masculino\".<br><br>Análisis de Distractores: 100 semanas: Punto cronológico donde se termina el bloque estandarizado inicial de mantenimiento previo a la diferenciación por sexo. 120 semanas: Corresponde al límite de tiempo en el que se da de alta terapéutica a pacientes de sexo femenino. 156 semanas: Equivale exactamente a tres años cerrados, pero el protocolo puntualiza la suspensión en la semana 146.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Algoritmo 3, Página 12."
+    },
+    {
+        id: 37,
+        question: "Como parte esencial del escrutinio molecular por NGS (Secuenciación de ARN), ¿la expresión de qué biomarcador es prioritario documentar para la estratificación?",
+        options: ["Expresión de CRLF2", "Mutación TPMT", "Gen NUDT15", "Mutación de p53"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, la sobreexpresión de CRLF2 identifica a una subpoblación de muy alto riesgo con un fenotipo similar al Philadelphia (\"Ph-like\"), cuyo pronóstico fatal obliga a intensificar tempranamente.<br><br>Perla ENARM: \"NGS -> RNA -> Evaluación de fusiones. Expresión de CRLF2 a partir de RNA seq. (ESENCIAL)\".<br><br>Análisis de Distractores: Mutación TPMT: Evaluado rutinariamente por secuenciación de DNA (no ARN) para prevenir toxicidad letal por tiopurinas, clasificado como \"Ideal\", no \"Esencial\". Gen NUDT15: Comparte algoritmo genómico de DNA con TPMT para ajustes farmacogenéticos, pero no se mapea primariamente por ARN. Mutación de p53: Marcador de agresividad pancancerígeno, pero no es el objetivo focal obligatorio del perfilado NGS transcriptómico inicial en estos protocolos institucionales.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Algoritmo 2, Página 16."
+    },
+    {
+        id: 38,
+        question: "En los centros sin capacidad para esquemas estándar, ¿cuál es la dosis mínima de metotrexato intravenoso de altas dosis exigida para considerarlo un tratamiento efectivo?",
+        options: ["1.0 g/m²", "2.5 g/m²", "5.0 g/m²", "8.0 g/m²"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, el metotrexato requiere escalar a regímenes masivos sostenidos (con posterior rescate con folinato) para penetrar eficazmente los santuarios farmacológicos (SNC) y vencer los mecanismos de resistencia intrínseca celular.<br><br>Perla ENARM: \"Recomendaciones generales para centros con imposibilidad de administración de estos esquemas: Administración de metotrexate a altas dosis para al menos 3 infusiones totales a dosis mínima de 2.5 g/m²\".<br><br>Análisis de Distractores: 1.0 g/m²: Dosis intermedia que no logra las concentraciones valle sostenidas en líquido cefalorraquídeo necesarias para proteger el neuroeje de recaídas. 5.0 g/m²: Es la dosis ideal empleada en protocolos avanzados (como Protocolo M de BFM), pero la normativa mínima tolerada es la mitad de esta cantidad. 8.0 g/m²: Corresponde a regímenes para osteosarcomas o linfomas agresivos, con toxicidad renal prohibitiva en inducción leucémica generalizada.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Asignación de esquema, Página 23."
+    },
+    {
+        id: 39,
+        question: "¿Cuál es el punto de corte temporal, contado desde el diagnóstico inicial, para clasificar una recaída medular como \"tardía\"?",
+        options: ["≥ 12 meses", "≥ 36 meses", "≥ 24 meses", "≥ 18 meses"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, diferenciar el tiempo del fracaso terapéutico define la quimiosensibilidad de la clona. Si el retorno se da de manera extendida posterior al año y medio, suele responder mejor a los esquemas de reinducción estándar que aquellas formas tempranas y fulminantes.<br><br>Perla ENARM: \"Recaída: Puede clasificarse como temprana (< 18 meses desde el diagnóstico) o tardía (≥ 18 meses)\".<br><br>Análisis de Distractores: ≥ 12 meses: Un punto estadístico frecuente de recaída temprana, demostrando fallo pleno de la fase de mantenimiento inicial. ≥ 36 meses: Temporalidad asociada a recaídas muy tardías, frecuentemente ya sin quimioterapia de por medio, pero el límite de la definición empieza antes. ≥ 24 meses: Límite clásico de evaluación oncológica, pero los protocolos de LLA pediátrica fijan el corte oficial en el mes 18.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Definiciones, Página 29."
+    },
+    {
+        id: 40,
+        question: "Durante los primeros 7 días de la prefase en el protocolo \"Terapia Total XV\", ¿cuál es el fármaco citorreductor de primera elección a utilizar por vía oral o intravenosa?",
+        options: ["Vincristina", "Ciclofosfamida", "Prednisona", "6-mercaptopurina"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Leucemia Linfoblástica Aguda pediátrica, el abordaje terapéutico exige una \"ventana esteroidea\" inicial que depura gradualmente la masa blástica circulante y previene el síndrome de lisis tumoral fulminante que ocurriría si se inyectara poliquimioterapia agresiva de inmediato.<br><br>Perla ENARM: \"Esquema de tratamiento para LLA, basado en 'Terapia Total XV'. Prefase: Días 1-7. Prednisona: PO 60 mg/m²/día TID por hasta 7 días\".<br><br>Análisis de Distractores: Vincristina: Componente fundamental de la inducción que arranca hasta el día 8 (o día 1 formal post-prefase), junto a antraciclinas y asparaginasa. Ciclofosfamida: Medicamento alquilante empleado para consolidaciones, intensificaciones tardías y fenotipos tipo T, no apto para la citorreducción primaria esteroidea. 6-mercaptopurina: Antimetabolito de uso diario como pilar exclusivo de la terapia de mantenimiento a largo plazo.",
+        source: "Protocolo Nacional de Atención Médica Leucemia Linfoblástica Aguda en niñas, niños y adolescentes, 2024, Algoritmo 3, Página 9."
+    }
+
+
+
+        
+        ];
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('LLAPROLastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('LLAPROProgress');
+                localStorage.removeItem('LLAPROLastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-blue-500 shadow-md z-10 border-blue-500 dark:border-blue-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-cyan-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "Leucemia Linfoblástica Aguda (LLA)";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "Protocolo Nacional de Atención Médica (PRONAM) - 2026";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="loginlite.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="loginlite.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-blue-100 dark:border-blue-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 dark:has-[:checked]:bg-blue-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('LLAPROProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('LLAPROLastQId', currentQuestionId);
+                else localStorage.removeItem('LLAPROLastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('LLAPROProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

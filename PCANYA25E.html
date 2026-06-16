@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-cyan-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const questionsData = [
+    {
+        id: 1,
+        question: "¿Cuál es la neoplasia maligna de mayor frecuencia epidemiológica a nivel nacional en el grupo de 0 a 19 años?",
+        options: ["Linfoma No Hodgkin", "Leucemia", "Cáncer tiroideo", "Tumor de células germinales"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, la leucemia representa el 34.1% de la incidencia oncológica pediátrica, consolidándose como la patología maligna predominante, seguida de los tumores del sistema nervioso central con un 10.3%. Conocer la prevalencia dicta la sospecha clínica ante alteraciones hematológicas iniciales.<br><br>Perla ENARM: Leucemia 2,421 (34.1%).<br><br>Análisis de Distractores: El Linfoma No Hodgkin representa el 6.5%, los tumores de células germinales el 9.2% y el cáncer tiroideo el 5.7%; todas son etiologías válidas pero con una incidencia significativamente menor.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Epidemiología GLOBOCAN, Página 7."
+    },
+    {
+        id: 2,
+        question: "¿Qué hallazgo estructural define al Triángulo de Codman en la evaluación radiográfica de una extremidad?",
+        options: ["Extensión tumoral hacia planos blandos profundos", "Formación de septos perpendiculares a la cortical", "Elevación del periostio en el borde óseo", "Destrucción medular con esclerosis periférica"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Datos Radiológicos de Tumor Óseo, esta imagen triangular se produce cuando el rápido crecimiento de la neoplasia maligna supera la capacidad de osificación, levantando el periostio y generando una reacción perióstica focalizada de alto riesgo.<br><br>Perla ENARM: Se aprecia la formación de un \"triángulo\" en el borde del hueso cuando el tumor levanta el periostio.<br><br>Análisis de Distractores: La formación de septos perpendiculares corresponde al signo del sol naciente. La invasión a planos blandos y la destrucción medular son hallazgos de agresividad pero no definen específicamente el epónimo de Codman.",
+        source: "Datos Radiológicos de Tumor Óseo Maligno, 2022, Signos Radiológicos, Página 1."
+    },
+    {
+        id: 3,
+        question: "¿Cuál es el tiempo de duración mínimo de un síntoma general para considerarse criterio formal de sospecha oncológica?",
+        options: ["≥ 15 días", "≥ 21 días", "≥ 30 días", "≥ 45 días"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, la temporalidad es un criterio de escrutinio clínico ineludible. Un cuadro clínico que no remite en este lapso rompe el patrón de las infecciones agudas habituales en pediatría, obligando al clínico a descartar procesos proliferativos.<br><br>Perla ENARM: Uno o más signos y síntomas que duren 15 días o más, pueden ser un dato de sospecha de cáncer.<br><br>Análisis de Distractores: 21, 30 y 45 días son lapsos que retrasan injustificadamente la referencia oportuna, aumentando el riesgo de progresión clínica y disminuyendo la probabilidad de curación.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Signos y Síntomas, Página 3."
+    },
+    {
+        id: 4,
+        question: "¿A partir de qué percentil se considera el incremento de la circunferencia craneal como un dato de alarma por patología maligna?",
+        options: ["> p85", "> p95", "> p97", "> p90"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Medición del Perímetro Cefálico, una medición por encima de este límite establece una desviación significativa del crecimiento fisiológico esperado. Fisiopatológicamente, se relaciona con el aumento de la presión intracraneal secundario a efecto de masa por tumores del sistema nervioso central o bloqueo del flujo de líquido cefalorraquídeo.<br><br>Perla ENARM: Si el punto se encuentra por arriba del percentil 90, debe buscarse la causa, puede ser un signo de cáncer infantil.<br><br>Análisis de Distractores: p85 es considerado un límite de vigilancia sin alarma inmediata, mientras que esperar a p95 o p97 representa una demora diagnóstica ante un posible síndrome de hipertensión endocraneana en lactantes.",
+        source: "Medición del Perímetro Cefálico, 2022, Interpretación de Gráficas, Página 10."
+    },
+    {
+        id: 5,
+        question: "¿Qué recuento absoluto de leucocitos es un criterio de referencia inmediata a hematología pediátrica en niñas y niños?",
+        options: ["< 2,500 o > 15,000 mm³", "< 1,500 o > 12,000 mm³", "< 1,000 o > 10,000 mm³", "< 2,000 o > 20,000 mm³"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, la leucopenia severa o la hiperleucocitosis en la etapa preescolar o escolar indican fallo medular primario o proliferación clónica descontrolada. El diagnóstico diferencial principal es la infiltración leucémica.<br><br>Perla ENARM: Leucocitos Niñas y niños: > 10,000 mm³ o < 1,000 mm³.<br><br>Análisis de Distractores: Los rangos de < 2,500 o > 15,000 mm³ corresponden exclusivamente a los criterios de referencia para población adolescente. Los demás valores no son puntos de corte estandarizados.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Criterios de Referencia, Página 4."
+    },
+    {
+        id: 6,
+        question: "¿Cuál es el mecanismo fisiopatológico que da origen al signo radiológico del sol naciente?",
+        options: ["Reacción inflamatoria con septos perpendiculares", "Reacción esclerótica de la médula ósea", "Neoformación lítica de bordes espiculados", "Elevación del periostio con formación triangular"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Datos Radiológicos de Tumor Óseo, este patrón es patognomónico de lesiones osteosarcomatosas agresivas. La mineralización tumoral sigue el trayecto de las fibras de Sharpey estiradas a través de la cortical, proyectándose hacia los tejidos blandos adyacentes.<br><br>Perla ENARM: Reacción inflamatoria del hueso con septos irradiados de manera perpendicular a la cortical dando el aspecto de un \"sol\".<br><br>Análisis de Distractores: La elevación del periostio triangular describe a Codman. La reacción esclerótica o lítica no explica la formación espiculada radiada característica de este hallazgo.",
+        source: "Datos Radiológicos de Tumor Óseo Maligno, 2022, Signos Radiológicos, Página 1."
+    },
+    {
+        id: 7,
+        question: "En el algoritmo de derivación por color, ¿qué estudio de imagen clasifica para el código azul ante focalización neurológica?",
+        options: ["Tomografía por emisión de positrones", "Resonancia magnética o tomografía de cráneo", "Radiografía lateral de cráneo", "Ultrasonido transfontanelar"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, la aparición de cefalea persistente, vómito explosivo o alteraciones en la marcha requiere neuroimagen estructural urgente (simple y contrastada) para delimitar neoformaciones ocupativas supratentoriales o infratentoriales.<br><br>Perla ENARM: AZUL: Resonancia magnética o TAC de cráneo (simple y contrastada).<br><br>Análisis de Distractores: El ultrasonido transfontanelar está limitado por el cierre de fontanelas y no evalúa fosa posterior. La radiografía es ineficaz para tejidos blandos y el PET no es un abordaje inicial.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Algoritmo de Derivación, Página 2."
+    },
+    {
+        id: 8,
+        question: "¿Cuáles son las referencias anatómicas que deben seguirse para la técnica correcta de medición del perímetro cefálico?",
+        options: ["Vértebra cervical prominente y glabela", "Conducto auditivo externo y sutura coronal", "Sutura sagital y base del hueso temporal", "Frente, cejas, orejas y protuberancia occipital"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Medición del Perímetro Cefálico, estandarizar la técnica asegura que se capture el diámetro máximo del neurocráneo. Cualquier desviación del plano horizontal supraorbitario o infranucal subestima o sobreestima los percentiles de riesgo.<br><br>Perla ENARM: Pásala por la parte más prominente de la frente, encima de las cejas y las orejas y por detrás, por la protuberancia occipital.<br><br>Análisis de Distractores: El uso de las suturas coronales, sagitales o el conducto auditivo externo no reflejan el punto de circunferencia máxima.",
+        source: "Medición del Perímetro Cefálico, 2022, Técnica de Medición, Página 9."
+    },
+    {
+        id: 9,
+        question: "¿Qué proporción de la población oncológica pediátrica en México se diagnostica en etapas avanzadas de la enfermedad?",
+        options: ["75%", "60%", "50%", "80%"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, este rezago estadístico explica por qué la tasa de sobrevida a largo plazo a nivel nacional es solo del 50%, contrastando con el 80% global. Esto incrementa de manera drástica los costos, la toxicidad y el riesgo de recaídas.<br><br>Perla ENARM: Tres de cada cuatro pacientes (75%) son diagnosticados en etapas avanzadas de la enfermedad.<br><br>Análisis de Distractores: El 50% corresponde a la tasa de sobrevida a largo plazo actual en el país. El 80% representa la probabilidad de curación en países con abordaje temprano óptimo.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Introducción, Página 5."
+    },
+    {
+        id: 10,
+        question: "¿Qué alteración define radiográficamente a una lesión de tejido óseo mal delimitada?",
+        options: ["Calcificación endomedular densa", "Extensión y bordes que no pueden definirse", "Reacción perióstica en capas de cebolla", "Radiolucidez perirradicular expansiva"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Datos Radiológicos de Tumor Óseo, la ausencia de una zona de transición estrecha o márgenes escleróticos indica una tasa de lisis ósea que supera la respuesta reparadora del huésped, lo cual es altamente predictivo de patología maligna infiltrativa.<br><br>Perla ENARM: Presencia de tumor o lesión en el hueso cuya extensión o bordes no pueden definirse.<br><br>Análisis de Distractores: La reacción en capas de cebolla sugiere Sarcoma de Ewing, pero no define semánticamente a la lesión mal delimitada general. Las calcificaciones densas son propias de lesiones condroides benignas o malignas lentas.",
+        source: "Datos Radiológicos de Tumor Óseo Maligno, 2022, Lesión Mal Delimitada, Página 1."
+    },
+    {
+        id: 11,
+        question: "¿Qué diámetro mínimo define el límite de sospecha para investigar malignidad en una adenopatía de consistencia dura y adherida?",
+        options: ["> 0.5 cm", "> 1.0 cm", "> 1.5 cm", "> 2.0 cm"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, el escrutinio del sistema reticuloendotelial pediátrico requiere diferenciar ganglios reactivos de masas linfoproliferativas. Las adenopatías que superan este diámetro, carecen de dolor, están adheridas a planos profundos y no responden a tratamiento empírico son indicativas de linfoma o leucemia.<br><br>Perla ENARM: Adenopatías (indoloras, duras, adheridas a planos profundos, mayores de 1.5cm de diámetro que no responden a tratamiento).<br><br>Análisis de Distractores: 0.5 y 1.0 cm son diámetros frecuentes en ganglios cervicales reactivos a infecciones virales. 2.0 cm retrasa la intervención ya que el corte establecido de riesgo inicia desde 1.5 cm.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Signos de Búsqueda Intencionada, Página 8."
+    },
+    {
+        id: 12,
+        question: "En la gráfica de percentiles de la Organización Mundial de la Salud, ¿qué variable clínica se interpola sobre el eje horizontal?",
+        options: ["Edad", "Perímetro cefálico", "Talla", "Peso"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Medición del Perímetro Cefálico, la estandarización somatométrica exige graficar la progresión del tiempo de desarrollo cronológico (en meses y años cumplidos) contra la medida antropométrica obtenida, evaluando la velocidad de crecimiento craneal.<br><br>Perla ENARM: En el eje horizontal encuentra la edad correspondiente y en el eje vertical el tamaño del perímetro cefálico.<br><br>Análisis de Distractores: El perímetro cefálico se grafica sobre el eje vertical. El peso y la talla se evalúan en curvas de nutrición separadas y no pertenecen a la gráfica de neurodesarrollo descrita.",
+        source: "Medición del Perímetro Cefálico, 2022, Interpretación de Gráficas, Página 9."
+    },
+    {
+        id: 13,
+        question: "En el algoritmo de derivación, ¿cuál es la indicación de gabinete clasificada como código morado?",
+        options: ["Tomografía axial computarizada de abdomen", "Radiografía simple de extremidad", "Serie esofagogastroduodenal", "Ultrasonido abdominal y/o pélvico"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, la presencia de distensión abdominal o masas palpables en hemiabdomen requiere evaluación con ecosonografía por su alta sensibilidad para determinar el origen de la masa (renal, adrenal, hepática o retroperitoneal) sin emitir radiación.<br><br>Perla ENARM: MORADO: Ultrasonido abdominal y/o pélvico.<br><br>Análisis de Distractores: La radiografía corresponde al código rojo. La tomografía abdominal no está indicada como tamizaje inicial por color debido a su disponibilidad y radiación ionizante.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Algoritmo de Derivación, Página 3."
+    },
+    {
+        id: 14,
+        question: "¿Qué técnica y vistas conforman el estudio inicial obligado ante la evidencia de dolor en extremidades progresivo?",
+        options: ["Radiografía anteroposterior con apoyo parcial", "Radiografía anteroposterior y lateral comparativa", "Tomografía axial focalizada de baja dosis", "Resonancia magnética simple de miembro pélvico"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Datos Radiológicos de Tumor Óseo, la evaluación ortopédica oncológica inicial requiere visualización ortogonal bilateral para contrastar la densidad medular y perióstica patológica contra el hueso sano del paciente.<br><br>Perla ENARM: ROJO: Realizar radiografía, AP y lateral comparativa de la extremidad.<br><br>Análisis de Distractores: La resonancia magnética o TAC son estudios de estadificación local (tercer nivel), no de sospecha primaria. Las proyecciones únicas (sin lateral comparativa) ocultan lesiones posteriores u osteólisis temprana.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Algoritmo de Derivación, Página 3."
+    },
+    {
+        id: 15,
+        question: "¿Cuál es el punto de corte exacto de hemoglobina que determina el envío a oncología en mujeres adolescentes?",
+        options: ["< 11.0 g/dL", "< 10.5 g/dL", "< 9.5 g/dL", "< 10.0 g/dL"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, la anemia severa sin una etiología carencial obvia o sangrado activo representa compromiso de la serie roja medular. Se estandarizan puntos de corte diferenciados por sexo debido a los cambios hormonales y menstruales puberales.<br><br>Perla ENARM: Adolescentes Mujeres: < 9.5 g/dL.<br><br>Análisis de Distractores: El límite para niños y niñas prepúberes es < 10 g/dL. El límite de alarma para varones adolescentes es < 10.5 g/dL.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Criterios de Referencia, Página 4."
+    },
+    {
+        id: 16,
+        question: "¿Qué material instrumental es indispensable para realizar la antropometría craneal sin sesgos de medición?",
+        options: ["Cinta métrica inextensible", "Calibrador cefálico de metal", "Cinta antropométrica de fibra plástica", "Regla graduada milimétrica"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Medición del Perímetro Cefálico, el uso de herramientas de tela o materiales deformables altera la precisión milimétrica del perímetro cráneo-encefálico, llevando a falsos negativos o subdiagnóstico en la progresión tumoral.<br><br>Perla ENARM: Usa una cinta métrica que no se pueda estirar.<br><br>Análisis de Distractores: Los calibradores son herramientas complejas no estandarizadas en consulta general. Las cintas elásticas o plásticas modifican su tensión y longitud perdiendo validez diagnóstica.",
+        source: "Medición del Perímetro Cefálico, 2022, Medición, Página 9."
+    },
+    {
+        id: 17,
+        question: "¿Cuál es el rasgo semiológico cardinal del dolor óseo que orienta el diagnóstico diferencial hacia una estirpe neoplásica?",
+        options: ["Desencadenado por ejercicio aeróbico", "Presenta alivio tras reposo prolongado", "Migratorio y de predominio diurno", "Progresivo y que despierta al paciente"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, el dolor oncológico somático se caracteriza por un crecimiento lesional intramedular expansivo. Su evolución interrumpe la arquitectura del sueño al aumentar la presión hidrostática local por la noche y no responde a dosis convencionales de AINEs.<br><br>Perla ENARM: Dolor en extremidades progresivo, que no cede con analgésicos y que despierta al paciente.<br><br>Análisis de Distractores: El dolor migratorio es típico de fiebre reumática. El dolor que mejora en reposo o asociado al esfuerzo orienta a patología biomecánica benigna o dolor de crecimiento fisiológico.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Signos de Búsqueda Intencionada, Página 8."
+    },
+    {
+        id: 18,
+        question: "¿A qué nivel resolutivo debe referirse un paciente pediátrico al identificar una reacción perióstica radiológica patológica?",
+        options: ["Especialidad quirúrgica de urgencias", "Tercer nivel de atención", "Segundo nivel de atención", "Consulta externa de traumatología"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Datos Radiológicos de Tumor Óseo, la estadificación, biopsia y manejo sistémico multimodal de los sarcomas óseos requieren infraestructura de alta especialidad exclusiva de estos centros, evitando procedimientos que siembren células tumorales en el trayecto.<br><br>Perla ENARM: En presencia de alguno de estos signos, envíe de inmediato a 3er nivel de atención.<br><br>Análisis de Distractores: El segundo nivel y urgencias generales no cuentan con recursos de salvamento de extremidad ni oncología ortopédica, retrasando el control locorregional.",
+        source: "Datos Radiológicos de Tumor Óseo Maligno, 2022, Criterios de Envío, Página 3."
+    },
+    {
+        id: 19,
+        question: "En la codificación visual de prioridades, ¿hacia qué servicio debe derivarse el algoritmo verde?",
+        options: ["Unidad de trasplante medular", "Oncología pediátrica", "Oftalmología", "Cirugía general"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, la observación clínica de leucocoria (pupila blanca) o desviación ocular de reciente inicio levanta la sospecha de Retinoblastoma intraocular, ameritando valoración del fondo de ojo bajo sedación por parte del oftalmólogo.<br><br>Perla ENARM: VERDE: Envío a oftalmología.<br><br>Análisis de Distractores: El código gris direcciona al paciente con oncología pediátrica. Los códigos diagnósticos no incluyen envíos primarios directos a trasplante o cirugía general por algoritmo de color.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Algoritmo de Derivación, Página 2."
+    },
+    {
+        id: 20,
+        question: "¿Cuál es el espectro cuantitativo plaquetario considerado como criterio analítico de alarma oncológica en niñas y niños?",
+        options: ["≤ 100,000 o > 600,000 mcL", "≤ 150,000 o > 450,000 mcL", "≤ 120,000 o > 500,000 mcL", "≤ 80,000 o > 700,000 mcL"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, tanto la trombocitopenia severa (secundaria a fracaso en la producción megacariocítica por invasión) como la trombocitosis reactiva extrema indican compromiso primario hematopoyético o reacción sistémica severa.<br><br>Perla ENARM: Plaquetas Niñas y niños: ≤ 100,000 mcL o > 600,000 mcL.<br><br>Análisis de Distractores: Valores como 150,000 son el límite inferior normal estándar de laboratorio, pero no obligan a referencia oncológica inmediata por sí solos sin integrar otros datos de hemograma.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Criterios de Referencia, Página 3."
+    },
+    {
+        id: 21,
+        question: "¿Cuál es la tasa de sobrevida a largo plazo reportada para la población oncológica pediátrica en México?",
+        options: ["80%", "60%", "50%", "75%"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, la supervivencia en el territorio nacional se encuentra severamente mermada en comparación con estándares internacionales debido al diagnóstico en fases avanzadas, abandono terapéutico y muerte por toxicidad.<br><br>Perla ENARM: Datos de México reportan que la tasa de sobrevida a largo plazo es del 50%.<br><br>Análisis de Distractores: 80% es la probabilidad de curación en países con abordajes tempranos óptimos. 75% corresponde a la proporción de pacientes mexicanos diagnosticados en etapas avanzadas. 60% no es un valor epidemiológico citado.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Introducción, Página 5."
+    },
+    {
+        id: 22,
+        question: "¿Qué parámetro en la cuenta diferencial linfocítica establece indicación de derivación inmediata a unidad hospitalaria?",
+        options: ["> 50% de linfocitos", "> 70% o presencia de blastos", "> 80% de linfocitos reactivos", "> 60% o cuerpos de Auer"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, la inversión extrema de la fórmula blanca con predominio linfocítico severo, o la simple visualización de células inmaduras (blastos) en sangre periférica, traduce invasión medular leucémica aguda inminente.<br><br>Perla ENARM: Linfocitosis > 70% o presencia de blastos.<br><br>Análisis de Distractores: 50% y 60% son respuestas linfocíticas fisiológicas o virales comunes en población preescolar. Los cuerpos de Auer son específicos de estirpe mieloide, pero el criterio oficial de la guía engloba cualquier blasto o límite > 70%.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Criterios de Referencia, Página 4."
+    },
+    {
+        id: 23,
+        question: "En las gráficas estandarizadas de la Organización Mundial de la Salud, ¿qué variable clínica se interpola sobre el eje vertical?",
+        options: ["Tamaño del perímetro cefálico", "Edad en años cumplidos", "Percentil neurológico esperado", "Talla en centímetros"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Medición del Perímetro Cefálico, la representación gráfica bidimensional del neurodesarrollo posiciona la progresión craneal (en centímetros) sobre el eje de las ordenadas para documentar alteraciones expansivas intracraneales.<br><br>Perla ENARM: En el eje horizontal encuentra la edad correspondiente y en el eje vertical el tamaño del perímetro cefálico.<br><br>Análisis de Distractores: La edad se interpola siempre en el eje horizontal. La talla y los percentiles no constituyen el eje vertical directo de medición en esta curva específica.",
+        source: "Medición del Perímetro Cefálico, 2022, Gráficas OMS, Página 9."
+    },
+    {
+        id: 24,
+        question: "En el algoritmo de derivación institucional, ¿qué acción diagnóstica se clasifica dentro del código amarillo?",
+        options: ["Tomografía axial computarizada", "Radiografía simple de tórax", "Pruebas de función hepática", "Biometría hemática completa inmediata"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, ante la sospecha de citopenias aisladas o combinadas (palidez, petequias, fiebre persistente), la evaluación morfológica celular de urgencia es el pilar para detectar patología oncohematológica primaria.<br><br>Perla ENARM: AMARILLO: biometría hemática completa inmediata.<br><br>Análisis de Distractores: La tomografía corresponde al código azul (cráneo). La radiografía se utiliza en el código rojo (extremidades). Las pruebas hepáticas no figuran en el algoritmo agudo de color.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Algoritmo de Derivación, Página 2."
+    },
+    {
+        id: 25,
+        question: "¿Qué signo radiológico maligno se describe visualmente por la formación de septos irradiados de manera perpendicular a la cortical?",
+        options: ["Reacción perióstica en capas", "Signo del sol naciente", "Triángulo de Codman", "Lesión lítica mal delimitada"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Datos Radiológicos de Tumor Óseo, este patrón refleja la mineralización osteoide agresiva que sigue las fibras estiradas de Sharpey hacia los tejidos blandos, hallazgo clásico de los sarcomas osteogénicos.<br><br>Perla ENARM: Signo del sol naciente. Reacción inflamatoria del hueso con septos irradiados de manera perpendicular a la cortical dando el aspecto de un \"sol\".<br><br>Análisis de Distractores: El triángulo de Codman no forma septos radiados, sino un levantamiento triangular puro. Las capas de cebolla (no descritas como sol naciente) orientan a Ewing.",
+        source: "Datos Radiológicos de Tumor Óseo Maligno, 2022, Signos Radiológicos, Página 1."
+    },
+    {
+        id: 26,
+        question: "¿Qué entidad clínica representa la segunda neoplasia de mayor incidencia en población pediátrica a nivel nacional?",
+        options: ["Linfoma No Hodgkin", "Tumor de células germinales", "Linfoma de Hodgkin", "Tumores del Sistema Nervioso Central"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, las neoplasias del SNC abarcan el 10.3% del total (731 casos anuales), ubicándose únicamente por debajo de la leucemia, lo que hace mandatorio el escrutinio de focalización neurológica y medición del perímetro cefálico.<br><br>Perla ENARM: Cerebral (SNC) 731 (10.3%).<br><br>Análisis de Distractores: Los tumores germinales ocupan el tercer lugar (9.2%), seguidos por los Linfomas No Hodgkin (6.5%) y Linfomas de Hodgkin (5.6%).",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Epidemiología, Página 7."
+    },
+    {
+        id: 27,
+        question: "¿Cuál es el valor límite de hemoglobina que amerita referencia a oncología o hematología en pacientes masculinos adolescentes?",
+        options: ["< 11.0 g/dL", "< 9.5 g/dL", "< 10.5 g/dL", "< 12.0 g/dL"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, los varones adolescentes tienen requerimientos y masas eritrocitarias superiores por estímulo androgénico; una cifra por debajo de este límite sin causa aparente sugiere fallo de producción central.<br><br>Perla ENARM: Adolescentes Hombres: < 10.5 g/dL.<br><br>Análisis de Distractores: < 9.5 g/dL es el criterio estandarizado para mujeres adolescentes. < 11.0 o < 12.0 g/dL pueden representar anemias leves carenciales que no exigen derivación inmediata a tercer nivel por código rojo oncológico.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Criterios de Referencia, Página 4."
+    },
+    {
+        id: 28,
+        question: "¿Cuál es el rango de edad que abarcan las gráficas estandarizadas de perímetro cefálico utilizadas para la pesquisa oncológica temprana?",
+        options: ["Nacimiento a 5 años", "Nacimiento a 10 años", "1 a 6 años", "2 a 8 años"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Medición del Perímetro Cefálico, las gráficas de la OMS evalúan la fase de crecimiento volumétrico encefálico más acelerado, ventana crítica donde las neoplasias supratentoriales o infratentoriales manifiestan macrocefalia o hidrocefalia obstructiva de rápida evolución.<br><br>Perla ENARM: Birth to 5 years (percentiles).<br><br>Análisis de Distractores: Después de los 5 años, el crecimiento óseo craneal se desacelera drásticamente por el cierre sutural definitivo, por lo que el monitoreo perimetral pierde sensibilidad diagnóstica frente a otros signos clínicos como papiledema o cefalea.",
+        source: "Medición del Perímetro Cefálico, 2022, Gráficas OMS, Páginas 9-10."
+    },
+    {
+        id: 29,
+        question: "Según el esquema cromático de actuación, ¿hacia dónde debe canalizarse al paciente si amerita el algoritmo código gris?",
+        options: ["Cuidados paliativos", "Servicio de urgencias", "Oncología pediátrica", "Cirugía general"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, este código se asigna directamente a valoraciones especializadas para confirmar la presencia histológica de malignidad una vez que el cuadro clínico de alta sospecha ha sido estructurado en el primer contacto.<br><br>Perla ENARM: Gris: Valoración por oncología pediátrica.<br><br>Análisis de Distractores: Cirugía general, paliativos o urgencias médicas no son directrices primarias en el algoritmo de color para el escrutinio oncológico de primer contacto.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Algoritmo de Derivación, Página 2."
+    },
+    {
+        id: 30,
+        question: "¿Qué lugar ocupa el cáncer infantil como causa de muerte relacionada a enfermedad en el grupo poblacional de 1 a 19 años en México?",
+        options: ["Segunda causa de mortalidad", "Principal causa de muerte", "Tercera causa de morbimortalidad", "Cuarta causa de defunción"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, la transición epidemiológica de las últimas dos décadas en el país ha desplazado a las enfermedades infecciosas, consolidando a las neoplasias malignas como el principal factor de mortalidad patológica en este rango etario.<br><br>Perla ENARM: El cáncer infantil se ha convertido en la principal causa de muerte relacionada a enfermedad en el grupo de 1 a 19 años.<br><br>Análisis de Distractores: Asignarle un segundo, tercer o cuarto lugar subestima la gravedad de la patología y la prioridad de salud pública dictada por la normativa nacional vigente.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Introducción, Página 5."
+    },
+    {
+        id: 31,
+        question: "¿Qué parámetro de recuento leucocitario absoluto determina una referencia inmediata a la unidad hospitalaria en adolescentes?",
+        options: ["> 15,000 o < 2,500 mm³", "> 10,000 o < 1,000 mm³", "> 12,000 o < 2,000 mm³", "> 20,000 o < 3,000 mm³"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, la población puberal tiene rangos de normalidad inmunológica distintos a los lactantes o preescolares. Alteraciones fuera de estos cortes sugieren leucemias agudas de presentación adolescente o aplasia medular infiltrativa.<br><br>Perla ENARM: Adolescentes Leucocitos: > 15,000 mm³ o < 2,500 mm³.<br><br>Análisis de Distractores: Los rangos > 10,000 o < 1,000 mm³ corresponden estrictamente a población infantil (niñas y niños prepúberes). Los demás valores son distractores estadísticos sin validez de referencia.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Criterios de Referencia, Página 4."
+    },
+    {
+        id: 32,
+        question: "¿Qué manifestación gastrointestinal debe buscarse de forma intencionada como dato temprano de malignidad neurológica?",
+        options: ["Dolor abdominal cólico", "Diarrea osmótica", "Regurgitación posprandial", "Vómitos explosivos"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, este tipo de emesis no precedida por náusea franca es el correlato clínico de la estimulación directa del área postrema o del aumento agudo de la presión intracraneal provocado por masas del fosa posterior.<br><br>Perla ENARM: Debe buscarse intencionadamente: vómitos explosivos.<br><br>Análisis de Distractores: El dolor cólico, la diarrea o regurgitación son indicativos de procesos funcionales, virales o anatómicos benignos, no teniendo relación patognomónica con hipertensión endocraneana ni malignidad de escrutinio.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Signos de Búsqueda Intencionada, Página 8."
+    },
+    {
+        id: 33,
+        question: "¿Qué fenómeno mecánico celular da origen fisiopatológico a la imagen descrita como Triángulo de Codman?",
+        options: ["Lisis difusa de hueso esponjoso", "Tumor que levanta el periostio", "Destrucción de la matriz cartilaginosa", "Extensión a través de canales de Havers"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Datos Radiológicos de Tumor Óseo, el periostio es rechazado de la cortical debido al ritmo de expansión exofítica de la masa sarcomatosa, osificándose únicamente en el ángulo de despegamiento y creando la imagen triangular característica.<br><br>Perla ENARM: Se aprecia la formación de un \"triángulo\" en el borde del hueso cuando el tumor levanta el periostio.<br><br>Análisis de Distractores: La lisis pura produce el signo de \"lesión mal delimitada\". La destrucción de matriz o la extensión intramedular no originan el epónimo perióstico específico.",
+        source: "Datos Radiológicos de Tumor Óseo Maligno, 2022, Signos Radiológicos, Página 1."
+    },
+    {
+        id: 34,
+        question: "De acuerdo a la normativa nacional vigente, ¿cuál es el método estandarizado de tamizaje primario para cáncer pediátrico?",
+        options: ["Tomografía corporal total", "Marcadores tumorales séricos", "No contamos con pruebas de tamizaje", "Biometría hemática semestral"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, la heterogeneidad y la baja prevalencia absoluta de las neoplasias pediátricas impiden la aplicación de un escrutinio universal de laboratorio o gabinete, fundamentando el diagnóstico exclusivamente en la alerta clínica temprana.<br><br>Perla ENARM: A diferencia del cáncer en personas adultas, en pediatría no contamos con pruebas de tamizaje.<br><br>Análisis de Distractores: No existe indicación para escrutinio radiológico (TAC) ni laboratorial (marcadores o BH rutinaria en asintomáticos) para buscar cáncer en niños sanos.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Diagnóstico, Página 7."
+    },
+    {
+        id: 35,
+        question: "¿Qué proporción de la carga global de cáncer pertenece a la población pediátrica a nivel mundial?",
+        options: ["8.0 a 12.5%", "5.0 a 10.0%", "0.1 a 0.4%", "0.5 a 4.6%"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, aunque su incidencia global porcentual es baja, el impacto en años de vida potencialmente perdidos justifica la alta priorización y el agresivo entrenamiento para detección de primer nivel.<br><br>Perla ENARM: Según datos de la OMS, el cáncer infantil representa entre un 0.5 a 4.6% de todo el cáncer en el mundo.<br><br>Análisis de Distractores: Porcentajes mayores a 5% sobreestiman drásticamente la epidemiología oncológica infantil frente al peso masivo de las neoplasias del adulto (mama, pulmón, próstata).",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Introducción, Página 5."
+    },
+    {
+        id: 36,
+        question: "¿Cuál es la indicación inmediata si se sospecha malignidad pediátrica y no se cuenta con los estudios y especialistas en la unidad de primer contacto?",
+        options: ["Solicitar tomografía de cuerpo entero", "Referir inmediatamente a oncología pediátrica", "Iniciar tratamiento empírico por 15 días", "Mantener en observación domiciliaria"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, la carencia de insumos no justifica retrasar el abordaje. La sospecha clínica fundamentada es el único requisito legal y médico para autorizar el traslado prioritario a centros de tercer nivel.<br><br>Perla ENARM: Si están disponibles en su unidad de adscripción, de lo contrario refiera inmediatamente a oncología/hematología pediátrica.<br><br>Análisis de Distractores: Esperar 15 días o iniciar manejos empíricos son causas primarias de mala praxis y progresión tumoral fatal en México. La TAC corporal total no es el estándar inicial de referencia.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Algoritmo de Derivación, Página 1."
+    },
+    {
+        id: 37,
+        question: "¿Qué umbral de hemoglobina exige la derivación oncológica en niñas y niños en edad escolar?",
+        options: ["< 10.0 g/dL", "< 11.5 g/dL", "< 10.5 g/dL", "< 9.0 g/dL"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, los valores prepuberales tienen una estrecha ventana fisiológica. Una caída por debajo de 10 g/dL es criterio definitorio de infiltración medular potencial y no debe subestimarse como un estado carencial simple sin escrutinio.<br><br>Perla ENARM: Hemoglobina Niñas y niños < 10 g/dL.<br><br>Análisis de Distractores: < 10.5 g/dL corresponde exclusivamente a adolescentes varones. < 11.5 g/dL y < 9.0 g/dL no representan los puntos exactos de corte definidos institucionalmente para alerta hematológica oncológica en esta población.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Criterios de Referencia, Página 3."
+    },
+    {
+        id: 38,
+        question: "¿Qué hallazgo físico genitourinario amerita inclusión inmediata a los criterios diagnósticos oncológicos?",
+        options: ["Dolor punzante epididimario", "Varicocele izquierdo grado III", "Hidrocele comunicante a tensión", "Aumento de volumen y testículo duro"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, una masa escrotal pétrea indolora con crecimiento rápido sugiere invariablemente tumores de células germinales o, en casos de recaída, infiltración extramedular leucémica a nivel testicular.<br><br>Perla ENARM: Aumento en volumen testicular / Testículo duro.<br><br>Análisis de Distractores: El dolor agudo orienta a torsión o epididimitis. El varicocele y el hidrocele tienen consistencias blandas, quísticas o \"en bolsa de gusanos\", no compatibles con la dureza neoplásica.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Signos y Síntomas, Página 5."
+    },
+    {
+        id: 39,
+        question: "Bajo condiciones terapéuticas y diagnósticas óptimas, ¿cuál es la probabilidad global de curación del cáncer infantil?",
+        options: ["60%", "70%", "80%", "90%"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, la quimioterapia estratificada moderna y la detección oportuna alcanzan una remisión definitiva alta en escenarios internacionales, cifra que contrasta y evidencia la urgencia de mejorar el escrutinio en México (50%).<br><br>Perla ENARM: Hasta un 80% de los pacientes diagnosticados tienen probabilidad de curarse.<br><br>Análisis de Distractores: 90% es un estimado excesivo incluso globalmente para todas las neoplasias juntas. 60% y 70% subestiman la capacidad real de curación actual en los centros internacionales de excelencia.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Introducción, Página 5."
+    },
+    {
+        id: 40,
+        question: "¿Cuáles son las tres características palpatorias cardinales que elevan la sospecha de malignidad en una adenopatía mayor a 1.5 cm?",
+        options: ["Indoloras, duras y adheridas a planos profundos", "Móviles, de consistencia blanda y fluctuantes", "Dolorosas, calientes y con eritema periférico", "Bilaterales, simétricas y de aparición súbita"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Diagnóstico Temprano de Cáncer, la infiltración de la arquitectura del ganglio linfático por células neoplásicas (linfoma o metástasis) condiciona fibrosis y fijación al tejido conectivo adyacente, impidiendo el dolor por crecimiento agudo de la cápsula típico de las infecciones.<br><br>Perla ENARM: Adenopatías (indoloras, duras, adheridas a planos profundos, mayores de 1.5cm de diámetro que no responden a tratamiento).<br><br>Análisis de Distractores: Los ganglios blandos y fluctuantes o dolorosos y con eritema representan procesos infecciosos o reactivos agudos (linfadenitis), los cuales son el diagnóstico diferencial primario benigno a descartar.",
+        source: "Lineamientos e Infografías para el Diagnóstico Temprano de Cáncer en Niñas, Niños y Adolescentes, 2022, Signos de Búsqueda Intencionada, Página 8."
+    },
+
+
+
+        
+        ];
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('cainfLastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('cainfProgress');
+                localStorage.removeItem('cainfLastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-blue-500 shadow-md z-10 border-blue-500 dark:border-blue-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-cyan-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "Diagnóstico Temprano de Cáncer Infantil";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "Protocolo Nacional de Atención Médica (PRONAM) - 2026";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="loginlite.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="loginlite.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-blue-100 dark:border-blue-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 dark:has-[:checked]:bg-blue-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('cainfProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('cainfLastQId', currentQuestionId);
+                else localStorage.removeItem('cainfLastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('cainfProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

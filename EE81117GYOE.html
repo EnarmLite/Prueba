@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const questionsData = [
+    {
+        id: 1,
+        question: "De acuerdo a la GPC, ¿cuál es el punto de corte clínico exacto para clasificar a un recién nacido como pretérmino extremo?",
+        options: ["≤ 28 semanas", "29 a 32 semanas", "32 a 34 semanas", "34 a 36 semanas"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Prematuro, la morbimortalidad neonatal se asocia fuertemente con la edad gestacional al nacer. Por ello, estratificar el riesgo es fundamental; se considera prematuro extremo a todo aquel nacimiento que ocurra con 28 semanas o menos de gestación, grupo que concentra la mayor tasa de complicaciones graves como hemorragia intraventricular.<br><br>Perla ENARM: \"Se denomina recién nacido pretérmino al que nace entre las 20.1 y 36.6 semanas y se clasifican en tres grupos: recién nacido pretérmino extremo (≤ 28 semanas de gestación), recién nacido pretérmino moderado (29-32 semanas de gestación) y recién nacidos pretérmino (33-36 semanas de gestación).\"<br><br>Análisis de Distractores: La opción B corresponde al grupo de pretérminos moderados. Las opciones C y D abarcan el concepto de pretérmino tardío, el cual presenta una supervivencia mucho mayor y menores secuelas en el neurodesarrollo.",
+        source: "SS-811-17, Intervenciones de enfermería para la prevención y detección oportuna del parto prematuro, 2017, Introducción, Página 6."
+    },
+    {
+        id: 2,
+        question: "De acuerdo a la GPC, ¿qué alteración hematológica se debe buscar intencionadamente durante el control prenatal en mujeres de estrato social medio y bajo por ser un factor de riesgo para parto prematuro?",
+        options: ["Trombocitopenia gestacional", "Leucocitosis asintomática", "Anemia materna", "Deficiencia de folato"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Prematuro, las deficiencias nutricionales agudizadas por determinantes sociales impactan directamente en el crecimiento fetal y la duración de la gestación. La deficiencia de hemoglobina circulante compromete la oxigenación placentaria, desencadenando respuestas de estrés que pueden activar prematuramente el trabajo de parto.<br><br>Perla ENARM: \"El personal de enfermería deberá monitorear el control prenatal en mujeres de estrato social medio y bajo para detectar la anemia y prevenir el bajo peso al nacer o el parto prematuro.\"<br><br>Análisis de Distractores: La trombocitopenia y la leucocitosis no se destacan en esta guía como factores directos tamizables en este estrato sociodemográfico específico para parto prematuro. La deficiencia de folato se asocia a defectos del tubo neural, pero el documento enfatiza puntualmente el escrutinio de anemia.",
+        source: "SS-811-17, Intervenciones de enfermería para la prevención y detección oportuna del parto prematuro, 2017, Valoración de enfermería, Página 11."
+    },
+    {
+        id: 3,
+        question: "De acuerdo a la GPC, ¿qué porcentaje de las infecciones intrauterinas asociadas a un mayor riesgo de parto prematuro son provocadas por candidiasis vaginal asintomática?",
+        options: ["14%", "25%", "40%", "50%"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Prematuro, la colonización y proliferación fúngica en el tracto vaginal puede originar una respuesta inflamatoria ascendente. Los microorganismos de baja virulencia desencadenan la liberación de citocinas y prostaglandinas que inducen contractilidad uterina y modificaciones cervicales.<br><br>Perla ENARM: \"Un meta análisis demostró que el 40% de las infecciones intrauterinas por candidiasis vaginal asintomática es un factor de riesgo para presentar parto prematuro.\"<br><br>Análisis de Distractores: El 14% corresponde a la reducción del riesgo de parto prematuro al suplementar con zinc. Las opciones 25% y 50% son cifras incorrectas y no avaladas por la evidencia epidemiológica en la guía para esta patología.",
+        source: "SS-811-17, Intervenciones de enfermería para la prevención y detección oportuna del parto prematuro, 2017, Factores de riesgo del parto prematuro, Página 12."
+    },
+    {
+        id: 4,
+        question: "De acuerdo a la GPC, ¿cuál es el tiempo mínimo recomendado que debe existir entre un embarazo y otro para evitar el síndrome de agotamiento materno?",
+        options: ["12 meses", "18 meses", "24 meses", "36 meses"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Prematuro, el periodo intergenésico corto priva al organismo materno del tiempo necesario para reponer las reservas nutricionales y fisiológicas consumidas durante la gestación y lactancia previas, elevando sustancialmente la incidencia de nacimientos antes de término.<br><br>Perla ENARM: \"El persona de enfermería deberá orientar a la población acerca del periodo intergenesico de no menos de 18 meses entre un embarazo y otro para evitar el síndrome de agotamiento materno.\"<br><br>Análisis de Distractores: Un periodo de 12 meses se considera un factor de riesgo directo por ser demasiado corto. Los periodos de 24 o 36 meses son seguros, pero el límite inferior dictado por la recomendación clave para evitar este síndrome es estrictamente 18 meses.",
+        source: "SS-811-17, Intervenciones de enfermería para la prevención y detección oportuna del parto prematuro, 2017, Factores de riesgo del parto prematuro, Página 14."
+    },
+    {
+        id: 5,
+        question: "De acuerdo a la GPC, ¿cuál es el límite máximo de horas de jornada laboral por semana recomendado para disminuir el riesgo de parto prematuro?",
+        options: ["Menos de 36 horas", "Menos de 40 horas", "Menos de 44 horas", "Menos de 48 horas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Prematuro, el estrés físico y mental crónico, desencadenado por largas jornadas de trabajo, incrementa los niveles de catecolaminas y cortisol materno, favoreciendo la maduración cervical precoz y la actividad miometrial.<br><br>Perla ENARM: \"El personal de enfermería deberá orientará a las mujeres sobre disminuir los riesgos de: Disminuir jornada laboral de menos de 40 horas por semana.\"<br><br>Análisis de Distractores: Las normativas laborales habituales a menudo permiten hasta 48 horas semanales; sin embargo, en el contexto del embarazo con riesgo de prematuridad, las 40 horas representan el umbral máximo de tolerancia comprobado. 36 y 44 horas son distractores numéricos sin sustento en el texto.",
+        source: "SS-811-17, Intervenciones de enfermería para la prevención y detección oportuna del parto prematuro, 2017, Factores de riesgo del parto prematuro, Página 13."
+    },
+    {
+        id: 6,
+        question: "De acuerdo a la GPC, ¿cuál es el tiempo límite de bipedestación continua permitido durante el día en la mujer embarazada para reducir el riesgo de parto prematuro?",
+        options: ["2 horas continuas", "4 horas continuas", "6 horas continuas", "8 horas continuas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Prematuro, la postura erecta prolongada altera la hemodinámica pélvica, comprometiendo el flujo uteroplacentario y ejerciendo presión mecánica directa sobre el cérvix, lo que predispone al parto pretérmino.<br><br>Perla ENARM: \"El personal de enfermería deberá orientará a las mujeres sobre disminuir los riesgos de: No estar de pie por más de 4 horas continuas durante el día.\"<br><br>Análisis de Distractores: Tiempos de 6 u 8 horas aumentan drásticamente el riesgo de complicaciones venosas y contracciones uterinas. 2 horas es una recomendación conservadora que no representa el límite máximo señalado en la normativa clínica.",
+        source: "SS-811-17, Intervenciones de enfermería para la prevención y detección oportuna del parto prematuro, 2017, Factores de riesgo del parto prematuro, Página 13."
+    },
+    {
+        id: 7,
+        question: "De acuerdo a la GPC, ¿durante qué periodo de la gestación se debe promover el consumo diario de suplementos de zinc para reducir el riesgo de parto prematuro en mujeres de bajos ingresos?",
+        options: ["Primer trimestre", "Primer y segundo trimestre", "Dos últimos trimestres", "Todo el embarazo"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Prematuro, los micronutrientes juegan un rol crítico en el mantenimiento de la integridad de las membranas fetales y en la regulación inmunológica. La deficiencia de zinc es común en poblaciones marginadas y su suplementación estratégica disminuye complicaciones infecciosas y rotura prematura de membranas en las fases de mayor crecimiento fetal.<br><br>Perla ENARM: \"El personal de enfermería promoverá el consumo prenatal de suplementos de micronutrientes múltiples, como el zinc diario durante los dos últimos trimestres del embarazo, para reducir el riesgo de parto prematuro.\"<br><br>Análisis de Distractores: El requerimiento de zinc aumenta exponencialmente en la segunda mitad del embarazo. Suplementarlo únicamente en el primer trimestre o de forma indistinta todo el embarazo no es la indicación estricta dirigida por el texto para el grupo de bajos ingresos.",
+        source: "SS-811-17, Intervenciones de enfermería para la prevención y detección oportuna del parto prematuro, 2017, Factores de riesgo del parto prematuro, Página 13."
+    },
+    {
+        id: 8,
+        question: "De acuerdo a la GPC, ¿cuál es la dosis diaria recomendada de aceites marinos para contribuir a disminuir el riesgo de parto prematuro?",
+        options: ["100 mg diarios", "200 mg diarios", "300 mg diarios", "400 mg diarios"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Prematuro, la suplementación con ácidos grasos poliinsaturados (omega-3 y omega-6) prolonga la gestación al alterar el equilibrio de la síntesis de prostaglandinas, reduciendo las formas proinflamatorias y pro-contráctiles que desencadenan el trabajo de parto.<br><br>Perla ENARM: \"El personal de enfermería orientará sobre el consumo de suplementos de aceites marinos de 200 mg diarios, como grasa de pescados y mariscos, omega-3 y omega-6 para contribuir a disminuir el riesgo de parto prematuro.\"<br><br>Análisis de Distractores: Dosis menores a 200 mg no logran una acumulación sérica protectora, mientras que dosis mayores (300 o 400 mg) no son la prescripción estándar de buena práctica recomendada por la normativa evaluada.",
+        source: "SS-811-17, Intervenciones de enfermería para la prevención y detección oportuna del parto prematuro, 2017, Prevención, Página 17."
+    },
+    {
+        id: 9,
+        question: "De acuerdo a la GPC, ¿antes de qué semana se debe promover y otorgar la primera consulta de atención prenatal para identificar y tratar comorbilidades?",
+        options: ["8 semanas", "10 semanas", "12 semanas", "14 semanas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Prematuro, el inicio temprano del control gestacional permite una estratificación oportuna de factores de riesgo modificables, implementación de modificaciones dietéticas y despistaje de infecciones antes de que estas causen daño intrauterino irreversible.<br><br>Perla ENARM: \"El personal de salud deberá promover y otorgar atención prenatal a partir de las 12 semanas de gestación, identificar y tratar las comorbilidades durante el periodo de gestación.\"<br><br>Análisis de Distractores: Aunque iniciar el control a las 8 o 10 semanas es ideal en la práctica privada, la recomendación base del sector salud fija las 12 semanas como el umbral límite para una captación temprana efectiva. 14 semanas ya se considera un inicio tardío del control.",
+        source: "SS-811-17, Intervenciones de enfermería para la prevención y detección oportuna del parto prematuro, 2017, Valoración de enfermería, Página 11."
+    },
+    {
+        id: 10,
+        question: "De acuerdo a la GPC, ¿a qué servicio de atención debe ser referida de forma sistemática toda mujer embarazada para prevenir complicaciones que desencadenen parto prematuro?",
+        options: ["Nutrición clínica", "Consulta dental", "Psicología clínica", "Medicina interna"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Prematuro, los patógenos bucales pueden translocarse por vía hematógena hacia la unidad fetoplacentaria. La periodontitis es una fuente crónica de endotoxinas que precipitan la cascada inflamatoria uterina.<br><br>Perla ENARM: \"El personal de enfermería deberá referir a las mujeres embarazadas a consulta dental para la prevención y tratamiento de enfermedad periodontal con la finalidad de reducir el riesgo parto prematuro.\"<br><br>Análisis de Distractores: Aunque nutrición y psicología son importantes, el documento emite una recomendación contundente (Nivel de evidencia 1+) para la referencia y manejo no quirúrgico de la enfermedad periodontal como prevención primaria en todo el universo de gestantes.",
+        source: "SS-811-17, Intervenciones de enfermería para la prevención y detección oportuna del parto prematuro, 2017, Factores de riesgo del parto prematuro, Página 12."
+    },
+    {
+        id: 11,
+        question: "De acuerdo a la GPC, ¿qué alteración del estado de ánimo se debe valorar obligatoriamente en toda embarazada al asociarse directamente con el consumo de tabaco y parto prematuro?",
+        options: ["Trastorno de ansiedad", "Trastorno bipolar", "Depresión", "Trastorno adaptativo"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Prematuro, las alteraciones psicológicas graves actúan como un factor precipitante de conductas de riesgo (como tabaquismo y alcoholismo), además de elevar el tono simpático y la producción de hormonas del estrés que alteran la quietud miometrial.<br><br>Perla ENARM: \"El personal de salud deberá realizar una valoración de depresión a la mujer embarazada y analizar el riesgo de consumo de tabaco ya que esta conducta puede condicionar un parto prematuro.\"<br><br>Análisis de Distractores: La ansiedad, los trastornos adaptativos y la bipolaridad son condiciones psiquiátricas relevantes, pero la directriz específica de tamizaje obligatorio en el entorno de prevención del parto prematuro recae sobre la depresión.",
+        source: "SS-811-17, Intervenciones de enfermería para la prevención y detección oportuna del parto prematuro, 2017, Atención de la mujer embarazada, Página 16."
+    },
+    {
+        id: 12,
+        question: "De acuerdo a la GPC, ¿cuál es la característica fundamental que debe tener la dieta recomendada durante el embarazo, además de incluir granos enteros sin procesar, para evitar el parto prematuro?",
+        options: ["Baja en sodio", "Baja en grasas", "Baja en glucemia", "Baja en proteínas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Prematuro, el control estricto del metabolismo de los hidratos de carbono reduce los picos de insulina y la hiperglucemia materna. Un ambiente intrauterino glucotóxico predispone a vasculopatía, polihidramnios e inflamación, elevando la tasa de prematurez.<br><br>Perla ENARM: \"Se recomienda que durante el embarazo se incluya una dieta equilibrada baja en glucemia con granos enteros sin procesar, frutas, frijoles y verduras.\"<br><br>Análisis de Distractores: Una dieta baja en proteínas causaría restricción del crecimiento. Aunque el control de sodio y grasas se promueve en síndromes hipertensivos, el lineamiento nutricional específico dictado contra el parto pretérmino es mantener una dieta baja en glucemia.",
+        source: "SS-811-17, Intervenciones de enfermería para la prevención y detección oportuna del parto prematuro, 2017, Factores de riesgo del parto prematuro, Página 14."
+    },
+    {
+        id: 13,
+        question: "De acuerdo a la GPC, ¿en qué rango de semanas de gestación se indica la ministración farmacológica de corticosteroides como profilaxis prenatal para maduración fetal?",
+        options: ["24 a 34 semanas", "26 a 36 semanas", "28 a 32 semanas", "32 a 36 semanas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Prematuro, la administración de esteroides antenatales cruza la barrera placentaria y estimula la síntesis de factor surfactante en los neumocitos tipo II, disminuyendo drásticamente la morbilidad y mortalidad por síndrome de dificultad respiratoria y enterocolitis necrosante en este margen temporal crítico.<br><br>Perla ENARM: \"El personal de enfermería deberá ministrar por prescripción medica, corticosteroides como profilaxis prenatal de las 26 hasta las 36 semanas de gestación.\"<br><br>Análisis de Distractores: El esquema tradicional internacionalmente suele ser de 24 a 34 semanas, pero esta Guía de Práctica Clínica mexicana establece rigurosamente el periodo desde la semana 26 hasta la 36, por lo que responder cualquier otro intervalo resulta incorrecto.",
+        source: "SS-811-17, Intervenciones de enfermería para la prevención y detección oportuna del parto prematuro, 2017, Intervenciones de enfermería, Página 17."
+    },
+    {
+        id: 14,
+        question: "De acuerdo a la GPC, ¿qué factor climático externo ha demostrado aumentar el riesgo de presentar nacimientos prematuros?",
+        options: ["Alta humedad relativa", "Alta presión atmosférica", "Alta temperatura ambiental", "Alta altitud geográfica"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Prematuro, el estrés térmico induce deshidratación materna y la consecuente liberación compensatoria de hormona antidiurética y oxitocina, hormonas que comparten receptores y estimulan directamente las contracciones del miometrio.<br><br>Perla ENARM: \"El estudio demostró que el calentamiento global, la alta temperatura ambiental, y el estrés por calor en mujeres embarazadas puede contribuir a aumentar un nacimiento prematuro.\"<br><br>Análisis de Distractores: La humedad, presión o altitud no forman parte de las directrices preventivas en el escrutinio de riesgo. La evidencia evaluada resalta puntualmente el estrés térmico como detonante ambiental.",
+        source: "SS-811-17, Intervenciones de enfermería para la prevención y detección oportuna del parto prematuro, 2017, Intervenciones de enfermería, Página 15."
+    },
+    {
+        id: 15,
+        question: "De acuerdo a la GPC, ¿cuál es la frecuencia recomendada para las visitas de atención prenatal en pacientes vigiladas bajo modelos alternativos continuos?",
+        options: ["Exclusivamente mensuales", "Semanales o quincenales", "Mensuales o bimestrales", "Exclusivamente semanales"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Prematuro, la vigilancia clínica estrecha por equipos de enfermería altamente capacitados favorece el reconocimiento inmediato de síntomas como dolor lumbar, aumento de secreción vaginal o contracciones indoloras, reduciendo hasta en 16% los partos antes de las 37 semanas.<br><br>Perla ENARM: \"Se recomienda al personal de enfermería realizar visitas prenatales semanales o quincenales durante todo el embarazo; incluyendo educación detallada sobre signos y síntomas de inicio de parto prematuro.\"<br><br>Análisis de Distractores: Las visitas mensuales son estándar en embarazos de bajo riesgo en su primera mitad. Las opciones exclusivamente semanales o mensuales no abarcan el rango de flexibilidad operativa señalado explícitamente en el documento.",
+        source: "SS-811-17, Intervenciones de enfermería para la prevención y detección oportuna del parto prematuro, 2017, Intervenciones de enfermería, Página 15."
+    },
+    {
+        id: 16,
+        question: "De acuerdo a la GPC, ¿cuál es el tiempo máximo en días a partir del primer día de la última menstruación para clasificar un nacimiento como parto prematuro?",
+        options: ["< 240 días", "< 259 días", "< 270 días", "< 280 días"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Prematuro, estandarizar las definiciones operativas permite aplicar criterios de morbilidad uniformes. Un nacimiento antes de los 259 días de amenorrea corresponde exactamente a menos de 37 semanas completas de desarrollo fetal.<br><br>Perla ENARM: \"Parto prematuro: (OMS), nacimiento que sucede antes de las 37 semanas de gestacion o menos de 259 días a partir del primer dia de la ultima menstruación.\"<br><br>Análisis de Distractores: 280 días equivale a las 40 semanas de un embarazo de término. Los umbrales de 240 y 270 días son cifras erróneas e inconsistentes con las definiciones de la Organización Mundial de la Salud respaldadas en el glosario oficial.",
+        source: "SS-811-17, Intervenciones de enfermería para la prevención y detección oportuna del parto prematuro, 2017, Glosario, Página 26."
+    },
+    {
+        id: 17,
+        question: "De acuerdo a la GPC, ¿qué rango de semanas de gestación al nacer define a un recién nacido prematuro tardío?",
+        options: ["29 a 32 semanas", "32 a 34 semanas", "34 a 36 semanas", "37 a 38 semanas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Prematuro, estos neonatos tienen un peso y apariencia que suele subestimar su vulnerabilidad clínica, pero enfrentan una mayor tasa de hiperbilirrubinemia, hipoglucemia y dificultad respiratoria leve en comparación con los lactantes a término.<br><br>Perla ENARM: \"Prematuro tardío: Naciemitno que se produce entre las semanas 34 y 36 de gestación.\"<br><br>Análisis de Distractores: De 29 a 32 semanas se clasifica como prematuro moderado. Las 37 a 38 semanas corresponden a un embarazo de término precoz. La ventana entre 32 y 34 no representa una categoría taxonómica única en esta guía.",
+        source: "SS-811-17, Intervenciones de enfermería para la prevención y detección oportuna del parto prematuro, 2017, Glosario, Página 26."
+    },
+    {
+        id: 18,
+        question: "De acuerdo a la GPC, ¿qué pauta posológica de corticosteroides prenatales debe indicarse en una paciente con embarazo múltiple respecto a una con embarazo simple?",
+        options: ["Administrar doble esquema", "Administrar un solo esquema", "Administrar esquema extendido", "Administrar dosis profiláctica menor"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Prematuro, a pesar de que el embarazo múltiple cursa con un volumen placentario mayor y una masa fetal incrementada, el volumen de distribución farmacológico sistémico para la betametasona no varía de forma que justifique exponer al binomio a toxicidad o inmunosupresión adicional.<br><br>Perla ENARM: \"Se recomienda al personal de salud ministrar un solo esquema de corticosteroides prenatales ya que el volumen de distribución es el mismo entre embarazos simples o múltiples.\"<br><br>Análisis de Distractores: Aumentar la dosis (doble esquema) o la duración (esquema extendido) no aporta beneficio en la maduración pulmonar e incrementa el riesgo de retraso del crecimiento y supresión suprarrenal. Dosis menores son ineficaces.",
+        source: "SS-811-17, Intervenciones de enfermería para la prevención y detección oportuna del parto prematuro, 2017, Intervenciones de enfermería, Página 17."
+    },
+    {
+        id: 19,
+        question: "De acuerdo a la GPC, ¿cuál es la edad máxima de inicio de la primera relación sexual en adolescentes considerada un factor de riesgo directo para el desarrollo de parto prematuro?",
+        options: ["< 14 años", "< 15 años", "< 16 años", "< 18 años"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Prematuro, el inicio temprano de la vida sexual sin el maduramiento del tracto reproductivo ni orientación adecuada en planificación, dispara el riesgo de infecciones de transmisión sexual, embarazos no deseados y fallos en el autocuidado que culminan en prematurez.<br><br>Perla ENARM: \"Un metaanalisis demostro que los factores de riesgo en las adolecentes reportados durante el embarazo son: Edad menor de 15 años en la primera relación sexual.\"<br><br>Análisis de Distractores: Aunque menores de 14, 16 o 18 años son biológicamente vulnerables, el parámetro estadístico específico validado por la revisión sistemática que sustenta la recomendación es tener menos de 15 años al momento de la coitarquía.",
+        source: "SS-811-17, Intervenciones de enfermería para la prevención y detección oportuna del parto prematuro, 2017, Valoración de enfermería, Página 11."
+    },
+    {
+        id: 20,
+        question: "De acuerdo a la GPC, ¿cuánto tiempo antes de la concepción debe iniciar el consumo rutinario de ácido fólico para obtener el máximo impacto en la reducción de nacimientos pretérmino?",
+        options: ["3 meses antes", "6 meses antes", "9 meses antes", "1 año antes"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Prevención del Parto Prematuro, una reserva intracelular folatocodependiente saturada antes de la implantación asegura el correcto desarrollo de la microvasculatura placentaria. El déficit temprano interfiere en la síntesis de ADN celular y condiciona isquemia y preeclampsia, causantes principales de parto prematuro iatrogénico o espontáneo.<br><br>Perla ENARM: \"El estudio demostró que el tomar ácido fólico un año antes de la concepción y hasta el final del primer trimestre del embarazo reduce la taza de parto prematuro antes de las 32 semanas de gestación.\"<br><br>Análisis de Distractores: La mayoría de las intervenciones estándar (como defectos del tubo neural) sugieren 3 meses de antelación. Sin embargo, para la etiología específica del parto prematuro, el nivel de evidencia más alto en esta directriz dicta iniciar 1 año previo al embarazo.",
+        source: "SS-811-17, Intervenciones de enfermería para la prevención y detección oportuna del parto prematuro, 2017, Intervenciones de enfermería, Página 17."
+    }
+        ];
+
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('ENF5LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('ENF5Progress');
+                localStorage.removeItem('ENF5LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-pink-500 shadow-md z-10 border-pink-500 dark:border-pink-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-rose-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "GINECOLOGÍA Y OBSTETRICIA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "GPC SS-811-17 • Intervenciones de enfermería para la prevención y detección oportuna del parto prematuro";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="FE82418GYOE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-pink-100 dark:border-pink-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-pink-50 has-[:checked]:border-pink-400 dark:has-[:checked]:bg-pink-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-pink-600 dark:hover:bg-pink-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('ENF5Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('ENF5LastQId', currentQuestionId);
+                else localStorage.removeItem('ENF5LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('ENF5Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

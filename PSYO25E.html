@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-cyan-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const questionsData = [
+    {
+        id: 1,
+        question: "¿En qué momento del ciclo respiratorio debe realizarse la técnica correcta para medir la circunferencia de cintura en el paciente adulto?",
+        options: ["Durante la apnea inspiratoria", "Al final de una espiración normal", "Al inicio de una espiración forzada", "Durante la inspiración profunda"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, la técnica antropométrica exige condiciones estandarizadas para evitar variaciones en el diámetro abdominal. El sitio de medición más preciso es en el punto medio entre la cresta iliaca y el arco subcostal, a nivel de la línea media axilar anterior, al final de una espiración normal.<br><br>Análisis de Distractores: Realizar la medición durante la inspiración (profunda o apnea) subestima el valor real por la contracción diafragmática. El inicio de la espiración no garantiza la relajación de la pared abdominal necesaria para el escrutinio del riesgo cardiometabólico.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección II. Sobrepeso y Obesidad en la Población Adulta, Página 6."
+    },
+    {
+        id: 2,
+        question: "¿A partir de qué puntaje Z del índice peso para la longitud se establece el diagnóstico clínico de obesidad en menores de 5 años?",
+        options: ["Mayor o igual a 3", "Mayor o igual a 2", "Mayor o igual a 1.5", "Mayor o igual a 1"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, la estratificación en la infancia temprana depende de las gráficas de la OMS para evitar clasificaciones erróneas del neurodesarrollo y la velocidad de crecimiento. La obesidad infantil en niños de 0 a 5 años se define con un Puntaje Z de peso/longitud o talla mayor o igual a 3.<br><br>Análisis de Distractores: Un puntaje Z de 1 a menor a 2 corresponde a riesgo de sobrepeso. Un puntaje Z de 2 a menor a 3 establece el diagnóstico de sobrepeso en este grupo etario específico.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección III. Sobrepeso y Obesidad en Edad Pediátrica, Página 18."
+    },
+    {
+        id: 3,
+        question: "De acuerdo con el Sistema de Estadificación de la Obesidad de Edmonton (EOSS), ¿en qué estadio se clasifica a un paciente adulto con diagnóstico de osteoartritis que genera limitación funcional moderada?",
+        options: ["Estadio 4", "Estadio 3", "Estadio 1", "Estadio 2"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, la afectación mecánica dictamina el pronóstico funcional independientemente del índice de masa corporal. El Estadio 2 incluye la presencia de una enfermedad crónica relacionada con la obesidad, como hipertensión, diabetes tipo 2, apnea del sueño y osteoartritis, o limitaciones moderadas en las actividades de la vida diaria.<br><br>Análisis de Distractores: El Estadio 1 implica síntomas físicos leves sin interferencia diaria. El Estadio 3 indica daño a órgano blanco establecido o artrosis incapacitante severa. El Estadio 4 refiere discapacidad grave o etapa terminal.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección II. Sobrepeso y Obesidad en la Población Adulta, Página 11."
+    },
+    {
+        id: 4,
+        question: "¿A partir de qué valor sérico de alanina aminotransferasa se sospecha fuertemente de enfermedad hepática grasa (MAFLD) en pacientes pediátricos varones?",
+        options: ["Mayor a 20 U/L", "Mayor a 22 U/L", "Mayor a 26 U/L", "Mayor a 30 U/L"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, los puntos de corte enzimáticos en pediatría son más estrictos que en la población adulta para la detección oportuna de disfunción metabólica. Para evaluar datos de enfermedad hepática grasa asociada a alteraciones metabólicas, se sospecha fuertemente con una elevación de alanina aminotransferasa mayor a 26 U/L en niños y mayor a 22 U/L en niñas.<br><br>Análisis de Distractores: El corte de 22 U/L es exclusivo para el escrutinio en pacientes femeninas. Los valores de 20 U/L o 30 U/L no son puntos de referencia antropométrica o laboratorial estandarizados en la guía clínica nacional para este fin.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección III. Sobrepeso y Obesidad en Edad Pediátrica, Página 20."
+    },
+    {
+        id: 5,
+        question: "¿Cuál es la frecuencia semanal mínima recomendada para la prescripción de entrenamiento de fuerza en pacientes adultos como parte de la modificación del estilo de vida?",
+        options: ["Al menos dos veces", "Al menos tres veces", "Al menos cuatro veces", "Todos los días"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, el fortalecimiento muscular es un pilar indispensable para optimizar la sensibilidad a la insulina y preservar la masa magra durante la reducción ponderal. Se debe prescribir entrenamiento de fuerza al menos dos veces por semana, permitiendo un descanso de al menos 48 horas entre sesiones de cada grupo muscular.<br><br>Análisis de Distractores: El ejercicio aeróbico se indica la mayoría de los días (150-300 min/semana), pero el estímulo de fuerza y resistencia requiere periodos de recuperación específicos, por lo que prescribirlo tres, cuatro o todos los días sin justificación individualizada eleva el riesgo de lesiones musculoesqueléticas.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección II. Sobrepeso y Obesidad en la Población Adulta, Página 13."
+    },
+    {
+        id: 6,
+        question: "¿Cuál es el límite máximo de pérdida de peso mensual permitido en un paciente pediátrico prepúber sometido a intervención conductual intensiva?",
+        options: ["250 gramos", "500 gramos", "1000 gramos", "1500 gramos"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, la restricción calórica severa en infantes interfiere negativamente con el neurodesarrollo y la ganancia estatural. En caso de haber pérdida de peso durante la estabilización del puntaje z-IMC, esta no deberá exceder los 500 g al mes para mantener una velocidad de crecimiento adecuada.<br><br>Análisis de Distractores: El límite de 1000 gramos (1 kg) al mes está reservado exclusivamente para adolescentes de 15 a 19 años. 250 g o 1500 g no corresponden a los parámetros de seguridad establecidos por la normativa para evitar afectación fisiológica en el niño.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección III. Sobrepeso y Obesidad en Edad Pediátrica, Página 22."
+    },
+    {
+        id: 7,
+        question: "Según las directrices internacionales para la actividad física, ¿cuántos minutos mínimos semanales de ejercicio aeróbico de intensidad moderada se recomiendan en mujeres embarazadas sin contraindicaciones?",
+        options: ["75 minutos", "100 minutos", "300 minutos", "150 minutos"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Actividad Física OMS, el ejercicio previene complicaciones gestacionales como preeclampsia y macrosomía. A todas las mujeres embarazadas y en puerperio sin contraindicaciones se les recomienda hacer como mínimo 150 minutos de actividad física aeróbica de intensidad moderada cada semana.<br><br>Análisis de Distractores: 75 minutos corresponden al límite inferior exclusivo para actividad de intensidad vigorosa en adultos no gestantes. 300 minutos es el límite superior recomendado en población general, pero no la meta clínica mínima de escrutinio para la paciente obstétrica.",
+        source: "Directrices de la OMS sobre actividad física y hábitos sedentarios, 2020, Mujeres Embarazadas y en Puerperio, Página 8."
+    },
+    {
+        id: 8,
+        question: "¿Qué puntaje mínimo en la subescala de ansiedad del Cuestionario HAD indica la necesidad clínica de derivación obligatoria a psiquiatría o psicología?",
+        options: ["Mayor o igual a 5 puntos", "Mayor o igual a 8 puntos", "Mayor o igual a 7 puntos", "Mayor o igual a 10 puntos"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, el tamizaje de salud mental es una de las 4M's indispensables para evitar el fracaso terapéutico. En el cuestionario HAD, el punto de corte diagnóstico para derivación por ansiedad es mayor o igual a 8 puntos.<br><br>Análisis de Distractores: El puntaje mayor o igual a 7 puntos es el límite diagnóstico específico para la subescala de depresión, no de ansiedad. Valores menores a 7 se consideran adaptativos o sin requerimiento de intervención farmacológica inmediata.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección II. Sobrepeso y Obesidad en la Población Adulta, Página 10."
+    },
+    {
+        id: 9,
+        question: "¿A partir de qué edad resulta aplicable y predictivo el cálculo del índice cintura-talla para determinar un alto riesgo de comorbilidades metabólicas en pediatría?",
+        options: ["A partir de los 2 años", "A partir de los 4 años", "A partir de los 6 años", "A partir de los 5 años"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, el depósito de tejido adiposo visceral se correlaciona con resistencia a la insulina de forma temprana. El índice cintura-talla (ICT) se realiza mediante el cálculo de la circunferencia en cm entre la estatura en cm; a partir de los 6 años de edad, si esta medida es mayor de 0.5, el paciente tiene mayor riesgo metabólico.<br><br>Análisis de Distractores: Antes de los 5 años, el parámetro predominante es el puntaje Z del índice peso para la talla (PT/E). A los 5 años se introduce la medición de cintura, pero el uso predictivo validado del cociente (ICT > 0.5) se aplica normativamente a partir de los 6 años cronológicos.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección III. Sobrepeso y Obesidad en Edad Pediátrica, Página 18."
+    },
+    {
+        id: 10,
+        question: "¿Cuál es la batería de estudios de laboratorio estrictamente indispensable en el escrutinio inicial metabólico de todo paciente adulto clasificado con sobrepeso u obesidad?",
+        options: ["Glucosa, lípidos, creatinina, ácido úrico, transaminasas y examen general de orina", "Glucosa, lípidos, hemoglobina glucosilada, insulina, transaminasas y electrolitos", "Glucosa, lípidos, creatinina, perfil tiroideo, biometría hemática y examen de orina", "Glucosa, lípidos, ácido úrico, bilirrubinas, examen general de orina y química sanguínea"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, la identificación sistemática de daño a órgano blanco no requiere estudios avanzados de inicio, sino un abordaje costo-efectivo en el primer nivel de atención. Se deben solicitar al menos glucosa en ayuno, perfil de lípidos, creatinina, ácido úrico, enzimas hepáticas (transaminasas) y examen de orina.<br><br>Análisis de Distractores: La insulina basal, hemoglobina glucosilada de rutina o perfil tiroideo no están indicados en el escrutinio inicial universal y se reservan para fenotipos clínicos específicos o falla terapéutica confirmada.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección II. Sobrepeso y Obesidad en la Población Adulta, Página 8."
+    },
+    {
+        id: 11,
+        question: "Aplicando el Sistema EOSS-P, ¿en qué estadio clínico se clasifica a un adolescente que presenta acantosis nigricans sin evidencia de otras comorbilidades sistémicas?",
+        options: ["Estadio 0", "Estadio 2", "Estadio 3", "Estadio 1"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de EOSS-P, las alteraciones pigmentarias de origen metabólico se catalogan como signos iniciales que exigen intervención conductual sin tratamiento farmacológico obligatorio. El Estadio 1 incluye anomalías metabólicas leves, tales como intolerancia a los carbohidratos, prehipertensión y acantosis nigricans.<br><br>Análisis de Distractores: El Estadio 0 corresponde a la ausencia total de anormalidades metabólicas. El Estadio 2 implica patología manifiesta como diabetes sin complicaciones o hipertensión. El Estadio 3 denota enfermedad descontrolada o daño orgánico avanzado.",
+        source: "Anexo Sistema de Estadificación de la Obesidad de Edmonton (EOSS-P), 2024, Evaluación Metabólica."
+    },
+    {
+        id: 12,
+        question: "Como medida conductual de higiene del sueño para favorecer la pérdida de peso en el adulto, ¿cuántas horas diarias de descanso nocturno recomienda el protocolo oficial?",
+        options: ["De 5 a 7 horas", "De 8 a 10 horas", "De 6 a 8 horas", "De 9 a 11 horas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, la privación crónica de sueño incrementa la resistencia a la insulina y altera los neuropéptidos saciógenos. Las recomendaciones generales de higiene del sueño indican dormir de 6 a 8 horas diarias y apagar dispositivos electrónicos para asegurar un descanso reparador.<br><br>Análisis de Distractores: De 8 a 11 horas es la recomendación operativa para la población adolescente. Menos de 6 horas se asocia fuertemente con alteración circadiana e incremento de la adiposidad visceral.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección II. Sobrepeso y Obesidad en la Población Adulta, Página 13."
+    },
+    {
+        id: 13,
+        question: "¿Cuál es el tiempo diario estandarizado para la prescripción de actividad física de tipo lúdico en niños preescolares de 2 a 4 años?",
+        options: ["180 minutos", "60 minutos", "90 minutos", "150 minutos"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, en la etapa de desarrollo motor grueso, el sedentarismo es deletéreo. En niñas y niños preescolares (2-4 años) se debe fomentar el ejercicio lúdico constante con una meta clínica estructurada de 180 minutos al día.<br><br>Análisis de Distractores: 60 minutos es la meta diaria de ejercicio estructurado para niños mayores de 5 años y adolescentes. 150 minutos es el objetivo mínimo semanal, no diario, para la población adulta.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Infografía Sobrepeso y Obesidad, Sección Niños."
+    },
+    {
+        id: 14,
+        question: "¿Qué estudio de gabinete confirmatorio es mandatorio cuando un paciente adulto presenta una elevación de transaminasas séricas mayor a dos veces su límite normal?",
+        options: ["Tomografía computarizada", "Ultrasonido hepático", "Resonancia magnética", "Gammagrama biliar"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, la esteatohepatitis exige documentar la infiltración grasa y descartar fibrosis para evitar la progresión a cirrosis. En caso de elevación de transaminasas por arriba de 2 veces su valor, se requieren hacer estudios de imagen, como ultrasonido o fibroscan, para completar el diagnóstico.<br><br>Análisis de Distractores: La tomografía o resonancia magnética no son estudios de primera línea por su costo y exposición a radiación. El diagnóstico morfológico inicial de MAFLD se sustenta siempre en el ecosonograma por su alta disponibilidad y especificidad.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección II. Sobrepeso y Obesidad en la Población Adulta, Página 9."
+    },
+    {
+        id: 15,
+        question: "Dentro de las recomendaciones del plato saludable, ¿cuál de las siguientes verduras se clasifica estrictamente como medible, cuyo consumo no debe exceder las 2 tazas diarias?",
+        options: ["Chayote", "Nopal", "Espinaca", "Zanahoria"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Guía de Alimentación, ciertos vegetales poseen un índice glucémico o carga de carbohidratos que requiere control volumétrico. Las verduras medibles, que no deben superar las 2 tazas diarias, incluyen cebolla, jícama, zanahoria, brócoli y betabel.<br><br>Análisis de Distractores: El chayote, nopal y las espinacas se consideran verduras de consumo libre dentro de la prescripción nutricional debido a su alto aporte de fibra y muy baja densidad energética celular.",
+        source: "Guía de Alimentación CAIPaDi, 2024, Sección Recomendaciones Generales, Página 2."
+    },
+    {
+        id: 16,
+        question: "¿Qué hallazgo clínico neurológico específico debe buscarse intencionadamente durante la exploración física de un paciente pediátrico con alto grado de adiposidad?",
+        options: ["Nistagmo bilateral", "Anisocoria pupilar", "Papiledema", "Temblor de intención"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, la obesidad infantil severa es un factor desencadenante documentado de hipertensión intracraneal idiopática (pseudotumor cerebri). Se debe buscar de manera intencionada en la exploración física la presencia de papiledema para referir de urgencia al especialista.<br><br>Análisis de Distractores: El nistagmo, la anisocoria y el temblor de intención no guardan una correlación patogénica directa y sistemática con la lipotoxicidad sistémica y no se incluyen en el tamizaje físico obligatorio de las guías nutricionales.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección III. Sobrepeso y Obesidad en Edad Pediátrica, Página 19."
+    },
+    {
+        id: 17,
+        question: "¿Cuál es un criterio antropométrico absoluto estipulado por la directriz para la referencia inmediata de un paciente adulto al segundo nivel de atención médica?",
+        options: ["Índice de masa corporal mayor o igual a 40", "Índice de masa corporal mayor o igual a 30", "Índice de masa corporal mayor o igual a 35 sin comorbilidades", "Índice de masa corporal mayor o igual a 28 con diabetes"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, la morbimortalidad mecánica y el alto riesgo cardiovascular en estadíos extremos superan la capacidad resolutiva del consultorio primario. Son criterios absolutos de referencia a segundo nivel de atención los pacientes con un IMC mayor o igual a 40 kg/m2 o que sean candidatos a cirugía bariátrica.<br><br>Análisis de Distractores: Un IMC de 30 o de 35 sin comorbilidades asociadas se trata en el primer nivel de atención. El corte para referir a pacientes con IMC grado II (35 a 39.9) exige que tengan comorbilidades crónicas descontroladas.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección II. Sobrepeso y Obesidad en la Población Adulta, Página 16."
+    },
+    {
+        id: 18,
+        question: "¿Cuántos días mínimos a la semana deben las personas mayores de 65 años ejecutar actividades físicas multicomponente que den prioridad al equilibrio funcional?",
+        options: ["Al menos un día", "Al menos tres días", "Al menos dos días", "Al menos cinco días"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Actividad Física OMS, la fragilidad ósea y la sarcopenia incrementan drásticamente el riesgo de morbimortalidad traumática. Las personas mayores deben realizar actividades físicas multicomponente variadas que den prioridad al equilibrio funcional y entrenamiento de fuerza tres o más días a la semana para evitar caídas.<br><br>Análisis de Distractores: El fortalecimiento muscular aislado para grandes grupos se indica al menos dos días por semana, pero la actividad multicomponente enfocada específicamente a la profilaxis de caídas exige un mínimo de tres días de intervención motriz.",
+        source: "Directrices de la OMS sobre actividad física y hábitos sedentarios, 2020, Personas Mayores, Página 6."
+    },
+    {
+        id: 19,
+        question: "¿A partir de qué percentil del índice de masa corporal para la edad se establece la clasificación clínica de obesidad en la población pediátrica mayor de 5 años?",
+        options: ["Mayor o igual al percentil 85", "Mayor o igual al percentil 90", "Mayor o igual al percentil 99", "Mayor o igual al percentil 95"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, las mediciones antropométricas dinámicas a partir de la edad escolar utilizan curvas CDC/OMS. Los valores de referencia para el diagnóstico de obesidad en población pediátrica a partir de los 5 años establecen el corte con un Percentil del IMC mayor o igual a 95 (o Puntaje Z mayor a 2).<br><br>Análisis de Distractores: El rango entre el percentil 85 y el percentil 94 dictamina el diagnóstico de sobrepeso. El percentil 90 se utiliza para el diagnóstico exclusivo de adiposidad central al medir la circunferencia de la cintura, no para el IMC global.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección III. Sobrepeso y Obesidad en Edad Pediátrica, Página 19."
+    },
+    {
+        id: 20,
+        question: "¿Qué metodología de comunicación estructurada está indicada en la práctica clínica para fomentar la disposición del paciente en el tratamiento integral de la obesidad?",
+        options: ["Sistema de las 3 C", "Algoritmo de Globorisk", "Estrategia de las 5 A", "Entrevista de Edmonton"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, evitar la estigmatización asegura la adherencia terapéutica. La estrategia de las 5A's (Averiguar, Evaluar, Aconsejar, Acordar, Ayudar) es el método estructurado de comunicación que facilita el establecimiento de una relación colaborativa para el tratamiento de problemas de salud a largo plazo.<br><br>Análisis de Distractores: Globorisk es una calculadora de estratificación cardiovascular estandarizada. Edmonton es el sistema de estadificación funcional y clínico (EOSS), y el sistema de las 3 C no forma parte de las intervenciones conductuales descritas.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección II. Sobrepeso y Obesidad en la Población Adulta, Página 14."
+    },
+    {
+        id: 21,
+        question: "¿Cuál es el requisito de tiempo estricto de fracaso terapéutico no farmacológico para justificar el inicio de medicamentos antiobesidad en el adulto?",
+        options: ["12 meses", "3 meses", "6 meses", "9 meses"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, el tratamiento farmacológico nunca es de primera línea y está supeditado a la falla de una intervención intensiva sobre el estilo de vida. En los pacientes que no logran perder al menos el 5% del peso corporal tras 6 meses de intervención intensiva supervisada con cambios en el estilo de vida, se debe considerar el uso de fármacos para el manejo de obesidad.<br><br>Análisis de Distractores: 3 meses es el periodo para evaluar adherencia inicial y hacer ajustes dietéticos, pero no faculta el inicio farmacológico. 9 y 12 meses prolongan innecesariamente el riesgo cardiometabólico del paciente que ya documentó fracaso terapéutico a medio año.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección II. Sobrepeso y Obesidad en la Población Adulta, Página 15."
+    },
+    {
+        id: 22,
+        question: "Aplicando el Sistema EOSS en adultos, ¿en qué estadio se clasifica clínicamente la presencia de antecedente de infarto agudo al miocardio?",
+        options: ["Estadio 3", "Estadio 2", "Estadio 4", "Estadio 1"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, la escala EOSS estadifica la severidad con base en la disfunción orgánica irreversible o severa. El Estadio 3 incluye el daño de órgano blanco establecido, por ejemplo, infarto del miocardio, insuficiencia cardiaca, complicaciones de diabetes o enfermedad renal.<br><br>Análisis de Distractores: El Estadio 1 involucra factores de riesgo subclínicos. El Estadio 2 incluye enfermedades crónicas establecidas pero sin daño terminal a órgano blanco (ej. HAS, DT2 sin complicaciones). El Estadio 4 se reserva para discapacidades graves o etapas terminales que imposibilitan el bienestar.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección II. Sobrepeso y Obesidad en la Población Adulta, Página 11."
+    },
+    {
+        id: 23,
+        question: "¿Cuál es el punto de corte sérico de alanina aminotransferasa para sospechar de enfermedad hepática grasa (MAFLD) en pacientes pediátricas de sexo femenino?",
+        options: ["Mayor a 26 U/L", "Mayor a 22 U/L", "Mayor a 30 U/L", "Mayor a 20 U/L"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, el escrutinio hepático pediátrico difiere por sexo biológico debido a las variaciones hormonales basales. Para evaluar datos de enfermedad hepática grasa asociada a alteraciones metabólicas, se sospecha fuertemente con una elevación de alanina aminotransferasa mayor a 22 U/L en niñas.<br><br>Análisis de Distractores: Mayor a 26 U/L es el corte específico validado para pacientes masculinos. Los cortes de 20 U/L y 30 U/L no corresponden a los umbrales diagnósticos estandarizados por la normativa pediátrica para daño por infiltración grasa.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección III. Sobrepeso y Obesidad en Edad Pediátrica, Página 20."
+    },
+    {
+        id: 24,
+        question: "¿Cuál es el límite máximo recomendado para el consumo de bebidas alcohólicas por ocasión en mujeres adultas sometidas a intervención de estilo de vida?",
+        options: ["Cero bebidas", "Dos bebidas", "Tres bebidas", "Una bebida"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, la densidad calórica del alcohol y su interferencia con el metabolismo hepático requieren restricción volumétrica exacta. Como recomendación general de hábitos de salud se debe evitar o limitar el consumo de alcohol a 1 bebida por ocasión en mujeres y 2 bebidas por ocasión en hombres.<br><br>Análisis de Distractores: Cero bebidas es ideal preventivamente, pero no es la recomendación textual operativa dictada para \"limitar\" su consumo. Dos bebidas es el margen superior exclusivo para el sexo masculino.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección II. Sobrepeso y Obesidad en la Población Adulta, Página 12."
+    },
+    {
+        id: 25,
+        question: "¿Cuál es el límite máximo seguro de pérdida ponderal mensual permitido en adolescentes de 15 a 19 años con obesidad?",
+        options: ["1 kilogramo", "2 kilogramos", "500 gramos", "1.5 kilogramos"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, las intervenciones nutricionales en el adolescente mayor deben evitar comprometer la densidad mineral ósea final y la masa magra. En adolescentes de 15 a 19 años, el efecto de pérdida de peso no deberá sobrepasar 1 kg al mes.<br><br>Análisis de Distractores: 500 gramos es el límite mensual restrictivo para niños y preadolescentes. Pérdidas de 1.5 o 2 kilogramos por mes incrementan el riesgo de talla baja y desnutrición subclínica por restricción calórica severa en fases de crecimiento.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección III. Sobrepeso y Obesidad en Edad Pediátrica, Página 22."
+    },
+    {
+        id: 26,
+        question: "¿Qué puntaje en la subescala de depresión del Cuestionario HAD justifica la derivación oportuna del paciente a psiquiatría?",
+        options: ["Mayor o igual a 8 puntos", "Mayor o igual a 5 puntos", "Mayor o igual a 7 puntos", "Mayor o igual a 10 puntos"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, la esfera mental impacta directamente en el apego terapéutico y requiere identificación temprana en primer nivel. En el Cuestionario HAD, el punto de corte diagnóstico para derivación por depresión es mayor o igual a 7 puntos.<br><br>Análisis de Distractores: Mayor o igual a 8 puntos es el corte correspondiente estrictamente para la subescala de ansiedad. 5 puntos es un hallazgo normal sin patología activa, y 10 puntos retrasa la referencia al requerir un cuadro excesivamente severo.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección II. Sobrepeso y Obesidad en la Población Adulta, Página 10."
+    },
+    {
+        id: 27,
+        question: "¿Qué edad define el envío absoluto e inmediato a segundo nivel de atención ante la presencia de obesidad grado 2 en la población pediátrica?",
+        options: ["Menores de 8 años", "Menores de 5 años", "Menores de 12 años", "Menores de 10 años"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, la adiposidad patológica en preescolares conlleva un alto índice de sospecha para etiologías endocrinológicas o alteraciones genéticas subyacentes. Son criterios para referencia a 2do o 3er nivel de atención las niñas o niños menores de 5 años con obesidad grados 2 y 3.<br><br>Análisis de Distractores: A partir de los 5 años, la obesidad grado 2 se maneja inicialmente en el primer nivel de atención mediante intervención conductual intensiva durante 6 meses, a menos que existan comorbilidades agudas descontroladas.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección III. Sobrepeso y Obesidad en Edad Pediátrica, Página 23."
+    },
+    {
+        id: 28,
+        question: "¿Qué posición corporal debe evitarse estrictamente durante el ejercicio en la mujer embarazada a partir del primer trimestre?",
+        options: ["Bipedestación estática", "Decúbito prono", "Sedestación prolongada", "Posición supina"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Actividad Física OMS, el aumento de volumen uterino genera compresión de la vena cava inferior, disminuyendo el retorno venoso y el gasto cardíaco. Como consideración de seguridad durante el ejercicio, se deben evitar las actividades en posición supina a partir del primer trimestre del embarazo.<br><br>Análisis de Distractores: Aunque el decúbito prono es anatómicamente imposible en etapas tardías, la posición supina es la contraindicación fisiológica formal en el entrenamiento. La bipedestación estática y sedestación no están contraindicadas durante el ejercicio pautado.",
+        source: "Directrices de la OMS sobre actividad física y hábitos sedentarios, 2020, Mujeres Embarazadas y en Puerperio, Página 8."
+    },
+    {
+        id: 29,
+        question: "¿Cuál es el valor mínimo de triglicéridos en ayuno que integra uno de los criterios diagnósticos para síndrome metabólico?",
+        options: ["Mayor o igual a 150 mg/dl", "Mayor o igual a 200 mg/dl", "Mayor o igual a 130 mg/dl", "Mayor o igual a 100 mg/dl"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, la hipertrigliceridemia es un biomarcador primario de resistencia a la insulina y lipotoxicidad celular. El diagnóstico de síndrome metabólico requiere la presencia de triglicéridos mayor o igual a 150 mg/dl.<br><br>Análisis de Distractores: 200 mg/dl es el valor de corte para diagnosticar hipercolesterolemia aislada o riesgo aterogénico por colesterol total. 130 mg/dl corresponde al corte clásico para colesterol LDL patológico, y 100 mg/dl es el umbral para alteración de glucosa en ayuno.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección II. Sobrepeso y Obesidad en la Población Adulta, Página 8."
+    },
+    {
+        id: 30,
+        question: "¿A partir de qué percentil se establece el diagnóstico clínico de prehipertensión en el paciente pediátrico?",
+        options: ["Mayor o igual al 95", "Mayor o igual al 85", "Mayor o igual al 90", "Mayor o igual al 80"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, la presión arterial en niños requiere estandarización según edad, sexo y talla. La prehipertensión se define operativamente cuando la presión arterial es mayor o igual al percentil 90 y menor al percentil 95.<br><br>Análisis de Distractores: El percentil mayor o igual a 95 establece el diagnóstico confirmatorio de hipertensión arterial infantil. Los percentiles 80 y 85 no constituyen límites hemodinámicos para clasificar daño o disfunción vascular sistémica en pediatría.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección III. Sobrepeso y Obesidad en Edad Pediátrica, Página 19."
+    },
+    {
+        id: 31,
+        question: "¿Cuántos criterios positivos en la escala STOP-Bang categorizan al paciente adulto con una sospecha clínica alta de síndrome de apnea obstructiva del sueño?",
+        options: ["3 a 4 criterios", "5 a 8 criterios", "1 a 2 criterios", "9 a 10 criterios"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, la categorización del SAOS determina la pertinencia inmediata de la polisomnografía confirmatoria. La sospecha clínica de SAOS es Alta cuando el paciente presenta de 5 a 8 criterios positivos en el cuestionario STOP-Bang.<br><br>Análisis de Distractores: De 0 a 2 criterios corresponde a una sospecha baja. De 3 a 4 criterios establece un riesgo intermedio. La escala evalúa un total máximo de 8 rubros, por lo cual 9 a 10 criterios es una sumatoria inexistente.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección II. Sobrepeso y Obesidad en la Población Adulta, Página 9."
+    },
+    {
+        id: 32,
+        question: "¿Qué profesional de la salud está estrictamente facultado para prescribir tratamiento farmacológico antiobesidad en adolescentes?",
+        options: ["Pediatra general", "Médico familiar", "Endocrinólogo pediatra", "Psiquiatra infantil"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, la intervención farmacológica en menores conlleva riesgo de interferencia con el eje neuroendocrino del crecimiento. En la actualidad dos medicamentos se encuentran aprobados para adolescentes; estos medicamentos deben ser prescritos exclusivamente por un endocrinólogo pediatra en el 2do o 3er nivel de atención.<br><br>Análisis de Distractores: El médico familiar y el pediatra general deben agotar la fase conductual intensiva durante 6 meses, y ante la falla, realizar la referencia institucional. El psiquiatra evalúa comorbilidad mental, pero no dirige la pauta metabólica del control de adiposidad central.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección III. Sobrepeso y Obesidad en Edad Pediátrica, Página 23."
+    },
+    {
+        id: 33,
+        question: "De acuerdo con la guía de alimentación, ¿cuál de los siguientes alimentos se considera una verdura de consumo libre?",
+        options: ["Cebolla", "Zanahoria", "Jícama", "Nopal"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Guía de Alimentación, las verduras con alta proporción de fibra soluble e insoluble y nulo índice glucémico pueden consumirse sin restricción volumétrica. El nopal se clasifica como una verdura de consumo libre, al igual que la espinaca y el chayote.<br><br>Análisis de Distractores: La cebolla, la zanahoria, el brócoli y la jícama se categorizan como \"verduras medibles\", cuyo consumo estricto no debe superar las 2 tazas diarias debido a su aporte intrínseco de carbohidratos simples.",
+        source: "Guía de Alimentación CAIPaDi, 2024, Sección Recomendaciones Generales, Página 2."
+    },
+    {
+        id: 34,
+        question: "Además de alteraciones antropométricas, ¿cuántos indicadores alterados (glucosa, presión, lípidos, ICT) confirman un riesgo cardiovascular incrementado en niños?",
+        options: ["Al menos dos indicadores", "Al menos un indicador", "Al menos tres indicadores", "Todos los indicadores"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, el daño endotelial es sinérgico cuando convergen distintas variables metabólicas. Si la niña, niño o adolescente presenta al menos dos indicadores alterados (ICT >0.5, PA >130/85, perfil de lípidos o glucosa en ayuno fuera de rango), se deberá considerar que presenta riesgo cardiovascular incrementado.<br><br>Análisis de Distractores: Un solo indicador amerita ajuste nutricional dirigido a ese parámetro específico. Tres o todos los indicadores reflejan franco síndrome metabólico, pero el umbral de \"riesgo incrementado\" preventivo se enciende confirmando únicamente dos ejes afectados.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección III. Sobrepeso y Obesidad en Edad Pediátrica, Página 19."
+    },
+    {
+        id: 35,
+        question: "¿Cuál es la duración mínima que debe tener un \"snack de ejercicio\" o pausa activa para interrumpir el sedentarismo durante el día en el adulto?",
+        options: ["Tres minutos", "Un minuto", "Cinco minutos", "Diez minutos"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, fragmentar las conductas sedentarias reactiva el metabolismo oxidativo muscular de manera costo-efectiva. Aumentar descansos activos realizando actividades cortas de ejercicio (snacks de ejercicios), al menos tres veces al día con intensidad de moderada a vigorosa, con una duración de al menos un minuto.<br><br>Análisis de Distractores: Un bloque de 10 a 15 minutos se considera una sesión de entrenamiento aeróbico formal inicial, no una pausa activa intercurrente. 3 y 5 minutos superan la indicación mínima y pueden restar apego en el entorno laboral.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección II. Sobrepeso y Obesidad en la Población Adulta, Página 12."
+    },
+    {
+        id: 36,
+        question: "¿Cuántas horas diarias de sueño ininterrumpido recomienda el protocolo para el grupo de adolescentes de 11 a 18 años?",
+        options: ["9 a 11 horas", "6 a 8 horas", "8 a 11 horas", "11 a 14 horas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, la arquitectura del sueño estabiliza los picos de hormona de crecimiento e insulina durante el desarrollo puberal. Las recomendaciones de hábitos para adolescentes (11-18 años) especifican un tiempo de sueño de 8 a 11 horas, acompañado de un máximo de 2 horas de exposición a pantallas.<br><br>Análisis de Distractores: 6 a 8 horas es el requerimiento de descanso para la población adulta. 9 a 11 horas es la meta para escolares (5 a 10 años), y 11 a 14 horas se restringe al grupo preescolar para asegurar maduración neurológica.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Infografía Sobrepeso y Obesidad, Sección Hábitos."
+    },
+    {
+        id: 37,
+        question: "En el tamizaje de salud mental del adulto, ¿cuál característica define operativamente al trastorno por atracón frente a otros hábitos?",
+        options: ["Sensación de pérdida de control al comer", "Consumir calorías líquidas frecuentemente", "Ayuno intermitente sin supervisión", "Comer para consolar la tristeza"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, las pautas conductuales patológicas exigen derivación especializada temprana. El trastorno por atracón se interroga buscando si cuando empieza a comer, tiene la sensación de que no puede parar a pesar de estar satisfecho (sensación de pérdida de control), y consume cantidades masivas en forma rápida.<br><br>Análisis de Distractores: Comer para consolar la tristeza o ansiedad es el factor definitorio del síndrome de \"comer emocional\". El consumo de calorías líquidas y el ayuno prolongado son hábitos disfuncionales, pero no catalogan un cuadro clínico psiquiátrico de atracón compulsivo.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección II. Sobrepeso y Obesidad en la Población Adulta, Página 9."
+    },
+    {
+        id: 38,
+        question: "Utilizando la clasificación EOSS-P en la esfera mecánica, ¿en qué estadio se agrupa a un paciente pediátrico con reflujo gastroesofágico?",
+        options: ["Estadio 1", "Estadio 3", "Estadio 0", "Estadio 2"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de EOSS-P, el incremento de la presión intraabdominal sostenida genera secuelas anatómicas que limitan la funcionalidad alimentaria e inflamatoria del niño. El Estadio 2 Mecánico incluye complicaciones moderadas como reflujo gastroesofágico (ERGE) y apnea del sueño que requiere presión positiva.<br><br>Análisis de Distractores: El Estadio 0 no presenta limitaciones funcionales. El Estadio 1 involucra molestias musculoesqueléticas intermitentes o disnea leve con ejercicio físico. El Estadio 3 define inmovilidad o complicaciones obstructivas requiriendo oxígeno suplementario.",
+        source: "Anexo Sistema de Estadificación de la Obesidad de Edmonton (EOSS-P), 2024, Evaluación Mecánica."
+    },
+    {
+        id: 39,
+        question: "¿Cuál es el punto de corte diagnóstico de hemoglobina glucosilada (HbA1c) para definir prediabetes en el escrutinio metabólico inicial?",
+        options: ["5.7 a 6.4 %", "6.0 a 6.4 %", "Mayor o igual a 6.5 %", "5.5 a 6.0 %"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, la disfunción temprana del páncreas endocrino se monitoriza percentilarmente para pautar reversión con dieta. El rango validado para el diagnóstico de prediabetes exige un resultado de hemoglobina glucosilada entre el 5.7 y el 6.4%.<br><br>Análisis de Distractores: Mayor o igual a 6.5% dictamina el diagnóstico firme de diabetes tipo 2. Los rangos de 5.5 a 6.0% o superiores a 6.0% no son parámetros aislados clínicamente estandarizados por la guía para estratificar intolerancia.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección II. Sobrepeso y Obesidad en la Población Adulta, Página 8."
+    },
+    {
+        id: 40,
+        question: "¿Cada cuánto tiempo debe evaluarse la velocidad de crecimiento en infantes de 2 a 5 años utilizando las gráficas de la OMS-CDC?",
+        options: ["Cada mes", "Cada 6 meses", "Cada 3 meses", "Cada 12 meses"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Sobrepeso y Obesidad, la ganancia estatural compensatoria es la principal herramienta para diluir la masa grasa sin someter al infante a dietas restrictivas. Las mediciones antropométricas en la ventana de 2 a 5 años exigen evaluar peso, talla y calcular velocidad de crecimiento cada 6 meses.<br><br>Análisis de Distractores: La valoración cada mes o cada 2 meses es obligatoria exclusivamente para lactantes menores de 2 años. Una revisión anual (cada 12 meses) permite ventanas muy prolongadas donde puede instaurarse adiposidad o pérdida de crecimiento lineal subclínica.",
+        source: "Protocolo Nacional de Atención Médica Sobrepeso y Obesidad, 2024, Sección III. Sobrepeso y Obesidad en Edad Pediátrica, Página 18."
+    }
+
+
+
+        
+        ];
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('SOBRYOBESLastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('SOBRYOBESProgress');
+                localStorage.removeItem('SOBRYOBESLastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-blue-500 shadow-md z-10 border-blue-500 dark:border-blue-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-cyan-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "Sobrepeso y Obesidad";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "Protocolo Nacional de Atención Médica (PRONAM) - 2026";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="loginlite.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="loginlite.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-blue-100 dark:border-blue-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 dark:has-[:checked]:bg-blue-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('SOBRYOBESProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('SOBRYOBESLastQId', currentQuestionId);
+                else localStorage.removeItem('SOBRYOBESLastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('SOBRYOBESProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

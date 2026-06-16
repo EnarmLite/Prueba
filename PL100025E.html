@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-cyan-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const questionsData = [
+    {
+        id: 1,
+        question: "¿Cuál es el número mínimo de consultas prenatales que debe recibir una persona embarazada de bajo riesgo?",
+        options: ["Cinco consultas prenatales", "Ocho consultas prenatales", "Diez consultas prenatales", "Tres consultas prenatales"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Primeros 1000 días, la estructuración del cuidado materno requiere asegurar un piso basal de encuentros médicos para el tamizaje oportuno de patologías. Aunque se sugiere un calendario óptimo de ocho visitas, el umbral mínimo exigido para reducir la morbimortalidad sigue siendo cinco intervenciones estandarizadas.<br><br>Perla ENARM: \"Se debe promover que la embarazada de bajo riesgo reciba como mínimo cinco consultas prenatales, iniciando preferentemente en las primeras 8 semanas de gestación\".<br><br>Análisis de Distractores: Ocho consultas prenatales (B) es el esquema calendario óptimo recomendado, pero no el mínimo legal. Tres consultas prenatales (D) es insuficiente y eleva el riesgo de muerte materna. Diez consultas prenatales (C) aplica para el control de embarazos de alto riesgo con comorbilidades.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM): Primeros 1000 días de vida, 2024, Sección III. Embarazo saludable, Página 2."
+    },
+    {
+        id: 2,
+        question: "¿Cuál es la ganancia de peso total recomendada durante el embarazo para una mujer con Índice de Masa Corporal pregestacional normal?",
+        options: ["12.5 a 18.0 kilogramos", "6.8 a 11.3 kilogramos", "11.3 a 15.9 kilogramos", "4.0 a 9.0 kilogramos"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Guías Alimentarias, el estado nutricional basal determina la capacidad metabólica y el riesgo de preeclampsia o macrosomía. Para pacientes eutróficas, este rango permite un adecuado desarrollo feto-placentario sin incrementar la adiposidad patológica materna.<br><br>Perla ENARM: \"NORMAL IMC de 18.5 a 24.9 kg/m2, Ganancia de peso total durante el embarazo: 11.3-15.9 kg\".<br><br>Análisis de Distractores: 12.5 a 18.0 kilogramos (A) es la indicación para pacientes con desnutrición inicial. 6.8 a 11.3 kilogramos (B) corresponde al límite para mujeres con sobrepeso pregestacional. 4.0 a 9.0 kilogramos (D) es la restricción estricta para obesidad franca.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM): Primeros 1000 días de vida, 2024, Sección III. Embarazo saludable, Página 5."
+    },
+    {
+        id: 3,
+        question: "¿Cuál es el tiempo exacto que debe esperarse para realizar el pinzamiento tardío del cordón umbilical en un recién nacido vigoroso?",
+        options: ["10 a 20 segundos", "30 a 60 segundos", "90 a 120 segundos", "1 a 3 minutos"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Primeros 1000 días, la demora controlada en el corte anatómico favorece la transfusión placentaria fisiológica, incrementando el volumen sanguíneo neonatal y consolidando reservas de hierro críticas para el primer semestre.<br><br>Perla ENARM: \"Pinzamiento tardío de cordón umbilical. Es una técnica médica que consiste en esperar entre 30 y 60 segundos después del nacimiento para pinzar el cordón y debe integrarse como práctica esencial\".<br><br>Análisis de Distractores: 10 a 20 segundos (A) constituye un pinzamiento precoz con pérdida del volumen placentario. Las opciones de 90 a 120 segundos (C) y 1 a 3 minutos (D) exceden el límite operativo marcado por la normativa nacional para esta práctica estándar en sala de parto.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM): Primeros 1000 días de vida, 2024, Sección IV. Parto y puerperio seguros, Página 11."
+    },
+    {
+        id: 4,
+        question: "¿A qué volumen anatómico y fruta equivale la capacidad gástrica máxima de un recién nacido al tercer día de vida?",
+        options: ["50 a 60 mililitros huevo", "80 a 150 mililitros naranja", "5 a 7 mililitros uva", "22 a 27 mililitros limón"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Aprendiendo a amamantar, el estómago neonatal experimenta una distensibilidad progresiva diaria. La sobrealimentación inicial causa vómitos y reflujo, por lo que es vital entender que en los primeros días se requieren ingestas pequeñas (acordes a la producción del calostro).<br><br>Perla ENARM: \"Día 3: 22-27 ml equivalente al tamaño de un limón. El estómago de tu bebé al nacer es muy pequeño, por ello no necesita mucho alimento\".<br><br>Análisis de Distractores: 5 a 7 mililitros uva (C) describe la capacidad en el primer día de nacido. 50 a 60 mililitros huevo (A) se alcanza hasta el décimo día. 80 a 150 mililitros naranja (B) corresponde a la distensibilidad del primer mes de vida.",
+        source: "Un regalo de salud para la vida. Aprendiendo a amamantar y alimentar a mi bebé, 2020, Sección ¡Te esperamos con los brazos abiertos!, Página 38."
+    },
+    {
+        id: 5,
+        question: "¿Cuál es la dosis de suplementación de ácido fólico indicada para toda persona embarazada sin factores de riesgo adicionales?",
+        options: ["4 miligramos diarios", "5 miligramos diarios", "0.4 miligramos diarios", "1 miligramo diario"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Primeros 1000 días, esta concentración compensa los requerimientos embrionarios basales para garantizar el cierre anatómico normal del neuroporo embrionario durante el primer trimestre, aplicable universalmente.<br><br>Perla ENARM: \"Debe prescribirse 0.4 mg de ácido fólico, en todas personas embarazadas al primer contacto, idealmente debe prescribirse 3 meses previos a la gestión\".<br><br>Análisis de Distractores: 4 miligramos diarios (A) es la dosis multiplicada reservada únicamente para pacientes con antecedentes genéticos o alteraciones del tubo neural previas. 5 miligramos diarios (B) y 1 miligramo diario (D) no corresponden al protocolo farmacológico nacional vigente.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM): Primeros 1000 días de vida, 2024, Sección III. Embarazo saludable, Página 6."
+    },
+    {
+        id: 6,
+        question: "¿Cuál es el momento normativo indicado para introducir alimentos potencialmente alergénicos como el huevo o el pescado en el lactante?",
+        options: ["Después de los 24 meses", "Antes de cumplir un año", "A los 18 meses cumplidos", "Posterior a los 3 años"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Niñas y Niños, la evidencia inmunológica moderna determina que retrasar la exposición a epítopes alimentarios fomenta atopia. El contacto en la ventana fisiológica del primer año favorece la tolerancia intestinal.<br><br>Perla ENARM: \"Los alimentos considerados potencialmente alergénicos como son huevo, kiwi, fresa, cacahuate, pescado, mariscos, trigo y soya se deben introducir antes de cumplir el año de edad\".<br><br>Análisis de Distractores: Después de los 24 meses (A), a los 18 meses cumplidos (C) y posterior a los 3 años (D) son paradigmas pediátricos obsoletos que actualmente elevan el riesgo de desarrollar reacciones anafilácticas y privan al niño de nutrientes de alto valor biológico.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM): Primeros 1000 días de vida, 2024, Sección VI. Niñas y niños de 28 días a 24 meses, Página 18."
+    },
+    {
+        id: 7,
+        question: "¿Qué parámetro de saturación pre y postductal clasifica un tamiz cardiaco neonatal como positivo sospechoso de cardiopatía grave?",
+        options: ["Menor al 90 porciento", "Mayor al 95 porciento", "Diferencia del 1 porciento", "Diferencia del 2 porciento"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Primeros 1000 días, la incapacidad de mantener la oxigenación periférica evidencia cortocircuitos intra o extracardíacos dependientes de conducto. Una caída por debajo de este umbral o una asimetría marcada obliga al abordaje anatómico urgente.<br><br>Perla ENARM: \"Se considera tamizaje positivo cuando la saturación < 90% o si existe una diferencia mayor a 3% entre la saturación pre y postductal\".<br><br>Análisis de Distractores: Mayor al 95 porciento (B) indica una mecánica cardiopulmonar sana y normal. Las diferencias de saturación del 1 porciento (C) y del 2 porciento (D) entre miembro superior derecho e inferior son gradientes fisiológicos y no superan el punto de corte diagnóstico superior al 3 porciento.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM): Primeros 1000 días de vida, 2024, Sección V. Atención a la persona recién nacida, Página 15-16."
+    },
+    {
+        id: 8,
+        question: "¿Cuál es la meta exacta de consumo diario exclusivo de agua natural recomendada durante todo el embarazo?",
+        options: ["Seis vasos diarios", "Doce vasos diarios", "Diez vasos diarios", "Nueve vasos diarios"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Mujeres Embarazadas, la expansión crítica del volumen sanguíneo materno y la tasa de recambio de líquido amniótico exigen un aporte hídrico seguro sin recurrir a bebidas endulzadas.<br><br>Perla ENARM: \"Toma agua natural a lo largo del día y con todas tus comidas: 9 vasos al día en el embarazo y 10 vasos al día durante la lactancia\".<br><br>Análisis de Distractores: Diez vasos diarios (C) es el objetivo hídrico exclusivo del periodo de lactancia. Seis vasos diarios (A) predice deshidratación y riesgo de infecciones de vías urinarias. Doce vasos diarios (B) sobrecarga inútilmente el filtrado glomerular materno.",
+        source: "Recomendaciones para la promoción de la salud en mujeres embarazadas y en periodo de lactancia, 2024, Recomendación 6, Página 156."
+    },
+    {
+        id: 9,
+        question: "¿En qué periodo de vida debe realizarse una biometría hemática de escrutinio universal para detectar anemia por deficiencia de hierro?",
+        options: ["3 a 6 meses", "9 a 12 meses", "18 a 24 meses", "Al nacimiento"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Primeros 1000 días, debido al inminente agotamiento fisiológico de las reservas férricas fetales y la alta prevalencia de desnutrición oculta, se exige esta ventana temporal para el abordaje de laboratorio preventivo.<br><br>Perla ENARM: \"Se recomienda realizar estudio de biometría hemática entre los 9 y 12 meses de vida, derivado de la alta prevalencia de anemia por deficiencia de hierro\".<br><br>Análisis de Distractores: Al nacimiento (D) el lactante posee niveles de hemoglobina altos por hemoconcentración. De 3 a 6 meses (A) persiste el soporte férrico intrauterino. De 18 a 24 meses (C) retrasa severamente el diagnóstico y perpetúa el daño neurológico anémico.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM): Primeros 1000 días de vida, 2024, Sección VI. Niñas y niños de 28 días a 24 meses, Página 20."
+    },
+    {
+        id: 10,
+        question: "¿Cuál es el tiempo máximo de conservación segura para la leche materna extraída mantenida a temperatura ambiente entre 19 y 26 grados centígrados?",
+        options: ["24 horas continuas", "72 horas continuas", "8 horas como máximo", "2 horas como máximo"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Mujeres Embarazadas, la actividad macrofágica natural de la leche le confiere propiedades bacteriostáticas que evitan la descomposición fuera de red de frío dentro de este límite preciso.<br><br>Perla ENARM: \"Conservación de la Leche Materna: Temperatura ambiente 19-26 °C, Hasta por 8 horas (máximo), 4 horas o menos tiempo si el clima es caluroso\".<br><br>Análisis de Distractores: 2 horas como máximo (D) minimiza la estabilidad biológica real. 24 horas continuas (A) exige el uso de una hielera con gel refrigerante (15 grados). 72 horas continuas (B) es el periodo de seguridad admitido exclusivamente dentro de un refrigerador.",
+        source: "Recomendaciones para la promoción de la salud en mujeres embarazadas y en periodo de lactancia, 2024, Anexo III, Página 106."
+    },
+    {
+        id: 11,
+        question: "¿En qué semanas de gestación se debe aplicar preferentemente la vacuna contra Tétanos, difteria y pertussis acelular?",
+        options: ["12 a 20 semanas", "38 a 40 semanas", "10 a 14 semanas", "27 a 36 semanas"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Primeros 1000 días, es indispensable lograr un pico de anticuerpos maternos circulantes y otorgar el tiempo fisiológico para su transvase pasivo a través de la placenta hacia el feto antes del nacimiento.<br><br>Perla ENARM: \"Nombre de la vacuna Tdpa: Momento de aplicación: A partir de la semana 20, preferente entre la semana 27 y 36 de gestación\".<br><br>Análisis de Distractores: 10 a 14 semanas (C) y 12 a 20 semanas (A) resultan prematuras para optimizar la carga inmunológica final. 38 a 40 semanas (B) impide el tiempo metabólico de 14 días necesario para generar los anticuerpos protectores.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM): Primeros 1000 días de vida, 2024, Sección III. Embarazo saludable, Página 5."
+    },
+    {
+        id: 12,
+        question: "¿Cuál es la cantidad exacta de agua natural recomendada diariamente para un lactante de 7 a 11 meses de edad?",
+        options: ["Medio vaso diario", "Un vaso diario", "Dos vasos diarios", "Cuatro vasos diarios"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Niñas y Niños, en este periodo la mayor proporción hídrica ingresa mediante la lactancia materna a libre demanda. Sin embargo, para adaptar el hábito y manejar los residuos de la ablactación temprana se instaura una dosis volumétrica menor.<br><br>Perla ENARM: \"Cantidad de agua natural o simple recomendada: 7 a 11 meses de edad: 120 ml (1/2 taza)\".<br><br>Análisis de Distractores: Un vaso diario (B) es la indicación fisiológica específica a partir de cumplir un año de edad. Dos vasos diarios (C) es el volumen mínimo dictado para infantes de dos años. Cuatro vasos diarios (D) sobrecarga peligrosamente los riñones inmaduros del lactante.",
+        source: "Recomendaciones para la promoción de la salud en niñas y niños de 0 a 4 años, 2024, Capítulo 1, Página 49."
+    },
+    {
+        id: 13,
+        question: "En la Prueba de Evaluación del Desarrollo Infantil, ¿qué condición define un resultado en color rojo o de riesgo de retraso?",
+        options: ["Logra actividades del grupo anterior", "No realiza actividades de edad anterior", "Falla solo en motor fino", "Pierde reflejos primitivos esperados"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Primeros 1000 días, la semaforización evalúa habilidades progresivas. El fallo grave y diagnóstico presuntivo de patología neurológica recae al observar un rezago de al menos dos rangos de edad.<br><br>Perla ENARM: \"Rojo (Riesgo de Retraso en el Desarrollo): La niña o niño que no realiza las actividades que corresponden a su grupo de edad y tampoco realiza las actividades del grupo de edad anterior\".<br><br>Análisis de Distractores: Lograr actividades del grupo anterior (A) es el criterio estricto para clasificar en el semáforo Amarillo (Rezago). Fallar solo en motor fino (C) es un dato analítico que per se no designa rojo directo. Perder reflejos primitivos (D) es un hito de maduración neurológica normal.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM): Primeros 1000 días de vida, 2024, Sección VI. Niñas y niños de 28 días a 24 meses, Página 25."
+    },
+    {
+        id: 14,
+        question: "¿Cuál es la principal causa de muerte materna durante el primer año posparto vinculada al retraso en la atención psiquiátrica?",
+        options: ["Psicosis puerperal aguda", "Infanticidio secundario", "Suicidio materno", "Eclampsia severa"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Primeros 1000 días, la omisión diagnóstica de los trastornos del estado de ánimo genera desadaptación y sufrimiento psicológico profundo en el puerperio, volviéndose la etiología fatal más prevalente en esta ventana de tiempo.<br><br>Perla ENARM: \"El retraso en la atención de los diversos trastornos mentales perinatales puede llevar al infanticidio o al suicidio, siendo este último la principal causa de muerte materna durante el primer año posparto\".<br><br>Análisis de Distractores: El Infanticidio secundario (B) es un acto criminal derivado de patología, pero no clasifica como la muerte de la madre. La Psicosis puerperal aguda (A) es un diagnóstico, no una causa de defunción aislada. La Eclampsia severa (D) es una patología orgánica vascular y no psiquiátrica.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM): Primeros 1000 días de vida, 2024, Sección III. Embarazo saludable, Página 9."
+    },
+    {
+        id: 15,
+        question: "Para evitar interferencia en la absorción de hierro y microhemorragias intestinales, ¿hasta qué edad debe retrasarse la introducción de leche entera de vaca?",
+        options: ["Después de 6 meses", "Después de 8 meses", "Después de 24 meses", "Después de 12 meses"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Niñas y Niños, las caseínas enteras y la alta carga de calcio bovino bloquean competitivamente a nivel duodenal los receptores de hierro y provocan daño de la mucosa inmadura.<br><br>Perla ENARM: \"Si tu bebé toma pecho solo hasta el año o no toma pecho, dale leche entera de vaca a partir del año\".<br><br>Análisis de Distractores: Después de 6 meses (A) y Después de 8 meses (B) son periodos prohibidos para lácteos enteros líquidos debido al peligro de enteropatía perdedora de sangre. Después de 24 meses (C) es una restricción exagerada para niños sanos.",
+        source: "Recomendaciones para la promoción de la salud en niñas y niños de 0 a 4 años, 2024, Capítulo 1, Página 34."
+    },
+    {
+        id: 16,
+        question: "De acuerdo al Índice de Coopland, ¿a partir de qué puntaje se debe considerar enviar a la paciente embarazada al siguiente nivel de atención?",
+        options: ["Mayor a 4 puntos", "Mayor a 2 puntos", "Mayor a 7 puntos", "Mayor a 6 puntos"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Primeros 1000 días, este corte estadístico define la frontera del riesgo leve frente al riesgo moderado o alto, lo que obliga al tamizaje especializado para predecir y evitar resultados adversos fetales.<br><br>Perla ENARM: \"En el caso de que identificar un puntaje mayor a 4 puntos se debe considerar enviar a siguiente nivel de atención\".<br><br>Análisis de Distractores: Mayor a 2 puntos (B) entra en la clasificación de riesgo bajo que se atiende en primer nivel. Mayor a 6 puntos (D) y Mayor a 7 puntos (C) pertenecen a riesgo alto, pero retardan la referencia del riesgo moderado que exige valoración desde el puntaje de 4.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM): Primeros 1000 días de vida, 2024, Sección III. Embarazo saludable, Página 8."
+    },
+    {
+        id: 17,
+        question: "¿Cuál es el periodo normativo establecido para realizar la toma óptima de la muestra del tamiz metabólico neonatal?",
+        options: ["Primeras 24 horas", "72 horas al quinto día", "Segunda y tercera semana", "Al momento del nacimiento"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Primeros 1000 días, asegurar este margen permite que el metabolismo del neonato entre en actividad enzimática total a través de la vía oral, reduciendo el riesgo de falsos negativos en enfermedades como hipotiroidismo.<br><br>Perla ENARM: \"Tamiz metabólico: Edad recomendada: A partir de las 72 horas de vida hasta el quinto día de vida\".<br><br>Análisis de Distractores: Al momento del nacimiento (D) y Primeras 24 horas (A) están contraindicados ya que el infante aún se apoya de hormonas y metabolitos de arrastre maternos. Segunda y tercera semana (C) es exclusivo para la segunda prueba en prematuros o enfermos críticos.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM): Primeros 1000 días de vida, 2024, Sección V. Atención a la persona recién nacida, Página 15."
+    },
+    {
+        id: 18,
+        question: "¿Cuál es el tiempo mínimo sugerido de actividad física aeróbica y fortalecimiento muscular a la semana durante un embarazo saludable?",
+        options: ["60 minutos semanales", "90 minutos semanales", "300 minutos semanales", "150 minutos semanales"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Primeros 1000 días, este nivel de actividad previene estados de hiperinsulinemia y trombosis venosa profunda en el binomio sin provocar estrés hemodinámico exhaustivo.<br><br>Perla ENARM: \"Recomendar la actividad física aeróbica y ejercicios de fortalecimiento muscular dirigidos a mantener un buen nivel de condición física... Realizar mínimo 150 minutos semanales\".<br><br>Análisis de Distractores: Las opciones 60 minutos semanales (A) y 90 minutos semanales (B) son ineficaces para conferir impacto cardiovascular significativo preventivo. La opción de 300 minutos semanales (C) es el objetivo recomendado en pacientes no gestantes con regímenes intensivos de pérdida de peso.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM): Primeros 1000 días de vida, 2024, Sección III. Embarazo saludable, Página 6."
+    },
+    {
+        id: 19,
+        question: "¿Cuál es el rango total de horas de sueño reparador diario recomendado para un infante de 1 a 2 años de edad?",
+        options: ["14 a 17 horas", "12 a 16 horas", "11 a 14 horas", "8 a 10 horas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Primeros 1000 días, establecer una higiene de sueño estricta en este periodo estabiliza los picos de hormona del crecimiento nocturnos y fomenta la asimilación cognitiva y conductual madura.<br><br>Perla ENARM: \"Niñas y niños de 1 a 2 años... cubrir de 11 a 14 horas de sueño reparador, incluidas las siestas, con horarios regulares para dormir\".<br><br>Análisis de Distractores: 14 a 17 horas (A) es el rango indispensable para recién nacidos y hasta 3 meses de vida. 12 a 16 horas (B) obedece a las necesidades de lactantes de 4 a 11 meses. 8 a 10 horas (D) representa privación severa de sueño en edad pediátrica temprana.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM): Primeros 1000 días de vida, 2024, Sección VI. Niñas y niños de 28 días a 24 meses, Página 21-22."
+    },
+    {
+        id: 20,
+        question: "¿Qué medicamento tópico está normado como agente de primera línea para realizar la profil profilaxis oftálmica inmediata en el recién nacido?",
+        options: ["Cloranfenicol solución oftálmica", "Gentamicina ungüento oftálmico", "Tobramicina solución oftálmica", "Neomicina ungüento oftálmico"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Primeros 1000 días, su aplicación en sala de partos neutraliza microorganismos adquiridos por canal vaginal causantes de ceguera bacteriana irreversible.<br><br>Perla ENARM: \"Se recomienda el uso de profilaxis oftálmica a la persona recién nacida... utilizando uno de los siguientes agentes: Cloranfenicol solución oftálmica, Cloranfenicol ungüento oftálmico o Eritromicina ungüento oftálmico\".<br><br>Análisis de Distractores: Gentamicina ungüento oftálmico (B), Tobramicina solución oftálmica (C) y Neomicina ungüento oftálmico (D) son aminoglucósidos empleados frecuentemente en oftalmología pediátrica general, sin embargo, las normativas mexicanas estandarizan específicamente macrólidos (eritromicina) o cloranfenicol.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM): Primeros 1000 días de vida, 2024, Sección V. Atención a la persona recién nacida, Página 14."
+    },
+    {
+        id: 21,
+        question: "¿En qué periodo exacto se recomienda realizar el ultrasonido obstétrico de escrutinio del primer trimestre?",
+        options: ["8 a 10.6 semanas", "11 a 13.6 semanas", "14 a 16.6 semanas", "18 a 22 semanas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Primeros 1000 días, la evaluación ultrasonográfica en este periodo específico permite establecer con máxima precisión la edad gestacional, evaluar la vitalidad fetal y medir marcadores precoces de cromosomopatías.<br><br>Perla ENARM: \"Promover USG obstétrico en cada trimestre. (1° 11 a 13.6 SDG, 2° 18 y 22 SDG, 3° 29 Y 30 o más SDG)\".<br><br>Análisis de Distractores: El periodo de 8 a 10.6 semanas (A) es útil para confirmar viabilidad temprana, pero no es la ventana ideal del tamizaje del primer trimestre. Las semanas 18 a 22 (D) corresponden al tamizaje estructural obligatorio del segundo trimestre. Las semanas 14 a 16.6 (C) caen en una zona ciega para medición de translucencia nucal.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM): Primeros 1000 días de vida, 2024, Sección III. Embarazo saludable, Página 4."
+    },
+    {
+        id: 22,
+        question: "¿Cuál es el número de tomas promedio recomendadas al día para un recién nacido alimentado exclusivamente al seno materno en los primeros 2 meses?",
+        options: ["3 a 5 tomas", "15 a 20 tomas", "8 a 12 tomas", "4 a 6 tomas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Aprendiendo a amamantar, el vaciamiento gástrico de la leche humana es rápido y la capacidad estomacal inicial es reducida, obligando a una frecuencia alta para asegurar el aporte calórico y mantener la producción mediada por prolactina.<br><br>Perla ENARM: \"Número de tomas promedio recomendadas por edad: 0-2 meses: 8-12 o más\".<br><br>Análisis de Distractores: De 3 a 5 tomas (A) y de 4 a 6 tomas (D) son frecuencias insuficientes que predisponen a deshidratación severa, pérdida de peso e hiperbilirrubinemia. De 15 a 20 tomas (B) indicaría una transferencia ineficiente de leche por mala técnica, agotando a la madre.",
+        source: "Un regalo de salud para la vida. Aprendiendo a amamantar y alimentar a mi bebé, 2020, Sección ¡Te esperamos con los brazos abiertos!, Página 43."
+    },
+    {
+        id: 23,
+        question: "Durante el primer trimestre del embarazo, ¿cuál es el ajuste de aumento calórico diario recomendado para una mujer con Índice de Masa Corporal normal?",
+        options: ["Aumento de 300 kilocalorías", "Aumento de 400 kilocalorías", "Aumento de 500 kilocalorías", "Sin requerimiento calórico extra"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Guías Alimentarias para Embarazadas, el desarrollo embriológico inicial no exige un aumento en la ingesta energética. Comer en exceso (\"por dos\") en esta etapa fomenta una adiposidad materna temprana innecesaria.<br><br>Perla ENARM: \"Durante el primer trimestre del embarazo (semanas 1 a 13), no se requieren calorías adicionales\".<br><br>Análisis de Distractores: El aumento de 300 kilocalorías (A) o más suele indicarse en guías internacionales a partir del segundo trimestre. El aumento de 400 kilocalorías (B) es el ajuste normado, pero específicamente para el primer semestre de lactancia materna, no en la gestación temprana.",
+        source: "Recomendaciones para la promoción de la salud en mujeres embarazadas y en periodo de lactancia, 2024, Anexo I, Página 236."
+    },
+    {
+        id: 24,
+        question: "De acuerdo a los hitos del neurodesarrollo infantil de la prueba EDI, ¿a qué edad se espera normativamente que un lactante se siente sin apoyo?",
+        options: ["6 meses", "4 meses", "9 meses", "12 meses"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Primeros 1000 días, la maduración del control axial desciende en dirección céfalo-caudal. A esta edad, el lactante logra suficiente tono en el tronco para mantener la sedestación independiente, hito clave para iniciar la alimentación complementaria.<br><br>Perla ENARM: \"6 MESES: Se da vuelta para ambos lados, se sienta sin apoyo, se mece hacia adelante y atrás en 4 puntos\".<br><br>Análisis de Distractores: A los 4 meses (B), el lactante sostiene la cabeza y se apoya en los codos, pero no logra sedestación autónoma. A los 9 meses (C), el menor ya gatea y se para sosteniéndose. A los 12 meses (D), el infante presenta marcha lateral y primeros pasos independientes.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM): Primeros 1000 días de vida, 2024, Sección VI. Niñas y niños de 28 días a 24 meses, Tabla 8, Página 22."
+    },
+    {
+        id: 25,
+        question: "¿Qué textura o consistencia alimentaria es la indicada al iniciar la alimentación complementaria entre los 6 y 7 meses de edad?",
+        options: ["Líquidos muy diluidos", "Purés o papillas espesas", "Picados finos grumosos", "Trozos enteros grandes"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Niñas y Niños, al iniciar la transición alimentaria, el menor requiere una consistencia suave que sea fácil de deglutir al desaparecer el reflejo de extrusión, pero suficientemente densa (que no escurra) para concentrar calorías y hierro.<br><br>Perla ENARM: \"6 a 7 meses: Papillas o puré. Al iniciar la alimentación complementaria deben ser alimentos en forma de puré... de consistencia espesa\".<br><br>Análisis de Distractores: Los líquidos muy diluidos (A) como caldos carecen de densidad nutricional y llenan la capacidad gástrica inútilmente. Los picados finos grumosos (C) se indican en la siguiente etapa (8 a 12 meses). Los trozos enteros grandes (D) a esta edad temprana elevan letalmente el riesgo de asfixia mecánica.",
+        source: "Recomendaciones para la promoción de la salud en niñas y niños de 0 a 4 años, 2024, Capítulo 1, Página 307."
+    },
+    {
+        id: 26,
+        question: "¿Cuál es el tiempo mínimo ininterrumpido recomendado para mantener el contacto piel a piel inmediatamente después del nacimiento?",
+        options: ["10 minutos mínimos", "20 minutos mínimos", "50 minutos mínimos", "120 minutos mínimos"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Primeros 1000 días, la estabilización de los parámetros fisiológicos, la termorregulación y la liberación óptima de oxitocina materna (para evitar hemorragia) requieren una exposición cutánea prolongada durante la hora dorada.<br><br>Perla ENARM: \"El contacto debe ser directo con la piel, sin toallas o sábanas... se recomienda un tiempo de contacto de al menos 50 minutos\".<br><br>Análisis de Distractores: Los 10 minutos mínimos (A) y 20 minutos mínimos (B) son periodos insuficientes que interrumpen el reconocimiento del pezón y el inicio temprano de la lactancia. Los 120 minutos mínimos (D) rebasan la definición estricta de la primera hora dorada, aunque el contacto prolongado posterior es beneficioso.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM): Primeros 1000 días de vida, 2024, Sección IV. Parto y puerperio seguros, Página 12."
+    },
+    {
+        id: 27,
+        question: "Para cubrir el gasto metabólico durante el primer semestre de lactancia exclusiva, ¿cuál es el incremento calórico diario recomendado para la madre?",
+        options: ["Aumento 200 kilocalorías", "Aumento 300 kilocalorías", "Sin aumento calórico", "Aumento 400 kilocalorías"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Guías Alimentarias para Embarazadas, la producción sostenida de leche requiere un aporte exógeno alto para no comprometer el estado nutricional de la madre, estandarizándose en este valor para todas las categorías de Índice de Masa Corporal.<br><br>Perla ENARM: \"Durante el primer semestre, se recomienda un aumento de 400 kcal para todas las categorías de IMC (1 a 4)\".<br><br>Análisis de Distractores: Un aumento de 200 kilocalorías (A) o 300 kilocalorías (B) condiciona desnutrición materna por déficit energético. Indicar sin aumento calórico (C) restringe los macronutrientes necesarios, alterando la biosíntesis de leche madura.",
+        source: "Recomendaciones para la promoción de la salud en mujeres embarazadas y en periodo de lactancia, 2024, Anexo I, Página 236."
+    },
+    {
+        id: 28,
+        question: "¿Cuál es el tiempo máximo de conservación segura para la leche materna extraída cuando se almacena en el refrigerador a 4 grados centígrados o menos?",
+        options: ["72 horas continuas", "24 horas continuas", "8 horas continuas", "7 días continuos"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Mujeres Embarazadas, bajo la red de frío constante de un refrigerador convencional casero, la leche humana mantiene sus propiedades inmunológicas y previene la proliferación bacteriana patógena por un periodo de tres días exactos.<br><br>Perla ENARM: \"Tipos y tiempos de conservación de leche materna: Refrigerador 4 °C o inferior: Hasta 72 horas\".<br><br>Análisis de Distractores: Las 8 horas continuas (C) corresponden al límite máximo de exposición a temperatura ambiente (19-26°C). Las 24 horas continuas (B) es el periodo de seguridad utilizando una hielera portátil con gel refrigerante. Los 7 días continuos (D) sobrepasan el margen bioseguro de refrigeración simple, requiriendo congelación profunda.",
+        source: "Recomendaciones para la promoción de la salud en mujeres embarazadas y en periodo de lactancia, 2024, Anexo III, Página 268."
+    },
+    {
+        id: 29,
+        question: "¿En qué periodo de vida extrauterina se considera ideal y normativo realizar el tamiz auditivo neonatal?",
+        options: ["Primeras 12 horas", "Primeras 24 a 48 horas", "Entre 72 horas y quinto día", "Exclusivamente al primer mes"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Primeros 1000 días, la identificación temprana de hipoacusia neurosensorial permite intervenir antes del periodo crítico de adquisición del lenguaje. El momento fisiológicamente idóneo para asegurar la limpieza del conducto auditivo de líquido amniótico es el segundo día.<br><br>Perla ENARM: \"Tamiz auditivo: Ideal entre las primeras 24 y 48 horas, antes de los primeros 3 meses de vida\".<br><br>Análisis de Distractores: Las primeras 12 horas (A) pueden dar falsos positivos por detritos en el conducto auditivo externo. Entre 72 horas y el quinto día (C) es el margen estricto para el tamiz metabólico. Esperar exclusivamente al primer mes (D) retrasa la cobertura inicial hospitalaria o de alta temprana sugerida.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM): Primeros 1000 días de vida, 2024, Sección V. Atención a la persona recién nacida, Tabla 4, Página 15."
+    },
+    {
+        id: 30,
+        question: "Para optimizar la absorción intestinal del hierro no hemo presente en las leguminosas, ¿con qué tipo de alimentos deben combinarse en la misma toma?",
+        options: ["Lácteos enteros fortificados", "Cereales refinados procesados", "Alimentos ricos vitamina C", "Suplementos de calcio oral"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Niñas y Niños, el ácido ascórbico funciona como un potente reductor que transforma el hierro férrico de los vegetales en hierro ferroso biodisponible, incrementando drásticamente su absorción duodenal para la prevención de anemia.<br><br>Perla ENARM: \"Combinen leguminosas y verduras de hoja verde con alimentos ricos en vitamina C (jitomate, limón, naranja, etc.) para mejorar el aprovechamiento de nutrientes como el hierro en sus comidas\".<br><br>Análisis de Distractores: Los lácteos enteros fortificados (A) y los suplementos de calcio oral (D) actúan como inhibidores competitivos bloqueando la absorción del hierro. Los cereales refinados procesados (B) no aportan moléculas potenciadoras y carecen de valor nutricional en este contexto.",
+        source: "Recomendaciones para la promoción de la salud en niñas y niños de 0 a 4 años, 2024, Capítulo 1, Página 429."
+    },
+    {
+        id: 31,
+        question: "¿Cuál es la dosis profiláctica de hierro elemental indicada a partir del cuarto mes para lactantes alimentados exclusivamente al seno materno?",
+        options: ["2 miligramos kilogramo día", "6 miligramos kilogramo día", "4 miligramos kilogramo día", "1 miligramo kilogramo día"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Primeros 1000 días, la leche humana contiene poco hierro absoluto. Dado el agotamiento natural de las reservas fetales hacia el segundo semestre, la suplementación base asegura el estado hematopoyético previo al inicio de la ablactación.<br><br>Perla ENARM: \"Hierro: Niñas y niños amamantados a partir del 4to mes y hasta los 12 meses... Dosis profiláctica: 1 mg/Kg/día de hierro elemental\".<br><br>Análisis de Distractores: Las dosis de 2 a 4 miligramos kilogramo día (A y C) son profilácticas pero exclusivas para neonatos prematuros desde la segunda semana. La dosis de 4 a 6 miligramos kilogramo día (B) es estrictamente terapéutica para corregir una anemia ferropénica ya confirmada, no profiláctica.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM): Primeros 1000 días de vida, 2024, Sección VI. Niñas y niños de 28 días a 24 meses, Tabla 7, Página 20."
+    },
+    {
+        id: 32,
+        question: "De acuerdo a las guías alimentarias, ¿cuál es la frecuencia recomendada para el consumo de pescados en mujeres embarazadas o lactantes?",
+        options: ["Al menos un día semana", "Diario sin excepciones", "Exclusivamente cada quince días", "Prohibido durante la gestación"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Guías Alimentarias para Embarazadas, el aporte de ácidos grasos omega 3 contenidos en el pescado favorece el neurodesarrollo fetal. La ingesta controlada de opciones bajas en mercurio garantiza beneficios nutricionales sin toxicidad por metales pesados.<br><br>Perla ENARM: \"Den, de ser posible, pescados como atún, sardina, bonito, salmón, entre otros; al menos un día de la semana\".<br><br>Análisis de Distractores: Consumirlo diario sin excepciones (B) eleva el riesgo de acumulación de metales pesados en el feto. Relegarlo exclusivamente a cada quince días (C) disminuye el impacto del aporte de grasas saludables poliinsaturadas. La restricción o prohibición durante la gestación (D) carece de evidencia clínica actual y fomenta dietas carenciales.",
+        source: "Recomendaciones para la promoción de la salud en mujeres embarazadas y en periodo de lactancia, 2024, Recomendación 4, Página 428."
+    },
+    {
+        id: 33,
+        question: "¿Cuánto tiempo debe esperarse como mínimo para realizar el primer baño en la persona recién nacida con el fin de prevenir hipotermia?",
+        options: ["Primeras 6 horas posteriores", "Esperar 24 horas posteriores", "Inmediatamente tras el parto", "A los 7 días posteriores"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Primeros 1000 días, la estabilización térmica neonatal y la absorción de los péptidos antimicrobianos del vérmix caseoso requieren posponer la inmersión en agua para evitar estrés por frío e hipoglucemia secundaria.<br><br>Perla ENARM: \"Técnica para el baño: recordando esperar 24 horas después de nacer para bañar a la niña o niño\".<br><br>Análisis de Distractores: Bañarlo en las primeras 6 horas posteriores (A) o inmediatamente tras el parto (C) incrementa severamente el riesgo de hipotermia grave interrumpiendo la adaptación transicional. Esperar a los 7 días posteriores (D) retrasa innecesariamente la higiene corporal habitual de egreso en un producto sano.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM): Primeros 1000 días de vida, 2024, Sección V. Atención a la persona recién nacida, Página 14."
+    },
+    {
+        id: 34,
+        question: "Durante la evaluación técnica del amamantamiento, ¿qué característica clínica de los labios del bebé indica un agarre asimétrico correcto?",
+        options: ["Labios hundidos con succión", "Labios invertidos hacia adentro", "Labios evertidos hacia afuera", "Labios tensos con chasquidos"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Aprendiendo a amamantar, el sellado hermético periareolar protege la integridad del pezón materno. La eversión, especialmente del labio inferior, garantiza que la presión negativa se distribuya uniformemente extrayendo la leche profunda sin macerar el tejido.<br><br>Perla ENARM: \"Presta atención a que su agarre sea adecuado, fíjate en... Sus labios están invertidos, o sea están hacia afuera, sobre todo el labio inferior que debe estar bien doblado hacia abajo\".<br><br>Análisis de Distractores: Observar labios hundidos con succión (A) o labios tensos con chasquidos (D) refleja pérdida del vacío intraoral, lo que reduce la transferencia de leche. Los labios invertidos hacia adentro (B) causan fricción mecánica directa y dolor lacerante en el pezón.",
+        source: "Un regalo de salud para la vida. Aprendiendo a amamantar y alimentar a mi bebé, 2020, Sección ¡Te esperamos con los brazos abiertos!, Página 30-31."
+    },
+    {
+        id: 35,
+        question: "¿Con qué frecuencia deben ofrecerse los alimentos de origen animal (carnes, pollo, huevo) a los lactantes que inician ablactación a los 6 meses de edad?",
+        options: ["Una vez por semana", "Cada tercer día", "Solo fines de semana", "Diariamente sin excepción"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Niñas y Niños, al agotarse las reservas endógenas de hierro a los 6 meses, el aporte exógeno proteico de alto valor biológico es vital para prevenir la alta incidencia de anemia en el país que afecta el neurodesarrollo.<br><br>Perla ENARM: \"A los 6 meses incorpora alimentos de origen animal como carne, pollo, huevo o pescado... Le protegen de la anemia y contribuyen a su crecimiento y desarrollo. Ofrécelos diariamente\".<br><br>Análisis de Distractores: Las frecuencias de una vez por semana (A), cada tercer día (B) o solo fines de semana (C) son insuficientes para sostener la acelerada hematopoyesis y el crecimiento de la masa muscular durante el primer año de vida, favoreciendo la aparición de anemia clínica.",
+        source: "Recomendaciones para la promoción de la salud en niñas y niños de 0 a 4 años, 2024, Recomendación 2, Página 287."
+    },
+    {
+        id: 36,
+        question: "¿En qué momento del control prenatal debe ofertarse obligatoriamente la prueba de tamizaje universal para Virus de Inmunodeficiencia Humana y Sífilis?",
+        options: ["Primeras 12 semanas gestación", "Entre 24 y 28 semanas", "Al finalizar el segundo trimestre", "Exclusivamente antes del parto"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Primeros 1000 días, el diagnóstico temprano de infecciones sistémicas permite instaurar el tratamiento antirretroviral o antibiótico profiláctico profiláctico de forma oportuna, reduciendo la transmisión vertical y evitando malformaciones por sífilis congénita.<br><br>Perla ENARM: \"La prueba de tamizaje para VIH y sífilis debe ofertarse en las primeras 12 semanas previa orientación y aceptación de la persona embarazada\".<br><br>Análisis de Distractores: El periodo entre 24 y 28 semanas (B) es específico para la detección metabólica de diabetes gestacional. Al finalizar el segundo trimestre (C) retrasa la ventana óptima de inicio terapéutico. Escrutar exclusivamente antes del parto (D) pierde la oportunidad preventiva de proteger al feto durante la organogénesis.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM): Primeros 1000 días de vida, 2024, Sección III. Embarazo saludable, Página 5."
+    },
+    {
+        id: 37,
+        question: "¿Cuál es la cantidad mínima diaria recomendada de consumo de verduras y frutas frescas durante el embarazo y la lactancia?",
+        options: ["200 gramos diarios", "400 gramos diarios", "150 gramos diarios", "600 gramos diarios"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Guías Alimentarias para Embarazadas, alcanzar este volumen basal asegura el aporte de fibra necesario para prevenir estreñimiento, además de proveer vitaminas (A, C, ácido fólico) cruciales para el crecimiento del tejido fetal sin exceso calórico.<br><br>Perla ENARM: \"La mitad de la población adulta, incluidas las mujeres, consumen menos de la mitad de la cantidad de verduras y frutas que deberían diariamente (400 g al día)\".<br><br>Análisis de Distractores: 200 gramos diarios (A) y 150 gramos diarios (C) representan ingestas seriamente deficientes que merman el aporte vitamínico antioxidante. La cantidad de 600 gramos diarios (D) es excelente, pero el parámetro higiénico-dietético normativo base exigido como meta mínima se establece en 400 gramos.",
+        source: "Recomendaciones para la promoción de la salud en mujeres embarazadas y en periodo de lactancia, 2024, Recomendación 1, Página 144."
+    },
+    {
+        id: 38,
+        question: "¿Cuál es el volumen máximo de leche entera de vaca recomendado al día para evitar desplazamiento de nutrientes en niños de 1 a 2 años?",
+        options: ["Máximo 1000 mililitros diarios", "Libre demanda sin límites", "Máximo 500 mililitros diarios", "Máximo 250 mililitros diarios"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Niñas y Niños, el exceso de lácteos bovinos satura el vaciamiento gástrico inhibiendo el apetito por alimentos sólidos, lo que resulta en dietas hipocalóricas o anemias carenciales (por competencia en la absorción del hierro).<br><br>Perla ENARM: \"No les des más de 500 ml de leche al día (entera, semidescremada o descremada) entre 1 y 2 años. Si toma mucha leche, no querrá comer otras comidas importantes para su salud\".<br><br>Análisis de Distractores: Permitir un máximo 1000 mililitros diarios (A) o a libre demanda sin límites (B) precipitará saciedad prematura frente a las papillas. Un máximo de 250 mililitros diarios (D) es una restricción exagerada en un infante sano con buena tolerancia intestinal a lácteos.",
+        source: "Recomendaciones para la promoción de la salud en niñas y niños de 0 a 4 años, 2024, Capítulo 1, Página 308."
+    },
+    {
+        id: 39,
+        question: "De acuerdo al Índice de Riesgo Obstétrico de Coopland, ¿qué puntaje numérico exacto clasifica a la paciente en la categoría de \"Riesgo Alto\"?",
+        options: ["Mayor o igual 4 puntos", "Mayor o igual 5 puntos", "Mayor o igual 6 puntos", "Mayor o igual 7 puntos"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Primeros 1000 días, este instrumento predictivo valora la suma de edad, paridad, antecedentes y patologías actuales. Alcanzar el umbral máximo correlaciona con la inminencia de mortalidad o secuelas permanentes sin atención de tercer nivel.<br><br>Perla ENARM: \"Las categorías de riesgo acorde con este índice son: Riesgo bajo: 0-3 puntos, Riesgo moderado: 4-6 puntos, Riesgo alto: Mayor o igual a 7 puntos\".<br><br>Análisis de Distractores: Mayor o igual 4 puntos (A), mayor o igual 5 puntos (B) y mayor o igual 6 puntos (C) corresponden estrictamente a los márgenes del riesgo moderado que exige envío al segundo nivel, pero no a la clasificación límite superior de la escala de riesgo alto.",
+        source: "Protocolo Nacional de Atención Médica (PRONAM): Primeros 1000 días de vida, 2024, Sección III. Embarazo saludable, Página 7."
+    },
+    {
+        id: 40,
+        question: "Ante el inicio de dolor severo o presencia de grietas sangrantes en el pezón durante los primeros días de lactancia, ¿cuál es la conducta clínica prioritaria a seguir?",
+        options: ["Buscar experto para evaluar técnica", "Suspender definitivamente lactancia directa", "Extraer exclusivamente con tiraleche", "Aplicar ungüentos antibióticos tópicos"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Aprendiendo a amamantar, el amamantamiento es un acto fisiológico indoloro. La presencia de lesión tisular evidencia indudablemente un agarre superficial o mala alineación del binomio, cuyo origen mecánico debe resolverse sin abandonar el acto de lactar.<br><br>Perla ENARM: \"Si mamá siente mucho dolor, busquen un profesional experto o consejera en lactancia que evalúe la succión del bebé, la postura de su cuerpo y la postura al dar pecho para poder corregir y evitar problemas mayores\".<br><br>Análisis de Distractores: Suspender definitivamente lactancia directa (B) priva al bebé del mejor alimento disponible. Extraer exclusivamente con tiraleche (C) alivia momentáneamente pero no resuelve el defecto posicional original. Aplicar ungüentos antibióticos tópicos (D) está contraindicado sin un proceso infeccioso y retrasa la corrección de la biomecánica de alimentación.",
+        source: "Recomendaciones para la promoción de la salud en mujeres embarazadas y en periodo de lactancia, 2024, Anexo III, Página 201."
+    }
+
+
+        
+        ];
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('1000DIASLastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('1000DIASProgress');
+                localStorage.removeItem('1000DIASLastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-blue-500 shadow-md z-10 border-blue-500 dark:border-blue-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-cyan-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "Primeros 1000 Días de Vida";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "Protocolo Nacional de Atención Médica (PRONAM) - 2026";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="loginlite.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="loginlite.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-blue-100 dark:border-blue-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 dark:has-[:checked]:bg-blue-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('1000DIASProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('1000DIASLastQId', currentQuestionId);
+                else localStorage.removeItem('1000DIASLastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('1000DIASProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

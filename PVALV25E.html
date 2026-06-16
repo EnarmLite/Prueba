@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-cyan-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const questionsData = [
+    {
+        id: 1,
+        question: "Edad máxima excepcional para administrar la vacuna contra tuberculosis en población infantil sin factores de riesgo comprobados.",
+        options: ["12 meses", "3 años", "Menos de 5 años", "14 años"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Vacunación a lo largo de la vida, la vacuna BCG se aplica de forma rutinaria al nacimiento. Sin embargo, en caso de rezago en infantes sanos, el límite de aplicación excepcional es antes de cumplir los 5 años. La extensión hasta los 14 años se reserva únicamente para escenarios con factores de riesgo específicos.<br><br>Perla ENARM: Se podrá vacunar a niñas y niños menores de 5 años y excepcionalmente a menores de 14 años que no hayan sido vacunados.<br><br>Análisis de Distractores: 12 meses es la edad de aplicación de la primera dosis de SRP, no el límite de BCG. 3 años no representa un corte epidemiológico para vacunación primaria en el esquema nacional. 14 años es el límite, pero exclusivo para población en riesgo, no para la población general sin factores documentados.",
+        source: "PRONAM Vacunación a lo largo de la vida, 2025, Sección III (Tabla 1), Página 143."
+    },
+    {
+        id: 2,
+        question: "Edad límite estricta permitida para la administración de la segunda dosis de la vacuna contra rotavirus.",
+        options: ["7 meses y 29 días", "8 meses y 29 días", "6 meses y 29 días", "11 meses y 29 días"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, la vacuna monovalente contra rotavirus (RV1) se administra a los 2 y 4 meses. Debido al incremento del riesgo de intususcepción intestinal en infantes mayores, existe una contraindicación absoluta para aplicar cualquier dosis posterior a esta edad de corte.<br><br>Perla ENARM: Ninguna persona deberá recibir esta vacuna después de los 7 meses con 29 días de edad.<br><br>Análisis de Distractores: 8 meses y 29 días supera el límite de seguridad comprobado en ensayos clínicos para evitar la intususcepción. 6 meses y 29 días es incorrecto; aún existe un mes de margen operativo para la aplicación rezagada. 11 meses y 29 días es el límite de edad para la dosis cero de sarampión en bloqueos, no aplicable a rotavirus.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.2.2, Página 38."
+    },
+    {
+        id: 3,
+        question: "Tiempo máximo que puede utilizarse un frasco multidosis abierto de vacuna contra influenza estacional, asumiendo estrictas medidas de asepsia y temperatura óptima.",
+        options: ["6 horas", "12 horas", "14 días", "28 días"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, la política de frascos abiertos establece que las vacunas líquidas multidosis (inactivadas o toxoides) conservan su potencia y seguridad hasta por cuatro semanas tras su apertura, reduciendo el desperdicio biológico intramuros.<br><br>Perla ENARM: Todos los frascos abiertos de vacunas líquidas en presentación multidosis podrán ser utilizados hasta 28 días después de abierto el frasco.<br><br>Análisis de Distractores: 6 horas es el límite de viabilidad para vacunas liofilizadas (vivas atenuadas) tras su reconstitución, como la SRP. 12 horas no corresponde a ninguna métrica temporal de la red de frío nacional. 14 días es un distractor temporal sin base normativa en la gestión de vacunas multidosis.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.1.3, Página 24."
+    },
+    {
+        id: 4,
+        question: "Edad de inicio para la aplicación de la dosis cero de vacuna contra sarampión, rubéola y parotiditis ante una situación de bloqueo vacunal por contacto confirmado.",
+        options: ["4 meses", "6 meses", "9 meses", "12 meses"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Vacunación a lo largo de la vida, ante un brote o contacto de alto riesgo con sarampión, la inmunidad materna residual decrece significativamente en el segundo semestre de vida. La vacunación adelantada protege a los lactantes expuestos, pero requiere reprogramar el esquema habitual posteriormente.<br><br>Perla ENARM: En situación de brote por sarampión, podrá vacunarse a las niñas y niños de 6 a 11 meses, cuando sean contactos de algún caso confirmado de sarampión.<br><br>Análisis de Distractores: 4 meses es demasiado temprano; los anticuerpos maternos transferidos por la placenta neutralizan la vacuna, haciéndola ineficaz. 9 meses es la edad de aplicación de la vacuna de fiebre amarilla o sarampión en esquemas de otros países, pero el bloqueo en México inicia antes. 12 meses es la edad para la primera dosis del esquema ordinario, no para la intervención extraordinaria de dosis cero.",
+        source: "PRONAM Vacunación a lo largo de la vida, 2025, Sección III (Tabla 4), Página 154."
+    },
+    {
+        id: 5,
+        question: "Recipiente normado para desechar las jeringas utilizadas en la aplicación de la vacuna contra sarampión, rubéola y parotiditis.",
+        options: ["Recipiente rígido rojo", "Bolsa de polietileno transparente", "Bolsa de polietileno roja", "Basurero municipal"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, las jeringas que tuvieron contacto directo con virus vivos atenuados (como SRP, SR, BCG, varicela) se consideran residuos biológico-infecciosos con riesgo de transmisión, por lo que su disposición final requiere inactivación o incineración especializada.<br><br>Perla ENARM: Las jeringas usadas para la aplicación de vacunas virales o bacterianas atenuadas se deben desechar en bolsa de polietileno roja.<br><br>Análisis de Distractores: Recipiente rígido rojo está destinado exclusivamente para materiales punzocortantes (agujas), no para el cuerpo de la jeringa. Bolsa de polietileno transparente se utiliza para frascos de vacunas inactivadas o jeringas usadas en la aplicación de estas últimas. Basurero municipal solo recibe frascos de vacunas inactivadas o jeringas que no tuvieron contacto con atenuados.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.1.4 (Cuadro 3), Página 27."
+    },
+    {
+        id: 6,
+        question: "Dosis y esquema recomendado de la vacuna contra hepatitis B para pacientes con enfermedad renal crónica en terapia de hemodiálisis.",
+        options: ["10 mcg en 3 dosis a los 0, 1 y 6 meses", "40 mcg en 3 dosis a los 0, 1 y 6 meses", "20 mcg en 2 dosis a los 0 y 1 mes", "40 mcg en 2 dosis a los 0 y 1 mes"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Vacunación a lo largo de la vida, los pacientes inmunosuprimidos y en hemodiálisis presentan menor tasa de seroconversión inmunológica. Por ello, requieren una macrodosis (el cuádruple de la pediátrica o el doble de la estándar de adulto) para lograr una respuesta celular y humoral efectiva.<br><br>Perla ENARM: Personas con diálisis o hemodiálisis: 2 mL (40 mcg) intramuscular, tres dosis al momento 0, 1 y 6 meses.<br><br>Análisis de Distractores: 10 mcg en 3 dosis es el esquema primario para infantes o adolescentes sanos. 20 mcg en 2 dosis es el esquema alternativo acelerado para adolescentes y adultos sanos sin antecedente vacunal. 40 mcg en 2 dosis es un esquema incompleto que no garantiza la memoria inmunológica a largo plazo en pacientes con falla renal.",
+        source: "PRONAM Vacunación a lo largo de la vida, 2025, Sección III (Tabla 3), Página 149."
+    },
+    {
+        id: 7,
+        question: "Semana de gestación a partir de la cual está indicada la aplicación de la vacuna contra tétanos, difteria y tos ferina acelular en cada embarazo.",
+        options: ["12", "16", "24", "20"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, la transferencia transplacentaria de anticuerpos IgG maternos contra la toxina pertussis se optimiza a partir de la segunda mitad del embarazo. Esto confiere inmunidad pasiva a la persona recién nacida durante los primeros meses críticos antes de iniciar su propio esquema.<br><br>Perla ENARM: Aplicar una dosis de Tdpa a partir de la semana 20 de edad gestacional (preferentemente entre la 27 a 36 semanas de gestación).<br><br>Análisis de Distractores: 12 semanas es el fin del primer trimestre; la transferencia de anticuerpos no es óptima y se reserva este periodo para evitar asociaciones con pérdidas gestacionales tempranas. 16 semanas es prematuro respecto a la cinética de transporte activo transplacentario de IgG. 24 semanas es una ventana útil, pero la indicación normativa de inicio es a partir de la semana 20.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.2.3 (Cuadro 8), Página 41."
+    },
+    {
+        id: 8,
+        question: "Esquema indicado de la vacuna contra el virus del papiloma humano en personas de 11 a 49 años que viven con el virus de la inmunodeficiencia humana.",
+        options: ["3 dosis a los 0, 2 y 6 meses", "Dosis única", "2 dosis a los 0 y 6 meses", "3 dosis a los 0, 1 y 6 meses"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Vacunación a lo largo de la vida, la disfunción linfocitaria en pacientes con VIH compromete la capacidad de generar títulos protectores de anticuerpos duraderos contra antígenos similares a virus (VLPs). Por lo tanto, el esquema requiere tres exposiciones al biológico independientemente del conteo de CD4+.<br><br>Perla ENARM: A personas de 11 a 49 años que viven con VIH, se les aplicarán 3 dosis de 0.5 mL intramuscular con intervalo de 0-2-6 meses.<br><br>Análisis de Distractores: Dosis única es el esquema actual estandarizado en la población general para niñas de quinto grado o de 11 años. 2 dosis a los 0 y 6 meses fue el esquema transitorio para población adolescente sana previo a la actualización monodosis. 3 dosis a los 0, 1 y 6 meses corresponde a la pauta de la vacuna contra la Hepatitis B, no VPH.",
+        source: "PRONAM Vacunación a lo largo de la vida, 2025, Sección III (Tabla 6), Página 160."
+    },
+    {
+        id: 9,
+        question: "Intervalo mínimo requerido entre la aplicación de la vacuna contra varicela y la vacuna contra sarampión, rubéola y parotiditis en caso de no administrarse de forma simultánea.",
+        options: ["2 semanas", "8 semanas", "4 semanas", "6 semanas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, la administración asincrónica de dos vacunas virales vivas atenuadas parenterales en un periodo corto induce interferencia viral e inhibición de la respuesta inmune mediada por interferón, reduciendo la eficacia de la segunda vacuna.<br><br>Perla ENARM: Las vacunas de antígenos atenuados pueden administrarse de forma simultánea; cuando no es posible, el intervalo mínimo de aplicación entre cada una es de 4 semanas.<br><br>Análisis de Distractores: 2 semanas es un intervalo insuficiente que resulta en la inactivación o mala respuesta de la segunda vacuna por el estado antiviral sistémico. 8 semanas es el intervalo mínimo entre dosis primarias de antineumocócica conjugada en mayores de un año, no aplica para SRP/Varicela. 6 semanas no está justificado fisiopatológicamente ni normado para separación de virales atenuadas parenterales.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.1.6, Página 32."
+    },
+    {
+        id: 10,
+        question: "Edad límite máxima permitida para la aplicación de la dosis de refuerzo de la vacuna contra difteria, tos ferina y tétanos.",
+        options: ["4 años, 11 meses y 29 días", "6 años, 11 meses y 29 días", "5 años, 11 meses y 29 días", "7 años, 11 meses y 29 días"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Vacunación a lo largo de la vida, la vacuna DPT contiene células enteras de Bordetella pertussis que causan alta reactogenicidad sistémica y neurológica en niños mayores. Pasando este límite, el componente de células enteras representa un riesgo inaceptable de encefalopatía o hipertermia severa.<br><br>Perla ENARM: En aquellos casos en los que no se reciba a los 4 años, la edad de aplicación no debe sobrepasar los 6 años, 11 meses y 29 días.<br><br>Análisis de Distractores: 4 años, 11 meses y 29 días corresponde al límite inferior recomendado, pero no al techo máximo para la recuperación de esquemas. 5 años, 11 meses y 29 días es la edad límite estricta para la hexavalente o para completar los esquemas primarios rezagados de otras vacunas de la primera infancia. 7 años, 11 meses y 29 días supera la restricción de reactogenicidad encefálica del componente de tosferina celular.",
+        source: "PRONAM Vacunación a lo largo de la vida, 2025, Sección III (Tabla 3), Página 146."
+    },
+    {
+        id: 11,
+        question: "Tiempo máximo de viabilidad para utilizar la vacuna contra sarampión, rubéola y parotiditis tras su reconstitución.",
+        options: ["6 horas", "4 horas", "8 horas", "12 horas"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, la estabilidad térmica de las vacunas virales vivas liofilizadas decrece estrepitosamente al mezclarse con el diluyente, lo que incrementa el riesgo de contaminación bacteriana y pérdida del título viral por fotodegradación.<br><br>Perla ENARM: Las vacunas liofilizadas como BCG, varicela, SR y SRP, podrán ser utilizadas hasta 6 horas después de reconstituidas o al finalizar la jornada de trabajo, lo que ocurra primero.<br><br>Análisis de Distractores: 4 horas es el límite exclusivo para la vacuna BCG de la cepa Tokio, debido a su extrema termolabilidad. 8 horas es el tiempo habitual de una jornada completa, pero excede el límite de bioseguridad del liofilizado reconstituido. 12 horas compromete tanto la viabilidad del virus como la seguridad por nula adición de conservadores en el diluyente.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.1.3, Página 24."
+    },
+    {
+        id: 12,
+        question: "Plazo máximo normado para realizar la notificación inmediata de un evento supuestamente atribuible a la vacunación o inmunización clasificado como grave.",
+        options: ["48 horas", "72 horas", "12 horas", "24 horas"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, la presentación de un ESAVI que pone en peligro la vida, causa invalidez, prolonga la hospitalización o desencadena la muerte exige un protocolo rápido de contención, investigación clínica y recolección de pruebas de calidad.<br><br>Perla ENARM: ESAVI grave debe notificarse de manera inmediata en las primeras 24 horas posterior al conocimiento por la unidad de salud.<br><br>Análisis de Distractores: 48 horas es el margen permitido para los ESAVI no graves (eventos locales, febrícula), que no alteran drásticamente la salud pública ni requieren hospitalización inminente. 72 horas implica una demora epidemiológica severa ante la posibilidad de un lote contaminado o defecto de programación. 12 horas es un límite logísticamente difícil de estandarizar en todos los niveles operativos del sector salud nacional.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.5, Página 53."
+    },
+    {
+        id: 13,
+        question: "Esquema de revacunación estandarizado con la vacuna antineumocócica conjugada en población sana de 60 años y más.",
+        options: ["Cada 5 años", "Refuerzo anual", "No requiere revacunación", "Cada 10 años"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, la administración de la vacuna conjugada en la adultez mayor genera un reclutamiento dependiente de linfocitos T, induciendo una respuesta anamnésica y memoria de largo plazo altamente superior a la vacuna polisacárida.<br><br>Perla ENARM: Se deberá aplicar una dosis de 0.5 mL intramuscular a la población de 60 años y más que no cuenten con antecedente vacunal. No se requiere revacunación.<br><br>Análisis de Distractores: Cada 5 años correspondía a la indicación histórica de revacunación con la vacuna polisacárida 23 valente por agotamiento de anticuerpos, hoy en desuso. Refuerzo anual es la directriz específica para la vacuna de influenza estacional. Cada 10 años es la pauta estandarizada para la reactivación de toxoides tetánico y diftérico (Td).",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.2.4, Página 48."
+    },
+    {
+        id: 14,
+        question: "Periodo de gestación exacto recomendado para la administración de la vacuna contra el virus sincitial respiratorio en personas embarazadas.",
+        options: ["20 a 26 semanas", "32 a 36 semanas", "27 a 36 semanas", "28 a 32 semanas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, la cinética óptima para la generación de un título materno elevado y el transporte transplacentario máximo de anticuerpos protectores contra el VSR hacia el feto se logra administrando el biológico al inicio del tercer trimestre avanzado.<br><br>Perla ENARM: Se deberá aplicar una dosis de 0.5 mL vía intramuscular en personas embarazadas entre las semanas 32 a 36 del embarazo.<br><br>Análisis de Distractores: 20 a 26 semanas es el margen temprano para el inicio de aplicación de la vacuna Tdpa. 27 a 36 semanas es el periodo de oro preferente para inmunizar contra tos ferina, pero es demasiado amplio para el VSR. 28 a 32 semanas es el punto de control primario donde se aplican otras intervenciones como gammaglobulina anti-D, no VSR.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.2.4, Página 48."
+    },
+    {
+        id: 15,
+        question: "Momento indicado para la aplicación de la primera dosis de vacuna contra hepatitis B en personas recién nacidas con un peso menor a 1,500 gramos.",
+        options: ["Primeras 24 horas", "A los 7 días", "A los 14 días", "Entre 6 y 8 semanas"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Vacunación a lo largo de la vida, los prematuros extremos o neonatos con bajo peso crítico presentan una inmadurez profunda del sistema linfoide, lo que disminuye drásticamente la seroconversión de las vacunas recombinantes aplicadas inmediatamente al nacer.<br><br>Perla ENARM: Los recién nacidos pretérmino (<29 semanas de edad gestacional) o con peso <1,500 gramos deberán vacunarse entre las 6-8 semanas de vida.<br><br>Análisis de Distractores: Primeras 24 horas es la meta epidemiológica estándar para neonatos con peso ≥ 2,000 g para bloquear la transmisión vertical. A los 7 días es el límite extemporáneo máximo para neonatos de término sanos en la etapa neonatal precoz. A los 14 días no tiene un sustento de maduración inmunológica para este grupo vulnerable.",
+        source: "PRONAM Vacunación a lo largo de la vida, 2025, Sección III (Tabla 3), Página 148."
+    },
+    {
+        id: 16,
+        question: "Sitio anatómico normado para la administración intramuscular de la vacuna hexavalente acelular en lactantes menores de 18 meses.",
+        options: ["Muslo derecho", "Muslo izquierdo", "Brazo derecho", "Brazo izquierdo"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, la masa muscular del tercio medio de la cara anterolateral externa del muslo es la única con volumen suficiente en lactantes para absorber vacunas combinadas y reactogénicas de 0.5 mL sin dañar estructuras nerviosas. Se asigna el derecho para estandarizar el registro y monitoreo local de ESAVIs.<br><br>Perla ENARM: Se deberán aplicar 3 dosis de 0.5 mL, vía intramuscular en el tercio medio de la cara anterolateral externa del muslo derecho en menores de 18 meses de edad.<br><br>Análisis de Distractores: Muslo izquierdo está asignado universalmente para la administración de la vacuna anti hepatitis B y la vacuna contra influenza. Brazo derecho solo se utiliza a partir de los 18 meses para neumocócica o en mayores de 11 años para hepatitis B. Brazo izquierdo se reserva de forma estandarizada en el programa nacional para la hexavalente del año y medio (refuerzo) o SRP.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.2.2, Página 37."
+    },
+    {
+        id: 17,
+        question: "Conducta operativa indicada ante un infante que acude a la unidad médica con un esquema de vacunación primario interrumpido e incompleto.",
+        options: ["Reiniciar el esquema desde la primera dosis", "Aplicar dosis doble de recuperación", "Continuar esquema sin reiniciar", "Solicitar serología cuantitativa previa"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, la memoria inmunológica celular se consolida con cada antígeno presentado, sin importar prolongaciones temporales extremas entre dosis. Reiniciar expone al paciente a sobredosificación antigénica y reactogenicidad innecesaria.<br><br>Perla ENARM: Es importante recordar que los esquemas incompletos no deben reiniciarse, se deben continuar en el momento en que se interrumpió la aplicación de este hasta completar el esquema de vacunación.<br><br>Análisis de Distractores: Reiniciar el esquema es una práctica prohibida por elevar drásticamente los eventos adversos locales sin beneficio adicional en títulos. Aplicar dosis doble transgrede la norma de farmacovigilancia y genera reactogenicidad sin potenciar los linfocitos de memoria. Solicitar serología cuantitativa es inviable, costoso y retrasaría la protección comunitaria mediante oportunidades perdidas.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.1.8, Página 34."
+    },
+    {
+        id: 18,
+        question: "Evento supuestamente atribuible a la vacunación o inmunización grave y específico asociado históricamente a la vacuna contra rotavirus.",
+        options: ["Síndrome de Guillain-Barré", "Choque anafiláctico", "Encefalitis aguda", "Intususcepción intestinal"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Vacunación a lo largo de la vida, la diseminación intestinal de las cepas atenuadas de rotavirus promueve hipertrofia del tejido linfoide asociado a mucosas (placas de Peyer), actuando fisiopatológicamente como un punto de guía anatómico que favorece la invaginación del asa.<br><br>Perla ENARM: Reacciones graves: Rotavirus, Intususcepción: ~1: 20,000.<br><br>Análisis de Distractores: Síndrome de Guillain-Barré tiene un ligero aumento de riesgo asociado a algunas cepas de influenza estacional, no a rotavirus. Choque anafiláctico es el riesgo generalizado por componentes o conservadores de cualquier biológico, pero no el característico de esta vacuna oral. Encefalitis aguda se ha documentado infrecuentemente como reacción cruzada con cepas virales sistémicas, como el sarampión silvestre.",
+        source: "PRONAM Vacunación a lo largo de la vida, 2025, Sección III (Tabla 9), Página 168."
+    },
+    {
+        id: 19,
+        question: "Sitio anatómico normado para la administración de la vacuna contra influenza estacional en lactantes de 6 a 18 meses de edad.",
+        options: ["Muslo izquierdo", "Muslo derecho", "Brazo izquierdo", "Brazo derecho"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, para diferenciar reacciones locales y garantizar absorción en volumen muscular, el plan sectorial de aplicación divide las extremidades. La primovacunación de influenza en la etapa lactante va siempre al muslo contralateral a las vacunas pentavalentes o neumocócicas.<br><br>Perla ENARM: La vía de aplicación es intramuscular, en el tercio medio de la cara anterolateral externa del muslo izquierdo, para menores de 18 meses de edad.<br><br>Análisis de Distractores: Muslo derecho está reservado rígidamente para vacunas bacterianas conjugadas o combinadas pediátricas (hexavalente, neumocócica). Brazo izquierdo (región deltoidea) se autoriza normativamente para influenza solo en personas mayores de 18 meses de edad con desarrollo muscular adecuado. Brazo derecho es sitio de neumococo para mayores, no de influenza de infantes.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.2.2, Página 38."
+    },
+    {
+        id: 20,
+        question: "Tiempo máximo de almacenamiento de los productos biológicos permitido estrictamente en el nivel local o unidad médica de la cadena de frío.",
+        options: ["1 mes", "3 meses", "4 meses", "9 meses"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, la dinámica logística de la red de frío limita los tiempos de almacenamiento en escalada inversa para prevenir fallos mecánicos y termolabilidad en puntos periféricos de alta rotación. Las unidades aplicativas finales deben rotar inventarios trimestralmente.<br><br>Perla ENARM: El tiempo máximo de almacenamiento en Nivel local o zonal es de 3 meses.<br><br>Análisis de Distractores: 1 mes es un margen de operación para inventarios pequeños, pero no el límite máximo establecido por la norma. 4 meses corresponde al tiempo normado de permanencia en el nivel jurisdiccional/distrital previo a la entrega local. 9 meses es el límite temporal otorgado macro-logísticamente en el nivel estatal o delegacional (cámaras frías de gran capacidad).",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.1.2.1, Página 23."
+    },
+    {
+        id: 21,
+        question: "Rango de temperatura estandarizado normativamente para la conservación de biológicos en todos los niveles de la red de frío.",
+        options: ["Entre 0 °C y +8 °C", "Entre +2 °C y +8 °C", "Entre +4 °C y +12 °C", "Entre -15 °C y -25 °C"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, la viabilidad de las vacunas depende de una cadena de frío estricta. La temperatura óptima de refrigeración previene la inactivación térmica de los antígenos atenuados y la degradación por congelación de los adyuvantes en vacunas inactivadas.<br><br>Perla ENARM: \"En todos los niveles de almacenamiento y durante su traslado, las vacunas deberán conservarse a temperatura de refrigeración (+2 °C a +8 °C).\"<br><br>Análisis de Distractores: Entre 0 °C y +8 °C expone las vacunas al punto de congelación, destruyendo irreversibles los enlaces de aluminio en vacunas conjugadas o toxoides. Entre +4 °C y +12 °C supera el margen de seguridad, acelerando la pérdida de potencia antigénica. Entre -15 °C y -25 °C es el rango de congelación, normado exclusivamente para vacunas específicas como polio oral (Sabin) en niveles macro-logísticos, no para la refrigeración universal.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.1.2.1, Página 23."
+    },
+    {
+        id: 22,
+        question: "Disposición final normada para los frascos vacíos o sobrantes de vacunas inactivadas y recombinantes en la unidad médica.",
+        options: ["Contenedor rígido rojo", "Bolsa de polietileno roja", "Incineración interna", "Bolsa transparente en basurero municipal"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, los frascos de vacunas inactivadas (toxoides, recombinantes o polisacáridos) carecen de agentes vivos capaces de replicarse o causar infección, por lo que no cumplen los criterios normativos de un residuo peligroso biológico-infeccioso (RPBI).<br><br>Perla ENARM: \"Frascos de vacunas inactivadas o recombinantes, así como jeringas usadas para su aplicación, se desecharán en bolsa de cualquier color excepto roja o amarilla, para el basurero municipal.\"<br><br>Análisis de Distractores: Contenedor rígido rojo es exclusivo para elementos punzocortantes (agujas). Bolsa de polietileno roja se reserva estrictamente para material expuesto a patógenos vivos (frascos o jeringas de vacunas atenuadas). Incineración interna no es un procedimiento autorizado ni necesario para material inerte sin riesgo biológico.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.1.4 (Cuadro 3), Página 27."
+    },
+    {
+        id: 23,
+        question: "Edad de aplicación indicada para la segunda dosis del esquema actualizado de la vacuna contra sarampión, rubéola y parotiditis en niñas y niños nacidos a partir de julio de 2020.",
+        options: ["4 años", "6 años", "18 meses", "12 meses"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, la modificación del esquema basal busca acortar la ventana de vulnerabilidad epidemiológica (falla primaria de la primera dosis) ante la amenaza de brotes importados. Las cohortes recientes completan su esquema a los 18 meses, logrando inmunidad de rebaño temprana.<br><br>Perla ENARM: \"La segunda dosis de SRP a los 18 meses aplica solo para niñas y niños nacidos a partir de julio de 2020.\"<br><br>Análisis de Distractores: 4 años es la edad normada para la aplicación del refuerzo de DPT, no de SRP. 6 años era la edad tradicional de la segunda dosis, pero esta directriz se mantendrá vigente únicamente para cohortes nacidas antes de julio de 2020. 12 meses corresponde a la aplicación de la primera dosis del esquema primario, no al refuerzo.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.2.1 (Cuadro 6), Página 35."
+    },
+    {
+        id: 24,
+        question: "Intervalo mínimo estandarizado que debe respetarse entre la aplicación de dos vacunas compuestas por antígenos inactivados si no se administraron simultáneamente.",
+        options: ["Ninguno", "2 semanas", "4 semanas", "8 semanas"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, las vacunas inactivadas, al no poseer capacidad replicativa, no compiten por el aclaramiento viral ni estimulan un estado de resistencia sistémica mediada por interferón, por lo que su absorción y procesamiento antigénico es independiente.<br><br>Perla ENARM: \"Las vacunas de antígenos inactivados pueden administrarse simultáneamente o con cualquier intervalo con otra vacuna de antígenos inactivados o atenuados.\"<br><br>Análisis de Distractores: 2 semanas no tiene sustento en la cinética de las vacunas inactivadas. 4 semanas es el intervalo mínimo requerido para administrar vacunas parenterales de antígenos virales atenuados de forma asincrónica, para evitar interferencia. 8 semanas es el intervalo entre dosis primarias de algunas vacunas, pero no la regla de separación temporal inter-biológico.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.1.6, Página 32."
+    },
+    {
+        id: 25,
+        question: "Práctica operativa de alto riesgo que está estrictamente prohibida en la extracción repetida de dosis de los frascos de vacunas multidosis.",
+        options: ["Almacenar el frasco a +5 °C", "Etiquetar la fecha y hora de apertura", "Uso de aguja piloto en el tapón", "Conservar el frasco por 28 días"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, dejar una aguja permanente atravesando el elastómero del frasco para facilitar la extracción rompe la barrera estéril y crea un conducto directo para la inoculación de microorganismos ambientales, alterando además la presión interna del vial.<br><br>Perla ENARM: \"Se considera una práctica insegura el uso de aguja piloto ya que puede contribuir a la reducción de la efectividad de la vacuna y desarrollo de microorganismos. Está prohibida.\"<br><br>Análisis de Distractores: Almacenar a +5 °C es la indicación normativa de la red de frío, no una prohibición. Etiquetar la fecha de apertura es obligatorio para la trazabilidad de la política de frascos abiertos. Conservar el frasco hasta 28 días es seguro y respaldado por normatividad para vacunas multidosis líquidas no atenuadas.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.1.3, Página 25."
+    },
+    {
+        id: 26,
+        question: "Condición laboral estricta bajo la cual el personal de salud es candidato a recibir una dosis única de vacuna contra tétanos, difteria y tos ferina acelular.",
+        options: ["Todo el personal hospitalario", "Contacto cotidiano con menores de 1 año", "Cirujanos y anestesiólogos", "Técnicos laboratoristas en virología"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, la estrategia del \"capullo\" (cocooning) en el ámbito hospitalario requiere inmunizar con componente pertússico acelular (Tdpa) a quienes interactúan de forma directa con lactantes vulnerables, interrumpiendo la cadena de transmisión de Bordetella pertussis.<br><br>Perla ENARM: \"Personal de salud en contacto con menores de 1 año, incluido el personal de salud, de guarderías y centros de acogida: aplicar dosis única cuando no cuenten con antecedente vacunal de Tdpa.\"<br><br>Análisis de Distractores: Todo el personal recibe vacuna Td convencional y anti-Hepatitis B; la indicación de Tdpa está focalizada epidemiológicamente a servicios de pediatría/neonatología. Cirujanos y anestesiólogos, así como Técnicos laboratoristas requieren Td, Hepatitis B, Influenza y COVID-19 como base, pero no Tdpa rutinaria a menos que estén asignados a neonatología.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.2.5 (Cuadro 10), Página 49."
+    },
+    {
+        id: 27,
+        question: "Esquema primario de la vacuna Doble Viral en personas de 10 a 49 años de edad sin antecedente documentado de vacunación.",
+        options: ["Dos dosis con intervalo de 4 semanas", "Dosis única", "Tres dosis a los 0, 1 y 6 meses", "Dos dosis con intervalo de 6 meses"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, ante la ausencia de registro de inmunidad primaria inducida en la infancia, la inducción de células B de memoria contra sarampión y rubéola requiere una exposición seriada estandarizada. La vacuna SR asegura la protección frente al fallo vacunal primario potencial de una dosis aislada.<br><br>Perla ENARM: \"Personas de 10 a 49 años en quienes no se cuente con documentación de esquema previo de SR o SRP, aplicar 2 dosis de 0.5 mL, cada una, con intervalo mínimo de 4 semanas.\"<br><br>Análisis de Distractores: Dosis única es la indicación para personas en este rango de edad que sí tienen antecedente documentado de haber recibido al menos una dosis previa de SR o SRP en la vida. Tres dosis a los 0, 1 y 6 meses es el esquema para rescate de Hepatitis B o VPH en inmunosuprimidos, no para SR. Dos dosis con intervalo de 6 meses es el esquema de la vacuna contra VPH poblacional.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.2.3, Página 44."
+    },
+    {
+        id: 28,
+        question: "Tiempo exacto de desecho de la vacuna contra tuberculosis correspondiente específicamente a la cepa Tokio tras su reconstitución.",
+        options: ["6 horas", "8 horas", "12 horas", "4 horas"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, el liofilizado de bacilos de Calmette-Guérin de la subcepa Tokio es extremadamente frágil frente a variaciones de temperatura y luz ultravioleta. Su termoestabilidad es inferior a otras vacunas liofilizadas, exigiendo una reducción clínica del tiempo operativo permitido para evitar inóculos subóptimos.<br><br>Perla ENARM: \"La vacuna BCG cepa Tokio, la cual podrá ser utilizada solo 4 horas después de ser reconstituida, al término de las cuales, deberá ser desechada.\"<br><br>Análisis de Distractores: 6 horas es el límite de viabilidad aplicable al resto de las vacunas liofilizadas (SRP, SR, Varicela) y para otras cepas de BCG. 8 horas es el equivalente a un turno laboral, pero supera los estándares biológicos de la cepa. 12 horas es un punto de alta fotodegradación y riesgo de contaminación bacteriana inaceptable en liofilizados.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.1.3, Página 25."
+    },
+    {
+        id: 29,
+        question: "Periodo gestacional establecido para el inicio preferente de la vacunación contra la COVID-19 en personas embarazadas para la optimización de protección materno-fetal.",
+        options: ["A partir de la primera semana", "A partir del segundo trimestre", "Durante el puerperio inmediato", "Entre las semanas 32 y 36"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, si bien la vacuna se considera segura, la indicación preferencial en el segundo trimestre previene asociaciones temporales infundadas con abortos espontáneos tempranos, permitiendo una ventana cronológica idónea para la transferencia activa de anticuerpos neutralizantes al feto antes del término.<br><br>Perla ENARM: \"Personas embarazadas en cualquier trimestre del embarazo (preferentemente en el segundo trimestre del embarazo, considerando el beneficio materno-fetal).\"<br><br>Análisis de Distractores: A partir de la primera semana coincide con el primer trimestre, que aunque no está absolutamente contraindicado, no es la etapa preferente de captación para biológicos inyectables (salvo influenza). Durante el puerperio inmediato es una oportunidad de rescate, pero pierde el beneficio principal de protección placentaria pasiva neonatal. Entre las semanas 32 y 36 es el lapso específico para la administración de la vacuna contra el Virus Sincitial Respiratorio (VSR).",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.2.4, Página 47."
+    },
+    {
+        id: 30,
+        question: "Volumen estandarizado por el programa nacional para la aplicación de la dosis de vacuna contra influenza estacional en la población pediátrica a partir de los 6 meses de edad.",
+        options: ["0.25 mL", "1.0 mL", "0.5 mL", "0.1 mL"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, el estándar técnico de dosificación eliminó la diferencia de volumen por edad para optimizar la respuesta inmunogénica y disminuir errores programáticos de dosificación. Todo paciente a partir de los 6 meses recibe el mismo volumen antigénico estandarizado de la formulación tetravalente.<br><br>Perla ENARM: \"Niñas y niños de 6 a 59 meses de edad: dosis de 0.5 mL cada una.\"<br><br>Análisis de Distractores: 0.25 mL era la dosis histórica fraccionada utilizada en menores de 3 años, actualmente en desuso normativo en el territorio mexicano. 1.0 mL es la macrodosis indicada exclusivamente para la vacuna anti hepatitis B en adultos o adolescentes no vacunados (>20 mcg). 0.1 mL es la dosis intradérmica microvolumétrica estricta de la vacuna BCG.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.2.2, Página 38."
+    },
+    {
+        id: 31,
+        question: "Manejo profiláctico estandarizado en una persona adulta que sufre una herida limpia y leve, de la cual se desconoce completamente el esquema de inmunización antitetánica.",
+        options: ["Vacunar con Td y no aplicar inmunoglobulina", "Aplicar inmunoglobulina y diferir vacuna Td", "Vacunar con Td y aplicar inmunoglobulina", "No aplicar vacuna Td ni inmunoglobulina"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, frente a heridas menores y no contaminadas (bajo riesgo de anaerobiosis tisular), la aplicación de la serie primaria de Td es suficiente para inducir niveles protectores de antitoxina. La inmunoglobulina antitetánica se reserva de forma estricta para heridas sucias, penetrantes o necrosadas en esquemas incompletos o desconocidos.<br><br>Perla ENARM: \"En caso de herida limpia leve, con esquema desconocido o menor a 3 dosis: Vacunar con Td; No aplicar inmunoglobulina antitetánica.\"<br><br>Análisis de Distractores: Aplicar inmunoglobulina de forma aislada otorga protección pasiva efímera (semanas) sin generar memoria inmunológica a largo plazo, dejando al paciente vulnerable. Vacunar con Td y aplicar inmunoglobulina es el abordaje mandatario para una herida sucia (contaminada con heces, tierra, proyectiles) en pacientes sin esquema. No aplicar nada sería una negligencia epidemiológica grave ante el riesgo latente de Clostridium tetani.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.2.3 (Cuadro 9), Página 43."
+    },
+    {
+        id: 32,
+        question: "Tiempo de retención estricto y permitido para el almacenamiento temporal de residuos peligrosos biológico-infecciosos (RPBI) generados en una unidad médica Nivel I.",
+        options: ["7 días", "15 días", "48 horas", "30 días"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, los establecimientos Nivel I (unidades hospitalarias de 1 a 5 camas, laboratorios pequeños o clínicas de primer nivel con baja captación) generan un volumen bajo de RPBI. La NOM-087 les otorga un lapso extendido para organizar la recolección externa sin comprometer la bioseguridad del inmueble.<br><br>Perla ENARM: \"El periodo de almacenamiento temporal sujeto al tipo de establecimiento generador: a) Nivel I, máximo 30 días.\"<br><br>Análisis de Distractores: 7 días es el tiempo de tolerancia máximo permitido para el Nivel III (hospitales mayores a 60 camas o gran volumen). 15 días es el periodo normado para el Nivel II (hospitales de 6 a 60 camas). 48 horas no corresponde a ninguna métrica oficial de manejo normativo de RPBI en la norma ecológica.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.1.4.1, Página 28."
+    },
+    {
+        id: 33,
+        question: "Periodo de mantenimiento y revacunación rutinaria con el toxoide tetánico y diftérico (Td) en población adulta que sí cuenta con un esquema primario completo y documentado.",
+        options: ["Cada 5 años", "Refuerzo anual", "Cada 10 años", "Refuerzo único en la vida adulta"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, la longevidad de los títulos de antitoxina generados por la serie primaria hexavalente y refuerzos infantiles DPT tiene una fase de meseta prolongada. El umbral protector declina gradualmente, haciendo necesario un estímulo anamnésico por década para garantizar protección humoral ante lesiones punzocortantes.<br><br>Perla ENARM: \"Personas con esquema completo: Aplicar a partir de los 15 años de edad, con refuerzo cada 10 años.\"<br><br>Análisis de Distractores: Cada 5 años genera sobreexposición antigénica, elevando la incidencia de reacciones locales graves de hipersensibilidad tipo III (reacción de Arthus). Refuerzo anual es exclusivo para vacunas de alta mutación estacional como Influenza, no para toxoides estables. Refuerzo único deja vulnerable al individuo en su etapa de adulto mayor por atrición natural de linfocitos B.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.2.3 (Cuadro 8), Página 41."
+    },
+    {
+        id: 34,
+        question: "Edad estandarizada para la administración de la vacuna de rutina contra la varicela en población infantil institucionalizada.",
+        options: ["Al nacimiento", "12 meses", "18 meses", "4 años"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, la vacuna atenuada contra la varicela se incorpora normativamente para interceptar la transmisión focalizada en niños sanos preescolares, aplicándose simultáneamente con la triple viral, optimizando ventanas operativas.<br><br>Perla ENARM: \"El esquema consiste en 1 dosis de 0.5 mL, vía subcutánea, en niñas y niños de 12 meses de edad que acuden a guarderías o centros de cuidados infantiles.\"<br><br>Análisis de Distractores: Al nacimiento es la indicación de vacunas específicas para bloquear transmisión vertical temprana (BCG, Hepatitis B). 18 meses se reserva para la segunda dosis de SRP, el refuerzo de hexavalente o la vacuna anti Hepatitis A. 4 años es el marcador del refuerzo de la triple bacteriana celular (DPT).",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.2.2, Página 41."
+    },
+    {
+        id: 35,
+        question: "Edad correspondiente en el esquema nacional para administrar la dosis única de la vacuna anti Hepatitis A en población infantil asistente a centros de cuidado infantil.",
+        options: ["18 meses", "12 meses", "6 meses", "4 años"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, la protección temprana contra el virus de transmisión entérica (fecal-oral) es una prioridad en áreas de concentración de lactantes mayores. La inmunización universal en este corte de edad otorga seroconversión efectiva y control de brotes institucionales.<br><br>Perla ENARM: \"Anti hepatitis A: Dosis única de 0.5 mL, vía intramuscular, a niñas y niños de 18 meses de edad.\"<br><br>Análisis de Distractores: 12 meses es el tiempo cronológico para la aplicación concurrente de SRP, Antineumocócica y Varicela. 6 meses es el hito temporal para el cierre del esquema primario de la hexavalente, no para inicio de Hepatitis A. 4 años es el momento del refuerzo de DPT de células enteras.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.2.2, Página 40."
+    },
+    {
+        id: 36,
+        question: "Calibre y longitud correctos de la aguja que debe emplearse para la vía intradérmica en la administración de la vacuna contra tuberculosis.",
+        options: ["25 G x 16 mm", "27 G x 13 mm", "23 G x 25 mm", "22 G x 32 mm"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, la técnica intradérmica exige depositar el biológico estrictamente en la dermis superficial para formar la pápula característica y reclutar macrófagos tisulares. Una aguja fina y corta previene perforaciones profundas que desencadenan abscesos subcutáneos o linfadenitis regional.<br><br>Perla ENARM: \"Vacuna BCG; Vía de administración Intradérmica; Medida de la aguja 27 G x 13 mm.\"<br><br>Análisis de Distractores: 25 G x 16 mm es la aguja intramusuclar estandarizada para vacunar a recién nacidos (como Hepatitis B pediátrica). 23 G x 25 mm es la aguja indicada para inyecciones intramusculares en lactantes y niños (Hexavalente, Neumococo). 22 G x 32 mm es la aguja de longitud extensa normada para adultos con panículo adiposo desarrollado.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.1.5.1 (Cuadro 4), Página 32."
+    },
+    {
+        id: 37,
+        question: "Sitio de inyección estandarizado para la aplicación intramuscular de la vacuna antineumocócica conjugada en infantes de 12 meses de edad.",
+        options: ["Región deltoidea del brazo izquierdo", "Tercio medio del muslo izquierdo", "Región deltoidea del brazo derecho", "Tercio medio de la cara anterolateral externa del muslo derecho"],
+        answer: 3,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, el corte anatómico-fisiológico para transición de la administración de vacunas desde los miembros inferiores hacia los superiores es estrictamente a los 18 meses. Por lo tanto, cualquier biológico intramuscular administrado a los 12 meses aún requiere utilizar el muslo.<br><br>Perla ENARM: \"El sitio anatómico dependerá de cada vacuna. En niñas y niños menores de 18 meses de edad la administración vía intramuscular es en el tercio medio de la cara anterolateral externa del muslo.\"<br><br>Análisis de Distractores: Región deltoidea del brazo izquierdo se usa en mayores de 18 meses o para la aplicación subcutánea de SRP. Muslo izquierdo se asigna universalmente a vacunas sin adyuvantes combinados, como Influenza pediátrica o Hepatitis B neonatal. Brazo derecho está reservado para el Neumococo, pero exclusivamente a partir del corte evolutivo de los 18 meses en adelante.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.2.1.5.1 (Cuadro 4), Página 31."
+    },
+    {
+        id: 38,
+        question: "Meta porcentual mínima establecida por el Programa de Vacunación Universal para coberturas de esquemas completos en población menor de un año de edad.",
+        options: ["Mayor o igual a 90%", "Mayor o igual a 95%", "100% absoluto", "Mayor o igual a 85%"],
+        answer: 0,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, la rectoría en salud pública fija indicadores realistas considerando movilidad, rezagos y condiciones sociales, logrando inmunidad comunitaria efectiva cuando nueve de cada diez infantes logran su batería vacunal primaria ininterrumpida.<br><br>Perla ENARM: \"Alcanzar y mantener el 90% de cobertura de vacunación en el esquema completo para niñas y niños menores de un año de edad y al año de edad.\"<br><br>Análisis de Distractores: Mayor o igual a 95% es la meta fijada para el cálculo individual por cada biológico aislado (cobertura general), no para el esquema integrador completo. 100% es una estimación de cálculo presupuestal administrativo, pero no un estándar de desempeño epidemiológico práctico. Mayor o igual a 85% es una cifra subóptima que expone a las comunidades a micro-brotes de enfermedades erradicables.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección Objetivos, Página 4."
+    },
+    {
+        id: 39,
+        question: "Límite temporal dictado normativamente para la notificación de un conglomerado de eventos supuestamente atribuibles a la vacunación (dos o más ESAVI en una misma clínica).",
+        options: ["48 horas", "72 horas", "24 horas", "7 días"],
+        answer: 2,
+        justification: "Justificación: De acuerdo al PRONAM de Lineamientos Generales del PVU, la aparición simultánea o secuencial de múltiples casos vinculados a un mismo frasco, lote o proveedor señala una probable desviación técnica, de contaminación o falla de la red de frío, constituyendo una emergencia en salud pública de reporte obligatorio inmediato.<br><br>Perla ENARM: \"Conglomerados de ESAVI: notificar a la jurisdicción sanitaria de forma inmediata (en las primeras 24 horas) posterior al conocimiento del conglomerado.\"<br><br>Análisis de Distractores: 48 horas es el tiempo habitual concedido para notificar casos de ESAVI leves aislados, no aplicable a conglomerados. 72 horas compromete la cadena probatoria epidemiológica y expone a más usuarios al riesgo técnico o del biológico. 7 días es un periodo injustificable que anula cualquier medida de mitigación o inmovilización oportuna del biológico.",
+        source: "Lineamientos Generales del Programa de Vacunación Universal, 2026, Sección 5.5, Página 54."
+    },
+    {
+        id: 40,
+        question: "Dictamen clínico para un paciente en hemodiálisis que tras completar un segundo esquema íntegro de macrodosis contra Hepatitis B no logra los títulos protectores serológicos requeridos.",
+        options: ["Iniciar un tercer esquema con 40 mcg", "Considerar no conversor y no vacunar adicionalmente", "Cambiar a vía de administración intradérmica", "Aplicar dosis única de 80 mcg"],
+        answer: 1,
+        justification: "Justificación: De acuerdo al PRONAM de Vacunación a lo largo de la vida, el fenotipo inmunológico de pacientes urémicos presenta anergia de linfocitos T cooperadores. Si el paciente no supera el límite de protección (10 UI/mL) después de seis macrodosis intramusculares en total, se clasifica como una incapacidad de montar respuesta humoral persistente frente a ese antígeno recombinante.<br><br>Perla ENARM: \"Confirmar seroconversión con serología. Si no se logró con un primer esquema, repetir. En caso de no respuesta a un segundo esquema, considerar no conversor y ya no vacunar adicionalmente.\"<br><br>Análisis de Distractores: Iniciar un tercer esquema no modifica el defecto inmunogénico intrínseco del paciente urémico no respondedor. Cambiar a vía intradérmica es una intervención ocasionalmente usada fuera del programa nacional, pero el PRONAM ordena detener la vacunación. Aplicar dosis única de 80 mcg es una sobredosificación experimental empírica sin aval en la normatividad sanitaria mexicana para Hepatitis B.",
+        source: "PRONAM Vacunación a lo largo de la vida, 2025, Sección III (Tabla 3), Página 149."
+    }
+
+
+
+        
+        ];
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('VACAUNLastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('VACAUNProgress');
+                localStorage.removeItem('VACAUNLastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-blue-500 shadow-md z-10 border-blue-500 dark:border-blue-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-cyan-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "Programa de Vacunación Universal (PVU)";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "Protocolo Nacional de Atención Médica (PRONAM) - 2026";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="loginlite.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="loginlite.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-blue-100 dark:border-blue-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 dark:has-[:checked]:bg-blue-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('VACAUNProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('VACAUNLastQId', currentQuestionId);
+                else localStorage.removeItem('VACAUNLastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('VACAUNProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

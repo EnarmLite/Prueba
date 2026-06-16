@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-pink-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const questionsData = [
+    {
+        id: 1,
+        question: "¿Cuál es la dosis de oxitocina intramuscular recomendada para el manejo activo del tercer periodo del parto?",
+        options: ["5 UI", "10 UI", "15 UI", "20 UI"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de atención de emergencia obstétrica, el pilar farmacológico para prevenir la atonía uterina es el uso de uterotónicos inmediatos. La administración intramuscular es segura, rápida y de elección en todos los niveles de atención.<br><br>Perla ENARM: \"Administrar 10 UI de oxitocina por vía intramuscular, es preferido porque es eficaz 2-3 minutos después de la administración, tiene efectos adversos mínimos, y se puede utilizar en todas las mujeres\".<br><br>Análisis de Distractores: La opción A (5 UI) es la dosis que puede utilizarse en infusión en bolo intravenoso lento bajo ciertas directrices, pero no es la dosis estándar IM preventiva. Las opciones C (15 UI) y D (20 UI) exceden la dosis inicial profiláctica recomendada y aumentan el riesgo de efectos adversos cardiovasculares sin beneficio adicional demostrado en prevención primaria.",
+        source: "SS-803-17, Intervenciones de Enfermería Para la Atención de la Emergencia Obstétrica En los Tres Niveles de Atención, 2017, Evidencias y Recomendaciones, Página 34."
+    },
+    {
+        id: 2,
+        question: "¿Cuál es el valor mínimo de proteínas en orina de 24 horas para confirmar el diagnóstico de preeclampsia?",
+        options: ["≥ 300 mg", "≥ 150 mg", "≥ 500 mg", "≥ 1000 mg"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de atención de emergencia obstétrica, la tira reactiva es solo un método de tamizaje; la cuantificación exacta del daño endotelial glomerular requiere recolección cronometrada para evitar falsos positivos por concentración urinaria.<br><br>Perla ENARM: \"El estudio demostró que el estándar de oro requiere una recolección de orina cronometrada, proteinuria significativa mayor de 300 mg/día en 24 horas\".<br><br>Análisis de Distractores: La opción B (≥ 150 mg) es el límite superior normal de excreción de proteínas en población general no gestante. La opción C (≥ 500 mg) no representa un punto de corte diagnóstico inicial. La opción D (≥ 1000 mg) es incorrecta, aunque valores por arriba de 5 g definen criterios de severidad.",
+        source: "SS-803-17, Intervenciones de Enfermería Para la Atención de la Emergencia Obstétrica En los Tres Niveles de Atención, 2017, Evidencias y Recomendaciones, Página 19."
+    },
+    {
+        id: 3,
+        question: "¿Qué valor de índice de choque clasifica a una paciente obstétrica directamente en Código Rojo?",
+        options: ["> 0.5", "> 0.6", "> 0.7", "> 0.8"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de atención de emergencia obstétrica, el índice de choque (frecuencia cardiaca dividida por la presión arterial sistólica) es el mejor predictor temprano de hipovolemia severa antes de la hipotensión franca, ameritando activación del equipo de respuesta inmediata.<br><br>Perla ENARM: \"Signos vitales con cambios graves... Índice de choque > 0.8\".<br><br>Análisis de Distractores: La opción C (> 0.7) corresponde al límite inferior del rango para clasificar a la paciente en Código Amarillo (0.7 a 0.8). Las opciones A y B representan índices de choque dentro de parámetros normales o compensados, sin ameritar activación de emergencia.",
+        source: "SS-803-17, Intervenciones de Enfermería Para la Atención de la Emergencia Obstétrica En los Tres Niveles de Atención, 2017, Anexos, Página 58."
+    },
+    {
+        id: 4,
+        question: "¿En qué periodo se recomienda iniciar dosis bajas de ácido acetilsalicílico en pacientes con factores de riesgo?",
+        options: ["8 a 12 semanas", "20 a 32 semanas", "12 a 28 semanas", "24 a 34 semanas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de atención de emergencia obstétrica, la antiagregación plaquetaria previene el daño endotelial y favorece la invasión trofoblástica adecuada si se inició de manera temprana en el segundo trimestre.<br><br>Perla ENARM: \"El personal de salud deberá recomendar las dosis bajas de aspirina en mujeres con bajo riesgo, iniciando entre las 12 y 28 semanas de gestación.\"<br><br>Análisis de Distractores: La opción A es prematura y no está sustentada por la evidencia principal para remodelación vascular. Las opciones B y D son tardías; iniciar la profilaxis después de la semana 20 reduce drásticamente su eficacia para modificar la fisiopatología placentaria.",
+        source: "SS-803-17, Intervenciones de Enfermería Para la Atención de la Emergencia Obstétrica En los Tres Niveles de Atención, 2017, Evidencias y Recomendaciones, Página 21."
+    },
+    {
+        id: 5,
+        question: "¿Cuál es el primer signo clínico que manifiesta toxicidad por infusión de sulfato de magnesio?",
+        options: ["Pérdida de reflejos osteotendinosos", "Depresión respiratoria", "Paro cardiaco", "Oliguria severa"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de atención de emergencia obstétrica, la hipermagnesemia provoca un bloqueo neuromuscular progresivo. La abolición de los reflejos rotulianos ocurre a niveles de 10 mEq/L, precediendo a complicaciones mortales.<br><br>Perla ENARM: \"La toxicidad del sulfato de magnesio depende en forma proporcional de la dosis/mEq/L administrados, manifestándose mediante la pérdida de los reflejos tendinosos profundos a los 10 mEq/L\".<br><br>Análisis de Distractores: La opción B (depresión respiratoria) ocurre a niveles más altos (15 mEq/L). La opción C (paro cardiaco) es el evento final catastrófico (niveles >15 mEq/L). La opción D (oliguria severa) no es un signo de toxicidad, sino una contraindicación/precaución que incrementa el riesgo de acumular el fármaco, ya que su excreción es renal.",
+        source: "SS-803-17, Intervenciones de Enfermería Para la Atención de la Emergencia Obstétrica En los Tres Niveles de Atención, 2017, Evidencias y Recomendaciones, Página 28."
+    },
+    {
+        id: 6,
+        question: "¿Cuál es la dosis y vía de administración del misoprostol indicada para la prevención de la hemorragia posparto cuando la oxitocina no está disponible?",
+        options: ["400 mcg vía sublingual", "800 mcg vía sublingual", "1000 mcg vía rectal", "600 mcg vía oral"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de atención de emergencia obstétrica, ante la ausencia de primera línea, el misoprostol es una alternativa de profilaxis altamente efectiva gracias a su estabilidad a temperatura ambiente y rápida absorción.<br><br>Perla ENARM: \"El personal de salud durante la gestión de la tercera etapa del parto administrará una sola dosis de misoprostol de 600 mcg vía oral para reducir la hemorragia postparto\".<br><br>Análisis de Distractores: La opción B (800 mcg vía sublingual) es la dosis indicada para el *tratamiento* de la hemorragia posparto establecida, no para prevención. La opción A (400 mcg) se utiliza como complemento de la oxitocina intracirugía, no profilaxis primaria aislada. La opción C (1000 mcg) excede las dosis farmacológicas estandarizadas en obstetricia.",
+        source: "SS-803-17, Intervenciones de Enfermería Para la Atención de la Emergencia Obstétrica En los Tres Niveles de Atención, 2017, Evidencias y Recomendaciones, Página 47."
+    },
+    {
+        id: 7,
+        question: "Durante el control farmacológico de una crisis hipertensiva grave en el embarazo, ¿cuál es el límite mínimo al que se debe descender la presión arterial diastólica?",
+        options: ["70 mmHg", "80 mmHg", "90 mmHg", "100 mmHg"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de atención de emergencia obstétrica, descensos abruptos o excesivos en la tensión arterial comprometen severamente el flujo útero-placentario, generando isquemia y sufrimiento fetal agudo.<br><br>Perla ENARM: \"El personal de salud deberá considerar que no es recomendable reducir la presión arterial sistólica a menos de 120 mmHg y la presión arterial diastólica a menos de 80 mmHg, como objetivo del tratamiento farmacológico\".<br><br>Análisis de Distractores: La opción A (70 mmHg) representa un nivel de hipoperfusión placentaria inminente. Las opciones C (90 mmHg) y D (100 mmHg) son cifras en las que aún persiste riesgo de daño a órgano blanco materno si se asocian a sistólicas elevadas.",
+        source: "SS-803-17, Intervenciones de Enfermería Para la Atención de la Emergencia Obstétrica En los Tres Niveles de Atención, 2017, Evidencias y Recomendaciones, Página 41."
+    },
+    {
+        id: 8,
+        question: "¿Cuál es el periodo mínimo de espaciamiento intergenésico recomendado después de una cesárea?",
+        options: ["6 a 12 meses", "12 a 18 meses", "24 a 36 meses", "18 a 24 meses"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de atención de emergencia obstétrica, el tiempo de cicatrización uterina completa y la recuperación de las reservas nutricionales maternas son fundamentales para evitar complicaciones como rotura uterina o acretismo en gestaciones subsecuentes.<br><br>Perla ENARM: \"El personal de enfermería deberá sensibilizar a la población sobre el espaciamiento entre los embarazo de 18 a 24 meses como mínimo antes del siguiente embarazo sobre todo después de una cesárea\".<br><br>Análisis de Distractores: Las opciones A y B exponen a la paciente a un altísimo riesgo de dehiscencia de histerorrafia. La opción C (24 a 36 meses) es un periodo válido pero excede el \"mínimo\" estricto marcado por la recomendación.",
+        source: "SS-803-17, Intervenciones de Enfermería Para la Atención de la Emergencia Obstétrica En los Tres Niveles de Atención, 2017, Evidencias y Recomendaciones, Página 46."
+    },
+    {
+        id: 9,
+        question: "¿Antes de qué semana de gestación se debe realizar el tratamiento periodontal no quirúrgico para mejorar los resultados perinatales?",
+        options: ["Semana 20", "Semana 24", "Semana 28", "Semana 35"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de atención de emergencia obstétrica, la erradicación de bacteriemias de bajo grado provenientes del tejido periodontal reduce la cascada de respuesta hiperinmune que precipita partos prematuros y daño endotelial (preeclampsia).<br><br>Perla ENARM: \"El personal de salud deberá promover el tratamiento periodontal no quirúrgico... antes de la semana 35 de embarazo, con enfoque a los efectos beneficiosos sobre el peso al nacer y parto a término\".<br><br>Análisis de Distractores: Las opciones A, B y C son semanas en las que es totalmente pertinente realizar el manejo, pero el límite temporal marcado textualmente por la guía para garantizar eficacia medible sobre el nacimiento son las 35 SDG.",
+        source: "SS-803-17, Intervenciones de Enfermería Para la Atención de la Emergencia Obstétrica En los Tres Niveles de Atención, 2017, Evidencias y Recomendaciones, Página 20."
+    },
+    {
+        id: 10,
+        question: "¿Qué rango de presión arterial corresponde a la clasificación de Código Amarillo en el triage obstétrico?",
+        options: ["130/80 a 139/89 mmHg", "140/90 a 159/109 mmHg", "≥ 160/110 mmHg", "≤ 89/50 mmHg"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de atención de emergencia obstétrica, la estratificación visual e inmediata de signos vitales define el grado de urgencia. Las cifras de hipertensión severa o hipotensión franca ameritan Código Rojo, mientras que rangos intermedios permiten una valoración calificada en amarillo.<br><br>Perla ENARM: \"Signos vitales (Código amarillo)... Entre 159/109 mm /Hg y 140/90 mm /Hg\".<br><br>Análisis de Distractores: La opción A es presión arterial limítrofe normal (Código Verde). La opción C (≥ 160/110 mmHg) y la opción D (≤ 89/50 mmHg) son cifras inestables que catalogan directamente en Código Rojo (Emergencia).",
+        source: "SS-803-17, Intervenciones de Enfermería Para la Atención de la Emergencia Obstétrica En los Tres Niveles de Atención, 2017, Anexos, Página 60."
+    },
+    {
+        id: 11,
+        question: "¿Hasta cuántos días después del parto puede presentarse una infección del tracto genital para ser definida como sepsis puerperal?",
+        options: ["10 días", "14 días", "28 días", "42 días"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de atención de emergencia obstétrica, el puerperio patológico abarca todo el periodo de involución anatómica y funcional de los órganos reproductores posterior al alumbramiento.<br><br>Perla ENARM: \"Sepsis Puerperal: Infección del tracto genital que ocurre entre el período transcurrido entre la rotura de membranas o el nacimiento y los 42 días postparto\".<br><br>Análisis de Distractores: Las opciones A, B y C son tiempos más cortos; aunque el riesgo de infección grave (ej. endometritis) es mayor en los primeros 10 días, la definición técnica y legal abarca exactamente los 42 días.",
+        source: "SS-803-17, Intervenciones de Enfermería Para la Atención de la Emergencia Obstétrica En los Tres Niveles de Atención, 2017, Glosario, Página 81."
+    },
+    {
+        id: 12,
+        question: "Para una medición correcta de la presión arterial, ¿qué longitud en relación con la circunferencia del brazo debe tener el brazalete?",
+        options: ["1.0 veces", "1.5 veces", "2.0 veces", "2.5 veces"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de atención de emergencia obstétrica, el uso de brazaletes subdimensionados en pacientes embarazadas (frecuentemente con ganancia ponderal u obesidad) sobrestima falsamente la tensión arterial sistólica y diastólica, conduciendo a diagnósticos e intervenciones iatrogénicas.<br><br>Perla ENARM: \"utilizando un tamaño apropiado de brazalete en el cual la longitud debe ser 1.5 veces la circunferencia del brazo\".<br><br>Análisis de Distractores: La opción A genera una sobreestimación sistólica de hasta 13 mmHg. Las opciones C y D utilizarían brazaletes demasiado largos, lo que puede infraestimar levemente las cifras o dificultar la técnica auscultatoria.",
+        source: "SS-803-17, Intervenciones de Enfermería Para la Atención de la Emergencia Obstétrica En los Tres Niveles de Atención, 2017, Evidencias y Recomendaciones, Página 25."
+    },
+    {
+        id: 13,
+        question: "¿Cuál es la dosis de suplementación de calcio indicada para reducir el riesgo de preeclampsia en pacientes de alto riesgo?",
+        options: ["1 a 2 g/día", "0.5 a 1 g/día", "2 a 3 g/día", "3 a 4 g/día"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de atención de emergencia obstétrica, la suplementación mineral disminuye la hiperreactividad vascular al estabilizar la membrana endotelial, especialmente útil en poblaciones con dietas bajas en este ion.<br><br>Perla ENARM: \"El personal de salud deberá recomendar a las mujeres con bajo riesgo de preeclampsia no restringir la sal en la dieta, tomar suplementos de calcio (1-2.5 g/d)\".<br><br>Análisis de Distractores: La opción B es infraterapéutica para la prevención de trastornos hipertensivos. Las opciones C y D exceden los requerimientos, incrementando el riesgo de nefrolitiasis y distensión gastrointestinal severa.",
+        source: "SS-803-17, Intervenciones de Enfermería Para la Atención de la Emergencia Obstétrica En los Tres Niveles de Atención, 2017, Evidencias y Recomendaciones, Página 20."
+    },
+    {
+        id: 14,
+        question: "¿De cuántos gramos consta el bolo intravenoso inicial de sulfato de magnesio en el esquema de ataque para eclampsia?",
+        options: ["2 g", "10 g", "15 g", "5 g"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de atención de emergencia obstétrica, el esquema endovenoso de Zuspan requiere una rápida impregnación para alcanzar los niveles séricos neuroprotectores (4 a 7 mEq/L) sin llegar a la franja de toxicidad.<br><br>Perla ENARM: \"Dosis de ataque: Comenzar con un bolo endovenoso de 5 g de sulfato de Magnesio... en bolo IV lento, a pasar en 15-20 minutos\".<br><br>Análisis de Distractores: La opción A es insuficiente para cruzar la barrera hematoencefálica y suprimir la actividad convulsiva. La opción B (10 g) corresponde a la dosis de carga utilizada en esquemas exclusivamente intramusculares (Pritchard). La opción C es letal por riesgo de paro respiratorio.",
+        source: "SS-803-17, Intervenciones de Enfermería Para la Atención de la Emergencia Obstétrica En los Tres Niveles de Atención, 2017, Evidencias y Recomendaciones, Página 30."
+    },
+    {
+        id: 15,
+        question: "¿Qué cantidad de proteinuria en recolección de 24 horas es criterio de severidad en los trastornos hipertensivos del embarazo?",
+        options: ["≥ 1 g", "≥ 2 g", "≥ 3 g", "≥ 5 g"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de atención de emergencia obstétrica, aunque la preeclampsia se diagnostica con cifras menores, la pérdida masiva de proteínas refleja un daño renal extenso (endoteliosis glomerular) que dicta el fin del manejo conservador.<br><br>Perla ENARM: \"Con proteinuria de 5 g o más en una colección de orina de 24 horas, por tira reactiva con tres +++ o más\".<br><br>Análisis de Distractores: Las opciones A, B y C confirman el diagnóstico de preeclampsia clásica (todas son >300 mg), pero ninguna de ellas tipifica por sí sola la entidad fisiopatológica como \"severa\".",
+        source: "SS-803-17, Intervenciones de Enfermería Para la Atención de la Emergencia Obstétrica En los Tres Niveles de Atención, 2017, Evidencias y Recomendaciones, Página 26."
+    },
+    {
+        id: 16,
+        question: "Según los criterios de valoración de signos vitales, ¿qué frecuencia cardiaca materna indica la activación inmediata de un Código Rojo?",
+        options: ["> 90 lpm", "> 100 lpm", "> 110 lpm", "> 125 lpm"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de atención de emergencia obstétrica, la taquicardia severa refleja un choque hipovolémico avanzado, sepsis grave o insuficiencia cardiaca aguda.<br><br>Perla ENARM: \"Signos vitales (Código rojo)... Frecuencia cardiaca, menor de 45 o mayor de 125 latidos por minuto (lpm)\".<br><br>Análisis de Distractores: Las opciones A y B son frecuencias normales durante el final del embarazo y el trabajo de parto. La opción C (> 110 lpm) es taquicardia clínica pero no es el valor de corte absoluto que la guía estipula para el Triage Rojo.",
+        source: "SS-803-17, Intervenciones de Enfermería Para la Atención de la Emergencia Obstétrica En los Tres Niveles de Atención, 2017, Anexos, Página 58."
+    },
+    {
+        id: 17,
+        question: "¿A partir de qué volumen de pérdida de sangre en un parto vaginal se define la hemorragia posparto?",
+        options: ["> 300 ml", "> 500 ml", "> 750 ml", "> 1000 ml"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de atención de emergencia obstétrica, esta es la definición técnica operativa clásica; la identificación visual de esta cantidad o mayor detona de inmediato los algoritmos de reposición volumétrica y uso de uterotónicos.<br><br>Perla ENARM: \"Hemorragia Postparto: Es la pérdida de más de 500 ml de sangre después de un parto vaginal\".<br><br>Análisis de Distractores: La opción A es una pérdida sanguínea esperada y fisiológica. La opción D (> 1000 ml) es la definición aplicable estrictamente para nacimientos por vía cesárea o hemorragia posparto \"severa\". La opción C no es un punto de corte.",
+        source: "SS-803-17, Intervenciones de Enfermería Para la Atención de la Emergencia Obstétrica En los Tres Niveles de Atención, 2017, Glosario, Página 11."
+    },
+    {
+        id: 18,
+        question: "¿Cuál es el fármaco bloqueador de canales de calcio vía oral recomendado como primera línea para la hipertensión severa en el embarazo?",
+        options: ["Nifedipino", "Amlodipino", "Diltiazem", "Verapamilo"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de atención de emergencia obstétrica, es imperativo un control ágil de la crisis hipertensiva. Esta dihidropiridina de acción corta (o prolongada) presenta un perfil farmacocinético seguro, relajando el músculo liso arteriolar sin comprometer el flujo placentario.<br><br>Perla ENARM: \"Ensayos controlados demostraron que la hipertensión grave debe ser tratada con fármacos de primera elección como el labetanol intravenoso, nifedipina oral e hidralazina intravenosa\".<br><br>Análisis de Distractores: La opción B (Amlodipino) no está validada por la guía para el manejo agudo en emergencias. Las opciones C y D (Diltiazem, Verapamilo) son no dihidropiridínicos que pueden tener efectos depresores inotrópicos no deseables en este contexto clínico.",
+        source: "SS-803-17, Intervenciones de Enfermería Para la Atención de la Emergencia Obstétrica En los Tres Niveles de Atención, 2017, Evidencias y Recomendaciones, Página 20."
+    },
+    {
+        id: 19,
+        question: "¿Cuál es el antídoto específico que debe administrarse ante la presencia de depresión respiratoria por toxicidad de sulfato de magnesio?",
+        options: ["Gluconato de calcio", "Bicarbonato de sodio", "Flumazenil", "Naloxona"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de atención de emergencia obstétrica, el calcio compite directamente con el magnesio en los canales iónicos del sistema nervioso y muscular, revirtiendo rápidamente el bloqueo neuromuscular peligroso.<br><br>Perla ENARM: \"El profesional de enfermería deberá mantener el monitoreo clínico cuidadoso, con una acción inmediata para detener o reducir los efectos adversos graves del sulfato de magnesio, con el uso de gluconato de calcio como antagonista\".<br><br>Análisis de Distractores: La opción B se usa para acidosis metabólica grave. La opción C revierte benzodiazepinas. La opción D antagoniza opioides. Ninguna de estas sustancias actúa sobre el canal de calcio/magnesio.",
+        source: "SS-803-17, Intervenciones de Enfermería Para la Atención de la Emergencia Obstétrica En los Tres Niveles de Atención, 2017, Evidencias y Recomendaciones, Página 44."
+    },
+    {
+        id: 20,
+        question: "¿Durante cuántas horas posparto debe continuarse la infusión de sulfato de magnesio para prevenir la recurrencia de convulsiones?",
+        options: ["6 horas", "24 horas", "12 horas", "48 horas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de atención de emergencia obstétrica, la irritabilidad del sistema nervioso central persiste en el puerperio inmediato; mantener niveles terapéuticos de magnesio durante este lapso erradica el pico máximo de incidencia de eclampsia posparto.<br><br>Perla ENARM: \"La duración del tratamiento es de 24 horas en total. Las alternativas son continuar hasta 24 horas después del parto\".<br><br>Análisis de Distractores: La opción A es insuficiente para garantizar neuroprotección. La opción C (12 horas) es una alternativa \"a menos que haya una indicación específica para continuar\", pero no es el estándar de seguridad. La opción D prolonga innecesariamente el riesgo de toxicidad e hipotonia muscular materna.",
+        source: "SS-803-17, Intervenciones de Enfermería Para la Atención de la Emergencia Obstétrica En los Tres Niveles de Atención, 2017, Evidencias y Recomendaciones, Página 44."
+    }
+        ];
+
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('ENF4LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('ENF4Progress');
+                localStorage.removeItem('ENF4LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-pink-500 shadow-md z-10 border-pink-500 dark:border-pink-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-pink-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-rose-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "GINECOLOGÍA Y OBSTETRICIA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "GPC SS-803-17 • Intervenciones de enfermería para la atención de la emergencia obstétrica en los tres niveles de atención";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-pink-600 dark:text-slate-400 dark:hover:text-pink-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="EE81117GYOE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-pink-100 dark:border-pink-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-pink-50 has-[:checked]:border-pink-400 dark:has-[:checked]:bg-pink-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-pink-600 dark:hover:bg-pink-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('ENF4Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('ENF4LastQId', currentQuestionId);
+                else localStorage.removeItem('ENF4LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('ENF4Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>
