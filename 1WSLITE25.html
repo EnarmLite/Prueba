@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador ENARM Lite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR: MAPA DE PREGUNTAS -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar en casos o preguntas..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- Rejilla de 280 preguntas continuas -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(38px,1fr))] gap-1.5 p-1"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Simulador
+                </button>
+            </div>
+        </aside>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300" title="Ver Tablero General">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso General -->
+            <div id="progress-container" class="hidden w-full max-w-5xl mx-auto bg-slate-200 dark:bg-slate-800 rounded-full mb-6 mt-0 h-5 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-indigo-600 h-full transition-all duration-500 flex items-center justify-center text-[10px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODALES -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Simulador</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará todo tu progreso y respuestas de los casos. ¿Deseas empezar desde cero?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="finish-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Finalizar Simulador</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">¿Estás seguro de que deseas terminar? Se evaluarán todas tus respuestas y se liberará la justificación médica.</p>
+            <div class="flex gap-3">
+                <button id="cancel-finish" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Seguir contestando</button>
+                <button id="confirm-finish" class="flex-1 py-2 bg-emerald-500 text-white rounded-lg text-sm font-bold hover:bg-emerald-600 transition-colors">Sí, Calificar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const casesData = [
+
+
+
+
+
+
+            {
+                id: 1,
+                caseText: "Mujer de 78 años, diabética e hipertensa. Inicia hace 60 minutos con disnea súbita, fatiga profunda y dolor en maxilar inferior. Ingresa a urgencias francamente diaforética. Signos vitales: TA 85/50 mmHg, FC 112 lpm, FR 28 rpm, SatO2 86% al aire ambiente. Exploración física: plétora yugular ausente. Ruidos cardiacos rítmicos, taquicárdicos, con aparición de un nuevo soplo sistólico en el ápex. Campos pulmonares con estertores crepitantes bilaterales de predominio basal. Electrocardiograma (realizado a los 5 min): ritmo sinusal, elevación del segmento ST de 2 mm en derivaciones DI, aVL, V5 y V6.",
+                source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST.",
+                questions: [
+                    {
+                        question: "¿En qué grupo poblacional la guía exige mantener alta sospecha diagnóstica ante síntomas isquémicos atípicos (equivalentes anginosos) como disnea, fatiga o dolor maxilar, en ausencia de dolor precordial clásico?",
+                        options: [
+                            "Hombres con edad menor a 40",
+                            "Mujeres y pacientes diabéticos",
+                            "Pacientes con insuficiencia renal",
+                            "Jóvenes con tabaquismo intenso"
+                        ],
+                        answer: 1,
+                        justification: "La presentación clínica del infarto agudo es altamente variable. Los síntomas autonómicos o irradiaciones atípicas sin dolor opresivo retroesternal retrasan el diagnóstico y el tratamiento de reperfusión. Se debe realizar escrutinio electrocardiográfico inmediato ante equivalentes isquémicos en poblaciones vulnerables.<br><br><b>Perla ENARM:</b> \"Los síntomas atípicos como dolor en cuello, tórax posterior, maxilar inferior, así como náusea, debilidad y fatiga, son más frecuentes en mujeres que en hombres. Obligatorio tener alta sospecha en mujeres y pacientes diabéticos\".<br><br><b>Análisis de Distractores:</b> Los hombres jóvenes (A y D) suelen presentarse con dolor precordial típico. Los pacientes con falla renal (C) presentan riesgo alto de isquemia, pero la guía resalta de manera prioritaria a las mujeres y diabéticos por el riesgo de neuropatía autonómica silente."
+                    },
+                    {
+                        question: "Basado en los hallazgos electrocardiográficos descritos (elevación del ST en DI, aVL, V5 y V6), ¿cuál es la arteria coronaria primariamente ocluida?",
+                        options: [
+                            "Arteria descendente anterior",
+                            "Arteria coronaria derecha",
+                            "Arteria circunfleja izquierda",
+                            "Tronco coronario principal"
+                        ],
+                        answer: 2,
+                        justification: "El electrocardiograma permite establecer una correlación topográfica precisa para predecir el vaso culpable. La elevación del segmento ST en las derivaciones laterales altas (DI, aVL) y laterales bajas (V5, V6) define el infarto de cara lateral, el cual es irrigado primariamente por la arteria circunfleja.<br><br><b>Perla ENARM:</b> \"Cuadro 5. Localización del infarto y correlación con la arteria afectada: Lateral (DI, aVL, V5, V6) - Circunfleja\".<br><br><b>Análisis de Distractores:</b> La descendente anterior (A) se manifiesta en V1-V4 (cara anterior). La coronaria derecha (B) se correlaciona con la cara inferior (DII, DIII, aVF). El tronco coronario principal (D) produce elevación de aVR con infradesnivel generalizado difuso."
+                    },
+                    {
+                        question: "Due a la hipoxemia documentada (SatO2 86%), usted inicia oxigenoterapia. ¿Cuál es el riesgo fisiopatológico de administrar oxígeno de manera rutinaria a pacientes infartados sin hipoxemia verdadera?",
+                        options: [
+                            "Produce vasodilatación coronaria paradójica",
+                            "Reduce drásticamente la eficacia del fibrinolítico",
+                            "Incrementa el daño miocárdico temprano",
+                            "Favorece la ruptura aguda de pared libre"
+                        ],
+                        answer: 2,
+                        justification: "La hiperoxia en tejido isquémico genera radicales libres de oxígeno y vasoconstricción coronaria, lo que agrava la perfusión tisular paradójicamente. El oxígeno suplementario está estrictamente reservado para pacientes con franca insuficiencia respiratoria aguda o saturaciones demostrables menores a 90%.<br><br><b>Perla ENARM:</b> \"Si el paciente no tiene hipoxia, la utilización de oxígeno suplementario puede incrementar el daño miocárdico temprano y se asocia con un tamaño de infarto mayor a la evaluación a los 6 meses\".<br><br><b>Análisis de Distractores:</b> La opción A es incorrecta porque la hiperoxia genera vasoconstricción. El oxígeno no interfiere con los fibrinolíticos (B) ni influye directamente sobre el riesgo mecánico de ruptura de pared libre (D), que depende de la necrosis transmural."
+                    },
+                    {
+                        question: "Usted decide iniciar terapia anticoagulante sistémica pre-intervención coronaria. Dada la edad de la paciente (78 años), ¿cuál es la directriz exacta para la administración de enoxaparina?",
+                        options: [
+                            "Administrar dosis estándar sin ningún ajuste",
+                            "Omitir exclusivamente el bolo intravenoso inicial",
+                            "Iniciar infusión continua exclusivamente",
+                            "Utilizar fondaparinux como primera línea"
+                        ],
+                        answer: 1,
+                        justification: "El metabolismo y excreción de las heparinas de bajo peso molecular decaen con el envejecimiento, incrementando críticamente el riesgo de hemorragia mayor. En senectos se debe evitar la sobre-anticoagulación inicial sin perder el beneficio antitrombótico.<br><br><b>Perla ENARM:</b> \"Se recomienda enoxaparina sobre heparina no fraccionada. En pacientes > 75 años: No se recomienda dar bolo. Empezar la primera dosis s.c. de 0.75 mg/kg con una máxima de 75 mg por dosis cada 12 h s.c.\".<br><br><b>Análisis de Distractores:</b> La dosis estándar (A) expone a un riesgo inaceptable de sangrado intracraneal. La infusión continua (C) es propia de la heparina no fraccionada. Fondaparinux (D) se prefiere únicamente si se reperfunde con estreptoquinasa, no pre-ICP primaria."
+                    },
+                    {
+                        question: "La paciente presenta choque cardiogénico agudo con un nuevo soplo sistólico en el ápex y franco edema agudo pulmonar. ¿Qué complicación mecánica post-infarto debe corroborarse urgentemente con ecocardiograma?",
+                        options: [
+                            "Rotura del músculo papilar",
+                            "Rotura del tabique interventricular",
+                            "Rotura de la pared libre",
+                            "Formación de pseudoaneurisma ventricular"
+                        ],
+                        answer: 0,
+                        justification: "Las complicaciones mecánicas asocian altísima mortalidad. La correlación semiológica de un infarto reciente que detona súbitamente insuficiencia cardiaca izquierda masiva (edema pulmonar por reflujo retrógrado súbito) y un soplo sistólico mitral es el sello clínico de la disfunción valvular por rotura del aparato subvalvular.<br><br><b>Perla ENARM:</b> \"Insuficiencia mitral aguda severa por rotura o disfunción del músculo papilar... Síntomas: disnea en reposo que puede llegar a ser severa, Signos: hipotensión... soplo sistólico mitral (para la rotura o disfunción del músculo papilar)\".<br><br><b>Análisis de Distractores:</b> La comunicación interventricular (B) genera un soplo rudo holosistólico paraesternal bajo (\"en barra\") con falla derecha. La rotura de pared libre (C) cursa con disociación electromecánica y taponamiento sin soplos. El pseudoaneurisma (D) es una complicación subaguda o crónica."
+                    }
+                ]
+            },
+
+
+{
+                id: 2,
+                caseText: "Niño de 4 años es llevado a urgencias por letargo e irritabilidad de 36 horas de evolución. La madre refiere que el cuadro inició con rechazo a la vía oral y vómitos en tres ocasiones. TA 90/55 mmHg, FC 135 lpm, FR 26 rpm, temperatura 39.1 °C. A la exploración física: paciente hipoactivo, con fascies de dolor. Abdomen distendido, con resistencia muscular involuntaria difusa, hiperalgesia generalizada y ruidos peristálticos ausentes. Signo de rebote francamente positivo en el cuadrante inferior derecho y dolor a la percusión. Se establece el diagnóstico clínico de apendicitis aguda con datos de irritación peritoneal.",
+                source: "Schwartz's Principles of Surgery, Capítulo 30: The Appendix, 11e, Páginas 9 y 10.",
+                questions: [
+                    {
+                        question: "Según la evidencia epidemiológica en este grupo etario específico, ¿cuál es la probabilidad estadística de que el paciente presente una apendicitis perforada al momento del diagnóstico?",
+                        options: [
+                            "10 a 20%",
+                            "30 a 45%",
+                            "51 a 100%",
+                            "Menor a 5%"
+                        ],
+                        answer: 2,
+                        justification: "La apendicitis en la población pediátrica presenta retos diagnósticos debido a la incapacidad de los pacientes para articular el dolor clásico. Los lactantes y niños pequeños (preescolares) carecen de un epiplón mayor completamente desarrollado para contener la infección, lo que, sumado a la presentación atípica (letargo, irritabilidad, distensión), retrasa el diagnóstico y eleva drásticamente la tasa de perforación respecto a los adultos.<br><br><b>Perla ENARM:</b> \"De estos, los lactantes y los niños pequeños son los más propensos a presentar enfermedad perforada (51% a 100%), mientras que los niños en edad escolar tienen tasas más bajas de perforación.\"<br><br><b>Análisis de Distractores:</b> Las opciones A, B y D subestiman gravemente la incidencia de perforación en menores de 5 años. Una tasa del 10 a 20% (A) corresponde estadísticamente a la incidencia global de perforación en la población adulta joven. Las tasas más bajas se observan en adolescentes, quienes tienen mayor capacidad de localización anatómica del dolor y comunicación del inicio de los síntomas."
+                    },
+                    {
+                        question: "Usted clasifica el cuadro clínico empleando la Escala de Apendicitis Pediátrica (Pediatric Appendicitis Score). ¿Qué hallazgos otorgan el puntaje máximo (2 puntos cada uno) en esta herramienta de tamizaje?",
+                        options: [
+                            "Leucocitosis mayor a 10,000 células/mm³ y fiebre",
+                            "Dolor en cuadrante inferior derecho y dolor a la tos, percusión o salto",
+                            "Anorexia y migración del dolor periumbilical",
+                            "Vómito y desviación a la izquierda en el diferencial"
+                        ],
+                        answer: 1,
+                        justification: "La Escala de Apendicitis Pediátrica (PAS) comparte similitudes con la escala de Alvarado pero se adapta a la reactividad infantil. Tiene un valor total de 10 puntos, priorizando los signos de irritación peritoneal focalizada. Un puntaje de 7 o mayor confiere una alta probabilidad diagnóstica (78% a 96%).<br><br><b>Perla ENARM:</b> \"La Escala de Apendicitis Pediátrica... se califica sobre 10 puntos, con el peso máximo (2 puntos cada uno) para la sensibilidad en el cuadrante inferior derecho y el dolor con la tos, la percusión o el salto.\"<br><br><b>Análisis de Distractores:</b> Las opciones A, C y D corresponden a criterios menores que otorgan únicamente 1 punto dentro de la escala PAS. Aunque la fiebre, la leucocitosis (A) o el vómito (D) son hallazgos frecuentes en el cuadro apendicular pediátrico, no poseen el mismo peso predictivo que los signos mecánicos directos de inflamación peritoneal localizada en la fosa ilíaca derecha."
+                    },
+                    {
+                        question: "Los estudios de imagen confirman apendicitis perforada sin evidencia de absceso o plastrón formado. ¿Cuál es el manejo quirúrgico inicial de elección avalado en esta población?",
+                        options: [
+                            "Drenaje percutáneo con catéter cola de cochino",
+                            "Laparotomía exploradora con lavado peritoneal",
+                            "Apendicectomía laparoscópica de urgencia",
+                            "Apendicectomía abierta por incisión de McBurney"
+                        ],
+                        answer: 2,
+                        justification: "A diferencia de la apendicitis con formación de masa o absceso encapsulado, donde se prefiere el manejo conservador escalonado, la perforación libre sin delimitación del foco requiere extirpación quirúrgica inmediata para controlar la sepsis intraabdominal. La laparoscopia supera al abordaje abierto al permitir un lavado de la cavidad más minucioso con menor morbilidad parietal.<br><br><b>Perla ENARM:</b> \"Para los pacientes con apendicitis complicada, se recomienda la apendicectomía urgente en el escenario de no haber absceso o masa. La apendicectomía laparoscópica parece conservar sus beneficios en este escenario también.\"<br><br><b>Análisis de Distractores:</b> El drenaje percutáneo (A) está absolutamente contraindicado si no existe una colección bien delimitada, ya que no resolverá la peritonitis libre. La laparotomía exploradora (B) es excesiva y aumenta la incidencia de adherencias graves a largo plazo. La apendicectomía abierta (D) es una alternativa válida solo en centros sin infraestructura o experiencia laparoscópica pediátrica, pero no es la primera elección moderna."
+                    },
+                    {
+                        question: "Tras realizar la apendicectomía con éxito, usted establece la prescripción antimicrobiana intravenosa posoperatoria. Según las directrices de la Asociación Americana de Cirugía Pediátrica (APSA), ¿qué duración es la recomendada para este caso?",
+                        options: [
+                            "Dosis única transoperatoria",
+                            "Al menos 3 días, preferentemente 5 días",
+                            "Exactamente 7 a 10 días",
+                            "14 días continuos"
+                        ],
+                        answer: 1,
+                        justification: "El control antimicrobiano en apendicitis perforada pediátrica requiere un balance entre erradicar la infección residual y evitar la disbiosis intestinal o resistencia. Las guías APSA han estandarizado este rango temporal, condicionando la suspensión a la resolución de la fiebre, reanudación del peristaltismo y normalización de la cuenta leucocitaria.<br><br><b>Perla ENARM:</b> \"En el escenario de una perforación, los antibióticos se continúan después de la cirugía durante al menos 3 días, y preferiblemente 5 días (guías de la APSA).\"<br><br><b>Análisis de Distractores:</b> La dosis única transoperatoria (A) es el protocolo estándar, pero exclusivamente para apendicitis aguda no perforada. Terapias prolongadas de 7 a 10 días (C) o 14 días (D) son obsoletas, carecen de beneficio clínico documentado, prolongan innecesariamente la estancia intrahospitalaria y aumentan los costos asociado a la atención."
+                    },
+                    {
+                        question: "Si los padres del paciente hubieran acudido en etapas tempranas de un cuadro no complicado y se optara por un manejo no operatorio exclusivo con antibióticos, ¿cuál es la tasa de recurrencia de apendicitis documentada al año de seguimiento en la población pediátrica?",
+                        options: [
+                            "10%",
+                            "22%",
+                            "38%",
+                            "50%"
+                        ],
+                        answer: 1,
+                        justification: "El tratamiento médico exclusivo (no operatorio) para la apendicitis aguda pediátrica no complicada es un abordaje validado pero controvertido. Aunque reduce la inflamación inicial de manera exitosa en casi un 90% de los casos, los pacientes se enfrentan a un riesgo estadísticamente comprobado de recaída, obligando a una cirugía posterior en casi un cuarto de los infantes tratados médicamente.<br><br><b>Perla ENARM:</b> \"Esto suele ser eficaz para reducir la inflamación (88% a 92%), pero tiene una tasa de recurrencia del 22% al cabo de 1 año y una mayor utilización de recursos.\"<br><br><b>Análisis de Distractores:</b> Las tasas de 10% (A), 38% (C) y 50% (D) son incorrectas en la evaluación clínica estandarizada. Aunque algunos subgrupos (por ejemplo, aquellos con un apendicolito visualizado en imagen) tienen índices de fracaso de manejo conservador aún más altos y predicen el fallo terapéutico temprano, el número consolidado global de recurrencia tardía es el 22%."
+                    }
+                ]
+            }, 
+
+
+
+        {
+                id: 3,
+                caseText: "Hombre de 68 años, acude para revisión anual. Niega síntomas cardiovasculares o neurológicos. Antecedente de diabetes mellitus tipo 2 de 5 años de diagnóstico en tratamiento oral. Exploración física: TA brazo derecho 165/90 mmHg, TA brazo izquierdo 145/88 mmHg. Frecuencia cardíaca 78 lpm, frecuencia respiratoria 16 lpm. Índice de masa corporal 24 kg/m². Fondo de ojo sin exudados ni hemorragias. Ruidos cardíacos rítmicos, sin soplos cervicales ni abdominales. Resto de la exploración sin alteraciones. Exámenes recientes: glucosa en ayuno 110 mg/dl, creatinina sérica 1.0 mg/dl, tasa de filtrado glomerular 75 ml/min/1.73m².",
+                source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento de la Hipertensión Arterial en el Primer Nivel de Atención.",
+                questions: [
+                    {
+                        question: "Durante la evaluación inicial de este paciente, ¿qué entidad clínica sugiere la asimetría tensional encontrada entre ambos brazos?",
+                        options: [
+                            "Coartación aórtica",
+                            "Enfermedad ateromatosa",
+                            "Disección aórtica aguda",
+                            "Insuficiencia cardíaca"
+                        ],
+                        answer: 1,
+                        justification: "La medición bilateral de la presión arterial es obligatoria en la valoración inicial. Una asimetría marcada se correlaciona con estenosis arterial por placas de ateroma en las arterias subclavia o braquial.<br><br><b>Perla ENARM:</b> \"Se recomienda una evaluación vascular a profundidad, de encontrar una diferencia de presión entre ambos brazos de más de 10 o de más de 15 mmHg. El presentar una diferencia de más de 15 mmHg entre ambos brazos indica un riesgo alto de enfermedad vascular y muerte.\"<br><br><b>Análisis de Distractores:</b> La coartación aórtica causa asimetría tensional entre miembros superiores e inferiores, no habitualmente entre ambos brazos, y es patología de adultos jóvenes o niños. La disección aórtica aguda causa asimetría tensional, pero se presenta como una urgencia hipertensiva con dolor torácico desgarrador, no en un paciente asintomático en revisión de rutina. La insuficiencia cardíaca reduce el gasto cardíaco general, pero no genera gradientes asimétricos entre extremidades."
+                    },
+                    {
+                        question: "Calculando la presión de pulso en el brazo dominante de este paciente, ¿qué tipo de daño a órgano blanco confirma este hallazgo hemodinámico?",
+                        options: [
+                            "Nefropatía incipiente",
+                            "Hipertrofia ventricular izquierda",
+                            "Rigidez arterial",
+                            "Enfermedad arterial periférica"
+                        ],
+                        answer: 2,
+                        justification: "La presión de pulso (diferencia entre la presión sistólica y diastólica, en este caso 165 - 90 = 75 mmHg) es un marcador clínico directo de la pérdida de distensibilidad de los grandes vasos por envejecimiento y aterosclerosis.<br><br><b>Perla ENARM:</b> \"El médico familiar debe buscar de manera intencionada daño a órgano blanco: Rigidez arterial (presión pulso en personas mayores de 60 años, ≥ 60 mmHg y velocidad de onda de pulso carotideo-femoral > 10 m/s).\"<br><br><b>Análisis de Distractores:</b> La hipertrofia ventricular izquierda requiere un electrocardiograma o ecocardiograma para su diagnóstico, no se define por la presión de pulso. La enfermedad arterial periférica se diagnostica hemodinámicamente mediante un índice tobillo-brazo < 0.9. La nefropatía incipiente se sospecharía ante la presencia de microalbuminuria o elevación del cociente albúmina/creatinina, no por las presiones periféricas."
+                    },
+                    {
+                        question: "Para asegurar el éxito terapéutico en este paciente, ¿cuál es la estrategia de prescripción recomendada por la guía para evitar el abandono del tratamiento?",
+                        options: [
+                            "Monoterapia a dosis máxima",
+                            "Combinación en una sola píldora",
+                            "Fármacos en tabletas separadas",
+                            "Terapia triple de inicio"
+                        ],
+                        answer: 1,
+                        justification: "La polifarmacia es la principal causa de inercia terapéutica y falta de apego en el paciente crónico. La terapia dual de inicio siempre debe buscar simplificarse.<br><br><b>Perla ENARM:</b> \"Se sugiere el uso de combinaciones de fármacos en una sola píldora en la mayoría de los pacientes hipertensos para mejorar la adherencia y persistencia en el tratamiento.\"<br><br><b>Análisis de Distractores:</b> La monoterapia está reservada únicamente para pacientes con hipertensión grado 1 de muy bajo riesgo o adultos mayores con fragilidad documentada. El uso de tabletas separadas incrementa estadísticamente las tasas de abandono a los 6 meses. La terapia triple de inicio no está indicada en el \"Paso 1\" del algoritmo; se reserva para el \"Paso 2\" tras fallo de la terapia dual a dosis plenas."
+                    },
+                    {
+                        question: "Dado el antecedente metabólico de este paciente, ¿cuál es la meta estricta de presión arterial que debe alcanzarse para reducir la morbilidad cardiovascular?",
+                        options: [
+                            "Menor de 150/90 mmHg",
+                            "Menor de 140/90 mmHg",
+                            "Menor de 130/80 mmHg",
+                            "Menor de 120/80 mmHg"
+                        ],
+                        answer: 2,
+                        justification: "El diagnóstico concomitante de Diabetes Mellitus tipo 2 reclasifica al paciente en un estrato de alto riesgo cardiovascular de forma automática, obligando a ser más agresivos con las metas hemodinámicas.<br><br><b>Perla ENARM:</b> \"Se recomienda en adultos con DM e hipertensión, recibir tratamiento y vigilancia para alcanzar una meta < 130/80 mmHg.\"<br><br><b>Análisis de Distractores:</b> La meta menor de 140/90 mmHg es el objetivo general a corto plazo para pacientes menores de 80 años sin comorbilidades (riesgo SCORE bajo). Las metas más laxas como 150/90 mmHg se toleran únicamente en adultos mayores frágiles, >80 años o con ateroesclerosis carotídea severa para evitar hipoperfusión cerebral. La meta menor a 120/80 mmHg no ha demostrado beneficio adicional y eleva el riesgo de eventos adversos renales."
+                    },
+                    {
+                        question: "Si en su evolución este paciente ingresa a urgencias con cifras de 190/115 mmHg acompañadas de confusión de nueva aparición, ¿cómo se clasifica esta complicación aguda?",
+                        options: [
+                            "Urgencia hipertensiva mayor",
+                            "Hipertensión resistente",
+                            "Hipertensión maligna",
+                            "Efecto de bata blanca"
+                        ],
+                        answer: 0,
+                        justification: "Las elevaciones extremas de presión arterial (>180/110 mmHg) solo son emergencias reales si existe evidencia clínica de daño isquémico, hemorrágico o edematoso en tejido blanco crítico (encefalopatía hipertensiva).<br><br><b>Perla ENARM:</b> \"Se recomienda enviar al servicio de urgencias a pacientes con: Urgencia hipertensiva mayor... con síntomas mortales como confusión de nueva aparición, dolor en el pecho, signos de insuficiencia cardíaca o enfermedad renal aguda.\"<br><br><b>Análisis de Distractores:</b> La hipertensión resistente se define ambulatoriamente como el fracaso a 3 fármacos a dosis máximas (incluyendo un diurético) y no por un pico aislado. El efecto de bata blanca no produce alteraciones neurológicas estructurales. La hipertensión maligna es un término que históricamente acompaña a papiledema y microangiopatía trombótica, pero la guía estandariza el manejo agudo grave neurológico bajo el concepto de Urgencia hipertensiva mayor u emergencia."
+                    }
+                ]
+            },
+
+
+
+
+            {
+                id: 4,
+                caseText: "Mujer de 42 años, sin comorbilidades, acude a consulta externa por cuadro de 16 días de evolución con tos intensa, inicialmente seca y actualmente con expectoración verdosa espesa. Refiere malestar general leve los primeros días, sin fiebre actual. Ha tomado infusiones de hierbas sin mejoría. Signos vitales: TA 110/70 mmHg, FC 78 lpm, FR 16 rpm, Temp 36.5 °C, SatO2 97 %. Exploración física: Faringe sin alteraciones. Cuello sin adenopatías. Tórax con movimientos respiratorios simétricos. A la actualización de la auscultación se percibe murmullo vesicular simétrico, sin ruidos agregados, descartándose semiología de condensación pulmonar. Resto de la exploración anodina.",
+                source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda en el Paciente Adulto.",
+                questions: [
+                    {
+                        question: "Para clasificar epidemiológicamente este cuadro dentro del algoritmo de la guía, ¿cuál es el límite temporal estricto para definir esta tos como aguda?",
+                        options: [
+                            "Menor a 1 semana",
+                            "Menor a 3 semanas",
+                            "Menor a 4 semanas",
+                            "De 3 a 8 semanas"
+                        ],
+                        answer: 1,
+                        justification: "El abordaje de las infecciones de la vía respiratoria inferior depende de la cronicidad de la tos. El punto de corte estricto para encasillar el diagnóstico como bronquitis aguda y omitir la búsqueda de etiologías crónicas es temporal.<br><br><b>Perla ENARM:</b> \"Tos aguda, definida como tos que persiste menos de 3 semanas. Empeora a medida que la enfermedad progresa y persiste más allá del cuadro de inflamación aguda\".<br><br><b>Análisis de Distractores:</b> El rango de 3 a 8 semanas (D) corresponde a la definición formal de tos subaguda (frecuentemente posinfecciosa e inflamatoria). Las opciones A y C son cortes temporales arbitrarios no respaldados por la normatividad nacional mexicana para la clasificación sindromática de la bronquitis aguda."
+                    },
+                    {
+                        question: "¿Cuál es el hallazgo clínico cardinal indispensable en la exploración física documentado en esta paciente para sostener el diagnóstico presuntivo y omitir estudios de imagen?",
+                        options: [
+                            "Ausencia de semiología de condensación pulmonar",
+                            "Saturación de oxígeno mayor a 92%",
+                            "Presencia de murmullo vesicular simétrico",
+                            "Ausencia de ruidos accesorios como sibilancias"
+                        ],
+                        answer: 0,
+                        justification: "El objetivo clínico primario en una bronquitis aguda es descartar un cuadro de neumonía. Para lograrlo de forma segura sin solicitar radiografías de tórax de manera rutinaria, el clínico debe guiarse por la ausencia de signos físicos clásicos de consolidación alveolar (como matidez, aumento de la transmisión de la voz o estertores crepitantes focalizados).<br><br><b>Perla ENARM:</b> \"En el examen físico: ausencia de semiología de condensación pulmonar. Habitualmente el examen es normal, aunque en algunos pacientes pueden auscultarse sibilancias y roncus\".<br><br><b>Análisis de Distractores:</b> Las sibilancias (D) pueden estar presentes en la bronquitis aguda normal por inflamación de la mucosa, por lo que su ausencia no es un requisito indispensable. La oximetría de pulso (B) y la simetría del murmullo (C) apoyan la estabilidad general, pero la guía exige documentar la negatividad de un síndrome de condensación para omitir la radiografía."
+                    },
+                    {
+                        question: "A pesar del diagnóstico clínico, la coloración verdosa del esputo le hace sospechar una posible etiología bacteriana y valora prescribir un macrólido. Según la GPC, ¿cuál es la conducta normativa exacta en este escenario?",
+                        options: [
+                            "Iniciar azitromicina por 3 días",
+                            "Iniciar eritromicina por 7 a 10 días",
+                            "Solicitar cultivo previo al inicio empírico",
+                            "No utilizar azitromicina"
+                        ],
+                        answer: 3,
+                        justification: "Existe una recomendación negativa explícita en la normativa mexicana respecto al uso de azitromicina, incluso ante la sospecha de componente bacteriano por moco espeso, debido a que no reduce el fracaso clínico global frente a placebo y fomenta la resistencia bacteriana masiva.<br><br><b>Perla ENARM:</b> \"No utilizar azitromicina en pacientes con BA con sospecha bacteriana\".<br><br><b>Análisis de Distractores:</b> Iniciar azitromicina (A) o eritromicina (B) de forma empírica en una bronquitis aguda representa una mala praxis sancionada por la guía. Solicitar cultivos (C) en pacientes inmunocompetentes está proscrito, ya que solo aísla colonizadores orofaríngeos comunes sin valor patológico real."
+                    },
+                    {
+                        question: "La paciente solicita un tratamiento avanzado para aliviar la tos severa que la debilita. ¿Qué recomendación establece la GPC sobre el uso de corticoesteroides inhalados?",
+                        options: [
+                            "Indicados solo si hay sibilancias agregadas",
+                            "No se recomiendan por riesgo de complicaciones",
+                            "Terapia de rescate si fracasan AINEs en 5 días",
+                            "Uso exclusivo de budesonida 400 mcg al día"
+                        ],
+                        answer: 1,
+                        justification: "A pesar del proceso inflamatorio local de la vía aérea en la bronquitis aguda, los ensayos clínicos demuestran que los corticoesteroides inhalados (ICS) no ofrecen beneficio en la resolución de los síntomas en pacientes no asmáticos y, por el contrario, exponen a efectos secundarios locales y sistémicos.<br><br><b>Perla ENARM:</b> \"No se recomienda el uso de ICS en pacientes con bronquitis aguda, ya que puede aumentar los costos del tratamiento, manejo de complicaciones y efectos adversos\".<br><br><b>Análisis de Distractores:</b> Las opciones A, C y D representan esquemas terapéuticos propios de patologías crónicas hiperreactivas como el asma o la EPOC, condiciones completamente excluidas del abordaje de una infección aguda y autolimitada en un paciente previamente sano."
+                    },
+                    {
+                        question: "Para tranquilizar a la paciente respecto al riesgo de que su cuadro clínico expectorante se trate de una infección grave, usted le informa epidemiológicamente el porcentaje real de pacientes con estos síntomas que cursan con una neumonía bacteriana:",
+                        options: [
+                            "1 %",
+                            "5 %",
+                            "15 %",
+                            "48 %"
+                        ],
+                        answer: 1,
+                        justification: "Conocer la prevalencia estadística de la neumonía oculta en pacientes que acuden por tos aguda permite evitar el uso irracional de antibióticos y disminuye sustancialmente la ansiedad del paciente respecto a la gravedad de su sintomatología respiratoria.<br><br><b>Perla ENARM:</b> \"Solo 5 % de los pacientes con síntomas sugestivos de BA presentan neumonía bacteriana\".<br><br><b>Análisis de Distractores:</b> La opción D (48%) corresponde al porcentaje de pacientes con bronquitis aguda que presentan esputo francamente purulento o de coloración verdosa sin tener una sobreinfección bacteriana. Las opciones A y C son distractores estadísticos fuera de los reportes epidemiológicos de la guía."
+                    }
+                ]
+            },
+            
+
+
+{
+                id: 5,
+                caseText: "Mujer de 54 años hospitalizada en terapia intensiva. Hace 30 minutos fue sometida a la colocación de un catéter venoso central subclavio derecho. Inicia súbitamente con deterioro hemodinámico. Exploración física: TA 70/40 mmHg, FC 135 lpm, FR 32 rpm, SatO2 82% al aire ambiente. A la inspección, presenta ingurgitación yugular y desviación traqueal hacia la izquierda. A la auscultación, ausencia total de murmullo vesicular en el hemitórax derecho e hiperresonancia a la percusión.",
+                source: "Tintinalli's Emergency Medicine: A Comprehensive Study Guide, Capítulo 68: Pneumothorax, 9th Edition, Páginas 4, 6, 7, 8 y 10.",
+                questions: [
+                    {
+                        question: "¿Cuál es el grupo de procedimientos invasivos que causa la mayor proporción de esta patología iatrogénica en la práctica médica?",
+                        options: [
+                            "Biopsia con aguja y toracocentesis",
+                            "Cateterización de la vena subclavia",
+                            "Ventilación con presión positiva",
+                            "Reanimación cardiopulmonar avanzada"
+                        ],
+                        answer: 0,
+                        justification: "El neumotórax iatrogénico ocurre con mayor frecuencia que el espontáneo y a menudo es subdiagnosticado. Aunque el caso clínico ilustra una complicación post-cateterismo subclavio, los procedimientos con aguja directa sobre el tórax superan estadísticamente a los accesos venosos centrales como causa global.<br><br><b>Perla ENARM:</b> \"Los procedimientos con aguja transtorácica (biopsia con aguja y toracocentesis) representan aproximadamente la mitad de los neumotórax iatrogénicos, y la cateterización de la vena subclavia representa una cuarta parte.\"<br><br><b>Análisis de Distractores:</b> La cateterización de la vena subclavia (B) es el antecedente directo de la paciente en el escenario, pero ocupa el segundo lugar epidemiológico (25% de los casos), no la mayor proporción. La ventilación con presión positiva (C) predispone a barotrauma, pero se asocia más frecuentemente a la ruptura de patología pulmonar preexistente. La reanimación cardiopulmonar (D) puede causar fracturas costales y neumotórax secundario traumático, pero no iguala la incidencia de las punciones diagnósticas directas."
+                    },
+                    {
+                        question: "Debido a la inestabilidad de la paciente, se realiza un ultrasonido pulmonar a pie de cama. ¿Qué hallazgo ecográfico normal desaparece y su ausencia confirma la sospecha de esta patología?",
+                        options: [
+                            "Signo de la estratosfera en modo M",
+                            "Deslizamiento pleural y artefacto en cola de cometa",
+                            "Separación del artefacto horizontal en mar y tierra",
+                            "Movimiento paradójico del hemidiafragma derecho"
+                        ],
+                        answer: 1,
+                        justification: "El ultrasonido a pie de cama tiene una sensibilidad superior al 98% para detectar neumotórax en pacientes críticos. La pérdida de contacto entre la pleura parietal y visceral elimina la fricción visible en tiempo real (deslizamiento) y las líneas de reverberación vertical que se originan de ella.<br><br><b>Perla ENARM:</b> \"En un pulmón normal, hay una reverberación ecográfica distal a la pleura que parece una cola de cometa y un signo de deslizamiento del movimiento de la pleura visceral a lo largo de la pleura parietal; estos no se ven en el neumotórax.\"<br><br><b>Análisis de Distractores:</b> El signo de la estratosfera o código de barras (A) es un hallazgo patológico que aparece confirmando neumotórax, no un signo normal que desaparece. La separación en mar y tierra (C) equivale al signo de la orilla de playa (seashore sign) en el modo M normal, pero la opción B describe los elementos dinámicos cardinales en modo B cuya ausencia es diagnóstica. El movimiento paradójico diafragmático (D) es un signo de parálisis del nervio frénico, irrelevante para buscar aire libre en el espacio pleural."
+                    },
+                    {
+                        question: "Ante el choque obstructivo inminente y sin esperar un estudio de imagen radiológico, ¿cuál es el abordaje terapéutico inicial de primera línea a realizar en este momento?",
+                        options: [
+                            "Toracocentesis con catéter pigtail 14 French",
+                            "Intubación endotraqueal de secuencia rápida",
+                            "Descompresión con aguja calibre 14 en el segundo espacio intercostal",
+                            "Toracostomía con tubo grueso de 36 French"
+                        ],
+                        answer: 2,
+                        justification: "Los datos de ingurgitación yugular, hipotensión profunda y desviación traqueal establecen el diagnóstico netamente clínico de un neumotórax a tensión. El atrapamiento de gas genera presión intratorácica que colapsa el retorno venoso, llevando a la muerte si no se libera el aire a presión de manera urgente.<br><br><b>Perla ENARM:</b> \"El neumotórax a tensión es un diagnóstico clínico (idealmente antes de una radiografía) y se trata inmediatamente mediante descompresión con aguja o toracostomía con tubo. Para descomprimir, use una aguja de calibre 14 para adultos en el segundo espacio intercostal, justo por encima de la costilla en la línea medioclavicular.\"<br><br><b>Análisis de Distractores:</b> La colocación de un catéter pigtail (A) o un tubo de toracostomía grueso (D) requieren tiempo para preparación estéril e incisión; aunque la toracostomía con tubo es el manejo definitivo ideal, la inserción rápida de una aguja gruesa es el abordaje empírico inicial que salva la vida. La intubación endotraqueal (B) de un paciente con choque obstructivo sin descomprimir primero el tórax agravará el aumento de presión intratorácica y provocará paro cardíaco inmediato."
+                    },
+                    {
+                        question: "Durante la maniobra de descompresión inicial de urgencia, el médico inserta la aguja demasiado medial respecto a la línea medioclavicular. ¿Qué estructura anatómica tiene el mayor riesgo de lesionarse inadvertidamente con esta desviación técnica?",
+                        options: [
+                            "Arteria intercostal posterior",
+                            "Vasos mediastínicos",
+                            "Paquete neurovascular axilar",
+                            "Parénquima pulmonar apical"
+                        ],
+                        answer: 1,
+                        justification: "La precisión anatómica es fundamental durante la toracostomía con aguja en el segundo espacio intercostal. La referencia es estricta sobre la línea medioclavicular. Una inserción medial dirige la aguja hacia el mediastino superior, poniendo en riesgo estructuras vasculares vitales torácicas internas.<br><br><b>Perla ENARM:</b> \"Si la inserción de la aguja es medial a la línea medioclavicular, los vasos mediastínicos pueden resultar lesionados.\"<br><br><b>Análisis de Distractores:</b> La arteria intercostal posterior (A) cursa por el borde inferior de la costilla, por lo que el riesgo de lesionarla ocurre si la aguja se inserta justo por debajo de la costilla superior, no por un abordaje medial. El paquete neurovascular axilar (C) estaría en riesgo únicamente durante abordajes en la línea axilar media o posterior, lateral a la referencia correcta. La lesión del parénquima pulmonar apical (D) es un riesgo inherente de la profundidad de inserción independientemente de ir muy medial o muy lateral."
+                    },
+                    {
+                        question: "Tras la estabilización temporal exitosa, se decide colocar un drenaje pleural definitivo mediante técnica de Seldinger. Para evitar morbilidad grave, ¿cuáles son los límites anatómicos del \"triángulo de seguridad\" recomendado para su inserción?",
+                        options: [
+                            "Segundo espacio intercostal, línea medioclavicular y línea axilar anterior",
+                            "Músculo esternocleidomastoideo, clavícula y línea media esternal",
+                            "Séptimo espacio intercostal, línea axilar posterior y borde escapular",
+                            "Borde anterior del dorsal ancho, borde lateral del pectoral mayor y quinto espacio intercostal"
+                        ],
+                        answer: 3,
+                        justification: "Las guías estandarizadas dictan que la colocación lateral de dispositivos de drenaje pleural debe realizarse en un área específica que minimiza el daño a los músculos importantes de la pared torácica, evita el nervio torácico largo y previene la perforación de órganos abdominales por cruzar el diafragma.<br><br><b>Perla ENARM:</b> \"Asegúrese de que la colocación sea en el 'triángulo de seguridad', bordeado por el quinto espacio intercostal, el músculo pectoral mayor y el músculo dorsal ancho.\"<br><br><b>Análisis de Distractores:</b> La zona del segundo espacio intercostal (A) es la vía clásica anterior para la descompresión con aguja, pero no corresponde al \"triángulo de seguridad\" utilizado para insertar drenajes definitivos laterales. Las referencias del cuello y clavícula (B) delimitan el acceso venoso yugular o subclavio. Un abordaje inferior al sexto o séptimo espacio intercostal (C) expone al paciente a un alto riesgo de perforación diafragmática, esplénica o hepática."
+                    }
+                ]
+            },
+          
+
+
+
+        {
+                id: 6,
+                caseText: "Mujer de 32 años, cursando embarazo de 26 semanas de gestación, acude a control prenatal. Antecedentes: madre con diabetes tipo 2, índice de masa corporal pregestacional de 33 kg/m². Exploración física: TA 110/70 mmHg, FC 82 lpm, FR 16 rpm. Altura uterina acorde a edad gestacional, sin edemas. Se solicita tamizaje para alteraciones del metabolismo de carbohidratos con carga oral de glucosa de 50 gramos, reportando un nivel plasmático a la hora de 145 mg/dl. Se procede a realizar estudio confirmatorio.",
+                source: "Williams Obstetrics, Capítulo 60: Diabetes Mellitus, 26th Edition.",
+                questions: [
+                    {
+                        question: "Según la estrategia de tamizaje de dos pasos, ¿cuál es el nivel umbral aceptado tras la carga de 50 gramos de glucosa que justifica proceder a la prueba diagnóstica de 100 gramos?",
+                        options: [
+                            "120 mg/dl",
+                            "140 mg/dl",
+                            "153 mg/dl",
+                            "180 mg/dl"
+                        ],
+                        answer: 1,
+                        justification: "En la evaluación del metabolismo de los carbohidratos mediante el abordaje de dos pasos, se inicia con una prueba de tamizaje administrando 50 gramos de glucosa oral sin importar la hora del día o el último alimento. Un resultado plasmático a la hora que alcance o supere los 130, 135 o 140 mg/dl obliga a realizar una prueba confirmatoria de tolerancia oral a la glucosa de 3 horas con 100 gramos.<br><br><b>Perla ENARM:</b> \"El Colegio Americano de Obstetras y Ginecólogos avala utilizar cualquiera de estos tres umbrales (130, 135 o 140 mg/dl) en la prueba de tamizaje de 50 gramos para proceder a la curva diagnóstica.\"<br><br><b>Análisis de Distractores:</b> La opción A (120 mg/dl) representa un valor normal o meta posprandial a las 2 horas, no un punto de corte para tamizaje. La opción C (153 mg/dl) es el valor de corte a las 2 horas para la estrategia de diagnóstico de un solo paso con 75 gramos (criterios IADPSG). La opción D (180 mg/dl) corresponde al valor umbral a la hora en la curva diagnóstica de 100 gramos, no al límite del tamizaje inicial."
+                    },
+                    {
+                        question: "Para confirmar el diagnóstico mediante la curva de tolerancia oral a la glucosa de 100 gramos, ¿qué valor umbral a las 2 horas establece un criterio diagnóstico positivo según Carpenter-Coustan?",
+                        options: [
+                            "140 mg/dl",
+                            "153 mg/dl",
+                            "165 mg/dl",
+                            "155 mg/dl"
+                        ],
+                        answer: 3,
+                        justification: "Tras un tamizaje positivo, se requiere una prueba diagnóstica. Para la curva de 100 gramos de 3 horas, el diagnóstico se establece si se igualan o superan dos o más valores. Los umbrales de Carpenter-Coustan (más rigurosos y frecuentemente preferidos) son: ayuno 95 mg/dl, 1 hora 180 mg/dl, 2 horas 155 mg/dl y 3 horas 140 mg/dl.<br><br><b>Perla ENARM:</b> \"De acuerdo con los criterios de Carpenter-Coustan para el diagnóstico de diabetes gestacional con carga de 100 gramos, el valor umbral a las 2 horas es de 155 mg/dl.\"<br><br><b>Análisis de Distractores:</b> La opción A (140 mg/dl) corresponde al límite a las 3 horas de la misma curva, no a las 2 horas. La opción B (153 mg/dl) es el criterio a las 2 horas pero aplicable estrictamente a la curva de un solo paso de 75 gramos. La opción C (165 mg/dl) corresponde al antiguo umbral de la NDDG a las 2 horas, el cual es más permisivo y detecta menos pacientes en riesgo."
+                    },
+                    {
+                        question: "Tras confirmar el diagnóstico, se inicia tratamiento nutricional. ¿Cuál es el porcentaje máximo de calorías diarias provenientes de carbohidratos sugerido para esta paciente?",
+                        options: [
+                            "33 a 40%",
+                            "45 a 50%",
+                            "55 a 60%",
+                            "65 a 70%"
+                        ],
+                        answer: 0,
+                        justification: "El pilar terapéutico inicial en la diabetes gestacional es el manejo nutricional, diseñado para evitar la hiperglucemia posprandial sin causar cetosis ni pérdida de peso riesgosa. La dieta debe ser ajustada calculando un aporte promedio de 30 a 35 kcal/kg/día. Restringir los carbohidratos mitiga de forma eficaz las excursiones glucémicas.<br><br><b>Perla ENARM:</b> \"El Colegio Americano de Obstetras y Ginecólogos sugiere que la ingesta de carbohidratos se limite al 33 a 40% de las calorías diarias totales, asignando el resto a proteínas (20%) y grasas (40%).\"<br><br><b>Análisis de Distractores:</b> Las opciones B, C y D representan dietas normoglucídicas o hiperglucídicas estándar en pacientes no embarazadas o sin alteración metabólica. Una carga de carbohidratos superior al 40% en una paciente con diabetes gestacional exacerba la hiperinsulinemia compensatoria fetal y la intolerancia materna secundaria a la resistencia periférica fisiológica mediada por lactógeno placentario."
+                    },
+                    {
+                        question: "La paciente no logra el control con dieta y requiere inicio de esquema con insulina. ¿Cuál es la meta de glucemia capilar en ayuno que debe mantenerse estrictamente para reducir la morbilidad perinatal?",
+                        options: [
+                            "Menor a 90 mg/dl",
+                            "Menor a 105 mg/dl",
+                            "Menor a 95 mg/dl",
+                            "Menor a 110 mg/dl"
+                        ],
+                        answer: 2,
+                        justification: "El tratamiento farmacológico con insulina está indicado cuando la terapia médica nutricional falla en mantener un estado de normoglucemia estable. Los objetivos de control capilar auto-monitoreado persiguen evitar la hipertrofia de los islotes pancreáticos fetales. Para el ayuno, el límite estricto superior es 95 mg/dl.<br><br><b>Perla ENARM:</b> \"Los métodos farmacológicos se recomiendan rutinariamente si la modificación de la dieta no logra mantener niveles de glucosa capilar en ayuno iguales o menores a 95 mg/dl.\"<br><br><b>Análisis de Distractores:</b> La opción A (menor a 90 mg/dl) es un control excesivamente estricto que, según estudios sistematizados, incrementa de manera inaceptable los episodios de hipoglucemia sintomática materna sin conferir un beneficio neonatal adicional. Las opciones B y D (menor a 105 o 110 mg/dl) definen un control \"laxo\" o subóptimo, el cual se asocia de forma directa con tasas elevadas de preeclampsia, macrosomía y trauma obstétrico."
+                    },
+                    {
+                        question: "En el seguimiento de esta paciente hacia el final del embarazo, ¿a partir de qué peso fetal estimado por ultrasonido se considera una operación cesárea profiláctica para evitar trauma obstétrico?",
+                        options: [
+                            "4000 gramos",
+                            "4500 gramos",
+                            "3800 gramos",
+                            "4250 gramos"
+                        ],
+                        answer: 1,
+                        justification: "La principal consecuencia perinatal adversa atribuida a la diabetes en el embarazo es el sobrecrecimiento somático con depósito excesivo de grasa en hombros y tronco (macrosomía asimétrica). Esto incrementa críticamente el riesgo de distocia de hombros y parálisis permanente del plexo braquial. Se evalúa quirúrgicamente a los fetos por encima de un peso crítico estimado.<br><br><b>Perla ENARM:</b> \"La operación cesárea profiláctica puede ser considerada en mujeres diabéticas cursando con un feto cuyo peso estimado ecográficamente sea igual o mayor a 4500 gramos.\"<br><br><b>Análisis de Distractores:</b> La opción A (4000 gramos) es el límite tradicional que define macrosomía general, pero en ausencia de desproporción cefalopélvica obvia, no justifica por sí sola una cesárea electiva sistemática. Las opciones C y D (3800 y 4250 gramos) no alcanzan el umbral basado en evidencia donde los riesgos de morbilidad materna por la cirugía superen los beneficios de evitar el trauma obstétrico en el binomio diabético."
+                    }
+                ]
+            },
+
+
+
+
+
+            {
+                id: 7,
+                caseText: "Masculino de 45 años traído a Urgencias por deterioro respiratorio agudo severo, fiebre y expectoración purulenta. Cuenta con antecedente de infección por virus de Influenza documentada hace 7 días. A la exploración se observa uso de músculos accesorios y aleteo nasal. Signos vitales: TA 95/60 mmHg, FC 120 lpm, FR 35 rpm, Temp 39.1 °C. Tórax con matidez a la percusión, abolición del murmullo vesicular y estertores crepitantes bilaterales. Laboratorios de ingreso destacan con recuento leucocitario de 3,500 cel/mm3.",
+                source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de la Neumonía Adquirida en la Comunidad.",
+                questions: [
+                    {
+                        question: "El antecedente de infección viral previa en este paciente constituye un factor de riesgo epidemiológico de alta relevancia. Según la GPC, ¿qué agente bacteriano se asocia clásicamente con este factor?",
+                        options: [
+                            "Pseudomonas aeruginosa",
+                            "Staphylococcus aureus",
+                            "Mycoplasma pneumoniae",
+                            "Haemophilus influenzae"
+                        ],
+                        answer: 1,
+                        justification: "Las infecciones virales alteran los mecanismos de defensa mucociliares y exponen receptores celulares, facilitando la sobreinfección por patógenos específicos.<br><br><b>Perla ENARM:</b> \"La asociación clásica entre infección por virus influenza y neumonía por Staphylococcus aureus se ha confirmado, constituyéndose como el factor de mayor relevancia para desarrollar una neumonía por este microorganismo\".<br><br><b>Análisis de Distractores:</b> Pseudomonas aeruginosa (A) se asocia a daño estructural pulmonar previo o inmunosupresión profunda. Mycoplasma pneumoniae (C) es característico de adultos jóvenes con cuadros de evolución gradual. Haemophilus influenzae (D) se presenta predominantemente en pacientes adultos mayores con exacerbación de EPOC o tabaquismo."
+                    },
+                    {
+                        question: "Ante la gravedad del cuadro clínico y el inminente paso al manejo avanzado de la vía aérea, la guía marca una excepción en el algoritmo de diagnóstico extrahospitalario rutinario. ¿Qué estudio microbiológico está indicado solicitar de forma justificada en este paciente?",
+                        options: [
+                            "Cultivo de esputo",
+                            "Antígeno urinario para Legionella",
+                            "Serología para patógenos atípicos",
+                            "Hemocultivos centrales seriados"
+                        ],
+                        answer: 0,
+                        justification: "El cultivo de secreciones respiratorias tiene bajo rendimiento en pacientes ambulatorios debido a la contaminación orofaríngea; sin embargo, en pacientes críticos que requieren manejo avanzado, su obtención es fundamental para guiar la terapia dirigida y desescalar antibióticos empíricos.<br><br><b>Perla ENARM:</b> \"Se sugiere realizar cultivo de esputo en pacientes con NAC severa y que estén intubados\".<br><br><b>Análisis de Distractores:</b> El antígeno urinario para Legionella (B) se reserva exclusivamente ante la sospecha de brotes o exposición específica. La serología (C) carece de valor en la urgencia. Los hemocultivos (D) son opcionales en neumonía severa, pero no sustituyen el rendimiento diagnóstico directo de un aspirado o cultivo de la vía aérea inferior bajo soporte ventilatorio."
+                    },
+                    {
+                        question: "El paciente cumple con los criterios predictivos para ingreso a la Unidad de Cuidados Intensivos (UCI). ¿Cuál es el esquema antibiótico empírico de primera línea establecido por la GPC para este escenario clínico?",
+                        options: [
+                            "Monoterapia con fluoroquinolona respiratoria",
+                            "Cefalosporina de tercera generación exclusiva",
+                            "Betalactámico intravenoso más macrólido intravenoso",
+                            "Amoxicilina con ácido clavulánico oral"
+                        ],
+                        answer: 2,
+                        justification: "En los pacientes más graves admitidos a terapia intensiva, la cobertura dual garantiza un efecto sinérgico y protección contra patógenos atípicos, lo que se ha asociado a una menor letalidad en comparación con la monoterapia.<br><br><b>Perla ENARM:</b> \"Se recomienda iniciar tratamiento en pacientes admitidos a UCI con: 1. betalactámico IV asociado a un macrólido por la misma vía, y 2. si no se pueden administrar macrólidos se sugiere la combinación de betalactámico más quinolona IV\".<br><br><b>Análisis de Distractores:</b> La monoterapia con fluoroquinolonas (A) se acepta en hospitalización general, no en UCI. Las cefalosporinas de tercera generación solas (B) no cubren gérmenes atípicos. La vía oral (D) está proscrita por el estado de choque o la inestabilidad hemodinámica profunda de la sepsis respiratoria."
+                    },
+                    {
+                        question: "Para el manejo inicial de la insuficiencia respiratoria aguda de este paciente, previo a cualquier deterioro que obligue a una intervención mecánica invasiva, ¿qué estrategia de soporte de oxígeno debe priorizarse según la norma?",
+                        options: [
+                            "Puntas nasales de alto flujo",
+                            "Mascarilla facial con reservorio",
+                            "Oxigenación por membrana extracorpórea",
+                            "Ventilación no invasiva"
+                        ],
+                        answer: 3,
+                        justification: "La aplicación de presión positiva a través de una máscara disminuye el trabajo de los músculos respiratorios, previene el colapso alveolar periférico y puede evitar los riesgos y complicaciones directas asociadas a la intubación orotraqueal.<br><br><b>Perla ENARM:</b> \"Se recomienda la suplementación de oxígeno con ventilación no invasiva en pacientes adultos con neumonía adquirida en la comunidad\".<br><br><b>Análisis de Distractores:</b> Las puntas nasales (A) y la mascarilla (B) ofrecen oxígeno sin aplicar presión positiva que reclute alvéolos colapsados, siendo insuficientes ante la insuficiencia respiratoria severa. La oxigenación por membrana extracorpórea (ECMO) (C) es una medida avanzada de último recurso, no un paso inicial."
+                    },
+                    {
+                        question: "De acuerdo con los criterios del IDSA/ATS para Neumonía Adquirida en la Comunidad, el paciente presenta un hallazgo de laboratorio de 3,500 leucocitos/mm3. ¿Cómo clasifica la GPC este dato en el pronóstico de severidad?",
+                        options: [
+                            "Criterio mayor para ingreso a UCI",
+                            "Criterio menor de severidad",
+                            "Factor protector inmunológico",
+                            "Indicador exclusivo de origen viral"
+                        ],
+                        answer: 1,
+                        justification: "La citopenia en el contexto de una infección pulmonar no refleja inmunidad, sino un estado de consumo o fracaso en la respuesta medular ocasionado por una sepsis abrumadora, elevando marcadamente el riesgo de muerte.<br><br><b>Perla ENARM:</b> \"Criterios menores: Leucopenia (recuento leucocitario < 4000 cel/mm3) Como resultado únicamente de la infección\".<br><br><b>Análisis de Distractores:</b> Los únicos \"criterios mayores\" (A) son la necesidad de asistencia ventilatoria invasiva y el choque séptico con vasopresores. No es un factor protector (C); al contrario, marca agotamiento orgánico. Tampoco es exclusivo de origen viral (D), ya que ocurre frecuentemente en sepsis bacterianas fulminantes."
+                    }
+                ]
+            },
+
+                        {
+                id: 8,
+                caseText: "Hombre de 55 años, con antecedente de artritis reumatoide en tratamiento con inhibidores del factor de necrosis tumoral alfa. Acude por tos productiva de 3 meses de evolución, hemoptisis ocasional, diaforesis nocturna y pérdida de 10 kg de peso. Exploración física: TA 120/80 mmHg, FC 98 lpm, FR 20 lpm, temperatura 38.2 °C. Caquexia evidente. Tórax con estertores crepitantes y soplo anfórico en el ápice pulmonar derecho. La radiografía de tórax revela un infiltrado apical derecho con una lesión cavitada de 4 cm sin nivel hidroaéreo. Se recolecta muestra de esputo para protocolo de estudio.",
+                source: "Harrison's Principles of Internal Medicine, Capítulo 183: Tuberculosis y Capítulo 186: Antimycobacterial Agents, 22nd Edition, Páginas 1, 2, 8, 19, 21 y 37.",
+                questions: [
+                    {
+                        question: "Previo al inicio de su terapia inmunosupresora actual, ¿cuál era el punto de corte de induración en la prueba cutánea de tuberculina para considerar infección latente en este paciente?",
+                        options: [
+                            "5 mm",
+                            "10 mm",
+                            "15 mm",
+                            "20 mm"
+                        ],
+                        answer: 0,
+                        justification: "Los pacientes que reciben fármacos biológicos que antagonizan el factor de necrosis tumoral pierden la capacidad de mantener la integridad del granuloma, elevando drásticamente su riesgo de reactivación endógena. Por ello, el umbral de detección inmunológica es el más estricto.<br><br><b>Perla ENARM:</b> \"Las personas que están inmunosuprimidas, por ejemplo debido al uso de glucocorticoides o inhibidores del factor de necrosis tumoral alfa, tienen un punto de corte de la reacción a la tuberculina de 5 mm para el tratamiento preventivo de la tuberculosis.\"<br><br><b>Análisis de Distractores:</b> El punto de corte de 10 mm (opción B) se aplica a individuos con riesgo intermedio, como usuarios de drogas intravenosas, personal de salud o inmigrantes recientes de áreas endémicas. El umbral de 15 mm (opción C) se reserva exclusivamente para personas sin factores de riesgo conocidos. Una induración de 20 mm (opción D) excede los criterios estandarizados de cualquier grupo epidemiológico y no representa un punto de corte médico válido."
+                    },
+                    {
+                        question: "Para establecer el diagnóstico confirmatorio definitivo y de referencia (estándar de oro) en este paciente, ¿cuál es el estudio que debe solicitarse?",
+                        options: [
+                            "Ensayo automatizado de amplificación de ácidos nucleicos",
+                            "Prueba cutánea de derivado proteico purificado",
+                            "Cultivo comercial automatizado en medio líquido",
+                            "Ensayo de liberación de interferón gamma en sangre"
+                        ],
+                        answer: 2,
+                        justification: "Aunque las pruebas moleculares son fundamentales para el diagnóstico inicial por su rapidez, el aislamiento microbiológico absoluto y el pilar para determinar el fenotipo completo de sensibilidad a fármacos sigue siendo el cultivo. Los sistemas líquidos han reducido el tiempo de detección frente a los medios sólidos tradicionales.<br><br><b>Perla ENARM:</b> \"Los sistemas comerciales de cultivo en medio líquido son recomendados por la Organización Mundial de la Salud como el estándar de referencia para el diagnóstico definitivo y cultivo de micobacterias.\"<br><br><b>Análisis de Distractores:</b> El ensayo automatizado (opción A) es el estudio inicial de elección y detecta resistencia a rifampicina, pero el estándar de referencia microbiológico global sigue siendo el cultivo. La prueba cutánea (opción B) y el ensayo de liberación de interferón gamma (opción D) miden la respuesta de las células T de memoria frente a antígenos micobacterianos, por lo que son útiles para infección latente, pero carecen de capacidad para diagnosticar o confirmar enfermedad pulmonar activa."
+                    },
+                    {
+                        question: "Durante la fase intensiva del tratamiento de este paciente, se utiliza un fármaco que es activado por la enzima catalasa-peroxidasa micobacteriana (KatG) para inhibir la síntesis de ácidos micólicos. ¿A qué medicamento corresponde este mecanismo de acción?",
+                        options: [
+                            "Rifampicina",
+                            "Isoniazida",
+                            "Pirazinamida",
+                            "Etambutol"
+                        ],
+                        answer: 1,
+                        justification: "Este fármaco es la piedra angular del tratamiento por su alta actividad bactericida temprana frente a bacilos en replicación activa. Altera la pared celular micobacteriana actuando como un profármaco que requiere conversión intracelular enzimática para ejercer su toxicidad bacteriana.<br><br><b>Perla ENARM:</b> \"La isoniazida es un profármaco activado por la catalasa-peroxidasa micobacteriana KatG; el complejo resultante inhibe la enzima InhA y finalmente bloquea la síntesis de ácido micólico.\"<br><br><b>Análisis de Distractores:</b> La rifampicina (opción A) ejerce su efecto bactericida uniéndose a la subunidad beta de la ARN polimerasa dependiente de ADN (gen rpoB). La pirazinamida (opción C) se convierte en ácido pirazinoico en el medio ácido del fagolisosoma y altera la enzima sintetasa de ácidos grasos I. El etambutol (opción D) es un bacteriostático que interrumpe la síntesis estructural al inhibir las arabinosiltransferasas de la pared celular bacteriana."
+                    },
+                    {
+                        question: "El paciente inicia el esquema de primera línea de forma estrictamente supervisada. A los 2 meses, el cultivo de esputo de control se reporta positivo. Considerando el hallazgo radiográfico inicial, ¿cuál es la conducta terapéutica de ajuste recomendada?",
+                        options: [
+                            "Solicitar baciloscopia seriada y mantener el esquema actual sin cambios",
+                            "Reiniciar la fase intensiva con cuatro fármacos durante 2 meses adicionales",
+                            "Añadir una fluoroquinolona de tercera generación al régimen de continuación",
+                            "Extender la duración de la fase de continuación hasta completar 7 meses"
+                        ],
+                        answer: 3,
+                        justification: "La persistencia de viabilidad bacilar al final de la fase intensiva en el contexto de alta carga bacteriana basal (enfermedad cavitada) incrementa inaceptablemente el riesgo de fracaso o recaída si se administra el esquema acortado clásico. La prolongación compensa el aclaramiento bacteriano lento.<br><br><b>Perla ENARM:</b> \"Se recomienda la extensión de la fase de continuación a 7 meses (para una duración total de 9 meses) en pacientes con enfermedad cavitaria en quienes los cultivos de esputo permanecen positivos más allá de los 2 meses de tratamiento.\"<br><br><b>Análisis de Distractores:</b> Mantener el esquema de 6 meses sin cambios (opción A) en un paciente con factores predictores de recaída (cavidad y cultivo positivo a los 2 meses) es una negligencia clínica. Reiniciar la fase intensiva desde cero (opción B) no está protocolizado; la medida correcta es prolongar la segunda fase. Añadir una fluoroquinolona sola (opción C) viola la regla de oro de la infectología antituberculosa: jamás añadir un solo fármaco a un régimen que muestra signos de falla terapéutica."
+                    },
+                    {
+                        question: "Tres años después de completar exitosamente su tratamiento, el paciente acude por hemoptisis. La radiografía muestra la cavidad apical cicatrizada con una masa móvil en su interior dependiente de la gravedad y engrosamiento pleural periférico. ¿Cuál es la etiología más probable?",
+                        options: [
+                            "Colonización intracavitaria por Aspergillus fumigatus",
+                            "Ruptura aguda de un aneurisma de Rasmussen",
+                            "Reactivación endógena por cepa multirresistente",
+                            "Infección diseminada por complejo Mycobacterium avium"
+                        ],
+                        answer: 0,
+                        justification: "Las secuelas anatómicas crónicas, especialmente las cavernas residuales limpias de bacilos, predisponen a la anidación de esporas fúngicas ambientales. El hongo prolifera formando un micetoma (aspergiloma) que genera fricción y erosión vascular local (\"signo del menisco\" o \"cascabel\" radiográfico), siendo una causa clásica de hemoptisis post-tuberculosa.<br><br><b>Perla ENARM:</b> \"En presencia de cavidades residuales grandes, Aspergillus fumigatus puede colonizar la lesión y producir síntomas como hemoptisis y pérdida de peso, resultando a menudo en un diagnóstico erróneo de recurrencia de la tuberculosis.\"<br><br><b>Análisis de Distractores:</b> El aneurisma de Rasmussen (opción B) consiste en la dilatación de una arteria pulmonar dentro de la pared de una cavidad, cuya ruptura causa hemoptisis, pero no produce una imagen de masa móvil intraluminal. Una reactivación tuberculosa (opción C) o infección por micobacterias no tuberculosas (opción D) presentarían neoformación de infiltrados, diseminación broncógena, adenopatías o empeoramiento sistémico agudo, no la imagen estructural de un cuerpo fúngico móvil aislado dentro de una cicatriz previa."
+                    }
+                ]
+            },     
+
+
+
+            {
+                id: 9,
+                caseText: "Mujer de 45 años con hipertensión arterial sistémica de 5 años de evolución, tratada de forma irregular. Acude por astenia progresiva y aumento de volumen en piernas. Signos vitales: TA 150/95 mmHg, FC 82 latidos por minuto, FR 18 respiraciones por minuto, IMC 32 kg/m². Exploración física: palidez de tegumentos, ruidos cardiacos con reforzamiento del segundo tono, edema pretibial bilateral que deja fóvea. Examen general de orina con proteínas positivas. Laboratorios: creatinina sérica 1.8 mg/dl, urea 55 mg/dl, hemoglobina 11.2 g/dl, bicarbonato sérico 18 mmol/l.",
+                source: "GPC-IMSS-335-19, Prevención, diagnóstico y tratamiento de la ENFERMEDAD RENAL CRÓNICA.",
+                questions: [
+                    {
+                        question: "De los hallazgos de laboratorio, ¿cuál se considera un factor de riesgo patogénico mayor para la progresión rápida de la enfermedad renal crónica?",
+                        options: [
+                            "Urea sérica de 55 mg/dl",
+                            "Hemoglobina de 11.2 g/dl",
+                            "Bicarbonato sérico de 18 mmol/l",
+                            "Creatinina sérica de 1.8 mg/dl"
+                        ],
+                        answer: 2,
+                        justification: "La acidosis metabólica crónica (evidenciada por un bicarbonato bajo) induce daño túbulo-intersticial por el incremento en la amoniogénesis adaptativa y la activación del sistema del complemento. Su corrección retrasa el deseo de deterioro funcional. La creatinina y urea son marcadores de función, pero no perpetuadores del daño per se.<br><br><b>Perla ENARM:</b> \"Se puede retrasar la progresión de enfermedad renal crónica y la necesidad de terapia de reemplazo si se identifica a la Diabetes, la severidad de la proteinuria y un nivel de bicarbonato sérico bajo como los factores de riesgo más importantes para la progresión rápida de la enfermedad.\"<br><br><b>Análisis de Distractores:</b> La urea (A) y la creatinina (D) marcan la reducción de la filtración, pero no aceleran fisiopatológicamente el proceso degenerativo. La hemoglobina baja (B) es una complicación sistémica de la reducción de masa renal funcionante y productora de eritropoyetina, pero el bicarbonato bajo es directamente un factor acelerador de esclerosis."
+                    },
+                    {
+                        question: "Para estimar la tasa de filtrado glomerular en esta paciente menor de 60 años, ¿qué ecuación matemática predictiva ofrece la mayor precisión diagnóstica?",
+                        options: [
+                            "Modificación de la Dieta en Enfermedad Renal",
+                            "Colaboración Epidemiológica de la Enfermedad Renal Crónica",
+                            "Fórmula de Cockcroft Gault",
+                            "Fórmula matemática de Jelliffe"
+                        ],
+                        answer: 1,
+                        justification: "El comportamiento de las fórmulas varía según la edad y el estadio. Para pacientes jóvenes (menores de 60 años) y con filtrados que aún no son terminales, la ecuación CKD-EPI (Colaboración Epidemiológica de la Enfermedad Renal Crónica) reduce el sesgo sistemático y mejora la re-clasificación del riesgo cardiovascular.<br><br><b>Perla ENARM:</b> \"En pacientes jóvenes, la precisión fue mayor con la ecuación CKD-EPI (18 a 39 años: 63.7%, 40 a 49 años: 72.8%).\"<br><br><b>Análisis de Distractores:</b> La ecuación MDRD (A) se reserva estrictamente como primera elección en adultos diabéticos y pacientes mayores de 60 años debido a su superioridad matemática comprobada en ese grupo. La fórmula de Cockcroft Gault (C) se usa para ajuste farmacológico poblacional, no para estadificar la cronicidad real. La fórmula de Jelliffe (D) no está estandarizada por KDIGO y se considera obsoleta."
+                    },
+                    {
+                        question: "Sin encontrarse en terapia de reemplazo renal por diálisis, ¿cuál es la meta estricta de ingesta diaria de proteínas sugerida en su dieta para evitar desnutrición y nefrotoxicidad?",
+                        options: [
+                            "0.6 gramos por kilogramo",
+                            "1.0 gramos por kilogramo",
+                            "0.8 gramos por kilogramo",
+                            "1.2 gramos por kilogramo"
+                        ],
+                        answer: 2,
+                        justification: "La restricción proteica moderada reduce la carga osmótica en la nefrona remanente, controlando la hiperfiltración y frenando el daño histológico, además de mitigar los síntomas urémicos. No debe restringirse por debajo del umbral basal sin suplementación con cetoanálogos, ya que el riesgo de sarcopenia supera al beneficio renal.<br><br><b>Perla ENARM:</b> \"En pacientes con una tasa de filtrado glomerular menor a 60 ml/min/1.73 m2 y que no se encuentren en diálisis se sugiere una ingesta diaria de proteínas de 0.8 g/kg. No se recomienda una ingesta muy baja de proteínas.\"<br><br><b>Análisis de Distractores:</b> Una restricción menor a 0.6 g/kg (A) es contraproducente por la malnutrición calórico-proteica urémica. Ingestas altas de 1.0 a 1.2 g/kg (B y D) incrementan las toxinas urémicas, exacerban la vasodilatación de la arteriola aferente, causan hipertensión capilar intraglomerular y aceleran la progresión a estadio terminal."
+                    },
+                    {
+                        question: "Con base en su edad de 45 años y el alto riesgo de desenlaces isquémicos por hipertensión y obesidad, ¿qué medida farmacológica adicional debe prescribirse de forma obligatoria?",
+                        options: [
+                            "Estatinas a dosis estándar",
+                            "Fibratos de nueva generación",
+                            "Secuestradores de ácidos biliares",
+                            "Inhibidores de absorción intestinal"
+                        ],
+                        answer: 0,
+                        justification: "La enfermedad renal crónica es considerada un equivalente de alto riesgo aterosclerótico primario. Los pacientes jóvenes (18-50 años) con factores concomitantes (como hipertensión) y una reducción del filtrado glomerular se benefician directamente del efecto pleiotrópico y lipídico de las estatinas, disminuyendo drásticamente la mortalidad cardiovascular y microvascular.<br><br><b>Perla ENARM:</b> \"Se sugiere tratamiento con estatinas en pacientes con enfermedad renal crónica y una tasa de filtración glomerular mayor a 60 ml/min/1.73 m2 si tienen 50 años o más o factores de riesgo cardiovascular (hipertensión, diabetes, tabaquismo, bajos niveles de HDL-C).\"<br><br><b>Análisis de Distractores:</b> Los fibratos (B) están restringidos o contraindicados debido al riesgo inminente de toxicidad muscular cruzada (rabdomiólisis) en insuficiencia renal y no reducen la mortalidad global de forma aislada en estos estadios. Las resinas fijadoras (C) e inhibidores de absorción como ezetimiba (D) nunca son manejos de primera línea individual."
+                    },
+                    {
+                        question: "¿Qué estudio de imagen de primera elección debe realizarse para excluir nefropatía obstructiva aguda y evaluar directamente la cronicidad anatómica?",
+                        options: [
+                            "Tomografía computarizada simple",
+                            "Resonancia magnética contrastada",
+                            "Gammagrafía de filtración glomerular",
+                            "Ultrasonido renal bilateral"
+                        ],
+                        answer: 3,
+                        justification: "El ultrasonido carece de nefrotoxicidad o reacciones adversas y es la modalidad más rentable para discernir si se trata de un daño crónico irreversible o una falla reversible provocada por hidronefrosis obstructiva, poliquistosis o inflamación aguda.<br><br><b>Perla ENARM:</b> \"El ultrasonido es el estudio de imagen de primera línea para la evaluación de personas con enfermedad renal no de origen claro. Le ayuda al clínico a separar enfermedad renal terminal de daño renal agudo potencialmente reversible o de etapas tempranas.\"<br><br><b>Análisis de Distractores:</b> La tomografía computarizada (A) expone innecesariamente a radiación sin aportar superioridad funcional inicial. La resonancia magnética con contraste (B) tiene contraindicación absoluta por el riesgo de inducir Fibrosis Sistémica Nefrogénica. La gammagrafía (C) documenta el flujo y filtrado de forma diferencial, pero no excluye causas anatómicas reversibles como litiasis o tumoraciones de primera intención."
+                    }
+                ]
+            },
+
+
+
+                        {
+                id: 10,
+                caseText: "Mujer de 40 años acude por dolor leve y presencia de una masa mamaria izquierda de rápido crecimiento durante el último mes. Signos vitales: TA 120/80 mmHg, FC 76 lpm, FR 16 rpm, T 36.8 °C. A la exploración física, se observa asimetría mamaria a expensas de un tumor firme, multinodular y móvil de 6 cm en el cuadrante superoexterno izquierdo. La piel suprayacente está tensa, brillante y presenta una red venosa colateral prominente. El complejo aréola-pezón se encuentra sin alteraciones. La palpación minuciosa de las fosas axilares y supraclaviculares no revela adenopatías sospechosas. El resto de la exploración sistémica es normal.",
+                source: "Williams Gynecology, Capítulo 13: Breast Disease, 4th Edition, Página 7.",
+                questions: [
+                    {
+                        question: "Considerando la epidemiología global de las patologías mamarias, ¿que proporción de los tumores primarios representa la neoplasia sospechada en esta paciente?",
+                        options: [
+                            "Del 25 al 30%",
+                            "Aproximadamente el 15%",
+                            "Menos del 1%",
+                            "Del 5 al 7%"
+                        ],
+                        answer: 2,
+                        justification: "La presentación clínica de una masa mamaria sólida, lobulada y de rápido crecimiento en una mujer en su cuarta década de la vida orienta fuertemente hacia un tumor filodes (Cystosarcoma phyllodes). Esta entidad es extremadamente infrecuente dentro de la patología mamaria global.<br><br><b>Perla ENARM:</b> \"Los tumores filodes representan menos del 1% de las neoplasias de mama, y la mediana de edad en el momento del diagnóstico es de 40 años.\"<br><br><b>Análisis de Distractores:</b> La proporción del 25 al 30% corresponde a la incidencia actual del carcinoma ductal in situ (DCIS) detectado por tamizaje. El 15% representa la incidencia clásica del carcinoma lobulillar infiltrante (segundo cáncer invasor más frecuente). El 5 al 7% corresponde a la prevalencia de los cánceres de mama con un síndrome de predisposición hereditaria (mutaciones BRCA1/BRCA2)."
+                    },
+                    {
+                        question: "¿Cuál de los siguientes criterios histopatológicos es un determinante fundamental para clasificar este tumor como benigno, limítrofe o maligno?",
+                        options: [
+                            "Número de mitosis y atipia de las células estromales",
+                            "Grado de diferenciación epitelial intracística",
+                            "Invasión extensa a capilares linfáticos dérmicos",
+                            "Amplificación genética del receptor Her-2/neu"
+                        ],
+                        answer: 0,
+                        justification: "El tumor filodes es una neoplasia bifásica compuesta por espacios epiteliales rodeados de estroma celular. El comportamiento biológico y su agresividad clínica no dependen del componente epitelial, sino exclusivamente de los cambios en el tejido conectivo (estroma).<br><br><b>Perla ENARM:</b> \"Los tumores filodes se clasifican en benignos, limítrofes o malignos según el grado de atipia de las células estromales, el número de mitosis, las características del margen tumoral y la abundancia de células estromales.\"<br><br><b>Análisis de Distractores:</b> El grado de diferenciación epitelial y la amplificación de Her-2/neu son marcadores críticos en los adenocarcinomas ductales y lobulillares, pero no tienen utilidad en la estadificación de los tumores filodes. La invasión de linfáticos dérmicos es el sello distintivo del carcinoma inflamatorio de mama, el cual produce \"piel de naranja\" y eritema extenso, hallazgos ausentes en el fenotipo multinodular y móvil del filodes."
+                    },
+                    {
+                        question: "Si la biopsia con aguja de corte confirmara un tumor filodes de grado maligno para esta masa de 6 cm, ¿cuál es la intervención quirúrgica local de elección recomendada?",
+                        options: [
+                            "Escisión local con margen negativo de 1 mm",
+                            "Cirugía conservadora con resección central",
+                            "Mastectomía simple exclusiva de forma profiláctica",
+                            "Escisión local amplia con margen de 1 cm"
+                        ],
+                        answer: 3,
+                        justification: "El tratamiento estándar para evitar la alta tasa de recurrencia local en las variantes invasivas del tumor filodes exige la resección completa de la masa asegurando un margen de tejido peritumoral sano. A diferencia del filodes benigno (donde basta 1 mm), las variantes limítrofes y malignas requieren un margen más estricto.<br><br><b>Perla ENARM:</b> \"La escisión amplia con un margen de 1 cm todavía se recomienda para los tumores filodes limítrofes y malignos.\"<br><br><b>Análisis de Distractores:</b> Un margen de 1 mm es aceptable únicamente si la patología final demuestra un tumor filodes benigno. La cirugía conservadora central se indica en la enfermedad de Paget del pezón. La mastectomía total no es obligatoria de primera intención, a menos que el tamaño del tumor (a menudo mayor a 5 cm) impida lograr el margen de 1 cm conservando un volumen estético y funcional adecuado de la mama."
+                    },
+                    {
+                        question: "Durante el abordaje quirúrgico definitivo de esta paciente, ¿cuál es la conducta estándar indicada respecto al manejo de los ganglios linfáticos regionales?",
+                        options: [
+                            "Biopsia de ganglio centinela con mapeo linfático",
+                            "Omitir estadificación axilar al ser clínicamente negativos",
+                            "Disección radical de los niveles axilares quirúrgicos",
+                            "Irradiación profiláctica sobre la fosa supraclavicular"
+                        ],
+                        answer: 1,
+                        justification: "A diferencia de los carcinomas mamarios clásicos que utilizan las redes linfáticas como principal vía de diseminación, los sarcomas y los tumores filodes diseminan primariamente por vía hematógena. El compromiso ganglionar linfático es extraordinariamente raro.<br><br><b>Perla ENARM:</b> \"Los tumores filodes raramente hacen metástasis a los ganglios linfáticos, por lo tanto, la estadificación axilar no es necesaria a menos que los ganglios parezcan clínicamente afectados.\"<br><br><b>Análisis de Distractores:</b> La disección axilar radical se reserva de rescate en la infrecuente situación donde existen adenopatías axilares metastásicas comprobadas preoperatoriamente. La biopsia de ganglio centinela es el estándar de manejo para cáncer de mama infiltrante etapa temprana, no para filodes. La irradiación profiláctica de las fosas ganglionares está contraindicada por falta de beneficio y exceso de morbilidad en tumores de origen sarcomatoso o estromal."
+                    },
+                    {
+                        question: "Si este tumor presentara un comportamiento sistémico maligno, ¿cuál es el estudio de imagen de primera elección indicado para estadificar el sitio primario más frecuente de metástasis a distancia?",
+                        options: [
+                            "Resonancia magnética cerebral",
+                            "Gammagrama óseo de cuerpo entero",
+                            "Tomografía computarizada de tórax",
+                            "Ultrasonido hepático y biliar"
+                        ],
+                        answer: 2,
+                        justification: "La diseminación hematógena del tumor filodes maligno tiene una afinidad anatómica específica, afectando primordialmente el parénquima pulmonar. Por esta razón, el protocolo de estadificación sistémica exige la búsqueda intencionada de focos secundarios en el tórax.<br><br><b>Perla ENARM:</b> \"Los tumores filodes malignos pueden hacer metástasis a órganos distantes, siendo el pulmón el sitio primario. Las radiografías de tórax o la tomografía computarizada de tórax son pruebas de estadificación apropiadas para casos malignos.\"<br><br><b>Análisis de Distractores:</b> El gammagrama óseo se utiliza para descartar metástasis en tejido óseo, el cual es el sitio principal de recurrencia en el cáncer de mama epitelial invasor (adenocarcinomas), no así en el tumor filodes. El cerebro y el hígado son focos secundarios menos prevalentes en etapas tempranas de diseminación de este tumor y los estudios hepáticos o cerebrales dirigidos solo se solicitan si existen signos o síntomas focales."
+                    }
+                ]
+            },            
+
+
+        ];
+
+        let userProgress = {};
+        let currentQuestionId = null; 
+        let examState = { isFinished: false };
+
+        const QUESTIONS_PER_CASE = 5;
+        const totalQuestions = casesData.length * QUESTIONS_PER_CASE;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadState();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('simuladorELW3LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const globalId = parseInt(box.dataset.id);
+                    const caseIdx = Math.floor((globalId - 1) / QUESTIONS_PER_CASE);
+                    const qIdx = (globalId - 1) % QUESTIONS_PER_CASE;
+                    const cData = casesData[caseIdx];
+                    
+                    if(!cData) return;
+                    
+                    const qData = cData.questions[qIdx];
+                    const matchText = cData.caseText.toLowerCase().includes(term) || qData.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || globalId.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            const modalReset = document.getElementById('reset-modal');
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                modalReset.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>modalReset.classList.add('hidden'), 300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('simuladorELW3Progress');
+                localStorage.removeItem('simuladorELW3LastQId');
+                localStorage.removeItem('simuladorELW3ExamState');
+                window.location.reload();
+            });
+
+            const modalFinish = document.getElementById('finish-modal');
+            document.getElementById('cancel-finish').addEventListener('click', () => {
+                modalFinish.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>modalFinish.classList.add('hidden'), 300);
+            });
+            document.getElementById('confirm-finish').addEventListener('click', () => {
+                finishExam();
+                modalFinish.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>modalFinish.classList.add('hidden'), 300);
+            });
+
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        function navigateCase(currentCaseId, direction) {
+            let targetCaseId = currentCaseId;
+            if (direction === 'prev' && currentCaseId > 1) {
+                targetCaseId = currentCaseId - 1;
+            } else if (direction === 'next' && currentCaseId < casesData.length) {
+                targetCaseId = currentCaseId + 1;
+            } else {
+                displayQuestion(null); 
+                return;
+            }
+            const targetGlobalQId = (targetCaseId - 1) * QUESTIONS_PER_CASE + 1;
+            displayQuestion(targetGlobalQId);
+        }
+
+        function getQBoxClass(globalId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-[10px] sm:text-xs cursor-pointer transition-all select-none border ";
+            if (isActive) base += "ring-4 ring-blue-500 shadow-md z-10 border-blue-500 dark:border-blue-400 ";
+
+            const state = userProgress[globalId];
+            const caseIdx = Math.floor((globalId - 1) / QUESTIONS_PER_CASE);
+            const qIdx = (globalId - 1) % QUESTIONS_PER_CASE;
+            const cData = casesData[caseIdx];
+            
+            if (!cData) return base + "bg-slate-100 text-slate-300";
+
+            if (!examState.isFinished) {
+                if (!state || !state.answered) {
+                    return base + "bg-slate-50 text-slate-400 border-slate-200 hover:bg-slate-200 dark:bg-slate-800/50 dark:text-slate-500 dark:border-slate-700/50 dark:hover:bg-slate-700";
+                } else {
+                    return base + "bg-slate-600 text-white border-slate-700 dark:bg-slate-700 dark:border-slate-600 shadow-inner";
+                }
+            } 
+            else {
+                if (!state || !state.answered) {
+                    return base + "bg-slate-100 text-slate-400 border-slate-200 dark:bg-slate-800 dark:text-slate-500 dark:border-slate-700";
+                } else {
+                    const isCorrect = state.selectedOption === cData.questions[qIdx].answer;
+                    if (isCorrect) {
+                        return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+                    } else {
+                        return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+                    }
+                }
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            let boxes = [];
+            for (let i = 1; i <= totalQuestions; i++) {
+                boxes.push(`<div class="${getQBoxClass(i, i === isActiveIdContext)}" data-id="${i}" onclick="displayQuestion(${i})">${i}</div>`);
+            }
+            return boxes.join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        function finishExam() {
+            examState.isFinished = true;
+            localStorage.setItem('simuladorELW3ExamState', JSON.stringify(examState));
+            displayQuestion(null);
+        }
+
+        function displayWelcomeScreen() {
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            
+            let correct = 0;
+            if (examState.isFinished) {
+                correct = Object.keys(userProgress).filter(id => {
+                    const globalId = parseInt(id);
+                    const caseIdx = Math.floor((globalId - 1) / QUESTIONS_PER_CASE);
+                    const qIdx = (globalId - 1) % QUESTIONS_PER_CASE;
+                    const cData = casesData[caseIdx];
+                    return cData && userProgress[id].answered && userProgress[id].selectedOption === cData.questions[qIdx].answer;
+                }).length;
+            }
+
+            const successRate = totalQuestions > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            let firstUncompletedId = 1;
+            for(let i = 1; i <= totalQuestions; i++){
+                if(!userProgress[i]?.answered){
+                    firstUncompletedId = i;
+                    break;
+                }
+            }
+            
+            let titleText = examState.isFinished ? "¡Simulador Evaluado!" : "Simulador ENARM";
+            let descText = examState.isFinished 
+                ? "Simulación concluida con éxito. Analiza el rendimiento global y la justificación clínica detallada de cada reactivo seriado." 
+                : "La calificación definitiva y la retroalimentación por pregunta se mostrarán tras presionar 'Finalizar y Calificar'.";
+            
+            let actionBtn = "";
+            if (examState.isFinished) {
+                actionBtn = `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Simulador</button>`;
+            } else {
+                actionBtn = `
+                    <button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-indigo-600 hover:to-blue-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-indigo-900/30 transition-transform hover:-translate-y-0.5 mr-3">
+                        ${ans === 0 ? 'Iniciar Examen' : 'Continuar Simulador'}
+                    </button>
+                    <button onclick="document.getElementById('finish-modal').classList.remove('hidden')" class="bg-rose-500 hover:bg-rose-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-rose-900/30 transition-transform hover:-translate-y-0.5">
+                        Finalizar y Calificar
+                    </button>
+                `;
+            }
+
+            let badgeText = examState.isFinished ? "RETROALIMENTACIÓN COMPLETA" : "ENARM 2026";
+            let badgeClass = examState.isFinished ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+
+            let statsHTML = examState.isFinished ? `
+                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                    <div>
+                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${totalQuestions}</span></p>
+                    </div>
+                    <div>
+                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                    </div>
+                    <div class="px-2">
+                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                    </div>
+                </div>
+            ` : `
+                <div class="w-full text-center py-4">
+                    <p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-2">Avance Global del Examen</p>
+                    <p class="text-4xl sm:text-5xl font-black text-white">${ans}<span class="text-xl sm:text-2xl text-slate-500">/${totalQuestions}</span></p>
+                    <div class="w-full bg-slate-700/50 rounded-full h-2 mt-4 overflow-hidden">
+                        <div class="bg-blue-400 h-2 rounded-full shadow-md transition-all duration-300" style="width: ${(ans/totalQuestions)*100}%"></div>
+                    </div>
+                </div>
+            `;
+
+            let legendHTML = examState.isFinished ? `
+                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+            ` : `
+                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-50 border border-slate-200 dark:bg-slate-800/50 dark:border-slate-700/50"></div> Pendiente</div>
+                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-600 border border-slate-700"></div> Respondida</div>
+            `;
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-7xl mx-auto lg:mt-0">
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <span class="inline-flex items-center gap-2 text-slate-400 font-semibold text-sm select-none">
+                            
+                        </span>
+                    </div>
+
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500">
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left w-full lg:w-3/5">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass}">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 ${examState.isFinished ? 'text-emerald-400' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium mx-auto lg:mx-0">${descText}</p>
+                                <div class="mt-8 flex justify-center lg:justify-start flex-wrap gap-4">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col items-center shadow-2xl w-full lg:w-2/5">
+                                ${statsHTML}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                Tablero del Examen (280 Preguntas)
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                ${legendHTML}
+                            </div>
+                        </div>
+                        <div class="grid gap-2 grid-cols-[repeat(auto-fill,minmax(40px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(globalId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = globalId ? parseInt(globalId) : null;
+                
+                if (currentQuestionId) {
+                    localStorage.setItem('simuladorELW3LastQId', currentQuestionId);
+                } else {
+                    localStorage.removeItem('simuladorELW3LastQId');
+                }
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+                    dashboardBtn.classList.add('lg:left-[22rem]');
+                } else {
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const caseIdx = Math.floor((currentQuestionId - 1) / QUESTIONS_PER_CASE);
+                const cData = casesData[caseIdx];
+                
+                if (!cData) return displayQuestion(null);
+                
+                renderCaseLayout(cData, currentQuestionId);
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                setTimeout(() => {
+                    const targetCard = document.getElementById(`q-card-${currentQuestionId}`);
+                    if (targetCard) {
+                        targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } else {
+                        document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                }, 50);
+
+            }, 150); 
+        }
+
+        function renderCaseLayout(cData, activeGlobalId) {
+            let html = `
+                <div class="flex flex-col gap-6 max-w-5xl mx-auto items-center">
+                    
+                    <!-- COLUMNA: TEXTO DEL CASO CLÍNICO -->
+                    <div class="w-full bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl shadow-md border border-slate-200 dark:border-slate-800 transition-all duration-300">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="inline-block bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-lg text-[10px] font-bold tracking-widest uppercase border border-blue-100 dark:border-blue-900/30">
+                                Caso Clínico Seriado
+                            </span>
+                            <span class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                                Bloque #${cData.id}
+                            </span>
+                        </div>
+                        <p class="text-slate-800 dark:text-slate-200 text-sm sm:text-base leading-relaxed font-medium">
+                            ${cData.caseText}
+                        </p>
+                        ${examState.isFinished ? `
+                            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                                <span class="text-slate-500">Bibliografía GPC:</span> ${cData.source}
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <!-- COLUMNA: BLOQUE DE LAS 5 PREGUNTAS ASOCIADAS -->
+                    <div class="w-full space-y-5">
+            `;
+
+            cData.questions.forEach((q, idx) => {
+                const globalQId = (cData.id - 1) * QUESTIONS_PER_CASE + idx + 1;
+                const qState = userProgress[globalQId];
+                const hasAnswered = qState && qState.answered;
+                const userAnswer = hasAnswered ? qState.selectedOption : null;
+                
+                let cardStyle = "border-slate-200 dark:border-slate-800/80";
+                if (globalQId === activeGlobalId) {
+                    cardStyle = "border-blue-500 dark:border-blue-500 ring-2 ring-blue-500/10";
+                }
+                if (examState.isFinished && hasAnswered) {
+                    cardStyle = (userAnswer === q.answer) ? "border-l-4 border-emerald-500" : "border-l-4 border-rose-500";
+                }
+
+                html += `
+                    <div id="q-card-${globalQId}" class="bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-2xl shadow-sm border ${cardStyle} transition-all">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="text-[9px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700">
+                                PREGUNTA ${globalQId}
+                            </span>
+                        </div>
+                        <h3 class="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 mb-4 leading-snug">${q.question}</h3>
+                        <form id="q-form-${globalQId}" class="space-y-2.5">
+                `;
+
+                q.options.forEach((opt, i) => {
+                    if (examState.isFinished) {
+                        let optClasses = "flex items-start p-3 border rounded-xl text-xs sm:text-sm ";
+                        let icon = "";
+                        
+                        if (i === q.answer) {
+                            optClasses += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 font-semibold";
+                            icon = `<svg class="w-4 h-4 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>`;
+                        } else if (i === userAnswer) {
+                            optClasses += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                            icon = `<svg class="w-4 h-4 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                        } else {
+                            optClasses += "bg-slate-50 border-slate-100 dark:bg-slate-800/30 dark:border-slate-800/50 opacity-50 text-slate-400";
+                        }
+
+                        html += `
+                            <div class="${optClasses}">
+                                <span class="leading-snug pr-3">${opt}</span>
+                                ${icon}
+                            </div>
+                        `;
+                    } else {
+                        const checkedStr = (hasAnswered && userAnswer === i) ? 'checked' : '';
+                        html += `
+                            <label class="flex items-start p-3 border border-slate-200 dark:border-slate-800 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/40 has-[:checked]:bg-blue-50/80 has-[:checked]:border-blue-400 dark:has-[:checked]:bg-blue-900/20 text-xs sm:text-sm shadow-sm" onclick="autoSaveAnswer(${globalQId})">
+                                <input type="radio" name="option" value="${i}" ${checkedStr} class="mt-0.5 h-3.5 w-3.5 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-700 cursor-pointer">
+                                <span class="ml-2.5 text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `;
+                    }
+                });
+
+                html += `</form>`;
+
+                if (examState.isFinished) {
+                    html += `
+                        <div class="bg-blue-50/60 dark:bg-slate-800/50 border border-blue-100/50 dark:border-slate-800 rounded-xl p-4 text-xs sm:text-sm mt-4">
+                            <h4 class="font-bold text-blue-800 dark:text-blue-400 mb-1 flex items-center gap-1 uppercase tracking-wider text-[10px]">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                Justificación Médica GPC
+                            </h4>
+                            <p class="text-slate-600 dark:text-slate-300 leading-relaxed">${q.justification}</p>
+                        </div>
+                    `;
+                }
+
+                html += `</div>`;
+            });
+
+            const isLastCase = cData.id === casesData.length;
+
+            html += `
+                        <!-- CONTROLES DE FLUJO EN CASOS -->
+                        <div class="flex justify-between items-center pt-4 mt-6 border-t border-slate-200 dark:border-slate-800">
+                            <button onclick="navigateCase(${cData.id}, 'prev')" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
+                                Caso Anterior
+                            </button>
+                            
+                            ${examState.isFinished ? `
+                                ${!isLastCase ? `
+                                    <button onclick="navigateCase(${cData.id}, 'next')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2.5 px-6 rounded-xl transition-colors text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
+                                        Siguiente Caso <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                                    </button>
+                                ` : `
+                                    <button onclick="displayQuestion(null)" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-6 rounded-xl transition-colors text-xs uppercase tracking-wider shadow-sm">
+                                        Ver Calificaciones
+                                    </button>
+                                `}
+                            ` : `
+                                <button onclick="navigateCase(${cData.id}, 'next')" class="bg-blue-600 dark:bg-blue-500 text-white font-bold py-2.5 px-6 rounded-xl shadow-md hover:bg-blue-700 dark:hover:bg-blue-400 transition-colors text-xs uppercase tracking-wider flex items-center gap-1.5">
+                                    Siguiente Caso <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                                </button>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function autoSaveAnswer(globalId) {
+            if(examState.isFinished) return;
+            const form = document.getElementById(`q-form-${globalId}`);
+            if (!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (selected) {
+                userProgress[globalId] = { answered: true, selectedOption: parseInt(selected.value) };
+                saveState();
+                updateProgressBar();
+                renderSidebarGrid();
+            }
+        }
+
+        function updateProgressBar() {
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = totalQuestions > 0 ? Math.round((ans / totalQuestions) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; 
+            }
+        }
+
+        function saveState() {
+            try { localStorage.setItem('simuladorELW3Progress', JSON.stringify(userProgress)); } catch(e) {}
+        }
+
+        function loadState() {
+            try {
+                const saved = localStorage.getItem('simuladorELW3Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+                const savedState = localStorage.getItem('simuladorELW3ExamState');
+                if (savedState) examState = JSON.parse(savedState);
+            } catch(e) { userProgress = {}; examState = { isFinished: false }; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+
+</body>
+</html>
