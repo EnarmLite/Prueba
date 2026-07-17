@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-purple-500 to-fuchsia-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+
+    {
+        id: 1,
+        question: "¿Cuál es el mecanismo fisiopatológico principal que define al infarto agudo de miocardio clasificado como tipo 1?",
+        options: ["Vasoespasmo coronario agudo", "Rotura de placa aterosclerótica", "Trombosis aguda del stent", "Desequilibrio de aporte miocárdico"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, la clasificación universal del infarto estratifica la etiología del evento isquémico para guiar el tratamiento. El tipo 1 es el escenario clásico ocasionado por aterotrombosis.<br><br>Perla ENARM: \"Tipo 1: Rotura o erosión de la placa de aterosclerosis y formación de un trombo oclusivo o suboclusivo. Incremento de los valores de troponina por arriba del percentil 99 del límite superior de referencia aunado al contexto clínico de isquemia miocárdica... Etiología más frecuente\".<br><br>Análisis de Distractores: La opción A y D corresponden a la definición del infarto tipo 2 (desequilibrio isquémico o vasoespasmo). La opción C describe de manera explícita al infarto tipo 4b.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Cuadros o Figuras (Cuadro 2), Página 73."
+    },
+    {
+        id: 2,
+        question: "¿Qué condición clínica o intervencionista establece el diagnóstico del infarto agudo de miocardio clasificado como tipo 4b?",
+        options: ["Trombosis documentada del stent", "Relacionado a cirugía coronaria", "Reestenosis clínica del stent", "Desequilibrio del aporte miocárdico"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, las complicaciones directas del intervencionismo percutáneo tienen clasificaciones específicas para el registro y manejo pronóstico.<br><br>Perla ENARM: \"Tipo 4b: Relacionado con trombosis del stent. Confirmado a través de angiografía coronaria o autopsia en el contexto clínico de isquemia miocárdica y con aumento de los títulos de biomarcadores cardiacos con al menos un valor por arriba del percentil 99 del límite superior de referencia\".<br><br>Análisis de Distractores: La opción B corresponde al infarto tipo 5. La opción C (reestenosis) define al infarto tipo 4c. La opción D describe al infarto tipo 2.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Cuadros o Figuras (Cuadro 2), Página 73."
+    },
+    {
+        id: 3,
+        question: "¿Cuál es la utilidad clínica principal de las escalas de riesgo CRUSADE y ACTION en la valoración del paciente infartado?",
+        options: ["Estimar riesgo de sangrado mayor", "Predecir mortalidad intrahospitalaria", "Evaluar la disfunción sistólica", "Predecir la insuficiencia cardiaca"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, el tratamiento intensivo con antitrombóticos y anticoagulantes expone al paciente a complicaciones hemorrágicas que deben predecirse y mitigarse desde el ingreso.<br><br>Perla ENARM: \"CRUSADE y ACTION: Escalas de mayor capacidad predictiva para el riesgo de sangrado\".<br><br>Análisis de Distractores: La opción B es la utilidad principal de las escalas GRACE y TIMI. La opción C se evalúa directamente mediante ecocardiografía, no por escalas clínicas de riesgo. La opción D corresponde a la escala de Zwolle.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Aspectos Generales (Sistemas de Clasificación), Página 8."
+    },
+    {
+        id: 4,
+        question: "¿Qué complicación cardiovascular a largo plazo discrimina con mayor capacidad predictiva la escala clínica de Zwolle?",
+        options: ["Trombosis aguda del stent", "Mortalidad global a diez años", "Aparición de choque cardiogénico", "Hospitalización por insuficiencia cardiaca"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, la falla de bomba y el remodelado ventricular son los determinantes principales de reingreso, y su riesgo puede estratificarse matemáticamente.<br><br>Perla ENARM: \"La escala de Zwolle fue la única escala que tuvo una capacidad discriminatoria de hospitalización por insuficiencia cardiaca de hasta dos años (ROC 0.80–0.83). Los investigadores concluyen que la escala GRACE es la de mejor capacidad para evaluar el riesgo de eventos cardiovasculares... asi como la escala de Zwolle para la predicción de hospitalización por falla cardiaca\".<br><br>Análisis de Distractores: Las opciones A y C no son los eventos primarios evaluados ni discriminados por esta escala. La opción B corresponde al espectro predictivo cubierto principalmente por la escala GRACE.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Estratificación), Página 59."
+    },
+    {
+        id: 5,
+        question: "¿Cuál es el punto de corte electrocardiográfico diagnóstico de nueva elevación del segmento ST en derivaciones V2 y V3 para mujeres de cualquier edad?",
+        options: ["≥ 1 mm", "≥ 1.5 mm", "≥ 2 mm", "≥ 2.5 mm"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, los criterios de voltaje en la cara anterior tienen diferencias dependientes del sexo para mejorar la sensibilidad y especificidad diagnóstica.<br><br>Perla ENARM: \"Nueva elevación del segmento ST en por lo menos dos derivaciones electro-anatómicas contiguas con los siguientes puntos de corte: ≥ 0.15 mV en mujeres (cualquier edad) en V2 y V3\". (1 mm equivale a 0.1 mV).<br><br>Análisis de Distractores: La opción A es el corte estándar para todas las demás derivaciones que no sean V2 y V3. La opción C es el corte exclusivo para hombres de 40 años o mayores. La opción D es el corte para hombres menores de 40 años.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Cuadros o Figuras (Cuadro 3), Página 74."
+    },
+    {
+        id: 6,
+        question: "¿Cuál es el punto de corte electrocardiográfico diagnóstico de nueva elevación del segmento ST en derivaciones V2 y V3 para hombres mayores o iguales a 40 años?",
+        options: ["≥ 1 mm", "≥ 1.5 mm", "≥ 2 mm", "≥ 2.5 mm"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, a medida que avanza la edad en el hombre, la exigencia de voltaje en cara anterior disminuye frente a la de pacientes jóvenes.<br><br>Perla ENARM: \"Nueva elevación del segmento ST en por lo menos dos derivaciones electro-anatómicas contiguas con los siguientes puntos de corte: ≥ 0.20 mV en hombres con edad ≥ 40 años en V2 y V3\".<br><br>Análisis de Distractores: La opción A aplica para las derivaciones fuera de V2 y V3. La opción B es el criterio universal de voltaje en cara anterior para mujeres. La opción D es el umbral para hombres menores de 40 años.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Cuadros o Figuras (Cuadro 3), Página 74."
+    },
+    {
+        id: 7,
+        question: "En presencia de un bloqueo de rama izquierda, ¿qué relación milimétrica define el criterio de Sgarbossa modificado para aumentar la sensibilidad del diagnóstico de oclusión coronaria aguda?",
+        options: ["Relación ≤ -0.25", "Relación ≥ 0.50", "Relación ≤ -0.10", "Relación ≥ 0.80"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, el criterio modificado de Smith-Sgarbossa mejora drásticamente la sensibilidad diagnóstica midiendo la proporcionalidad de la discordancia del segmento ST respecto a la onda S.<br><br>Perla ENARM: \"El diagnóstico de IAM CEST por ECG puede hacerse con los criterios de Sgarbossa y Sgarbossa modificado (relación ST/S ≤ -0.25 tiene 99% de especificidad), que muestran la presencia de elevación del segmento ST concordante\".<br><br>Análisis de Distractores: Las opciones B, C y D presentan valores matemáticos falsos que no figuran dentro del constructo del algoritmo de Sgarbossa modificado para documentar isquemia con complejos anchos.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Aspectos Generales (Electrocardiograma), Página 10 y 25."
+    },
+    {
+        id: 8,
+        question: "¿Qué grado de elevación del segmento ST en la derivación V4R es necesario para confirmar un infarto de ventrículo derecho en hombres menores de 30 años?",
+        options: ["≥ 0.5 mm", "≥ 1 mm", "≥ 1.5 mm", "≥ 2 mm"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, las derivaciones derechas también requieren un ajuste fino por edad para evitar sobrediagnósticos por variantes de normalidad en varones muy jóvenes.<br><br>Perla ENARM: \"En pacientes con IAM inferior, el registrar las derivaciones precordiales derechas (V3R y V4R), en busca de la elevación del segmento ST (≥ 1 mV en varones de menos de 30 años y ≥ 0.5 mV en el resto de la población) sirve para identificar el infarto del ventrículo derecho concomitante\".<br><br>Análisis de Distractores: La opción A es el criterio aplicable a las mujeres y a los varones de 30 años o más. Las opciones C y D son voltajes que superan la exigencia diagnóstica de la guía para la cámara ventricular derecha.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Diagnóstico), Página 24."
+    },
+    {
+        id: 9,
+        question: "¿Cuál es la arritmia responsable de la principal causa de mortalidad extrahospitalaria en el infarto agudo de miocardio con elevación del segmento ST?",
+        options: ["Taquicardia ventricular polimórfica", "Fibrilación auricular rápida", "Fibrilación ventricular", "Bloqueo auriculoventricular completo"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, la inestabilidad eléctrica temprana del miocardio isquémico degenera rápidamente a un ritmo de paro no perfusivo, justificando la necesidad del uso temprano de desfibriladores.<br><br>Perla ENARM: \"La fibrilación ventricular se constituye como la principal causa de muerte extrahospitalaria por IAM CEST\".<br><br>Análisis de Distractores: La opción A es una arritmia grave pero epidemiológicamente menos frecuente como causa directa de muerte súbita inicial extrahospitalaria en masa. La opción B desencadena insuficiencia cardiaca pero rara vez muerte súbita extrahospitalaria. La opción D produce compromiso hemodinámico manejable con marcapasos.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Cuadros o Figuras (Complicaciones Eléctricas), Página 77."
+    },
+    {
+        id: 10,
+        question: "¿Cuál es la dosis de carga de clopidogrel vía oral estrictamente recomendada como terapia adjunta a la fibrinólisis en pacientes menores de 75 años?",
+        options: ["Dosis de 75 miligramos", "Dosis de 150 miligramos", "Carga de 300 miligramos", "Carga de 600 miligramos"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, la carga del inhibidor P2Y12 se ajusta según la estrategia de reperfusión; en fibrinólisis se utiliza una dosis media para balancear el riesgo de sangrado intrínseco del trombolítico.<br><br>Perla ENARM: \"Terapia antiplaquetaria adjunta a la Terapia Fibrinolítica... Clopidogrel: Dosis de carga de 300 mg oral, seguida de dosis de mantenimiento de 75 mg día\".<br><br>Análisis de Distractores: La opción A es la dosis de mantenimiento estándar o la dosis de inicio exclusiva para mayores de 75 años. La opción B no corresponde a ninguna recomendación actual. La opción D es la dosis de carga utilizada cuando la estrategia es una intervención coronaria percutánea (hemodinamia), no fibrinólisis.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Cuadros o Figuras (Cuadro 10), Página 80."
+    },
+    {
+        id: 11,
+        question: "¿Cuál es el ajuste de dosificación inicial de clopidogrel como coadyuvante de terapia fibrinolítica en pacientes mayores de 75 años?",
+        options: ["Dosis de inicio de 75 miligramos", "Dosis de carga de 150 miligramos", "Dosis de carga de 300 miligramos", "Dosis de carga de 600 miligramos"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, la población senecta presenta un riesgo prohibitivo de hemorragia mayor, particularmente intracraneal, por lo que se omite la dosis de impregnación masiva del antiagregante.<br><br>Perla ENARM: \"En pacientes > 75 años, dosis de carga de 75 mg seguida de una dosis de mantenimiento de 75 mg día\" (lo que operativamente significa iniciar directo con la dosis de mantenimiento sin impregnación).<br><br>Análisis de Distractores: La opción C es la dosis para menores de 75 años en fibrinólisis. La opción D es la carga agresiva reservada para intervencionismo percutáneo primario en adultos no senectos. La opción B carece de sustento en la norma.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Cuadros o Figuras (Cuadro 10), Página 80."
+    },
+    {
+        id: 12,
+        question: "¿Qué ajuste posológico es obligatorio al administrar terapia fibrinolítica con tenecteplase en pacientes mayores de 75 años?",
+        options: ["Administrar en infusión continua", "Omitir bolo intravenoso inicial", "Duplicar la dosis ponderal", "Reducir la dosis a la mitad"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, el envejecimiento incrementa severamente la tasa de hemorragia intracraneal letal ante fibrinolíticos específicos para fibrina.<br><br>Perla ENARM: \"Cuadro 9. Terapia Fibrinolítica Intravenosa. Tenecteplase (TNK-tPA): Para mayores de 75 años reducir la dosis a la mitad\".<br><br>Análisis de Distractores: La opción A contradice el mecanismo del tenecteplase, que está diseñado específicamente para darse en bolo único. La opción B aplica para la enoxaparina en mayores de 75 años, no para el tenecteplase. La opción C empeoraría radicalmente el riesgo de muerte por sangrado.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Cuadros o Figuras (Cuadro 9), Página 79."
+    },
+    {
+        id: 13,
+        question: "Según las metas de reperfusión de la guía, ¿cuál es el tiempo máximo \"puerta-aguja\" recomendado para la administración del agente fibrinolítico desde el diagnóstico?",
+        options: ["Menor a diez minutos", "Menor a treinta minutos", "Menor a noventa minutos", "Menor a ciento veinte minutos"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, una vez que se descarta la posibilidad de traslado oportuno a sala de hemodinamia, la preparación y aplicación del trombolítico debe ser perentoria para disolver el trombo inestable.<br><br>Perla ENARM: \"Se debe administrar en < 30 minutos (puerta-aguja)\".<br><br>Análisis de Distractores: La opción A es la meta máxima para la toma y lectura del electrocardiograma inicial. Las opciones C y D son las metas para el inflado del balón en la intervención coronaria percutánea (tiempo puerta-balón o primer contacto-balón), no para el fármaco.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Aspectos Generales (Tratamiento), Página 12."
+    },
+    {
+        id: 14,
+        question: "¿Cuál es el límite de tiempo de evolución clínica desde el inicio del dolor donde la terapia fibrinolítica mantiene su recomendación absoluta de eficacia y seguridad?",
+        options: ["Primeras seis horas", "Primeras doce horas", "Primeras veinticuatro horas", "Primeras cuarenta y ocho horas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, la necrosis miocárdica se consolida progresivamente, por lo que el beneficio de recanalizar farmacológicamente la arteria decae dramáticamente después de medio día, aumentando el riesgo de sangrado y rotura de pared por reperfusión tardía.<br><br>Perla ENARM: \"La fibrinólisis está recomendada en las primeras 12 hrs del inicio de los síntomas cuando la ICP primaria no se pueda realizar en los primeros 120 min\".<br><br>Análisis de Distractores: La opción A es el periodo de máximo beneficio anatómico, pero no el límite de su recomendación. Las opciones C y D superan ampliamente el umbral donde el riesgo de sangrado intracraneal por el fibrinolítico supera cualquier beneficio miocárdico marginal.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Fibrinólisis), Página 42."
+    },
+    {
+        id: 15,
+        question: "¿Cuál es the dosis estándar recomendada del bolo intravenoso inicial de heparina no fraccionada durante la intervención coronaria percutánea primaria?",
+        options: ["Treinta a cincuenta unidades por kilo", "Cincuenta a sesenta unidades por kilo", "Setenta a cien unidades por kilo", "Ciento veinte unidades por kilo"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, el paso de guías metálicas y catéteres hacia la coronaria trombosada exige una anticoagulación sistémica contundente e inmediata en sala de hemodinamia.<br><br>Perla ENARM: \"La dosis que se recomienda de forma estándar para la angioplastía: un bolo de 70-100 UI/kg, posteriormente, una infusión de 12–15 UI/kg/h hasta un máximo de 1,000 UI/h durante 48 hrs\".<br><br>Análisis de Distractores: La opción B corresponde al bolo utilizado cuando la indicación es exclusivamente manejo médico agudo conservador o pre-trombólisis con alteplase. Las opciones A y D subdosifican o sobredosifican gravemente el nivel de protección intraprocedimiento estipulado.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Anticoagulación), Página 49."
+    },
+    {
+        id: 16,
+        question: "¿Cuál es el rango objetivo del tiempo de coagulación activado que se busca al infundir heparina no fraccionada durante la angioplastia primaria?",
+        options: ["Cien a ciento cincuenta segundos", "Doscientos a doscientos cincuenta segundos", "Trescientos a trescientos cincuenta segundos", "Cuatrocientos a cuatrocientos amplicación segundos"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, en la sala de cateterismo el nivel de anticoagulación se monitoriza a pie de cama para asegurar la fluidez de la sangre sin generar sangrado masivo en el sitio de punción arterial.<br><br>Perla ENARM: \"Durante la angioplastia primaria se pueden usar bolos HNF I.V. guiados por TCA (tiempo de coagulación activado) con el objetivo de alcanzar un rango de 200 a 250 segundos\".<br><br>Análisis de Distractores: La opción A representa un nivel infraterapéutico de alto riesgo protrombótico intra-stent. Las opciones C y D alcanzan niveles peligrosos de sangrado sistémico aplicables más a circulación extracorpórea que a hemodinamia de urgencia.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Anticoagulación), Página 49."
+    },
+    {
+        id: 17,
+        question: "¿Cuál es la primera alteración electrocardiográfica que precede clínicamente a la franca elevación del segmento ST tras la oclusión coronaria total aguda?",
+        options: ["Inversión de onda T", "Aparición de onda Q", "Depresión del segmento PR", "Ondas T hiperagudas"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, la despolarización y repolarización miocárdica sufren cambios secuenciales drásticos en cuestión de minutos; la detección de estas ondas evita descartar erróneamente isquemias fulminantes en sus primeros instantes.<br><br>Perla ENARM: \"Algunos pacientes con oclusión coronaria aguda pueden tener un ECG inicial sin elevación del segmento ST, a veces debido a que se les explora muy precozmente... buscar ondas T hiperagudas, que pueden preceder a la elevación del segmento ST\".<br><br>Análisis de Distractores: La opción A ocurre de manera más tardía tras la reperfusión o isquemia subendocárdica pura. La opción B representa necrosis transmural consolidada (fase crónica o tardía). La opción C es el hallazgo patognomónico clásico de la pericarditis aguda, no de isquemia.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Diagnóstico), Página 26."
+    },
+    {
+        id: 18,
+        question: "Sin retrasar la terapia de reperfusión ni contar con choque cardiogénico, ¿en qué momento está indicada la evaluación obligatoria de la fracción de eyección del ventrículo izquierdo?",
+        options: ["Antes de la coronariografía", "Durante la sala de urgencias", "Antes del alta hospitalaria", "Exclusivamente a las doce semanas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, el conocimiento de la viabilidad contráctil residual es el factor modificador más importante para el pronóstico y el dictamen de las terapias a egreso.<br><br>Perla ENARM: \"Establecer la disfuncion del VI es un factor pronóstico clave, por lo cual esta recomendado determinar la FEVI antes del alta hospitalaria en todo paciente con IAMCEST\".<br><br>Análisis de Distractores: Las opciones A y B pueden retrasar injustificadamente el paso inmediato a hemodinamia (\"puerta-balón\"), algo que la guía prohíbe. La opción D se usa como un control evolutivo exclusivo si la fracción basal inicial fue muy baja (menor a 40%), pero exige una toma basal previa intrahospitalaria.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Ecocardiograma), Página 30."
+    },
+    {
+        id: 19,
+        question: "¿En qué ventana temporal se recomienda reiniciar el ácido acetilsalicílico tras una cirugía de revascularización coronaria post-infarto para proteger la permeabilidad de los puentes venosos?",
+        options: ["Tiempo no mayor a catorce días", "Después del primer mes posquirúrgico", "A los tres meses de evolución", "Únicamente en caso de trombosis"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, los injertos de vena safena sufren trombosis precoz por falta de endotelización arterial, por lo que la interrupción de la antiagregación tras el quirófano debe ser la mínima indispensable sin exponer a sangrado del sitio quirúrgico.<br><br>Perla ENARM: \"En los pacientes postoperados de revascularización miocárdica, se recomienda reiniciar ácido acetilsalicílico y ticagrelor no mayor a 14 dias, para la reducción de trombosis o falla de puentes de revascularización coronaria de vena safena\".<br><br>Análisis de Distractores: Las opciones B y C dejan desprotegido el material biológico venoso injertado durante su periodo de máxima vulnerabilidad protrombótica. La opción D es una conducta reactiva ante un puente ocluido que inevitablemente causaría isquemia aguda.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Prevención Secundaria), Página 78."
+    },
+    {
+        id: 20,
+        question: "¿En qué ventana de tiempo debe enviarse de manera rutinaria a intervención coronaria percutánea a un paciente al que se le aplicó fibrinólisis con éxito clínico documentado?",
+        options: ["Entre dos y veinticuatro horas", "Dentro de los primeros treinta minutos", "Exclusivamente después de cuarenta y ocho horas", "De manera inmediata sin ningún retraso"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, esta es la directriz que enmarca el concepto de \"estrategia farmacoinvasiva\". Si la lisis disolvió el trombo (criterios de éxito), el paciente de todas formas requiere cateterismo para tratar la placa residual estenótica subyacente y prevenir el reinfarto temprano, pero con un margen seguro tras el pico del efecto lítico.<br><br>Perla ENARM: \"Se debe privilegiar realizar una estrategia farmacoinvasiva con intervención coronaria percutánea en las siguientes dos horas y hasta las 24 horas después de la reperfusión farmacológica\".<br><br>Análisis de Distractores: La opción D se denomina \"ICP de rescate\" y solo está indicada si la fibrinólisis fracasó clínicamente. La opción B está dentro del periodo activo agudo de lisis sistémica y arriesgaría a sangrado letal. La opción C abandona al paciente a su suerte dejándole la estenosis crítica durante el periodo subagudo más vulnerable a reoclusión.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Aspectos Generales (Algoritmos), Página 12 y 53."
+    },
+    {
+        id: 21,
+        question: "¿Cuál es el mecanismo fisiopatológico que caracteriza al infarto agudo de miocardio clasificado como tipo 2?",
+        options: ["Rotura de placa aterosclerótica", "Trombosis aguda del stent", "Desequilibrio de aporte isquémico", "Reestenosis clínica del stent"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, las etiologías difieren del daño aterotrombótico clásico e incluyen cualquier factor que merme la entrega de oxígeno al miocardio frente a su demanda.<br><br>Perla ENARM: \"Tipo 2: Secundario a desequilibrio isquémico. Desequilibrio entre el suministro y la demanda miocárdicas de oxígeno. p.ej. disfunción endotelial coronaria, espasmo coronario, embolismo coronario, taquiarritmias, bradiarritmias, anemia, insuficiencia respiratoria\".<br><br>Análisis de Distractores: La opción A corresponde exclusivamente al infarto tipo 1. La opción B define al infarto tipo 4b. La opción D clasifica al infarto tipo 4c.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Cuadros o Figuras (Cuadro 2), Página 73."
+    },
+    {
+        id: 22,
+        question: "¿Qué ubicación clínica o situación distingue al infarto agudo de miocardio tipo 3 de las demás clasificaciones universales?",
+        options: ["Oclusión total documentada por angiografía", "Muerte sin disponibilidad de biomarcadores", "Elevación mayor a cinco veces de troponina", "Aparición de nuevas ondas Q patológicas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, se asigna esta categoría a los desenlaces fatales fulminantes donde la sospecha clínica de isquemia era evidente pero el colapso impidió la toma o el ascenso cinético laboratorial.<br><br>Perla ENARM: \"Tipo 3: Muerte sin posibilidad de contar con biomarcadores. Muerte en el contexto de síntomas y alteraciones electrocardiográficas compatibles con un proceso isquémico miocárdico, pero sin la posibilidad de tener biomarcadores cardiacos\".<br><br>Análisis de Distractores: Las opciones C y D corresponden a los criterios de un infarto tipo 5 (post-CABG). La opción A es confirmatoria de infartos tipo 1, 4b o 4c, pero siempre se acompaña de biomarcadores.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Cuadros o Figuras (Cuadro 2), Página 73."
+    },
+    {
+        id: 23,
+        question: "¿Cuál grupo farmacológico está contraindicado de forma absoluta en el tratamiento de la pericarditis temprana asociada al infarto agudo de miocardio?",
+        options: ["Ácido acetilsalicílico", "Uso de colchicina", "Antiinflamatorios no esteroideos", "Fármacos inhibidores plaquetarios"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, el uso de analgésicos convencionales interfiere con la cicatrización del tejido necrótico, lo que predispone fuertemente a complicaciones mecánicas letales como la rotura de pared libre o septal.<br><br>Perla ENARM: \"Tratamiento: ácido acetilsalicílico y, si no hay respuesta, se añade colchicina. NUNCA se utilizan AINE´s ni esteroides en la pericarditis asociada a infarto de miocardio\".<br><br>Análisis de Distractores: La opción A es el tratamiento de primera línea seguro. La opción B es la alternativa adjunta si no hay respuesta inicial. La opción D es obligatoria en todo paciente infartado.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Anexos (Complicaciones Inflamatorias), Página 78."
+    },
+    {
+        id: 24,
+        question: "Ante una complicación mecánica por infarto agudo de miocardio, ¿qué estructura cardiaca genera clásicamente un soplo sistólico en barra al romperse?",
+        options: ["Rotura de pared libre", "Rotura del músculo papilar", "Rotura del tabique interventricular", "Pseudoaneurisma ventricular izquierdo"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, la necrosis transmural del septum genera una comunicación anómala de altas presiones manifestando un soplo rudo, intenso y característico que traduce el corto circuito de izquierda a derecha.<br><br>Perla ENARM: \"Signos: hipotensión, taquicardia, oliguria... soplo sistólico mitral (para la rotura o disfunción del músculo papilar), soplo sistólico 'en barra' (para la rotura del tabique interventricular)\".<br><br>Análisis de Distractores: La opción A cursa con taponamiento cardiaco y disociación electromecánica sin soplo característico. La opción B genera un soplo de insuficiencia mitral auscultado primordialmente en el ápex. La opción D es un evento crónico contenido por el pericardio sin este tipo de soplo agudo.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Anexos (Complicaciones Mecánicas), Página 77."
+    },
+    {
+        id: 25,
+        question: "¿Cuál es el límite de presión arterial sistólica para contraindicar de forma absoluta el uso de nitroglicerina intravenosa en el paciente con insuficiencia cardiaca aguda?",
+        options: ["Presión sistólica menor a 120 mmHg", "Presión sistólica menor a 100 mmHg", "Presión sistólica menor a 90 mmHg", "Presión sistólica menor a 80 mmHg"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, los nitrovasodilatadores reducen la precarga y poscarga útiles para aliviar la congestión, pero su acción puede colapsar el gasto cardiaco si no existe una presión de perfusión mínima segura.<br><br>Perla ENARM: \"Se sugiere dar nitroglicerina intravenosa en infusión continua para reducir la presión telediastólica del ventrículo izquierdo. No debe administrarse si la presión arterial sistólica es menor de 90 mmHg\".<br><br>Análisis de Distractores: Las opciones A, B y D presentan límites fisiológicos incorrectos según la normativa de seguridad para el uso de vasodilatadores coronarios sistémicos.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Edema Agudo Pulmonar), Página 49."
+    },
+    {
+        id: 26,
+        question: "¿En qué escenario clínico de insuficiencia cardiaca aguda está recomendada la indicación de ultrafiltración temprana?",
+        options: ["Como terapia inicial de primera línea", "Congestión refractaria a tratamiento diurético", "Presencia de choque cardiogénico asociado", "Pacientes con tasa de filtración normal"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, la remoción mecánica de líquidos acarrea mayor riesgo de eventos adversos y es inferior al tratamiento farmacológico para el mantenimiento renal, por lo que su uso se escala solo ante fracaso del manejo inicial.<br><br>Perla ENARM: \"La ultrafiltración únicamente deberá considerarse en pacientes con congestión refractaria que no respondan al tratamiento diurético. Es preferible iniciar con tratamiento farmacológico\".<br><br>Análisis de Distractores: La opción A es incorrecta porque la primera línea son los diuréticos de asa. La opción C contraindica este procedimiento debido a la grave hipotensión concomitante. La opción D no justifica un procedimiento extracorpóreo si el riñón puede responder a diuréticos convencionales.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Edema Agudo Pulmonar), Página 50."
+    },
+    {
+        id: 27,
+        question: "En presencia de insuficiencia cardiaca y fracción de eyección ≤ 40%, ¿qué grupo farmacológico adicional está indicado para reducir la rehospitalización y muerte en ausencia de hipercalemia y falla renal grave?",
+        options: ["Antagonistas de la aldosterona", "Diuréticos de asa", "Calcioantagonistas no dihidropiridínicos", "Inotrópicos intravenosos"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, la inhibición neurohumoral completa evita el remodelado perjudicial del miocardio tras el evento isquémico extenso.<br><br>Perla ENARM: \"Se recomienda administrar un antagonista de la aldosterona a los pacientes con insuficiencia cardiaca y FEVI ≤ 40%, sin enfermedad renal grave ni hipercalemia, para reducir el riesgo de rehospitalización y muerte\".<br><br>Análisis de Distractores: La opción B reduce síntomas de congestión, pero no han demostrado impactar significativamente la mortalidad a largo plazo. La opción C está contraindicada por su efecto inotrópico negativo. La opción D se reserva para choque o falla cardiaca aguda con hipotensión franca.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Insuficiencia Cardiaca), Página 49."
+    },
+    {
+        id: 28,
+        question: "¿Cuál es el fármaco vasopresor recomendado para aumentar la presión arterial y la perfusión de órganos vitales en el paciente con choque cardiogénico post infarto?",
+        options: ["Dopamina en infusión", "Dobutamina intravenosa", "Noradrenalina intravenosa", "Adrenalina en bolo directo"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, el soporte inotrópico y vasopresor en el choque isquémico requiere estabilizar la hemodinamia sin exacerbar arritmias o aumentar desproporcionadamente el consumo de oxígeno miocárdico.<br><br>Perla ENARM: \"Se recomienda la administración de un vasopresor (noradrenalina preferiblemente) para pacientes en choque cardiogénico pese al tratamiento con otro inotrópico, para aumentar la PA y la perfusión de órganos vitales\".<br><br>Análisis de Distractores: La opción A (dopamina) se ha asociado a mayor mortalidad y arritmias en este escenario específico. La opción B (dobutamina) es inotrópico puro de primera línea, pero no el agente vasopresor principal para revertir hipotensiones críticas (choque avanzado). La opción D (adrenalina) no demostró impacto positivo a corto ni largo plazo en los estudios mencionados por la guía.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Choque Cardiogénico), Página 54."
+    },
+    {
+        id: 29,
+        question: "En relación al uso de dopamina en pacientes cursando con choque cardiogénico, ¿cuál es el evento adverso principal que limita su uso frente a otras aminas vasoactivas?",
+        options: ["Vasodilatación periférica severa", "Edema agudo pulmonar masivo", "Trombosis de la arteria coronaria", "Eventos arritmogénicos y muerte"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, el estudio SOAP II demostró que la dopamina pierde superioridad frente a la noradrenalina y aumenta la letalidad por inestabilidad eléctrica en el miocardio isquémico.<br><br>Perla ENARM: \"La dopamina, comparada con la noradrenalina, se asoció a un incremento de muerte a los 28 días entre los 280 pacientes con choque cardiogénico... Hubo además mayores eventos arritmogénicos entre los pacientes tratados con dopamina que en aquellos a quienes se les administró noradrenalina\".<br><br>Análisis de Distractores: La opción A es incorrecta porque la dopamina produce vasoconstricción, no vasodilatación. Las opciones B y C no son los riesgos estadísticamente dominantes que justifiquen su inferioridad frente a la noradrenalina según la evidencia central.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Choque Cardiogénico), Página 53."
+    },
+    {
+        id: 30,
+        question: "Según la evidencia en el paciente con choque cardiogénico agudo sin complicaciones mecánicas, ¿qué dispositivo de soporte hemodinámico NO se recomienda utilizar de manera rutinaria?",
+        options: ["Balón intraaórtico de contrapulsación", "Dispositivo de asistencia Impella", "Oxigenación por membrana extracorpórea", "Marcapasos temporal transvenoso"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, el ensayo clínico IABP-SHOCK II demostró de manera contundente la ausencia de beneficio de sobrevida en colocar profilácticamente este dispositivo en isquemias puras.<br><br>Perla ENARM: \"Resultados a 30 días, fallecieron 119 pacientes tratados con balón de contrapulsación a comparación de 123 en el grupo control. No se recomienda el uso del balón de contrapulsación para reducir la mortalidad en pacientes con choque cardiogénico\".<br><br>Análisis de Distractores: La opción B (Impella) sí cuenta con recomendación específica de guía para la asistencia ventricular derecha o disfunción crítica. La opción C es una terapia extrema avalada para choque refractario en centros especializados. La opción D se usa rutinariamente para choque asociado a bradiarritmias o bloqueos.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Choque Cardiogénico), Página 52."
+    },
+    {
+        id: 31,
+        question: "En el contexto de un paciente cursando un choque cardiogénico agudo de etiología isquémica, ¿qué estrategia intervencionista coronaria está expresamente contraindicada?",
+        options: ["Revascularización exclusiva a arteria responsable", "Intervencionismo coronario multivaso", "Terapia de puente farmacoinvasivo", "Colocación de stent metálico primario"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, tratar lesiones distantes al vaso infartado prolonga el procedimiento, el tiempo de contraste y la inestabilidad eléctrica y hemodinámica empeorando la letalidad.<br><br>Perla ENARM: \"En choque cardiogénico, la revascularización por intervencionismo coronario multivaso no relacionado con el vaso responsable del infarto no está recomendada\".<br><br>Análisis de Distractores: La opción A es exactamente el tratamiento resolutivo de elección en el paciente chocado. La opción C y D son intervenciones estándar aceptadas si la reperfusión primaria inmediata fallara o no estuviera indicada.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Choque Cardiogénico), Página 54."
+    },
+    {
+        id: 32,
+        question: "Ante el desarrollo de insuficiencia ventricular derecha con reducción del índice cardiaco secundaria al infarto, ¿qué dispositivo de soporte se recomienda para mejorar la hemodinamia del paciente?",
+        options: ["Balón intraaórtico de contrapulsación", "Dispositivo de asistencia Impella", "Marcapasos bicameral definitivo", "Válvula aórtica transcatéter"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, existen asistencias mecánicas transitorias percutáneas eficaces para desahogar las presiones derechas mientras recupera aturdimiento el miocardio isquémico.<br><br>Perla ENARM: \"Se recomienda el uso de dispositivos de asistencia ventricular derecha como impella para mejorar el índice cardiaco, reducción de la presión venosa central en pacientes con insuficiencia ventricular derecha\".<br><br>Análisis de Distractores: La opción A no se recomienda de rutina e impacta primariamente la perfusión coronaria izquierda. La opción C es un tratamiento eléctrico, no un soporte de bomba mecánico. La opción D resuelve estenosis valvular crónica, no una falla derecha aguda post-infarto.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Asistencia Ventricular), Página 55."
+    },
+    {
+        id: 33,
+        question: "Tras la intervención coronaria con implante de stent en un paciente con infarto y fibrilación auricular que cursa con BAJO riesgo de sangrado, ¿cuál es la duración recomendada para mantener la triple terapia antitrombótica?",
+        options: ["Durante uno a seis meses", "Estrictamente durante un mes", "Durante seis a doce meses", "Mayor a doce meses"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, combinar dos antiplaquetarios más anticoagulante oral tiene un balance delicado; si el paciente no tiene datos predictores hemorrágicos letales, el periodo inicial de vulnerabilidad al stent justifica esta cobertura media.<br><br>Perla ENARM: \"Después de un IAMCEST con implante de stent(s) en paciente con fibrilación auricular y bajo riesgo de sangrado, se recomienda considerar el tratamiento triple con ácido acetilsalicílico, clopidogrel y un anticoagulante oral durante 1 a 6 meses para prevenir complicaciones isquémicas\".<br><br>Análisis de Distractores: La opción B aplica exclusivamente a los pacientes infartados con fibrilación auricular que sí presentan un alto riesgo de sangrado. Las opciones C y D superan ampliamente el periodo en el que se recomienda triple terapia para cualquier estrato de riesgo.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Anticoagulación en FA), Página 45."
+    },
+    {
+        id: 34,
+        question: "Tras la intervención coronaria con implante de stent en un paciente con infarto y fibrilación auricular que cursa con ALTO riesgo de sangrado, ¿cuál es la duración de tiempo máxima recomendada para mantener la triple terapia?",
+        options: ["Durante uno a seis meses", "Estrictamente durante un mes", "Durante seis a doce meses", "Exclusivamente por siete días"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, las comorbilidades hemorrágicas exigen limitar la triple terapia al mínimo indispensable antes de descontinuar uno de los antiplaquetarios, acortando el riesgo fatal de sangrado mayor.<br><br>Perla ENARM: \"Después de un IAM CEST con implante de stents en paciente con fibrilación auricular y alto riesgo de sangrado, se recomienda considerar el tratamiento triple con ácido acetilsalicílico, clopidogrel y un anticoagulante oral durante 1 mes\".<br><br>Análisis de Distractores: La opción A corresponde a los pacientes con fibrilación y bajo riesgo de sangrado. Las opciones C y D no están avaladas por la directriz para la regulación del retiro escalonado post-stent con fibrilación auricular.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Anticoagulación en FA), Página 46."
+    },
+    {
+        id: 35,
+        question: "Al rebasar el periodo de doce meses de evolución tras un infarto agudo y la colocación de un stent en un paciente portador de fibrilación auricular, ¿cuál es la terapia farmacológica de sostén recomendada a largo plazo?",
+        options: ["Anticoagulante oral en monoterapia", "Terapia antiplaquetaria dual", "Ácido acetilsalicílico exclusivo", "Anticoagulante oral más clopidogrel"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, una vez que el endotelio del stent ha sanado totalmente (después del primer año), el riesgo cardioembólico por la arritmia asume la prioridad absoluta y los antiplaquetarios sistémicos resultan fútiles e incrementan riesgos de sangrado inútilmente.<br><br>Perla ENARM: \"Después de los 12 meses de la ICP e implante de stent en paciente con IAM CEST y fibrilación auricular con riesgo bajo de sangrado se recomienda continuar con un anticoagulante oral en monoterapia\".<br><br>Análisis de Distractores: La opción B y C protegen la arteria isquémica pero abandonan la protección contra el infarto cerebral cardioembólico de la fibrilación. La opción D se usa como un paso transitorio (doble terapia) pero no para mantenimiento crónico en la gran mayoría.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Anticoagulación en FA), Página 46."
+    },
+    {
+        id: 36,
+        question: "En pacientes que se presentan totalmente asintomáticos en su evolución, ¿cuál es el tiempo de inicio de isquemia a partir del cual la intervención coronaria percutánea primaria ya no está indicada?",
+        options: ["Mayor a doce horas", "Mayor a veinticuatro horas", "Mayor a cuarenta y ocho horas", "Mayor a setenta y dos horas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, el tejido infartado tras dos días ya se encuentra en fase de necrosis y organización cicatrizal total en pacientes estables, por lo que reabrir mecánicamente una arteria ocluida tardíamente carece de beneficio funcional y no mejora la sobrevida.<br><br>Perla ENARM: \"Para pacientes asintomáticos, no está indicada la intervención coronaria percutánea primaria después de 48 horas del inicio de los síntomas\".<br><br>Análisis de Distractores: Las opciones A y B son etapas subagudas donde aún está fuertemente recomendada la revascularización rutinaria o la estrategia farmacoinvasiva según el dolor residual o la clínica. La opción D es un lapso incorrecto estipulado por la norma.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Intervencionismo), Página 37."
+    },
+    {
+        id: 37,
+        question: "En el paciente postoperado de revascularización miocárdica quirúrgica (bypass), ¿cuál es el tiempo temporal máximo recomendado para el reinicio obligado de ácido acetilsalicílico?",
+        options: ["No mayor a catorce días", "No mayor a treinta días", "No mayor a cuarenta y ocho horas", "No mayor a noventa días"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, los injertos venosos son sumamente reactivos y susceptibles de fracaso trombótico inicial si el tejido no está fuertemente antiagregado tras cicatrizar los accesos de la toracotomía.<br><br>Perla ENARM: \"En los pacientes postoperados de revascularización miocárdica, se recomienda reiniciar ácido acetilsalicílico y ticagrelor no mayor a 14 dias, para la reducción de trombosis o falla de puentes de revascularización coronaria de vena safena\".<br><br>Análisis de Distractores: La opción C (48 horas) pondría en gran riesgo al paciente de sangrado torácico masivo agudo, ya que la hemostasia quirúrgica es aún frágil. Las opciones B y D superan ampliamente el periodo de vulnerabilidad dejando ocluir los injertos implantados.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Intervencionismo), Página 61."
+    },
+    {
+        id: 38,
+        question: "¿Cuál es el tratamiento con fármacos inhibidores de los receptores plaquetarios P2Y12 preferido para el paciente infartado que requerirá intervención coronaria percutánea si se cuenta con disponibilidad?",
+        options: ["Prasugrel o ticagrelor", "Clopidogrel en infusión continua", "Bivalirudina y fondaparinux", "Abciximab o eptifibatida"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, la antiagregación intensiva y rápida demostró superioridad sobre el esquema histórico oral; el clopidogrel ha quedado como agente secundario.<br><br>Perla ENARM: \"La terapia antiplaquetaria dual con aspirina más ticagrelor o prasugrel (o clopidogrel, si ticagrelor o prasugrel no están disponibles o están contraindicados), se recomienda durante 12 meses después de la ICP\".<br><br>Análisis de Distractores: La opción B describe una presentación de un fármaco inexistente en la clínica real (clopidogrel se da oral). La opción C pertenece a los anticoagulantes sistémicos inyectables. La opción D son inhibidores IIb/IIIa intravenosos usados pero no son la terapia de mantenimiento base recomendada a todos.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Terapia Antiagregante), Página 21."
+    },
+    {
+        id: 39,
+        question: "De acuerdo a los meta-análisis presentados en la guía, ¿qué nivel de reducción de riesgo para eventos vasculares cerebrales tiene integrar a los pacientes a un programa de rehabilitación cardiaca?",
+        options: ["Reducción del treinta por ciento", "Reducción del cincuenta y ocho por ciento", "Reducción del sesenta por ciento", "Reducción del setenta por ciento"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, el ajuste biológico y el control de estilos de vida mediado por equipos de seguimiento previene fuertemente los eventos ateroembólicos tanto a nivel coronario como sistémico.<br><br>Perla ENARM: \"Estos programas reducen la mortalidad cardiovascular hasta en un 58%, el infarto del miocardio se redujo 30% y los eventos vasculares cerebrales 60%\".<br><br>Análisis de Distractores: La opción A es el porcentaje validado para la reducción de nuevos eventos de infarto del miocardio. La opción B es la cifra estadísticamente significativa para la disminución de la mortalidad cardiovascular global.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Rehabilitación Cardiaca), Página 66."
+    },
+    {
+        id: 40,
+        question: "¿Qué arritmia letal intrahospitalaria previenen los medicamentos bloqueadores beta adrenérgicos cuando se inician de forma temprana en el infarto agudo de miocardio?",
+        options: ["Taquicardia supraventricular paroxística", "Fibrilación ventricular y reinfarto", "Fibrilación auricular rápida", "Bloqueo auriculoventricular de alto grado"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Infarto Agudo de Miocardio, el estudio COMMIT demostró que apagar el estado adrenérgico del ventrículo isquémico evita los disparos mortales que causan la muerte súbita arritmogénica precoz.<br><br>Perla ENARM: \"El uso de temprano de bloqueadores beta reduce el riesgo de reinfarto y fibrilación ventricular (581 [2.5%] vs 698 [3.0%]; OR 0.83; p=0.001)\".<br><br>Análisis de Distractores: La opción D (bloqueo) es precisamente una contraindicación potencial si se precipita excesivamente con betabloqueadores. La opción C (fibrilación auricular) se maneja con amiodarona si cursa inestable en este contexto particular según la guía.",
+        source: "GPC-IMSS-357-21, Diagnóstico y Tratamiento del Infarto Agudo de Miocardio con Elevación del Segmento ST, 2021, Evidencias y Recomendaciones (Uso de Bloqueadores Beta), Página 51."
+    }
+
+
+        
+       ];
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('ExMI10LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('ExMI10Progress');
+                localStorage.removeItem('ExMI10LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-purple-500 shadow-md z-10 border-purple-500 dark:border-purple-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-fuchsia-500 to-purple-600 hover:from-purple-600 hover:to-fuchsia-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-purple-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-fuchsia-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "MEDICINA INTERNA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "IMSS-357-21 • Diagnóstico y tratamiento del infarto agudo de miocardio con elevación del segmento ST";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-purple-600 dark:text-slate-400 dark:hover:text-purple-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="login.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-purple-100 dark:border-purple-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-purple-50 has-[:checked]:border-purple-400 dark:has-[:checked]:bg-purple-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-purple-600 focus:ring-purple-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-purple-600 dark:hover:bg-purple-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-fuchsia-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('ExMI10Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('ExMI10LastQId', currentQuestionId);
+                else localStorage.removeItem('ExMI10LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('ExMI10Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

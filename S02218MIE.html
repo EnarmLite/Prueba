@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-purple-500 to-fuchsia-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+
+    {
+        id: 1,
+        question: "¿Cuál es el porcentaje que representa esta neoplasia respecto al total de defunciones por patologías oncológicas a nivel mundial?",
+        options: ["17.7%", "25.8%", "11.7%", "34.4%"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Prevención Cáncer Pulmón, esta enfermedad constituye el problema de salud pública de mayor impacto letal en la oncología global, superando a las neoplasias de mama, colon y próstata. La alta letalidad se atribuye al diagnóstico en etapas avanzadas y a su relación intrínseca con el tabaquismo.<br><br>Perla ENARM: \"El CP constituye la principal causa de muerte por cáncer a nivel mundial. De acuerdo con datos de la OMS, representó 17.7% del total de muertes por cáncer.\"<br><br>Análisis de Distractores: El 25.8% corresponde a la sinergia estadística entre exposición a radón y tabaco. El 11.7% es la prevalencia de esta neoplasia en hombres en México. El 34.4% corresponde al porcentaje de pacientes con esta neoplasia que tienen antecedente de exposición a humo de leña.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Introducción, Página 8."
+    },
+    {
+        id: 2,
+        question: "¿En qué entidades federativas se reportan las tasas más bajas de mortalidad por neoplasias pulmonares en México?",
+        options: ["Hidalgo y Tlaxcala", "Sonora y Chihuahua", "Sinaloa y Nuevo León", "Baja California y Sonora"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Prevención Cáncer Pulmón, existe una polarización epidemiológica en el país. Los estados del norte concentran la mayor carga de la enfermedad, correlacionado históricamente con una adopción más temprana y masiva del tabaquismo. Por el contrario, los estados del centro-sur mantienen tasas estandarizadas inferiores.<br><br>Perla ENARM: \"Se presentó una mayor tasa estandarizada para los estados de Baja California Sur, Sinaloa, Sonora, Chihuahua y Nuevo León, y las más bajas para Hidalgo y Tlaxcala.\"<br><br>Análisis de Distractores: Sonora, Chihuahua, Sinaloa, Nuevo León y Baja California Sur representan los focos rojos epidemiológicos con las tasas de mortalidad más altas a nivel nacional, por lo que son incorrectas en el contexto de buscar las tasas más bajas.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Introducción, Página 8."
+    },
+    {
+        id: 3,
+        question: "¿Cuál es la estirpe histológica diagnosticada con mayor frecuencia en mujeres mexicanas con exposición crónica a biomasa?",
+        options: ["Carcinoma de células escamosas", "Adenocarcinoma de pulmón", "Carcinoma de células pequeñas", "Tumor carcinoide bronquial"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Prevención Cáncer Pulmón, el humo de biomasa (leña) induce mutaciones distintas a las del alquitrán del tabaco. En la población femenina no fumadora, el daño alveolar crónico deriva predominantemente en la formación de neoplasias glandulares periféricas.<br><br>Perla ENARM: \"En mujeres mexicanas no fumadoras, el humo de leña se asocia con CP en particular del tipo histológico adenocarcinoma (58.8%).\"<br><br>Análisis de Distractores: El carcinoma de células escamosas (epidermoide) y el de células pequeñas tienen una asociación central y estricta con el consumo pesado de tabaco. El tumor carcinoide es una neoplasia neuroendocrina rara no asociada directamente a biomasa.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Introducción, Página 9."
+    },
+    {
+        id: 4,
+        question: "De acuerdo a la estadística evaluada, ¿cuál es el factor de riesgo que confiere la mayor probabilidad individual de desarrollar esta patología?",
+        options: ["Tabaquismo activo", "Antecedentes de cáncer", "Exposición a asbesto", "Exposición humo de leña"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Prevención Cáncer Pulmón, aunque el tabaquismo explica el mayor volumen poblacional de casos, la predisposición genética y el daño celular previo de un historial oncológico personal otorgan el riesgo estadístico más elevado y obligan a un umbral más estricto de vigilancia.<br><br>Perla ENARM: \"Antecedentes de cáncer (5.7), Asbesto (4.4) y Tabaquismo (3.6).\"<br><br>Análisis de Distractores: El tabaquismo activo es la causa más común, pero estadísticamente su impacto individual es de 3.6. El asbesto tiene 4.4 y el humo de leña 3.1. El antecedente oncológico supera a todos con 5.7.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Cuadros o figuras, Página 26."
+    },
+    {
+        id: 5,
+        question: "¿Cuál es el rango de edad establecido para considerará a un paciente asintomático como candidato a tamizaje tomográfico estándar?",
+        options: ["40 a 55 años", "50 a 65 años", "55 a 74 años", "60 a 80 años"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Prevención Cáncer Pulmón, la ventana de escrutinio se fundamenta en el equilibrio clínico; someter a individuos más jóvenes genera radiación innecesaria y falsos positivos, mientras que después del límite superior, las comorbilidades y la expectativa de vida disminuyen el beneficio de la detección.<br><br>Perla ENARM: \"Se recomienda que a las personas de 55 a 74 años de edad, fumadoras activas o que dejaron de fumar en los últimos 15 años y que tengan IT ≥ 30 paquetes/año, se refieran para que se les realice la TCDB.\"<br><br>Análisis de Distractores: Las edades fuera del rango 55-74 años no justifican el escrutinio primario estándar según la indicación mayor. Existen criterios especiales para pacientes a partir de 50 años, pero exigen sumar factores de riesgo extra y un menor índice tabáquico, sin ser el tamizaje estándar general.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Diagnóstico, Página 23."
+    },
+    {
+        id: 6,
+        question: "En pacientes a partir de los 50 años, ¿cuál es el índice tabáquico mínimo requerido para justificar el escrutinio imagenológico si existen factores de riesgo adicionales?",
+        options: ["10 paquetes por año", "15 paquetes por año", "20 paquetes por año", "30 paquetes por año"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Prevención Cáncer Pulmón, cuando convergen el tabaquismo y otro carcinógeno probado (como asbesto o cáncer previo), el umbral de daño acumulado para iniciar la búsqueda activa disminuye. En este subgrupo más joven, se reduce la carga tabáquica necesaria para justificar la tomografía.<br><br>Perla ENARM: \"Se recomienda que a las personas ≥ 50 años de edad, con antecedente de IT ≥ 20 paquetes/año y con factores de riesgo para CP sean referidas para que se les realice la TCDB.\"<br><br>Análisis de Distractores: Un índice de 30 paquetes es el requerimiento para el grupo de edad estándar (55-74 años) sin factores extra obligatorios. Los índices de 10 o 15 no alcanzan el punto de corte avalado para someter a radiación al paciente asintomático.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Diagnóstico, Página 24."
+    },
+    {
+        id: 7,
+        question: "¿Cuál es el estudio de imagen de elección indicado para realizar el escrutinio primario en población de alto riesgo asintomática?",
+        options: ["Tomografía dosis baja", "Tomografía por emisión", "Radiografía de tórax", "Ultrasonografía torácica"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Prevención Cáncer Pulmón, esta modalidad es la única intervención validada por ensayos clínicos masivos que identifica nódulos en etapa subclínica (alta sensibilidad) limitando el daño por exposición a radiación ionizante repetida. Su implementación impacta directamente en la sobrevida.<br><br>Perla ENARM: \"Realizar una tomografía computada de dosis baja de tórax (TCDB) comparado con evaluación clínica, análisis de esputo o radiografía de tórax disminuye la mortalidad.\"<br><br>Análisis de Distractores: La radiografía de tórax falla en detectar lesiones menores a 1 cm ocultas por estructuras óseas o mediastinales. La tomografía por emisión (PET) es un recurso de estadificación costoso. El ultrasonido no es útil para visualizar parénquima aireado profundo.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Diagnóstico, Página 22."
+    },
+    {
+        id: 8,
+        question: "¿Qué modalidad de imagen está formalmente contraindicada para utilizarse como herramienta de cribado en pacientes asintomáticos?",
+        options: ["Tomografía de alta resolución", "Radiografía de tórax", "Resonancia magnética torácica", "Tomografía con contraste"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Prevención Cáncer Pulmón, la evidencia demostró que el uso de estudios radiográficos convencionales de forma periódica en asintomáticos no altera la mortalidad, propicia una falsa sensación de seguridad e incrementa intervenciones innecesarias.<br><br>Perla ENARM: \"No se recomienda realizar RxT como prueba de cribado para CP.\"<br><br>Análisis de Distractores: La resonancia y tomografías contrastadas/alta resolución no son tamizaje, pero la radiografía de tórax es la que recibe explícitamente una indicación \"Fuerte en contra\" debido a su uso tradicional pero erróneo en la práctica clínica diaria de primer nivel.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Diagnóstico, Página 23."
+    },
+    {
+        id: 9,
+        question: "¿Qué prueba diagnóstica de laboratorio cuenta con una recomendación fuerte en contra para su uso sistemático como método de detección temprana?",
+        options: ["Gasometría arterial", "Biometría hemática completa", "Marcadores tumorales séricos", "Citología de esputo"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Prevención Cáncer Pulmón, la evaluación celular de expectoraciones en pacientes sin sintomatología carece de sensibilidad anatómica y no impacta la detección de masas periféricas. Su uso retrasa recursos que deben dirigirse a imagen tomográfica.<br><br>Perla ENARM: \"No se recomienda realizar citología de esputo como prueba de cribado para CP.\"<br><br>Análisis de Distractores: Gasometría, biometría y marcadores no se utilizan para cribado primario pulmonar; sin embargo, la citología de esputo era una práctica antigua que la evidencia actual penaliza y prohíbe de manera tajante para este propósito preventivo.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Diagnóstico, Página 23."
+    },
+    {
+        id: 10,
+        question: "Dentro de las manifestaciones clínicas iniciales, ¿cuál es el signo que presenta el mayor valor predictivo positivo para confirmar esta neoplasia?",
+        options: ["Tos crónica", "Dolor torácico", "Pérdida de peso", "Presencia de hemoptisis"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Prevención Cáncer Pulmón, la erosión de vasos sanguíneos endobronquiales o cavitación tumoral produce expectoración hemática. Clínicamente, es el dato de alarma más específico de destrucción tisular oncológica en el tracto respiratorio inferior comparado con síntomas constitucionales.<br><br>Perla ENARM: \"El VPP para hemoptisis fue de 2.4 con OR de 16.24. En caso de hemoptisis la duración de 6 meses presentó un VPP en hombres de 5.8 y en mujeres de 3.3.\"<br><br>Análisis de Distractores: La tos crónica, el dolor torácico y la pérdida de peso presentan valores predictivos inferiores (0.44, 0.82 y 1.1 respectivamente). Son relevantes pero inespecíficos; la expectoración sanguinolenta es la manifestación cardinal.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Diagnóstico, Páginas 22 y 23."
+    },
+    {
+        id: 11,
+        question: "¿Cuál es la conducta clínica indicada en un paciente que presenta factores de riesgo y expectoración sanguinolenta recurrente?",
+        options: ["Solicitar tomografía anual", "Iniciar antibiótico empírico", "Referir para protocolo diagnóstico", "Realizar citología seriada"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Prevención Cáncer Pulmón, la aparición del síntoma cardinal elimina la naturaleza preventiva del caso. El abordaje cambia inmediatamente de \"tamizaje asintomático\" a \"evaluación oncológica activa\", requiriendo atención especializada sin retrasos en primer nivel.<br><br>Perla ENARM: \"Se sugiere referir a personas con factores de riesgo para CP asociado a síntomas respiratorios y hemoptisis, con o sin pérdida de peso, a la instancia de salud pertinente para que se lleve a cabo el protocolo diagnóstico.\"<br><br>Análisis de Distractores: Solicitar tomografía de tamizaje anual es exclusivo para asintomáticos. Iniciar antibióticos asume patología infecciosa e ignora el riesgo oncológico inminente. La citología de esputo está proscrita en este abordaje inicial.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Diagnóstico, Página 24."
+    },
+    {
+        id: 12,
+        question: "¿Qué intervención de estilo de vida sugiere la GPC como factor protector con evidencia clínica para disminuir la probabilidad de esta neoplasia?",
+        options: ["Dieta hiperproteica", "Ayuno intermitente", "Suplementación con folatos", "Consumo de té verde"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Prevención Cáncer Pulmón, existe evidencia epidemiológica que asocia los metabolitos antioxidantes y polifenoles presentes en infusiones botánicas específicas con una inhibición parcial del estrés oxidativo que precede a la mutagénesis epitelial.<br><br>Perla ENARM: \"Se sugiere el consumo de té negro o verde, elaborado a partir de Camellia sinensis, si no existe contraindicación médica, para disminuir el riesgo de CP.\"<br><br>Análisis de Distractores: La suplementación vitamínica y de folatos está explícitamente en contra de indicarse para quimioprevención pulmonar. La dieta hiperproteica y el ayuno no poseen sustento en las recomendaciones preventivas de esta patología.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Prevención, Página 19."
+    },
+    {
+        id: 13,
+        question: "¿Qué grupo de medicamentos cuenta con recomendación en contra para prescribirse como medida de quimioprevención en población de riesgo?",
+        options: ["Antiinflamatorios no esteroideos", "Corticosteroides inhalados", "Broncodilatadores de acción prolongada", "Inhibidores de bomba"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Prevención Cáncer Pulmón, aunque la inflamación crónica participa en la tumorogénesis, el uso sistemático de bloqueadores de la ciclooxigenasa (incluyendo aspirina) no genera reducción en la incidencia y añade riesgos gastrointestinales y renales inaceptables en pacientes sanos.<br><br>Perla ENARM: \"No se sugiere el uso AINEs para disminuir el riesgo de CP.\"<br><br>Análisis de Distractores: Los corticosteroides y broncodilatadores conforman el tratamiento estándar del paciente con limitación crónica del flujo aéreo, una comorbilidad frecuente, pero no son mencionados como medicamentos proscritos para prevención oncológica.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Prevención, Página 20."
+    },
+    {
+        id: 14,
+        question: "¿Qué tipo de suplementación vitamínica debe evitarse como estrategia preventiva debido a la falta de beneficio comprobado?",
+        options: ["Vitamina D", "Complejo B", "Vitamina A", "Vitamina K"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Prevención Cáncer Pulmón, múltiples ensayos clínicos demostraron de forma contundente que el uso aislado o combinado de antioxidantes exógenos falla en proteger el parénquima e incluso puede tener efectos adversos paradójicos en sujetos fumadores.<br><br>Perla ENARM: \"No se sugiere el uso de vitaminas A, C, E, folatos y selenio, ya sea solas o en diferentes combinaciones para disminuir el riesgo de CP.\"<br><br>Análisis de Distractores: Aunque el documento se pronuncia en contra de vitaminas de forma general, señala directa y puntualmente a las vitaminas A, C y E, así como el ácido fólico y selenio. Las vitaminas D, B o K no se abordan en la prohibición explícita de este apartado.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Prevención, Página 21."
+    },
+    {
+        id: 15,
+        question: "Una vez iniciado el protocolo de escrutinio en un paciente de alto riesgo, ¿cuál es la periodicidad mínima recomendada para realizar el estudio de imagen consecutivo?",
+        options: ["Cada seis meses", "Cada dos años", "Cada año durante tres años", "Cada cinco años"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Prevención Cáncer Pulmón, el tiempo de duplicación tumoral y la evolución de los nódulos exigen un monitoreo que equilibre la detección oportuna de crecimientos milimétricos y el impacto acumulado de la radiación. El esquema anual es el estándar aprobado.<br><br>Perla ENARM: \"Se sugiere que a las personas con factores de riesgo para CP referidas para cribado, la TCDB se realice cada año, durante al menos tres años.\"<br><br>Análisis de Distractores: La radiación cada seis meses es excesiva para escrutinio primario asintomático. Espaciar los estudios a dos o cinco años permite el desarrollo de lesiones a etapas irreversibles, perdiendo el objetivo del tamizaje.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Diagnóstico, Página 24."
+    },
+    {
+        id: 16,
+        question: "En la población femenina mexicana, ¿cuál es la etapa clínica en la que se realiza el diagnóstico de esta neoplasia con mayor frecuencia?",
+        options: ["Etapa clínica I", "Etapa clínica II", "Etapa clínica IIIA", "Etapa clínica IV"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Prevención Cáncer Pulmón, la sintomatología inicial es tardía e inespecífica. Las mujeres, muchas de ellas no fumadoras, desarrollan neoplasias periféricas que cursan silentes hasta presentar diseminación metastásica extrapulmonar, resultando en un pronóstico sombrío al momento de la sospecha médica.<br><br>Perla ENARM: \"La etapa clínica más frecuente fue la IV con 54.6%, seguido de las etapas IIIB y IIIA con 29.2 % y 11.6% respectivamente.\"<br><br>Análisis de Distractores: El diagnóstico en etapas I y II es anecdótico debido a la ausencia de síntomas y la carencia de programas masivos de detección tomográfica en población general abierta.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Introducción, Página 9."
+    },
+    {
+        id: 17,
+        question: "¿Cuántos años de exposición continua al humo de biomasa se requieren para establecer un aumento estadísticamente significativo en la probabilidad de desarrollar patología glandular?",
+        options: ["Mayor a 10 años", "Mayor a 20 años", "Mayor a 30 años", "Mayor a 50 años"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Prevención Cáncer Pulmón, la inhalación en interiores (asociada tradicionalmente a cocinar con leña) requiere décadas de inflamación fibrosante sostenida para lograr transformación maligna epitelial en ausencia del alquitrán del tabaco.<br><br>Perla ENARM: \"Con exposición mayor a 50 años el OR para adenocarcinoma fue de 1.9.\"<br><br>Análisis de Distractores: La exposición de 1 a 20 o 21 a 50 años no arrojó momios de riesgo significativos en la evidencia nacional referenciada. El impacto real en la tumorigénesis ocurre en la quinta década de exposición.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Prevención, Páginas 16 y 17."
+    },
+    {
+        id: 18,
+        question: "En pacientes que han suspendido el hábito tabáquico, ¿cuál es el tiempo máximo de abstinencia para considerarlos aún candidatos al tamizaje imagenológico estándar?",
+        options: ["Menor a 5 años", "Menor a 10 años", "Menor a 15 años", "Menor a 20 años"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Prevención Cáncer Pulmón, el cese del tabaquismo reduce progresivamente la probabilidad de daño orgánico. Sin embargo, el riesgo basal permanece alto durante los siguientes tres lustros post-cesación; rebasado este umbral, el rendimiento del cribado decrece dramáticamente.<br><br>Perla ENARM: \"Personas asintomáticas de 55 a 74 años con IT ≥ 30 paquetes/año o que dejaron de fumar en los últimos 15 años.\"<br><br>Análisis de Distractores: Una abstinencia de 5 o 10 años mantiene al paciente en riesgo latente elevadísimo, calificando forzosamente para la tomografía. Los pacientes con más de 15 años de abstinencia salen del algoritmo formal de imagen.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Anexos (Algoritmo 1), Página 25."
+    },
+    {
+        id: 19,
+        question: "¿Qué elemento ambiental genera daño celular sinérgico severo al combinarse con tabaquismo, posicionándose como la segunda causa de mortalidad por esta patología?",
+        options: ["Gas radón", "Polvo de asbesto", "Clorometilo", "Éter bis-clorometílico"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Prevención Cáncer Pulmón, la exposición en el hogar o ambientes cerrados a las emisiones de este gas inodoro, sumado al efecto de los radicales libres del cigarro, incrementa más de 25 veces la incidencia de transformación oncológica epitelial pulmonar.<br><br>Perla ENARM: \"La sinergia entre gas radón y tabaco es la segunda causa de CP, ya que el decaimiento del isótopo provoca daño celular e incrementa el potencial de transformación maligna.\"<br><br>Análisis de Distractores: El asbesto es el tercer factor etiológico en relevancia estadística, con alta asociación ocupacional, pero es el radón el que se señala explícitamente como el segundo gran factor sinérgico con el tabaco.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Introducción, Página 9."
+    },
+    {
+        id: 20,
+        question: "Como parte de las modificaciones al estilo de vida, ¿qué tipo de intervención física sugiere la evidencia para lograr una reducción en la probabilidad de esta enfermedad?",
+        options: ["Actividad física de baja intensidad", "Actividad física de moderada a alta intensidad", "Ejercicios de resistencia estática", "Rehabilitación pulmonar supervisada"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Prevención Cáncer Pulmón, la reducción del sedentarismo tiene un impacto en la mitigación del estrés oxidativo y la mejora inmunológica global. Dinámicamente, se requiere de un esfuerzo metabólico sostenido para adquirir el efecto protector estadístico.<br><br>Perla ENARM: \"Se sugiere realizar actividad física de moderada a alta intensidad, si no existe contraindicación médica, para disminuir el riesgo de CP.\"<br><br>Análisis de Distractores: La actividad de baja intensidad no demostró una reducción de riesgo clínicamente relevante en comparación. Los ejercicios estáticos y la rehabilitación pulmonar tienen otros propósitos fisiológicos (cardiovasculares o tratamiento de EPOC), no prevención oncológica primaria.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Prevención, Página 18."
+    },
+    {
+        id: 21,
+        question: "¿Qué término clínico define la GPC como la acción sistemática de realizar exámenes médicos a un grupo poblacional específico para identificar tempranamente una patología?",
+        options: ["Cribado", "Escrutinio diagnóstico", "Tamizaje poblacional", "Detección oportuna"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Cáncer Pulmón, la terminología estandarizada para evaluar a individuos asintomáticos con el fin de descartar o confirmar una neoplasia en sus fases iniciales se define mediante este concepto epidemiológico y preventivo.<br><br>Perla ENARM: \"Cribar: realizar un examen médico a un conjunto de personas para detectar una determinada enfermedad y descartar otras.\"<br><br>Análisis de Distractores: Escrutinio, tamizaje y detección oportuna son sinónimos coloquiales utilizados en la práctica diaria, pero la terminología formal que esta GPC incluye en su glosario oficial es exclusivamente \"cribado\".",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Glosario, Página 33."
+    },
+    {
+        id: 22,
+        question: "De los siguientes síntomas constitucionales y respiratorios, ¿cuál reporta el valor predictivo positivo más bajo para confirmar la presencia de esta neoplasia?",
+        options: ["Pérdida de peso", "Dolor torácico", "Fiebre prolongada", "Fatiga"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Cáncer Pulmón, el cansancio crónico es el síntoma más inespecífico en esta población de riesgo, frecuentemente atribuible a hipoxemia por comorbilidad obstructiva pulmonar más que al efecto consuntivo directo de la masa tumoral.<br><br>Perla ENARM: \"El valor predictivo positivo para la fatiga fue de 0.43, comparado con 0.82 para dolor torácico y 1.1 para pérdida de peso.\"<br><br>Análisis de Distractores: La pérdida de peso (1.1), el dolor torácico (0.82) y la fiebre mayor a 6 meses (0.58) presentan valores predictivos estadísticamente superiores a la fatiga, orientando con mayor especificidad clínica hacia la destrucción tisular oncológica.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Diagnóstico, Página 23."
+    },
+    {
+        id: 23,
+        question: "En la evaluación del rendimiento diagnóstico, ¿cuál es el número de pacientes que requieren escrutinio con tomografía de dosis baja para prevenir una muerte por esta patología?",
+        options: ["154 pacientes", "247 pacientes", "320 pacientes", "309 pacientes"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Cáncer Pulmón, la implementación de la tomografía en grupos de alto riesgo demostró una eficiencia clínica comprobable, requiriendo tamizar a poco más de 300 individuos para impactar directamente en la letalidad general de la cohorte estudiada.<br><br>Perla ENARM: \"En el grupo de tomografía hubo 247 muertes por cada 100 000 personas/año, con un número necesario a tratar de 320.\"<br><br>Análisis de Distractores: La cifra de 247 corresponde a las muertes observadas en el grupo con tomografía, y 309 a las muertes en el grupo evaluado con radiografía. El valor 154 es un distractor de otra cohorte del texto.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Diagnóstico, Página 22."
+    },
+    {
+        id: 24,
+        question: "Dentro de las etiologías no relacionadas a toxicomanías, ¿qué porcentaje de estas neoplasias respiratorias se atribuye directamente a la exposición a fibras minerales de asbesto?",
+        options: ["3 al 4%", "7 al 9%", "10 al 15%", "1 al 2%"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Cáncer Pulmón, los silicatos fibrosos inhalados penetran profundamente en el parénquima y pleura, desencadenando fibrosis y mutagénesis con el paso de las décadas, representando una fracción estadísticamente constante de la etiología global.<br><br>Perla ENARM: \"El asbesto es un carcinógeno que incrementa el riesgo, en especial en los fumadores; 3% a 4% de los casos son causados por la exposición al amianto.\"<br><br>Análisis de Distractores: Los porcentajes de 7%, 10% y 15% sobreestiman el impacto aislado de este material. La carga porcentual sigue correspondiendo al tabaquismo (85%).",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Introducción, Página 9."
+    },
+    {
+        id: 25,
+        question: "En pacientes con tabaquismo activo que además presentan exposición intradomiciliaria a gas radón, ¿qué multiplicador estadístico de riesgo se desarrolla para presentar esta enfermedad en comparación con población no expuesta?",
+        options: ["10.5 veces", "16.2 veces", "31.2 veces", "25.8 veces"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Cáncer Pulmón, la radiación alfa emitido por el decaimiento de este gas inodoro daña directamente el ADN epitelial. Al combinarse con el estrés oxidativo del tabaco, se genera un efecto sinérgico deletéreo catastrófico que catapulta la probabilidad de malignidad.<br><br>Perla ENARM: \"En el subanálisis de exposición a radón en hombres fumadores de 15 a 24 cigarros por día comparados con hombres no fumadores, el riesgo fue de 25.8.\"<br><br>Análisis de Distractores: El valor 16.2 corresponde a la asociación estadística de la hemoptisis. Los valores 10.5 y 31.2 representan los intervalos de confianza inferiores y superiores mencionados en otras tablas poblacionales de la GPC.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Prevención, Página 17."
+    },
+    {
+        id: 26,
+        question: "En la epidemiología de la mujer mexicana, además de la predisposición familiar, ¿qué condición clínica basal demostró una alta asociación estadística transversal para el desarrollo de esta patología pulmonar?",
+        options: ["Obesidad mórbida", "Desnutrición", "Deficiencia de hierro", "Hipoalbuminemia severa"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Cáncer Pulmón, el déficit nutricional crónico debilita los mecanismos inmunológicos de vigilancia tumoral y reparación genómica, volviendo al epitelio respiratorio sustancialmente más susceptible a los carcinógenos ambientales como el humo de biomasa.<br><br>Perla ENARM: \"En cuanto a los factores para mujeres se observó la exposición a otros neumotóxicos con 3.5 y la desnutrición con 2.8.\"<br><br>Análisis de Distractores: La obesidad mórbida, deficiencia de hierro e hipoalbuminemia son condiciones de impacto sistémico, pero la GPC señala textualmente a la \"desnutrición\" general como el factor clínico codificado y medido en el perfil de riesgo femenino.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Introducción, Página 9."
+    },
+    {
+        id: 27,
+        question: "En el algoritmo de imagen para asintomáticos, ¿cuál es el nivel de sensibilidad clínica comprobada que avala a la tomografía de dosis baja como estándar de oro?",
+        options: ["73.5%", "85.2%", "93.8%", "91.3%"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Cáncer Pulmón, el éxito del escrutinio radica en no dejar pasar falsos negativos. Esta modalidad de imagen es capaz de identificar lesiones nodulares parenquimatosas milimétricas antes de que invadan estructuras hiliares, logrando una tasa de detección temprana superior al 90%.<br><br>Perla ENARM: \"El valor predictivo para identificar nódulos sospechosos con tomografía presentó una sensibilidad de 93.8% y especificidad de 73.4%.\"<br><br>Análisis de Distractores: El 73.5% corresponde a la baja sensibilidad de la radiografía de tórax (motivo por el cual está proscrita). El 91.3% es la especificidad de la misma radiografía.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Diagnóstico, Página 22."
+    },
+    {
+        id: 28,
+        question: "A pesar de su alta eficacia de detección, ¿cuál es la especificidad real de la tomografía computada de dosis baja que justifica el monitoreo seriado de los nódulos encontrados?",
+        options: ["99.8%", "91.3%", "93.8%", "73.4%"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Cáncer Pulmón, el punto débil del escrutinio tomográfico es el hallazgo de nódulos benignos (granulomas, cicatrices, hamartomas). Su moderada especificidad significa que habrá falsos positivos que requieren evaluación morfológica anual.<br><br>Perla ENARM: \"El valor predictivo para identificar nódulos sospechosos con tomografía presentó una sensibilidad de 93.8% y especificidad de 73.4%.\"<br><br>Análisis de Distractores: El 93.8% es su sensibilidad. El 91.3% es la especificidad engañosamente alta de la placa simple de tórax. Un 99.8% es un nivel de certeza histológica, inalcanzable con estudios de imagen basal.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Diagnóstico, Página 22."
+    },
+    {
+        id: 29,
+        question: "Al calcular la dosis acumulada de carcinógenos inhalados en la historia clínica, ¿cuál es la constante aritmética entre la que se deben dividir los cigarrillos fumados?",
+        options: ["10", "20", "30", "40"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Cáncer Pulmón, la estandarización internacional asume que una cajetilla comercial convencional contiene dos decenas de unidades. Este factor unifica el cálculo para estratificar el daño alveolar sin importar la marca de consumo.<br><br>Perla ENARM: \"Índice tabáquico: número de referencia que refleja el promedio de consumo de tabaco al individuo. Se calcula multiplicando el número de cigarros fumados por día por el número de años que se ha fumado y dividiendo el resultado entre 20.\"<br><br>Análisis de Distractores: Dividir entre 10, 30 o 40 altera drásticamente el resultado, excluyendo erróneamente a pacientes del algoritmo de tamizaje o incluyendo a población de bajo riesgo innecesariamente a radiación.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Glosario, Página 33."
+    },
+    {
+        id: 30,
+        question: "¿Qué estudio de evaluación respiratoria fisiológica, al resultar francamente anormal, se asocia a un valor predictivo positivo de 1.6 para el diagnóstico de esta neoplasia?",
+        options: ["Espirometría", "Pletismografía", "Difusión pulmonar", "Oximetría"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Cáncer Pulmón, la presencia de un patrón obstructivo crónico e irreversible (EPOC) refleja un daño extenso por alquitrán y partículas sólidas en la vía aérea, lo que comparte la misma cascada fisiopatológica e inflamatoria que culmina en transformación celular atípica.<br><br>Perla ENARM: \"El valor predictivo positivo para la espirometría anormal fue de 1.6 con una asociación de 9.39.\"<br><br>Análisis de Distractores: La pletismografía y la capacidad de difusión (DLCO) son estudios de función avanzados que no fungen como indicadores epidemiológicos primarios. La oximetriz es una medición de intercambio gaseoso agudo, inespecífica para predicción oncológica.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Diagnóstico, Página 23."
+    },
+    {
+        id: 31,
+        question: "De las siguientes terapias farmacológicas femeninas, ¿cuál tiene una recomendación formal en contra para ser prescrita como método de quimioprevención de esta patología?",
+        options: ["Terapia de reemplazo", "Moduladores estrogénicos", "Anticonceptivos orales", "Progestágenos inyectables"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Cáncer Pulmón, tras evaluar los niveles de esteroides sintéticos y su interacción con los receptores tisulares pulmonares periféricos, se concluyó que la manipulación hormonal del ciclo menstrual carece de propiedades protectoras epiteliales.<br><br>Perla ENARM: \"No se sugiere el uso de anticonceptivos orales para disminuir el riesgo de la enfermedad.\"<br><br>Análisis de Distractores: Moduladores, terapia de reemplazo y progestágenos aislados poseen distintos perfiles de riesgo cardiovascular y mamario, pero la GPC señala textualmente a los anticonceptivos orales en sus cuadros de recomendación negativa para profilaxis pulmonar.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Prevención, Página 21."
+    },
+    {
+        id: 32,
+        question: "En el abordaje nutricional preventivo, ¿el consumo de qué macronutriente específico de origen vegetal tiene una recomendación en contra para disminuir la incidencia de esta neoplasia?",
+        options: ["Proteína de soya", "Proteína de chía", "Proteína de cacahuate", "Proteína de amaranto"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Cáncer Pulmón, a pesar del auge dietético de los isoflavones y fitoestrógenos para la protección celular general, los metaanálisis demostraron un nulo impacto protector en el tracto respiratorio de pacientes sanos o expuestos.<br><br>Perla ENARM: \"No se sugiere el consumo de proteína de soya para disminuir el riesgo de la enfermedad.\"<br><br>Análisis de Distractores: Chía, amaranto y cacahuate son fuentes proteicas y grasas habituales, pero la controversia científica analizada y prohibida explícitamente en la GPC se centró en la popularizada suplementación con derivados de soya.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Prevención, Página 22."
+    },
+    {
+        id: 33,
+        question: "En una paciente femenina de alto riesgo, ¿cuánto tiempo continuo de expectoración sanguinolenta incrementa el valor predictivo positivo hasta un 3.3 clínico?",
+        options: ["Un mes", "Tres meses", "Un año", "Seis meses"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Cáncer Pulmón, la erosión vascular microscópica sostenida por la invasión local de la pared bronquial genera una hemorragia crónica; alcanzar este límite temporal descarta procesos infecciosos agudos y consolida la sospecha de tejido neoplásico subyacente.<br><br>Perla ENARM: \"Si la hemoptisis tenía duración de 6 meses, el valor predictivo en hombres fue de 5.8 y en mujeres de 3.3.\"<br><br>Análisis de Distractores: Un síntoma menor a un mes puede atribuirse a traqueobronquitis aguda. Un año de evolución es excesivamente letal para presentarse como abordaje inicial en primer nivel sin otros síntomas francos de consumición.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Diagnóstico, Página 23."
+    },
+    {
+        id: 34,
+        question: "¿Qué grupo de compuestos químicos presentes en frutas y verduras a los que se les atribuye la disminución fisiológica del riesgo oncológico?",
+        options: ["Licopenos", "Flavonoides", "Carotenos", "Tocoferoles"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Cáncer Pulmón, la evidencia favorece a estos metabolitos botánicos secundarios por su capacidad intrínseca para neutralizar radicales libres oxidativos en el epitelio alveolar antes de que generen daño permanente al ADN.<br><br>Perla ENARM: \"Flavonoides: compuestos fenólicos constituyentes de la dieta humana. Se encuentran en vegetales, semillas, frutas y en bebidas como vino y cerveza.\"<br><br>Análisis de Distractores: Licopenos, carotenos y tocoferoles (vitamina E) son antioxidantes conocidos, pero la evidencia analizada apoya y nombra específicamente a la dieta rica en flavonoides como la sugerencia dietética de prevención secundaria.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Glosario y Prevención, Páginas 19 y 33."
+    },
+    {
+        id: 35,
+        question: "¿Qué fármaco antipirético y antiagregante de venta libre tiene una recomendación explícita para no utilizarse como profilaxis primaria de esta enfermedad oncológica?",
+        options: ["Paracetamol", "Celecoxib", "Ácido acetilsalicílico", "Ibuprofeno"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Cáncer Pulmón, el consumo regular o a dosis altas de este derivado del sauce fracasó en los ensayos clínicos para reducir la mortalidad pulmonar, imponiendo en su lugar un riesgo hemorrágico gastrointestinal injustificado.<br><br>Perla ENARM: \"No se sugiere el uso de AAS para disminuir el riesgo de la enfermedad.\"<br><br>Análisis de Distractores: El celecoxib y el ibuprofeno son parte del grupo general de AINEs (que también están contraindicados), pero la GPC otorga una recomendación y párrafo completamente independiente y directo para prohibir el uso del ácido acetilsalicílico (AAS).",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Prevención, Página 20."
+    },
+    {
+        id: 36,
+        question: "Analizando la tendencia epidemiológica masculina en México, ¿en qué año se registró la tasa máxima histórica de mortalidad estandarizada antes de comenzar su descenso gradual?",
+        options: ["1989", "1980", "2000", "2012"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Cáncer Pulmón, el efecto de los programas de cesación tabáquica y las restricciones legales tiene un retraso de décadas en reflejarse en la letalidad. El pico oncológico masculino ocurrió a finales de los ochenta tras el auge del tabaquismo de mitad de siglo.<br><br>Perla ENARM: \"La mortalidad en varones ajustada por edad, fue de 9.25 por cada 100 000 en 1980, y aumentó a 11.91 para 1989, para luego descender gradualmente hasta el 2000.\"<br><br>Análisis de Distractores: En 1980 la tasa era menor (9.25). En el año 2000 descendió a 8.65, y en 2012 llegó a 8.0 confirmando la tendencia nacional a la baja en hombres.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Introducción, Página 8."
+    },
+    {
+        id: 37,
+        question: "Como parte del abordaje clínico de los síndromes paraneoplásicos, ¿cuál es el valor predictivo positivo que se le asigna estadísticamente a la disminución involuntaria de peso?",
+        options: ["2.4", "1.1", "0.82", "0.44"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Cáncer Pulmón, la caquexia tumoral refleja un estado hipercatabólico y secreción de citocinas (TNF-alfa) secundaria a gran carga neoplásica. Aunque grave, su aparición no es tan específica de la vía respiratoria como lo es la hemoptisis (2.4).<br><br>Perla ENARM: \"El valor predictivo para pérdida de peso fue de 1.1.\"<br><br>Análisis de Distractores: El valor de 2.4 corresponde a la hemoptisis, 0.82 pertenece al dolor torácico por invasión pleural, y el 0.44 está ligado a la presencia de tos crónica simple.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Diagnóstico, Página 23."
+    },
+    {
+        id: 38,
+        question: "De acuerdo al estudio retrospectivo del Hospital General de México, ¿qué porcentaje de las pacientes femeninas con diagnóstico confirmado no presentaban ningún historial de tabaquismo?",
+        options: ["12%", "45%", "68%", "32%"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Cáncer Pulmón, a diferencia de la de la epidemiología masculina casi exclusiva por alquitrán, un tercio de las mujeres mexicanas enferman secundario a inflamación por biomasa, asbesto y genética, exigiendo al médico evaluar otros neumotóxicos ambientales.<br><br>Perla ENARM: \"Se encontró que de 479 casos diagnosticados, 216 fueron mujeres, de las cuales 147 (68%) nunca fumaron y 69 (32%) sí tenían antecedente de fumar.\"<br><br>Análisis de Distractores: El 32% corresponde a la proporción de pacientes de esa misma cohorte que sí contaban con antecedentes de consumo tabáquico activo o pasivo pesado, siendo incorrecto ante el planteamiento de no exposición.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Introducción, Página 9."
+    },
+    {
+        id: 39,
+        question: "¿Cuál es el fenómeno biológico que evita que la neoplasia asociada estrictamente a patología laboral y minería se reconozca y se catalogue como enfermedad profesional a tiempo?",
+        options: ["Ausencia de biomarcadores", "Crecimiento endobronquial", "Largo período de latencia", "Localización apical estricta"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Cáncer Pulmón, los depósitos de sílice y fibras inorgánicas tardan décadas en producir el microambiente mutagénico necesario para el escape inmunológico, manifestando el fenotipo maligno mucho después de que la vida laboral activa concluyó.<br><br>Perla ENARM: \"En muchos casos la patología asociada a la exposición laboral no se manifiesta hasta la edad de jubilación debido a su largo período de latencia, lo que contribuye a que no se reconozcan como enfermedad profesional.\"<br><br>Análisis de Distractores: El crecimiento endobronquial es característico del tabaco. La ausencia de biomarcadores y la localización apical (tumor de Pancoast) son características de subclasificaciones oncológicas, pero el tiempo celular latente es el factor médico-legal clave.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Introducción, Página 9."
+    },
+    {
+        id: 40,
+        question: "En un análisis enfocado a mujeres mexicanas no fumadoras expuestas a humo de leña, ¿cuál fue el porcentaje en el que se identificó la estirpe adenocarcinoma?",
+        options: ["58.8%", "45.2%", "50.5%", "65.4%"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Cáncer Pulmón, la inhalación crónica de partículas de biomasa induce mutagénesis periférica glandular en lugar de la metaplasia escamosa central vinculada al cigarrillo, consolidando al adenocarcinoma como la variante histológica dominante en este nicho ambiental.<br><br>Perla ENARM: \"La media de edad fue de 58.9 años. Las estirpes histológicas más frecuentes fueron adenocarcinoma (58.8%), seguido por carcinoma epidermoide (21.4%).\"<br><br>Análisis de Distractores: Las opciones B, C y D representan porcentajes ajenos a la casuística e incidencia estricta reportada por las instituciones oncológicas nacionales para este fenotipo patogénico.",
+        source: "GPC-SS-022-18, Prevención y detección temprana del cáncer de pulmón en el primer nivel de atención, 2018, Introducción, Página 9."
+    }
+
+        
+       ];
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('ExMI10LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('ExMI10Progress');
+                localStorage.removeItem('ExMI10LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-purple-500 shadow-md z-10 border-purple-500 dark:border-purple-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-fuchsia-500 to-purple-600 hover:from-purple-600 hover:to-fuchsia-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-purple-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-fuchsia-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "MEDICINA INTERNA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "SS-022-18 • Prevención y detección temprana de cáncer de pulmón en el primer nivel de atención";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-purple-600 dark:text-slate-400 dark:hover:text-purple-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="login.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-purple-100 dark:border-purple-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-purple-50 has-[:checked]:border-purple-400 dark:has-[:checked]:bg-purple-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-purple-600 focus:ring-purple-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-purple-600 dark:hover:bg-purple-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-fuchsia-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('ExMI10Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('ExMI10LastQId', currentQuestionId);
+                else localStorage.removeItem('ExMI10LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('ExMI10Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

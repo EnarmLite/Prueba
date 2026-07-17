@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-purple-500 to-fuchsia-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+
+
+    {
+        id: 1,
+        question: "¿Qué variante clínica de hipertermia severa afecta típicamente a pacientes con comorbilidades crónicas, inmunocompromiso o alteraciones anatómicas, desarrollándose por exposición ambiental directa sin requerir actividad física previa?",
+        options: ["Variante clásica", "Variante por esfuerzo", "Variante de estadio I", "Variante moderada"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Prevención de golpe de calor, la patología se divide en dos perfiles epidemiológicos claros: el asociado al ejercicio en jóvenes sanos y la forma clásica en pacientes con vulnerabilidad intrínseca.<br><br>Perla ENARM: Históricamente el golpe de calor se ha clasificado en dos entidades clínicas diferentes, golpe de calor asociado a esfuerzo; y golpe de calor no asociado al ejercicio, el cual se presenta en pacientes susceptibles solo por las temperaturas ambientales altas.<br><br>Análisis de Distractores: La variante por esfuerzo requiere actividad física extenuante previa. Los estadios I y moderado son fases de menor gravedad (agotamiento), no etiologías de la hipertermia extrema.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Diagnóstico, p. 18."
+    },
+    {
+        id: 2,
+        question: "Además de los mayores de 65 años, ¿qué grupo etario se considera poblacionalmente vulnerable al estrés térmico y cumple criterio absoluto para traslado inmediato a unidad de cuidados críticos?",
+        options: ["Menores de 15 años", "Menores de 12 años", "Menores de 8 años", "Menores de 5 años"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Prevención de golpe de calor, los extremos de la vida tienen inmadurez o senescencia en las respuestas termorreguladoras, lo que facilita el desarrollo fulminante de disfunción multiorgánica.<br><br>Perla ENARM: Se recomienda trasladar de manera inmediata a los pacientes con edades al extremo de la vida (pacientes mayores de 65 años y menores de 12 años), a un escalón hospitalario que cuente con unidad de cuidados críticos.<br><br>Análisis de Distractores: Las edades de 5, 8 o 15 años no son los puntos de corte establecidos por la guía nacional para la activación de la red de traslado en esta patología.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Tratamiento, p. 25."
+    },
+    {
+        id: 3,
+        question: "Ante escenarios donde la temperatura ambiental excede los 30°C, ¿en qué horarios específicos sugiere la norma limitar y concentrar la realización de actividades físicas para evitar la morbilidad térmica?",
+        options: ["11 a 16 horas", "10 a 15 horas", "12 a 18 horas", "7 a 8 y 17 a 19 horas"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Prevención de golpe de calor, restringir el esfuerzo a las ventanas de menor radiación solar e impacto térmico previene la saturación del sistema de disipación calórica.<br><br>Perla ENARM: Se recomienda que siempre que exista un ambiente con temperatura ambiental mayor a 30°C... idealmente no realizar actividades físicas en los horarios donde se incrementa la temperatura, limitando las actividades físicas de 7 a 8 horas, y de 17 a 19 horas.<br><br>Análisis de Distractores: Los rangos intermedios del día (10 a 18 horas) son los momentos de mayor pico de temperatura e insolación directa, por lo que la actividad debe evitarse por completo, no fomentarse.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Prevención, p. 18."
+    },
+    {
+        id: 4,
+        question: "Fisiopatológicamente, ¿qué porcentaje de pérdida de volumen respecto al peso corporal total desencadena la disminución crítica de la producción de sudor y del flujo sanguíneo cutáneo?",
+        options: ["1 a 2%", "6 a 8%", "3 a 5%", "9 a 11%"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Prevención de golpe de calor, rebasar este umbral hídrico obliga al organismo a centralizar el volumen circulante, suprimiendo la principal vía de eliminación de calor (evaporación) y acelerando la hipertermia intraabdominal.<br><br>Perla ENARM: La deshidratación reduce el rendimiento... Cuando la pérdida de líquidos consiste en el 3 al 5% del peso corporal, la producción de sudor y el flujo sanguíneo de la piel empiezan a disminuir, reduciendo así la capacidad de disipación del calor.<br><br>Análisis de Distractores: Pérdidas del 1 al 2% causan sed pero mantienen el flujo cutáneo. Pérdidas mayores al 8% indican choque hipovolémico establecido grave, mucho después de que los mecanismos de sudoración han claudicado.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Prevención, p. 17."
+    },
+    {
+        id: 5,
+        question: "¿Qué dispositivo físico, comúnmente utilizado en lesiones musculoesqueléticas, está explícitamente contraindicado durante el manejo inicial prehospitalario para el enfriamiento térmico?",
+        options: ["Vendas de compresión", "Sábanas de algodón", "Compresas frías", "Ventiladores eléctricos"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Prevención de golpe de calor, el uso de compresión periférica limita la dilatación de los lechos capilares subcutáneos, atrapando el calor profundo y anulando los beneficios de la convección.<br><br>Perla ENARM: No se recomienda el empleo de vendas de compresión, ventilador de neblina o la toalla de refrigeración.<br><br>Análisis de Distractores: Sábanas ligeras se pueden usar si no son oclusivas. Las compresas frías en sitios clave (axilas/ingle) y los ventiladores eléctricos son la piedra angular de la técnica de enfriamiento por evaporación/conducción.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Tratamiento, p. 22."
+    },
+    {
+        id: 6,
+        question: "Durante la reanimación con cristaloides intrahospitalaria, ¿qué triada de variables clínicas dinámicas se indica monitorizar para evaluar la respuesta a volumen y evitar un edema pulmonar yatrogénico?",
+        options: ["Gasto cardiaco, saturación y llenado capilar", "Presión venosa central, lactato y diuresis", "Llenado capilar, temperatura y presión arterial", "Presión arterial, frecuencia cardiaca y diuresis"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Prevención de golpe de calor, la reanimación hídrica debe ser guiada estrechamente por signos vitales básicos y excreta renal, ya que el paciente crítico cursa con vasodilatación extrema que predispone a errores de sobrecarga.<br><br>Perla ENARM: La presión arterial, la frecuencia cardiaca y diuresis guían la respuesta que tiene el paciente a la reposición hídrica, aunque de ser disponibles se sugiere utilizar variables dinámicas durante la reanimación.<br><br>Análisis de Distractores: La PVC, el gasto cardíaco y el lactato son mediciones avanzadas, pero la pauta clínica base para enfermería y piso recomendada explícitamente en esta patología son los signos hemodinámicos tradicionales y la orina.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Tratamiento, p. 28."
+    },
+    {
+        id: 7,
+        question: "¿Qué secuencia de abordaje es el punto de partida clínico obligatorio para la estabilización temprana ante cualquier caso presuntivo de hipertermia ambiental extrema en el servicio de urgencias?",
+        options: ["Abordaje sistemático ABCDE", "Evaluación escala de Glasgow", "Canalización de accesos venosos", "Medición exacta de temperatura"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Prevención de golpe de calor, antes de centrarse exclusivamente en la termometría, se debe asegurar la permeabilidad de la vía aérea, oxigenación y perfusión cerebral, previniendo el paro cardiorrespiratorio inminente.<br><br>Perla ENARM: Un enfoque ABCDE (vía aérea / respiración / circulación, déficit neurológico y exposición) debe ser el punto de partida en el manejo de un paciente con golpe de calor, con el fin de identificar de manera oportuna las disfunciones orgánicas.<br><br>Análisis de Distractores: Valorar la temperatura, los accesos IV o el Glasgow son pasos subsecuentes; el protocolo vital universal de reanimación (vía aérea y circulación) siempre precede intervenciones dirigidas.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Tratamiento, p. 24."
+    },
+    {
+        id: 8,
+        question: "Aunque el paciente habitualmente se presenta con piel caliente y seca, ¿qué hallazgo dermatológico clásico se observa paradójicamente cuando el paciente entra en la fase de choque cardiogénico/hipovolémico?",
+        options: ["Seca y caliente", "Sudorosa y fría", "Pálida y cianótica", "Ictérica y marmórea"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Prevención de golpe de calor, en etapas de colapso hemodinámico grave, el estado de hipoperfusión tisular induce una respuesta catecolaminérgica profunda que enfría falsamente la periferia sin modificar la temperatura nuclear letal.<br><br>Perla ENARM: En el momento del colapso la presión arterial sistólica menor a 100 mmHg, la taquicardia, la hiperventilación y una apariencia de choque (es decir, la piel sudorosa y fría) son frecuentes.<br><br>Análisis de Distractores: La piel seca y caliente es el hallazgo pre-colapso por falla termorreguladora directa. Cianosis o ictericia no son la manifestación de hipoperfusión inmediata mediada por catecolaminas térmicas.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Diagnóstico, p. 19."
+    },
+    {
+        id: 9,
+        question: "Además de los diuréticos y anticolinérgicos, ¿qué otra familia de medicamentos psiquiátricos interfiere directamente con la termorregulación y obliga a proscribir el estrés térmico en quienes los consumen?",
+        options: ["Glucocorticoides inhalados", "Macrólidos prolongados", "Inhibidores de proteasa", "Antidepresivos tricíclicos"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Prevención de golpe de calor, estos fármacos bloquean los receptores muscarínicos periféricos y alteran la respuesta hipotalámica al calor, inhabilitando biológicamente al cuerpo para iniciar la sudoración.<br><br>Perla ENARM: Se recomienda que los pacientes que consuman cualquiera de los siguientes medicamentos, no se sometan a estrés físico intenso o se expongan a altas temperaturas ambientales: ...Antidepresivos tricíclicos.<br><br>Análisis de Distractores: Glucocorticoides, macrólidos y antirretrovirales no tienen acción farmacodinámica probada sobre los centros reguladores térmicos del sistema nervioso central o las glándulas sudoríparas.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Prevención, p. 16."
+    },
+    {
+        id: 10,
+        question: "Como parte de la estrategia intrahospitalaria para prevenir la falla orgánica, ¿qué dispositivo invasivo está normado desde el inicio para cuantificar con exactitud la microperfusión sistémica?",
+        options: ["Sonda vesical Foley", "Catéter venoso central", "Línea arterial radial", "Sonda nasogástrica"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Prevención de golpe de calor, el riñón es altamente susceptible al daño por mioglobina (rabdomiólisis) y deshidratación; el gasto urinario continuo es el mejor marcador dinámico de perfusión orgánica.<br><br>Perla ENARM: El apoyo hospitalario dependerá del estado clínico... restaurar el volumen intravascular con una solución cristaloide isotónica intravenosa, colocar un catéter vesical para controlar la salida de orina e iniciar vasopresores para apoyar la sangre.<br><br>Análisis de Distractores: La línea arterial o el CVC se reservan para UCI en refractariedad; la colocación de sonda urinaria es un paso inicial mandatario de monitoreo estricto sin retrasos.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Tratamiento, p. 26."
+    },
+    {
+        id: 11,
+        question: "¿Qué intervención prioritaria de enfermería es fundamental ejecutar inmediatamente para garantizar una ruta robusta de reanimación metabólica e hídrica de emergencia?",
+        options: ["Vía intraósea tibial", "Vía central subclavia", "Dos vías intravenosas", "Una vía periférica corta"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Prevención de golpe de calor, la alta probabilidad de requerir flujos rápidos de cristaloides fríos concurrentes con medicamentos vasoactivos o antiepilépticos exige contar con múltiples lumenes venosos gruesos.<br><br>Perla ENARM: Intervenciones de enfermería... Se recomienda iniciar el tratamiento con las siguientes intervenciones: Canalización de 2 vías intravenosas para fluidoterapia.<br><br>Análisis de Distractores: Una vía periférica es insuficiente ante choque. La intraósea o el CVC consumen tiempo vital y son alternativas de segunda línea si el acceso periférico colapsa.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Tratamiento, p. 28."
+    },
+    {
+        id: 12,
+        question: "Durante la estabilización prehospitalaria inicial (sombra, desvestir al paciente), se debe aislar físicamente a la víctima del suelo; ¿qué mecanismo físico de transferencia de calor se inhibe con esta acción?",
+        options: ["Evaporación", "Radiación", "Conducción", "Convección"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Prevención de golpe de calor, superficies urbanas como el asfalto almacenan grandes cantidades de calor solar; colocar al paciente directamente sobre ellas transferirá energía térmica incesante por contacto directo con los tejidos.<br><br>Perla ENARM: Se recomienda colocar a la víctima en una barrera aislante, como una almohadilla para dormir o una bolsa de dormir, esto disminuye la conducción del calor desde el suelo.<br><br>Análisis de Distractores: La evaporación usa paso a gas (sudor); la radiación es intercambio infrarrojo sin contacto; la convección es movimiento por aire. El suelo caliente trasfiere por conducción directa.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Tratamiento, p. 22."
+    },
+    {
+        id: 13,
+        question: "Independientemente de la gravedad neurológica aparente, ¿qué antecedente médico preexistente es un criterio normativo ineludible para el traslado urgente de la escena a un centro de tercer nivel?",
+        options: ["Asma bronquial intermitente", "Osteoartritis degenerativa", "Diabetes mellitus tipo 2", "Enfermedad cardiovascular"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Prevención de golpe de calor, la taquicardia extrema compensadora aumenta drásticamente el consumo miocárdico de oxígeno, precipitando isquemia o arritmias fatales en corazones previamente afectados.<br><br>Perla ENARM: Se recomienda que los pacientes con condiciones médicas predisponentes que presentan manifestaciones eléctricas cardiovasculares o alteraciones en la consciencia... deben ser considerados para traslado inmediato. (Criterios de traslado urgente Cuadro 1: Factores cardiovasculares pre existentes).<br><br>Análisis de Distractores: Si bien la diabetes reduce el umbral térmico neurológico periférico, es la enfermedad cardíaca la variable predictora independiente de mortalidad súbita que requiere UCI cardiológica profiláctica.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Anexos (Cuadro 1), p. 29."
+    },
+    {
+        id: 14,
+        question: "Posterior a la fase inicial de injuria térmica, ¿qué trastorno hematológico grave mediado por el endotelio y la cascada inflamatoria generalizada constituye una de las principales fallas orgánicas?",
+        options: ["Púrpura trombocitopénica", "Anemia hemolítica térmica", "Coagulopatía intravascular diseminada", "Síndrome antifosfolípido"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Prevención de golpe de calor, el calor directo sobre el tejido conectivo genera lisis endotelial, liberando factor tisular sistémico que activa el consumo masivo de factores de coagulación y plaquetas.<br><br>Perla ENARM: Apoyar la función del sistema de órganos, ya que los pacientes pueden desarrollar insuficiencia orgánica múltiple con estado de choque, insuficiencia respiratoria aguda, lesión renal aguda, coagulopatía intravascular diseminada e isquemia intestinal.<br><br>Análisis de Distractores: Las otras entidades son trastornos autoinmunes o mecánicos puros, y no representan el colapso hemostático global fulminante característico de los síndromes de hipertermia maligna/ambiental severa.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Tratamiento, p. 26."
+    },
+    {
+        id: 15,
+        question: "Durante la presentación de un caso con franco deterioro del estado de alerta, ¿qué punto de corte numérico de presión arterial sistólica es indicativo de choque y colapso cardiovascular?",
+        options: ["Menor a 90 mmHg", "Menor a 100 mmHg", "Menor a 110 mmHg", "Menor a 80 mmHg"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Prevención de golpe de calor, este límite identifica el fracaso agudo del tono vascular compensatorio que sostiene la perfusión cerebral a pesar de la hipertermia masiva, marcando la fase tardía y de alta letalidad.<br><br>Perla ENARM: En el momento del colapso la presión arterial sistólica menor a 100 mmHg, la taquicardia, la hiperventilación y una apariencia de choque (es decir, la piel sudorosa y fría) son frecuentes.<br><br>Análisis de Distractores: Aunque umbrales menores a 90 indican estado hipovolémico general en otras patologías, la normativa especifica el corte diagnóstico temprano de <100 mmHg para activar el protocolo de colapso por calor.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Diagnóstico, p. 19."
+    },
+    {
+        id: 16,
+        question: "Si un atleta colapsa con alteración de consciencia y temperatura rectal de 39.5°C, sin llegar estrictamente al corte diagnóstico clásico de los criterios formales, ¿cuál es el paso de buena práctica clínica a seguir?",
+        options: ["Iniciar enfriamiento empírico de inmediato", "Administrar antitérmicos intramusculares", "Retrasar enfriamiento hasta alcanzar >40°C", "Reevaluar signos vitales en 30 minutos"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Prevención de golpe de calor, el retraso terapéutico condiciona apoptosis neuronal irreversible; la clínica de disfunción neurológica sumada al esfuerzo exige tratar presuntivamente como urgencia letal térmica real.<br><br>Perla ENARM: Se recomienda que el enfriamiento empírico para el golpe de calor no debe retrasarse por un valor de medición que puede estar por debajo del umbral de diagnóstico de 40°C.<br><br>Análisis de Distractores: Esperar que el daño suba a >40°C es negligencia. Los antitérmicos farmacológicos carecen de eficacia ya que la etiología no involucra mediadores pirogénicos hipotalámicos (PG).",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Tratamiento, p. 22."
+    },
+    {
+        id: 17,
+        question: "Además de las complicaciones isquémicas y el daño renal por rabdomiólisis, ¿cuál es el cuadro de fracaso primario del sistema ventilatorio derivado de la cascada inflamatoria térmica grave?",
+        options: ["Neumonía nosocomial lobar", "Tromboembolia microvascular", "Derrame pleural trasudativo", "Insuficiencia respiratoria aguda"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Prevención de golpe de calor, el choque sistémico condiciona hipoperfusión pulmonar que daña la barrera alvéolo-capilar, generando edema pulmonar no cardiogénico y falla respiratoria que demanda intubación mecánica precoz.<br><br>Perla ENARM: Los pacientes pueden desarrollar insuficiencia orgánica múltiple con estado de choque, insuficiencia respiratoria aguda... El apoyo hospitalario dependerá del estado clínico... ir desde oxígeno suplementario, realizar intubación y ventilación mecánica.<br><br>Análisis de Distractores: Derrames pleurales o neumonía de la comunidad requieren procesos crónicos o agentes patógenos aislados, el daño agudo directo en este contexto se manifiesta como SDR o insuficiencia directa.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Tratamiento, p. 26."
+    },
+    {
+        id: 18,
+        question: "Frente a un paciente postrado febril con letargo neurológico sin claro antecedente ambiental, ¿qué infección parasitaria endémica se considera diagnóstico diferencial formal en urgencias?",
+        options: ["Encefalitis autoinmune", "Dengue hemorrágico", "Fiebre tifoidea", "Malaria"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Prevención de golpe de calor, el paludismo severo presenta paroxismos febriles extremos superiores a 40°C, alteración de la consciencia e inestabilidad hemodinámica indistinguibles del daño térmico puro.<br><br>Perla ENARM: Cuando se sospecha de golpe de calor se recomienda hacer diagnóstico diferencial con síndrome neuroléptico maligno, malaria y meningitis.<br><br>Análisis de Distractores: Aunque el dengue grave presenta fiebre e hipovolemia, no figura normativamente en la tríada diferencial puntual (neurotóxico/malaria/meningitis) establecida en los apartados de evidencia clínica.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Diagnóstico, p. 21."
+    },
+    {
+        id: 19,
+        question: "Ante el caso de un militar colapsado con riesgo alto de convulsiones inminentes por daño hipertérmico, ¿qué ruta de abordaje de líquidos es obligatoria para su resucitación?",
+        options: ["Vía oral asistida rápida", "Vía intravenosa directa", "Vía nasogástrica alta", "Vía intraósea humeral"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Prevención de golpe de calor, administrar volúmenes en el tracto digestivo de un paciente neurológicamente vulnerable facilita la broncoaspiración letal y el cierre de la vía aérea en el momento de la crisis convulsiva.<br><br>Perla ENARM: Se recomienda la hidratación endovenosa u oral... sin embargo, en una víctima con estado mental alterado y riesgo de convulsiones, se prefiere la vía intravenosa ya que minimiza el riesgo de aspiración y el consiguiente compromiso de la vía aérea.<br><br>Análisis de Distractores: La vía oral/SNG están tajantemente contraindicadas en alteraciones mentales; la intraósea es solo para casos extremos de paro donde el acceso IV periférico ha fracasado en múltiples intentos.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Tratamiento, p. 23."
+    },
+    {
+        id: 20,
+        question: "Al documentar la entrada de un paciente hipotenso y severamente deshidratado al área de choque, ¿cuál es el volumen basal estandarizado recomendado para reanimación cristaloide inicial?",
+        options: ["1 a 2 litros", "500 a 1000 ml", "2.5 a 3 litros", "3.5 a 4 litros"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Prevención de golpe de calor, esta meta volémica busca resucitar la microcirculación cutánea para permitir el enfriamiento invasivo, basándose estrictamente en guías de respuesta hemodinámica.<br><br>Perla ENARM: Las personas con golpe de calor pueden perder volumen debido a pérdidas de fluidos insensibles, y las mejores opciones de reposición son de 1 a 2 litros de fluidos isotónicos (solución salina al 0.9%).<br><br>Análisis de Distractores: Infundir menos volumen subtrata el choque vasodilatador; sobrepasar este límite de forma ciega (>3L) precipita rápidamente sobrecarga cardíaca en corazones miopáticos o fatigados térmicamente.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Tratamiento, p. 27."
+    },
+    {
+        id: 21,
+        question: "De acuerdo con la clasificación de la Asociación Japonesa de Medicina Aguda (AJMA) para la enfermedad térmica, ¿qué estadio se caracteriza por síntomas como calambres musculares y mareo, pero se distingue fundamentalmente por la ausencia de alteraciones en el estado de alerta?",
+        options: ["Estadio I", "Estadio II", "Estadio III", "Estadio residual"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Prevención de golpe de calor, la clasificación inicial permite estratificar el daño térmico. En su primera fase, el organismo sufre agotamiento periférico celular, pero logra mantener una perfusión cerebral adecuada, evitando el daño neurológico.<br><br>Perla ENARM: Estadio I: se considera una enfermedad menor asociada al calor, los síntomas asociados son mareo, fatiga, bostezo leve, dolor muscular, calambres musculares. No tiene alteración de la consciencia.<br><br>Análisis de Distractores: El Estadio II incluye síntomas sistémicos (vómito, disminución de concentración) sin llegar al colapso grave. El Estadio III implica disfunción orgánica evidente o coma profundo. No existe un estadio residual en la clasificación aguda.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Diagnóstico, p. 20."
+    },
+    {
+        id: 22,
+        question: "¿Qué manifestación clínica o hallazgo sistémico clasifica de forma automática a la enfermedad por estrés térmico dentro de la categoría de severidad máxima (Estadio III)?",
+        options: ["Cefalea severa", "Vómito persistente", "Disfunción hepática", "Calambres musculares"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Prevención de golpe de calor, el fracaso multiorgánico (falla hepática, renal o coagulopatía) representa la claudicación total del sistema celular ante la carga térmica, independientemente de que el coma esté presente o no.<br><br>Perla ENARM: Estadio III: Paciente con manifestaciones graves de la enfermedad... Pueden presentar disfunciones orgánicas a otros niveles como daño hepático, lesión renal y coagulopatía.<br><br>Análisis de Distractores: La cefalea y el vómito son característicos del Estadio II. Los calambres limitados a los músculos periféricos pertenecen al Estadio I y no implican falla estructural visceral.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Diagnóstico, p. 20."
+    },
+    {
+        id: 23,
+        question: "¿Qué vía de medición termométrica está normada de primera elección por su alta precisión y de la cual no debe prescindirse para establecer el diagnóstico definitivo en urgencias?",
+        options: ["Vía timpánica", "Vía oral", "Vía axilar", "Vía rectal"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Prevención de golpe de calor, obtener la temperatura central (\"core\") es un pilar diagnóstico crítico, ya que dicta el pronóstico y el inicio de reanimación invasiva. Cualquier otra vía periférica resulta inestable y genera diagnósticos fallidos.<br><br>Perla ENARM: Se recomienda que en todos los pacientes con sospecha de golpe de calor, se debe realizar la medición de la temperatura por vía rectal.<br><br>Análisis de Distractores: Las vías timpánica, oral y axilar están textualmente desaconsejadas por la normativa ya que sus valores fluctúan por la temperatura ambiental y variables respiratorias o sudoríparas locales.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Diagnóstico, p. 19."
+    },
+    {
+        id: 24,
+        question: "Al evaluar a un paciente con hipertermia severa de origen ambiental, ¿qué alteración clínica vuelve ineficaz y falsamente baja la medición de la temperatura corporal por vía oral?",
+        options: ["Vasoconstricción periférica", "Hiperventilación secundaria", "Piel sudorosa profusa", "Sialorrea excesiva"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Prevención de golpe de calor, la taquipnea e hiperventilación compensatorias, comunes en el paciente chocado o ansioso por calor, introducen corrientes de aire masivas que enfrían localmente la mucosa oral, ocultando la verdadera hipertermia nuclear.<br><br>Perla ENARM: Las mediciones de temperatura oral también se ven afectadas por la hiperventilación, la deglución, la ingestión de líquidos fríos y la ventilación facial.<br><br>Análisis de Distractores: La vasoconstricción y la piel sudorosa afectan principalmente la medición cutánea o axilar. La sialorrea no es el factor primario documentado que interfiere termodinámicamente con la medición sublingual en estos escenarios.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Diagnóstico, p. 19."
+    },
+    {
+        id: 25,
+        question: "Durante la realización de ejercicio extremo, ¿qué parámetro macroscópico de fácil acceso se recomienda vigilar continuamente para monitorizar el estado de deshidratación?",
+        options: ["Elasticidad tegumentaria", "Frecuencia respiratoria", "Características de la orina", "Tensión arterial sistémica"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Prevención de golpe de calor, el volumen y color de la orina (densidad urinaria visual) representan un biomarcador altamente fidedigno y temprano de la conservación renal de agua por aumento de la hormona antidiurética en respuesta al estrés térmico.<br><br>Perla ENARM: Se recomienda monitorizar el estado de hidratación con el cambio en las características macroscópicas de la orina y midiendo el peso durante el esfuerzo físico.<br><br>Análisis de Distractores: La turgencia de la piel es tardía y poco sensible en el adulto. La frecuencia respiratoria y la tensión arterial cambian hasta que se ha instaurado un estado de hipovolemia clínica severa, no en las fases tempranas de prevención de deshidratación.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Prevención, p. 17."
+    },
+    {
+        id: 26,
+        question: "Para el paciente completamente consciente y alerta que tolera la rehidratación oral, ¿cuál es la concentración de carbohidratos recomendada en los líquidos de reposición?",
+        options: ["1 a 2%", "3 a 8%", "10 a 12%", "15 a 20%"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Prevención de golpe de calor, esta ventana de concentración resulta ideal para potenciar el cotransporte de sodio y glucosa a nivel del enterocito, permitiendo la absorción rápida de agua sin aumentar la carga osmótica intraluminal.<br><br>Perla ENARM: Ministre agua para beber si está completamente consciente, ministre líquidos con electrolitos con 3 a 8% de carbohidratos para el tratamiento de la deshidratación relacionada con el esfuerzo.<br><br>Análisis de Distractores: Concentraciones <3% limitan la velocidad del transporte celular acoplado. Concentraciones >10% elevan la osmolaridad gástrica, provocando retención hídrica en el intestino, retraso del vaciamiento y riesgo de diarrea osmótica.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Tratamiento, p. 22."
+    },
+    {
+        id: 27,
+        question: "En el abordaje invasivo prehospitalario o urgencias, ¿qué método de intervención térmica ha demostrado la tasa de descenso de temperatura central más rápida (0.20°C/min)?",
+        options: ["Pulverización de agua", "Inmersión en agua helada", "Aplicación de hielo local", "Aire acondicionado convectivo"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Prevención de golpe de calor, la alta conductividad térmica del agua fría al rodear por completo y directamente la superficie corporal genera un gradiente de extracción de calor masivo, superando estadísticamente a los métodos que dependen solo de gas o paños.<br><br>Perla ENARM: El enfriamiento con agua helada es dos veces más rápido para reducir la temperatura central que la pulverización de agua sobre el cuerpo para mejorar el enfriamiento por evaporación (0.20°C/min frente a 0.11°C/min).<br><br>Análisis de Distractores: La pulverización reduce la temperatura a 0.11°C/min, y es la segunda mejor técnica. El hielo focal o el aire convectivo son medidas adyuvantes, pero no logran el impacto termodinámico absoluto de la inmersión directa en agua helada.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Tratamiento, p. 23."
+    },
+    {
+        id: 28,
+        question: "Fisiológicamente, ¿cuál es el mecanismo principal que utiliza el organismo humano para disipar eficientemente el calor durante la realización de actividad física intensa?",
+        options: ["Conducción hística", "Convección atmosférica", "Radiación infrarroja", "Evaporación por sudoración"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Prevención de golpe de calor, mientras la radiación elimina el calor en reposo, el sudor (evaporación) extrae pasivamente una inmensa cantidad de energía latente al transicionar de líquido a gas, convirtiéndose en el pilar termorregulador dinámico.<br><br>Perla ENARM: El calor se transmite hacia y desde el cuerpo por conducción, convección y radiación. Un mecanismo adicional para eliminar el exceso de calor corporal es la evaporación.<br><br>Análisis de Distractores: La radiación y convección dependen del gradiente entre la piel y el clima; si el aire es más caliente que 37°C, estos fallan. La conducción exige contacto con una superficie fría. Solo la evaporación funciona activamente durante el hipermetabolismo del ejercicio, hasta que claudica por deshidratación.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Prevención, p. 15."
+    },
+    {
+        id: 29,
+        question: "En un contexto militar o deportivo, ¿qué antecedente de infección sistémica reciente documentada obliga a limitar la exposición térmica debido al riesgo de colapso orgánico?",
+        options: ["Enfermedad diarreica", "Esguince cervical agudo", "Dermatitis por contacto", "Rinitis alérgica crónica"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Prevención de golpe de calor, las infecciones gastrointestinales o virales sistémicas no solo merman el volumen plasmático total basal, sino que alteran el set-point hipotalámico y disminuyen la capacitancia de las glándulas sudoríparas.<br><br>Perla ENARM: Se recomienda informar de los principales factores de riesgo para el desarrollo de golpe de calor en adultos, como son... disfunción de las glándulas sudoríparas, quemaduras solares, enfermedades virales y diarrea.<br><br>Análisis de Distractores: Los esguinces, dermatitis focal y cuadros alérgicos crónicos carecen de injerencia directa en la depleción aguda de volumen intravascular o en el bloqueo de las vías eferentes termorreguladoras simpáticas.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Prevención, p. 14."
+    },
+    {
+        id: 30,
+        question: "¿Qué alteración antropométrica y metabólica incrementa hasta en un 30% la probabilidad de desarrollar golpe de calor en adultos sometidos a entrenamiento físico?",
+        options: ["Estatura baja extrema", "Alta densidad ósea", "Sobrepeso y obesidad", "Circunferencia cefálica grande"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Prevención de golpe de calor, el tejido adiposo tiene baja conductividad térmica, actuando como un aislante biológico que atrapa el calor nuclear, además de asociarse a un menor volumen plasmático en relación con la masa corporal total y un pobre acondicionamiento cardiovascular.<br><br>Perla ENARM: Hay estudios relacionados en donde se ha identificado un incremento del 30% de posibilidad de presentar golpe de calor en reclutas militares con sobrepeso en el entrenamiento básico.<br><br>Análisis de Distractores: Las variantes de densidad ósea, estatura o proporciones craneales carecen de un rol fisiopatológico documentado en la retención de energía térmica o en la falla de la disipación convectiva celular.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Prevención, p. 16."
+    },
+    {
+        id: 31,
+        question: "Dentro del abanico de alteraciones eléctricas cardiovasculares por hipertermia maligna, ¿qué lesión isquémica estructural grave se documenta hasta en un 21% de los ingresos?",
+        options: ["Bloqueo auriculoventricular", "Infarto al miocardio", "Fibrilación auricular", "Taquicardia supraventricular"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Prevención de golpe de calor, la taquicardia sostenida (aumento del inotropismo/cronotropismo compensatorio) combinada con la hipoperfusión tisular desequilibra críticamente el aporte y la demanda de oxígeno en el tejido coronario.<br><br>Perla ENARM: Dentro de las alteraciones en termorregulación están descritas las alteraciones eléctricas por hipertermia... infarto al miocardio (21%), fibrilación auricular (8.6%), taquicardia supraventricular (4.3%).<br><br>Análisis de Distractores: Aunque las arritmias auriculares suceden, ocurren con mucha menor frecuencia (<9%) frente a la contundencia de la isquemia e infarto directo (21%). Los bloqueos AV son secuelas de degeneración, no hallazgos térmicos de primer orden.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Tratamiento, p. 25."
+    },
+    {
+        id: 32,
+        question: "Durante el manejo terapéutico farmacológico intrahospitalario, ¿qué medicamento se encuentra totalmente proscrito para tratar la hipertermia dado su fracaso comprobado en ensayos clínicos?",
+        options: ["Dantroleno", "Rocuronio", "Succinilcolina", "Vecuronio"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Prevención de golpe de calor, aunque el dantroleno es el antagonista del receptor de rianodina de elección en la hipertermia maligna anestésica, la génesis del golpe de calor clásico no obedece a hipermetabolismo muscular mediado por calcio libre.<br><br>Perla ENARM: Un ensayo clínico aleatorizado bien diseñado de dantroleno versus placebo en golpe de calor clásico no mostró diferencias en las tasas de enfriamiento ni en los resultados, concluyendo que éste tratamiento farmacológico no debe utilizarse.<br><br>Análisis de Distractores: Bloqueadores neuromusculares convencionales (Rocuronio, Vecuronio) pueden ser empleados circunstancialmente para facilitar intubación o detener fasciculaciones perjudiciales, pero es el Dantroleno el fármaco específicamente refutado por la norma.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Tratamiento, p. 27."
+    },
+    {
+        id: 33,
+        question: "Al abordar a un paciente agudo con temperatura extrema y signos de inflamación meníngea aparente, ¿qué diagnóstico infeccioso exige descartarse sistemáticamente debido a su alta mortalidad?",
+        options: ["Meningitis bacteriana", "Encefalitis autoinmune", "Infección por toxoplasma", "Absceso cerebral local"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Prevención de golpe de calor, los síntomas primarios (cefalea, fiebre masiva, alteración de estado de alerta y rigidez) son una mímica perfecta de la respuesta inflamatoria central. Excluir la neuroinfección invasiva es mandatorio antes de asumir un cuadro exclusivamente térmico.<br><br>Perla ENARM: Cuando se sospecha de golpe de calor se recomienda hacer diagnóstico diferencial con síndrome neuroléptico maligno, malaria y meningitis.<br><br>Análisis de Distractores: Encefalitis autoinmune o abscesos no están priorizados en la guía como diagnósticos de choque diferencial de primera línea; la meningitis comparte el perfil hiperagudo de la clínica de urgencias descrita.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Diagnóstico, p. 21."
+    },
+    {
+        id: 34,
+        question: "Para lograr una adaptación biológica óptima cardiovascular que optimice la respuesta al estrés ambiental extremo, ¿cuántos días previos se recomiendan para completar la aclimatación?",
+        options: ["3 a 5 días", "7 a 9 días", "10 a 14 días", "21 a 28 días"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Prevención de golpe de calor, este periodo exacto de exposición escalonada asegura el aumento gradual del volumen plasmático, estabiliza la tasa de sudoración precoz y desensibiliza el umbral cardíaco ante la hipovolemia.<br><br>Perla ENARM: Se recomienda tener un periodo de aclimatación antes de las actividades físicas... al menos 10-14 días previos de aclimatación antes de realizar dichas actividades.<br><br>Análisis de Distractores: La síntesis de hormonas reguladoras de aldosterona y la remodelación microvascular tardan más de 7 días, por lo que periodos de <5 o 9 días resultan insuficientes. No se requieren más de 3 semanas (21 días) para alcanzar la máxima meseta biológica en sanos.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Prevención, p. 15."
+    },
+    {
+        id: 35,
+        question: "¿Durante qué ventana mensual estacional ocurre la mayor concentración de casos fatales por ondas térmicas en población general, obligando a intensificar las campañas de vigilancia?",
+        options: ["Febrero a abril", "Mayo a julio", "Junio a agosto", "Agosto a octubre"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Prevención de golpe de calor, la coincidencia de las máximas temperaturas caniculares con la realización de trabajo agrícola, deportivo y militar al aire libre, sin infraestructura adecuada, dispara exponencialmente el Riesgo Relativo epidemiológico.<br><br>Perla ENARM: El mayor RR para presentar golpe de calor se presentó en junio y agosto en 2010... Se recomienda incrementar las medidas preventivas para evitar el golpe de calor en los meses de junio a agosto.<br><br>Análisis de Distractores: La etapa primaveral (marzo-mayo) tiene incidencias de adaptación gradual. El pico histórico de letalidad térmica normado estadísticamente en territorio de influencia es estrictamente de verano pleno (junio, julio, agosto).",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Promoción a la salud, p. 12-13."
+    },
+    {
+        id: 36,
+        question: "¿El consumo de qué clase de fármacos interfiere con las vías neuroquímicas periféricas necesarias para sudar, incrementando radicalmente la susceptibilidad al daño térmico?",
+        options: ["Corticosteroides sistémicos", "Antihistamínicos comunes", "Broncodilatadores agonistas", "Inhibidores de leucotrienos"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Prevención de golpe de calor, los antihistamínicos (especialmente los de primera generación) poseen potente actividad anticolinérgica de efecto secundario, lo que inhibe la estimulación simpática de las glándulas sudoríparas écrinas, frenando la evaporación.<br><br>Perla ENARM: Se recomienda que los pacientes que consuman cualquiera de los siguientes medicamentos, no se sometan a estrés físico intenso o se expongan a altas temperaturas ambientales: ... Antihistamínicos.<br><br>Análisis de Distractores: Corticoides, broncodilatadores (como salbutamol) y montelukast no ejercen inhibición muscarínica ni paralizan el sistema eferente hipotalámico encargado de liberar la carga calórica a la piel.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Prevención, p. 16."
+    },
+    {
+        id: 37,
+        question: "Durante la inmersión del cuerpo en agua helada como terapia prehospitalaria radical, ¿qué complicación de la vía aérea debe prevenirse manteniendo la cabeza siempre fuera del agua?",
+        options: ["Cierre laríngeo temporal", "Aspiración y ahogamiento", "Edema agudo glótico", "Broncoestenosis severa"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Prevención de golpe de calor, el paciente con hipertermia severa a menudo sufre convulsiones generalizadas o colapso del tono muscular profundo; sumergir el cuello o rostro conduce invariablemente a la broncoaspiración del medio líquido de reanimación.<br><br>Perla ENARM: Se recomienda un enfriamiento rápido con agua helada... se debe garantizar que la cabeza no se sumerja en el agua y para proteger las vías respiratorias nunca se debe dejar sola a la víctima debido al riesgo de aspiración y ahogamiento.<br><br>Análisis de Distractores: Aunque el frío extremo puede inducir respuestas reflejas, el riesgo letal inminente, directo y puramente mecánico derivado del coma hídrico es la asfixia por aspiración pulmonar completa.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Tratamiento, p. 23."
+    },
+    {
+        id: 38,
+        question: "En el paciente crítico intrahospitalario con falla multisistémica que no responde a los métodos de evaporación de piel, ¿qué medida de enfriamiento invasiva normada reduce directamente la carga térmica?",
+        options: ["Lavado gástrico profundo", "Hemodiálisis continua", "Plasmaféresis terapéutica", "Circulación extracorpórea"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Prevención de golpe de calor, perfundir una solución hipotérmica a través del tubo digestivo (lavado gástrico o peritoneal) permite la absorción del calor masivo esplácnico central directamente mediante el principio de conducción, bajando la temperatura a nivel del núcleo vital.<br><br>Perla ENARM: Manejo hospitalario. Baje la temperatura corporal central lo más rápido posible. Emplee métodos invasivos: 1. Lavado gástrico, 2. Lavado peritoneal, 3. Infusión intravenosa de fluidos fríos. (Cuadro 1).<br><br>Análisis de Distractores: Hemodiálisis y soporte extracorpóreo oxigenado (ECMO) son tratamientos avanzados para fallas orgánicas instauradas en UCI, pero no fungen como la intervención empírica inmediata dictada por el algoritmo térmico primario.",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Anexos, p. 29."
+    },
+    {
+        id: 39,
+        question: "Considerando el impacto celular y las complicaciones orgánicas latentes, ¿cuál es la tasa de mortalidad prospectiva esperada a dos años posterior a sobrevivir un cuadro grave de golpe de calor?",
+        options: ["30%", "45%", "58%", "71%"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Prevención de golpe de calor, la exposición a altas temperaturas desencadena una cascada de daño mitocondrial e inflamación persistente en órganos blanco (miocardio y endotelio), lo que confiere un pronóstico sombrío a largo plazo con una alta letalidad tardía.<br><br>Perla ENARM: La mortalidad prospectiva relacionada a golpe de calor es de 58% a los 28 días y 71% a los dos años.<br><br>Análisis de Distractores: Las opciones menores (30% o 45%) subestiman ampliamente el deterioro de sobrevida, mientras que la cifra del 58% corresponde exclusivamente a la mortalidad a corto plazo (28 días).",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Justificación, p. 8."
+    },
+    {
+        id: 40,
+        question: "Al titular líquidos isotónicos guiándose por metas en el paciente intrahospitalario hipotenso, ¿qué evento adverso se debe prevenir ante la vasodilatación masiva y claudicación vascular periférica?",
+        options: ["Hipernatremia aguda", "Sobrecarga de fluidos", "Coagulopatía dilucional", "Hipopotasemia severa"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Prevención de golpe de calor, inundar el lecho circulatorio en un intento por elevar la presión arterial en un paciente con miocardiopatía inducida por calor, sin monitorizar la respuesta, resulta en rápido edema agudo de pulmón por sobrecarga hídrica letal.<br><br>Perla ENARM: Se recomienda utilizar soluciones isotónicas, durante la reanimación... basado en metas para evitar sobrecarga de fluidos y mantener una adecuada perfusión de la microcirculación.<br><br>Análisis de Distractores: Al usar solución isotónica al 0.9% es raro condicionar hipernatremia aguda. La coagulopatía es secundaria a CID térmica directa, no dilucional en los volúmenes primarios recomendados (1-2 litros).",
+        source: "GPC-SEMAR-571-19, Prevención, diagnóstico y tratamiento de golpe de calor en adultos, 2019, Tratamiento, p. 27."
+    }
+
+
+
+
+
+
+
+
+
+
+        
+       ];
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('ExMI10LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('ExMI10Progress');
+                localStorage.removeItem('ExMI10LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-purple-500 shadow-md z-10 border-purple-500 dark:border-purple-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-fuchsia-500 to-purple-600 hover:from-purple-600 hover:to-fuchsia-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-purple-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-fuchsia-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "MEDICINA INTERNA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "SEMAR-571-19 • Prevención, diagnóstico y tratamiento de golpe de calor en adultos";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-purple-600 dark:text-slate-400 dark:hover:text-purple-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="login.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-purple-100 dark:border-purple-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-purple-50 has-[:checked]:border-purple-400 dark:has-[:checked]:bg-purple-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-purple-600 focus:ring-purple-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-purple-600 dark:hover:bg-purple-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-fuchsia-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('ExMI10Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('ExMI10LastQId', currentQuestionId);
+                else localStorage.removeItem('ExMI10LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('ExMI10Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

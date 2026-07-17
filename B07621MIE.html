@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-purple-500 to-fuchsia-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+
+    {
+        id: 1,
+        question: "¿A partir de qué edad se indica iniciar el tamizaje sistemático para la detección oportuna de hipertensión arterial sistémica?",
+        options: ["40 años", "18 años", "30 años", "50 años"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial, el tamizaje universal permite detectar la enfermedad a tiempo, iniciar medidas multidisciplinarias tempranas y evitar un deterioro orgánico silencioso a largo plazo.<br><br>Perla ENARM: \"Se recomienda realizar tamizaje para hipertensión arterial en todos los adultos mayores de 18 años de edad, para detectar a tiempo hipertensión arterial, iniciar de forma oportuna el tratamiento multidisciplinario, y evitar ingresos hospitalarios por eventos cardiovasculares.\"<br><br>Análisis de Distractores: Posponer la toma sistemática a los 30, 40 o 50 años dejaría a la población joven sin detección de factores tempranos y sin abordaje de patologías secundarias.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento, 2021, Tamizaje, Página 17."
+    },
+    {
+        id: 2,
+        question: "¿Cuál es el factor de riesgo conductual modificable que muestra la mayor asociación estadística para el desarrollo directo de hipertensión arterial sistémica?",
+        options: ["Tabaquismo activo", "Sedentarismo crónico", "Dieta rica en grasas", "Dependencia de alcohol"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial, la evaluación de conductas modificables es el pilar preventivo principal, destacando el alcoholismo sobre el resto por su capacidad de hiperactivación simpática letal.<br><br>Perla ENARM: \"La dependencia de alcohol muestra una mayor probabilidad para el desarrollo de hipertensión.\"<br><br>Análisis de Distractores: El tabaquismo, sedentarismo y la mala dieta incrementan severamente el riesgo cardiovascular general, pero el consumo dependiente de alcohol tiene el mayor peso estadístico aislado documentado para generar elevación tensional.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento, 2021, Prevención, Página 26."
+    },
+    {
+        id: 3,
+        question: "¿Qué cifras de presión arterial obtenidas de forma aislada en el consultorio definen el Estadio 2 de la hipertensión arterial sistémica?",
+        options: ["140 a 159 y 90 a 99 mmHg", "160 a 179 y 100 a 109 mmHg", "130 a 139 y 85 a 89 mmHg", "≥ 180 y ≥ 110 mmHg"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial, la estadificación en consultorio permite decidir la agresividad del abordaje farmacológico inicial a partir del riesgo inminente de daño.<br><br>Perla ENARM: \"Cuadro 1. Hipertensión Estadio 2: Presión Sistólica 160 a 179 mmHg, Presión Diastólica 100 a 109 mmHg.\"<br><br>Análisis de Distractores: Las cifras de 140-159/90-99 corresponden al Estadio 1. Las cifras 130-139/85-89 corresponden al nivel limítrofe o fronterizo. Valores ≥ 180/110 determinan el Estadio 3 o nivel de urgencia/emergencia.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento, 2021, Anexos, Página 75."
+    },
+    {
+        id: 4,
+        question: "¿Cuál es el estudio de elección estándar para establecer el diagnóstico definitivo de hipertensión arterial sistémica y evaluar el pronóstico cardiovascular?",
+        options: ["Ecocardiograma transtorácico", "Toma seriada en consultorio", "Monitoreo ambulatorio de presión", "Monitoreo domiciliario por bitácora"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial, la tecnología ambulatoria de 24 horas elimina los sesgos adrenérgicos de la visita médica y determina los patrones de caída nocturna del pulso.<br><br>Perla ENARM: \"El monitoreo de la presión arterial de forma ambulatoria (MAPA) es el método de elección para el diagnóstico de hipertensión, y la evaluación precisa del riesgo cardiovascular en adultos > 18 años.\"<br><br>Análisis de Distractores: La bitácora domiciliaria es una alternativa válida si no se cuenta con el recurso. Las tomas en consultorio tienen alto margen de efecto de bata blanca. El ecocardiograma evalúa exclusivamente daño orgánico secundario.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento, 2021, Diagnóstico, Página 42."
+    },
+    {
+        id: 5,
+        question: "Al medir la presión arterial en ambos brazos durante la evaluación inicial, ¿qué diferencia en milímetros de mercurio sugiere alto riesgo de enfermedad ateromatosa vascular?",
+        options: ["> 10 mmHg", "> 5 mmHg", "> 20 mmHg", "> 15 mmHg"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial, la asimetría tensional severa obliga a descartar obstrucción intraluminal aterosclerótica en el arco aórtico o arterias subclavias.<br><br>Perla ENARM: \"Se recomienda medir la presión arterial en ambos brazos al menos en la primera consulta, debido a que una diferencia > 15 mmHg indica enfermedad ateromatosa y se asocia con un aumento del riesgo cardiovascular.\"<br><br>Análisis de Distractores: Diferencias menores a 10 mmHg son hallazgos fisiológicos habituales. Una diferencia entre 10 y 15 mmHg requiere vigilancia, pero el corte para riesgo letal o enfermedad ateromatosa consolidada es estrictamente > 15 mmHg.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento, 2021, Tamizaje, Página 37."
+    },
+    {
+        id: 6,
+        question: "En pacientes mayores de 60 años, ¿cuál es el valor de la presión de pulso indicativo de rigidez arterial patológica y daño orgánico temprano?",
+        options: ["≥ 60 mmHg", "≥ 50 mmHg", "≥ 40 mmHg", "≥ 70 mmHg"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial, la calcificación vascular aórtica incrementa la brecha sistólica-diastólica y eleva sustancialmente el trabajo miocárdico.<br><br>Perla ENARM: \"El médico familiar debe buscar de manera intencionada daño a órgano blanco: Rigidez arterial (presión pulso en personas mayores de 60 años, ≥ 60 mmHg).\"<br><br>Análisis de Distractores: Valores de 40 o 50 mmHg son brechas normales para mantener una hemodinámica funcional óptima. El corte de ≥ 70 mmHg no representa el umbral basal para sospechar rigidez patológica inicial en estos pacientes.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento, 2021, Diagnóstico, Página 32."
+    },
+    {
+        id: 7,
+        question: "¿Qué combinación farmacológica se prefiere inicialmente al tratar a un paciente con hipertensión arterial sistémica y obesidad concomitante?",
+        options: ["Inhibidor de enzima y tiazida", "Calcioantagonista y tiazida", "Inhibidor de enzima y calcioantagonista", "Monoterapia con calcioantagonista"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial, en individuos con síndrome metabólico se debe evitar la primera línea con diuréticos por su reconocido potencial adverso sobre el perfil glucémico y lipídico.<br><br>Perla ENARM: \"Si el paciente tiene: síndrome metabólico, obesidad o diabetes mellitus tipo 2 debe preferirse terapia dual con bloqueador de canales de calcio.\"<br><br>Análisis de Distractores: Las combinaciones duales con tiazidas se reservan únicamente para hipertensos sin factores de riesgo metabólico al arranque del algoritmo. La monoterapia casi siempre resulta ineficaz y se limita a hipertensión grado 1 de mínimo riesgo.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento, 2021, Anexos, Página 71."
+    },
+    {
+        id: 8,
+        question: "En el tratamiento de hipertensión resistente, ¿qué diurético está indicado agregar al esquema si la tasa de filtrado glomerular cae por debajo de 30 ml/min?",
+        options: ["Diurético de asa", "Diurético ahorrador de potasio", "Diurético tiazídico", "Bloqueador alfa"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial, la caída crítica del filtrado anula la natriuresis en el túbulo distal y exige la transición a compuestos más potentes a nivel del asa de Henle para vencer la sobrecarga hídrica.<br><br>Perla ENARM: \"Si se tiene aclaramiento de creatinina menor a 30 ml/min, se sugiere usar diurético de asa.\"<br><br>Análisis de Distractores: Las tiazidas pierden eficacia de filtración en fases avanzadas. La espironolactona (ahorrador de potasio) está formalmente contraindicada por peligro inminente de hiperkalemia arritmogénica. El bloqueador alfa es de uso residual posterior, no un reemplazo diurético.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento, 2021, Anexos, Página 71."
+    },
+    {
+        id: 9,
+        question: "¿Cuál es la meta general de presión arterial a corto plazo para pacientes menores de 80 años sin evidencia previa de daño cardiovascular?",
+        options: ["< 130 / 80 mmHg", "< 120 / 80 mmHg", "< 140 / 90 mmHg", "< 150 / 90 mmHg"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial, se requiere equilibrar la prevención de aterosclerosis sin inducir hipoperfusión cerebral o coronaria con reducciones extremas e injustificadas en población general.<br><br>Perla ENARM: \"Se recomienda que en adultos con hipertensión arterial sistémica menores de 80 años la meta de presión arterial a corto plazo debe ser < 140/90 mmHg.\"<br><br>Análisis de Distractores: Bajar de 130/80 mmHg es la meta rigurosa reservada para riesgo extremo, infartados o diabéticos. Buscar menos de 120/80 mmHg carece de evidencia poblacional universal segura. Cifras laxas de 150/90 mmHg aplican para fragilidad en el adulto mayor.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento, 2021, Tratamiento farmacológico, Página 60."
+    },
+    {
+        id: 10,
+        question: "¿Cuál es el objetivo terapéutico de control estricto en la presión arterial para un individuo diagnosticado simultáneamente con diabetes mellitus tipo 2?",
+        options: ["< 140 / 90 mmHg", "< 130 / 80 mmHg", "< 150 / 90 mmHg", "< 120 / 80 mmHg"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial, la agresividad inflamatoria de la glucotoxicidad sumada a la tensión parietal multiplica el riesgo letal micro y macrovascular, demandando metas inferiores de protección.<br><br>Perla ENARM: \"Se recomienda en adultos con diabetes mellitus e hipertensión, recibir tratamiento y vigilancia para alcanzar una meta < 130/80 mmHg.\"<br><br>Análisis de Distractores: El objetivo < 140/90 mmHg o < 150/90 mmHg resultaría permisivo y facilitaría la progresión de la nefropatía diabética preexistente. Forzar el descenso por debajo de 120/80 mmHg eleva eventos secundarios iatrogénicos.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento, 2021, Tratamiento farmacológico, Página 60."
+    },
+    {
+        id: 11,
+        question: "¿Cada cuánto tiempo debe evaluarse médicamente a una persona que presenta cifras tensionales limítrofes entre 130 a 139 y 85 a 89 mmHg en su tamizaje inicial?",
+        options: ["Evaluación semanal", "Evaluación semestral", "Evaluación trienal", "Evaluación mensual"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial, el estado fronterizo incrementa el riesgo de conversión a enfermedad sostenida a mediano plazo, exigiendo vigilancia sin llegar aún al manejo farmacológico rutinario.<br><br>Perla ENARM: \"Si tienen factores de riesgo para hipertensión o si su presión arterial sistólica es de 120 a 129 mmHg o 130 a 139 mmHg, la reevaluación será semestralmente.\"<br><br>Análisis de Distractores: Las consultas mensuales o semanales aplican para pacientes diagnosticados en fase de titulación de dosis farmacológica. Revisiones muy prolongadas (trienal) se reservan para población joven totalmente asintomática con niveles < 120/80 mmHg.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento, 2021, Tamizaje, Página 37."
+    },
+    {
+        id: 12,
+        question: "¿Qué entidad clínica se sospecha inminentemente si la creatinina sérica incrementa más del 30% tras la instauración de un fármaco antagonista de angiotensina?",
+        options: ["Apnea obstructiva del sueño", "Aldosteronismo primario tumoral", "Estenosis de arteria renal", "Feocromocitoma suprarrenal"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial, el bloqueo abrupto del mecanismo de rescate de la angiotensina II desencadena insuficiencia isquémica grave en la nefrona cuando existe un flujo sanguíneo vascular basal comprometido.<br><br>Perla ENARM: \"El médico familiar debe sospechar de hipertensión secundaria renovascular cuando hay deterioro de la función renal con el uso de inhibidores o antagonistas, sobre todo en casos de estenosis renal bilateral.\"<br><br>Análisis de Distractores: Apnea, feocromocitoma y aldosteronismo no generan un colapso del filtrado hemodinámico exclusivamente condicionado por el consumo de los fármacos del eje renina-angiotensina.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento, 2021, Anexos, Página 65."
+    },
+    {
+        id: 13,
+        question: "Dentro de la clasificación de patologías subyacentes, ¿cuál es la causa más común de hipertensión arterial secundaria en la población adulta?",
+        options: ["Enfermedad renovascular ateroesclerótica", "Síndrome de apnea obstructiva", "Aldosteronismo primario hiperplásico", "Enfermedad del parénquima renal"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial, la hipoxia crónica nocturna y la disrupción del sueño generan un estado de hiperactividad noradrenérgica sistémica que constituye la causa epidémica subyacente de mayor impacto.<br><br>Perla ENARM: \"Las causas principales de hipertensión secundaria son: Apnea obstructiva del sueño 40-50%, Enfermedad renovascular 5-34%, Aldosteronismo primario 8-20%.\"<br><br>Análisis de Distractores: Los orígenes vasculares y parenquimatosos renales ocupan la segunda o tercera posición en prevalencia global, mientras que las abnormalities neuroendocrinas no superan la abrumadora frecuencia del trastorno del sueño condicionado por la obesidad poblacional.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento, 2021, Epidemiología, Página 64."
+    },
+    {
+        id: 14,
+        question: "¿Qué mediciones tensionales establecen clínicamente el concepto diagnóstico de hipertensión enmascarada peligrosa?",
+        options: ["< 140 / 90 mmHg consultorio y > 140 / 90 mmHg casa", "> 140 / 90 mmHg consultorio y < 140 / 90 mmHg casa", "> 160 / 100 mmHg consultorio y > 160 / 100 mmHg casa", "< 120 / 80 mmHg consultorio y < 120 / 80 mmHg casa"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial, este patrón confunde al clínico por mostrar aparente control presencial, cuando en el entorno real de vida la presión destruye orgánicamente los tejidos endoteliales.<br><br>Perla ENARM: \"Cuadro 1. Hipertensión Enmascarada: < 140 en consultorio y > 140 en casa.\"<br><br>Análisis de Distractores: Cifras elevadas frente al médico con mediciones bajas en domicilio confirman simplemente la hipertensión de bata blanca. Valores altísimos constantes demuestran descontrol sostenido absoluto resistente a manejo.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento, 2021, Anexos, Página 75."
+    },
+    {
+        id: 15,
+        question: "Ante cifras de 195 / 115 mmHg en el área de emergencias, ¿qué dato clínico define la progresión absoluta a urgencia hipertensiva mayor inminente?",
+        options: ["Cefalea holocraneal de intensidad moderada", "Retinopatía crónica de segundo grado", "Evidencia de daño agudo orgánico", "Aparición de epistaxis unilateral simple"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial, las hipertensiones extremas asintomáticas requieren manejo gradual por vía oral, pero la alteración en el funcionamiento de órganos diana determina la letalidad aguda y necesidad de vía intravenosa inmediata.<br><br>Perla ENARM: \"Se recomienda enviar al servicio de urgencias a pacientes con evidencia de daño agudo a órgano blanco que requiera atención médica inmediata como edema pulmonar, encefalopatía, infarto o disección aórtica.\"<br><br>Análisis de Distractores: Cifras de cefalea moderada, retinopatía base preexistente y epistaxis representan sangrados capilares o distensión venosa crónica (urgencia hipertensiva menor) manejable, sin riesgo súbito de muerte como el que supone el infarto o la hemorragia intracraneal aguda.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento, 2021, Anexos, Página 74."
+    },
+    {
+        id: 16,
+        question: "¿Cuál es el límite máximo recomendado de consumo de sal dietética para potenciar el efecto reductor de la presión arterial sistémica?",
+        options: ["Menor a 2 gramos diarios", "Menor a 8 gramos diarios", "Menor a 10 gramos diarios", "Menor a 5 gramos diarios"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial, restringir el cloruro de sodio mitiga la expansión del volumen intravascular y recupera la sensibilidad endotelial a la farmacoterapia vasodilatadora diaria.<br><br>Perla ENARM: \"Reducción del consumo de sal. No exceder los 5 g al día. Reducción de presión arterial de 2 a 8 mmHg.\"<br><br>Análisis de Distractores: Un consumo de 8 a 10 gramos anula las propiedades de la dieta DASH y suprime la eficacia de los tiazídicos. La indicación estricta de \"2 gramos\" se refiere científicamente a la medición neta de sodio metabólico, no a la sal combinada de mesa de 5 gramos.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento, 2021, Anexos, Página 78."
+    },
+    {
+        id: 17,
+        question: "En el abordaje algorítmico de un paciente de hipertensión resistente, ¿cuál es el cuarto fármaco obligatorio de rescate a prescribir en función renal conservada?",
+        options: ["Furosemida intravenosa", "Betabloqueador cardioselectivo", "Espironolactona", "Prazocina de acción rápida"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial, el estado inflamatorio crónico deriva en un escape tensional mineralocorticoide sistémico que solo responde a intervenciones antagonistas del receptor específico para aldosterona.<br><br>Perla ENARM: \"Paso 3, Hipertensión resistente: Tratamiento triple más Espironolactona u otras drogas.\"<br><br>Análisis de Distractores: Los betabloqueadores, simpaticolíticos y compuestos venodilatadores se limitan al papel de quinta línea alternativa exclusivamente cuando la tasa de filtrado desciende a zona de riesgo y contraindica el uso de la propia espironolactona.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento, 2021, Anexos, Página 71."
+    },
+    {
+        id: 18,
+        question: "¿Cuál es el periodo máximo de incapacidad temporal para el trabajo que puede prescribirse ante hipertensión esencial descontrolada que desempeña carga física pesada?",
+        options: ["3 días", "14 días", "7 días", "21 días"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial, los criterios ocupacionales médicos exigen evitar el colapso hemodinámico letal durante periodos de esfuerzo laboral isométrico excesivo no protegido terapéuticamente.<br><br>Perla ENARM: \"Se recomienda otorgar de 0 a 14 días individualizando a cada paciente; hipertensión arterial esencial en carga de trabajo pesado: máximo 14 días.\"<br><br>Análisis de Distractores: Los tiempos breves estandarizados de 3 o 7 días abordan desequilibrios tensionales de menor impacto vinculados a exigencias laborales livianas y medianas respectivamente. No hay fundamentación médico legal de inicio para expedir más de 21 días consecutivos.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento, 2021, Anexos, Página 77."
+    },
+    {
+        id: 19,
+        question: "¿Cuál intervención aislada del cambio conductual logra el mayor impacto reductivo sobre la tensión arterial demostrable en milímetros de mercurio?",
+        options: ["Dieta nórdica o DASH", "Suspensión radical de alcohol", "Control de peso corporal", "Ejercicio isométrico muscular"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial, abatir el componente graso visceral detiene la insulinoresistencia periférica reactiva y ejerce un impacto superior a cualquier medida de suplementación e hidratación en aislamiento.<br><br>Perla ENARM: \"Control de peso, mantener índice de masa corporal recomendable > 18 y < 25. Reducción de la presión arterial de 5 a 20 mmHg.\"<br><br>Análisis de Distractores: Adoptar un patrón DASH disminuye eficazmente entre 8 a 14 mmHg; el gasto aeróbico aporta de 4 a 9 mmHg netos y suspender las bebidas con etanol resta un máximo de 2 a 4 mmHg, todos inferiores a los 20 mmHg logrados por pérdida masiva de kilogramos.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento, 2021, Anexos, Página 78."
+    },
+    {
+        id: 20,
+        question: "¿Qué herramienta de gabinete general e inicial es indispensable para pesquisar daño orgánico secundario ventricular o anomalías rítmicas silentes?",
+        options: ["Radiografía simple de tórax", "Ecocardiograma transtorácico", "Monitor Holter de 24 horas", "Electrocardiograma de 12 derivaciones"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial, el impacto de la postcarga aórtica desencadena alteraciones anatomoeléctricas hipertróficas cuya identificación primaria desde la primera visita reduce dramáticamente la aparición de complicaciones arritmogénicas mortales.<br><br>Perla ENARM: \"A toda persona con hipertensión se recomienda para la evaluación clínica y daño a órgano blanco realizar estudios generales: Electrocardiograma.\"<br><br>Análisis de Distractores: La tecnología de ecocardiografía se reserva protocolarmente para confirmar la severidad estructural de pacientes crónicos y refractarios de mayor estirpe. La radiografía y los holter representan alternativas secundarias dirigidas a cuadros específicos y urgencias pre-existentes.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento, 2021, Diagnóstico, Página 31."
+    },
+    {
+        id: 21,
+        question: "¿A partir de qué cifras se confirma el diagnóstico de hipertensión arterial sistémica mediante el uso del monitoreo domiciliario?",
+        options: ["≥ 135/85 mmHg", "≥ 140/90 mmHg", "≥ 130/80 mmHg", "≥ 120/80 mmHg"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial en el Primer Nivel, los valores diagnósticos fuera de consultorio tienen umbrales más bajos debido a la ausencia del estrés adrenérgico generado en el entorno clínico. La confirmación ambulatoria reduce el sobretratamiento.<br><br>Perla ENARM: \"HAS con monitoreo domiciliario 135 o más / 85 o más.\"<br><br>Análisis de Distractores: Las cifras de 140/90 mmHg definen la hipertensión en el entorno de consultorio, no en el domicilio. Los valores de 130/80 mmHg representan la meta de control para pacientes de alto riesgo o con alteraciones renales. El umbral de 120/80 mmHg corresponde al límite superior de la presión arterial óptima.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento de la Hipertensión Arterial en el Primer Nivel de Atención, 2021, Anexos, Página 75."
+    },
+    {
+        id: 22,
+        question: "En un paciente sin alteraciones metabólicas al momento del diagnóstico, ¿cuál es la combinación farmacológica inicial recomendada?",
+        options: ["Antagonista de receptor y betabloqueador", "Inhibidor de enzima y calcioantagonista", "Monoterapia con diurético de asa", "Inhibidor de enzima y diurético tiazídico"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Hiprestensión Arterial en el Primer Nivel, la primera línea de tratamiento en pacientes sin obesidad, diabetes o síndrome metabólico permite el uso de natriuréticos, combinados con bloqueadores del sistema renina-angiotensina para lograr el control hemodinámico dual.<br><br>Perla ENARM: \"Si no hay riesgo metabólico o hay retención hídrica preferir diurético en la terapia dual.\"<br><br>Análisis de Distractores: Los inhibidores de enzima con calcioantagonistas (B) son la elección exclusiva si el paciente presenta riesgo metabólico. Los betabloqueadores (A) se reservan para isquemia o arritmias. La monoterapia (C) casi nunca logra el control sostenido en la población adulta general.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento de la Hipertensión Arterial en el Primer Nivel de Atención, 2021, Anexos, Página 69."
+    },
+    {
+        id: 23,
+        question: "¿Cuál es el punto de corte de edad para iniciar una búsqueda intencionada de etiologías secundarias ante un diagnóstico reciente de hipertensión arterial sistémica?",
+        options: ["< 50 años", "< 40 años", "< 60 años", "< 30 años"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial en el Primer Nivel, la presentación de cifras tensionales elevadas en población joven tiene una alta probabilidad de corresponder a alteraciones endocrinológicas o anatómicas corregibles, a diferencia de la etiología esencial vista en edades maduras.<br><br>Perla ENARM: \"Se recomienda que en adultos < 40 años se debe buscar de manera intencionada la presencia de HAS secundarias y si es necesario envío a segundo nivel de atención.\"<br><br>Análisis de Distractores: Posponer la sospecha diagnóstica a edades como 50 o 60 años retrasa el tratamiento de patologías curables (como feocromocitoma o coartación aórtica). La edad de 30 años es indicativa en guías pasadas o en mujeres no obesas, pero el tamizaje sistemático obligatorio marca el límite a los 40 años.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento de la Hipertensión Arterial en el Primer Nivel de Atención, 2021, Diagnóstico, Página 64."
+    },
+    {
+        id: 24,
+        question: "En la evaluación con monitoreo ambulatorio de 24 horas, ¿qué cifras medias en el periodo nocturno establecen el diagnóstico de hipertensión arterial sistémica?",
+        options: ["> 130/80 mmHg", "> 135/85 mmHg", "> 120/70 mmHg", "> 110/65 mmHg"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial en el Primer Nivel, la presión hemodinámica nocturna desciende fisiológicamente. La pérdida de este declive y el mantenimiento de presiones por encima de este umbral predicen fuertemente morbilidad y mortalidad cardiovascular autónoma.<br><br>Perla ENARM: \"El diagnóstico por MAPA consideraría cifras medias de PAS > 130 o PAD > 80 mm Hg en el periodo de 24 hr... y > 120 o > 70 mm Hg, respectivamente, en periodo nocturno.\"<br><br>Análisis de Distractores: El valor de > 135/85 mmHg (B) diagnostica hipertensión en el promedio diurno ambulatorio. El corte de > 130/80 mmHg (A) determina el diagnóstico general en el promedio de las 24 horas completas.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento de la Hipertensión Arterial en el Primer Nivel de Atención, 2021, Diagnóstico, Página 40."
+    },
+    {
+        id: 25,
+        question: "Tras iniciar o ajustar la terapia farmacológica antihipertensiva, ¿cuál es el intervalo de tiempo indicado para reevaluar la respuesta clínica hasta lograr el control?",
+        options: ["Evaluaciones cada 1 a 2 meses", "Evaluaciones cada 15 a 20 días", "Evaluaciones cada 3 a 6 meses", "Evaluaciones cada 6 a 12 meses"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial en el Primer Nivel, los fármacos requieren un periodo fisiológico para alcanzar su máximo efecto de remodelación endotelial y reducción de las resistencias vasculares periféricas de forma estable.<br><br>Perla ENARM: \"Los adultos que inician tratamiento farmacológico nuevo o ajustado para la HAS deben someterse a una evaluación de seguimiento de la adherencia y la respuesta al tratamiento a intervalos mensuales hasta que se logre el control.\"<br><br>Análisis de Distractores: Las evaluaciones cada 15 días pueden precipitar cambios de dosis antes de que el fármaco alcance su efecto pleno. Las visitas cada 3 a 6 meses son exclusivamente para la fase de mantenimiento en pacientes ya controlados y estables.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento de la Hipertensión Arterial en el Primer Nivel de Atención, 2021, Tratamiento, Página 60."
+    },
+    {
+        id: 26,
+        question: "Cuál es la meta estricta de presión arterial a corto plazo para pacientes con antecedente de enfermedad cardiovascular o con un riesgo calculado a 10 años ≥ 10%?",
+        options: ["< 130/80 mmHg", "< 140/90 mmHg", "< 120/80 mmHg", "< 150/90 mmHg"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial en el Primer Nivel, el beneficio de la intensificación terapéutica es superior en pacientes que ya presentan placas inestables o falla renal aguda. Descender la presión alivia el esfuerzo miocárdico basal.<br><br>Perla ENARM: \"Para adultos con hipertensión y enfermedad cardiovascular conocida, o riesgo de evento CV a 10 años de ≥ 10%, se recomienda un objetivo de PA < 130/80 mmHg.\"<br><br>Análisis de Distractores: La meta de < 140/90 mmHg aplica a pacientes menores de 80 años de bajo riesgo sin enfermedad previa. Perseguir cifras menores a 120/80 mmHg eleva el riesgo de hipoperfusión tisular. La meta < 150/90 mmHg se tolera en octogenarios frágiles.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento de la Hipertensión Arterial en el Primer Nivel de Atención, 2021, Tratamiento, Página 60."
+    },
+    {
+        id: 27,
+        question: "¿Qué suplemento mineral con demostrada eficacia hipotensora se encuentra estrictamente contraindicado en pacientes con enfermedad renal crónica?",
+        options: ["Suplementación de calcio", "Suplementación de magnesio", "Suplementación de vitamina D", "Suplementación de potasio"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial en el Primer Nivel, aunque este electrolito contrarresta la carga de sodio, los riñones con tasa de filtrado disminuida o los pacientes tratados con inhibidores de enzima desarrollan retención severa y arritmias letales.<br><br>Perla ENARM: \"La suplementación de potasio se recomienda para adultos con presión arterial elevada, pero está contraindicada en pacientes con ERC o cuando se utilizan fármacos que reducen la excreción de potasio.\"<br><br>Análisis de Distractores: La suplementación rutinaria con calcio y magnesio carece de evidencia comprobada y no se recomienda para control tensional en ningún escenario. La vitamina D interviene en la regulación ósea y no tiene restricción absoluta ligada al control hipertensivo directo en este contexto.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento de la Hipertensión Arterial en el Primer Nivel de Atención, 2021, Tratamiento no farmacológico, Página 49."
+    },
+    {
+        id: 28,
+        question: "En las intervenciones de estilo de vida, ¿qué rango de reducción en la presión sistólica se espera al adoptar la dieta DASH?",
+        options: ["8 a 14 mmHg", "2 a 4 mmHg", "5 a 20 mmHg", "4 a 9 mmHg"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial en el Primer Nivel, el alto aporte de fibras, potasio y bajo contenido de grasas saturadas favorece la reactividad endotelial natural de los vasos sanguíneos, otorgando una disminución tensional significativa.<br><br>Perla ENARM: \"Alimentación saludable: Adecuado consumo de frutas y verduras, proteínas magras y lácteos descremados. Reducción PA 8-14 mmHg.\"<br><br>Análisis de Distractores: El rango de 5 a 20 mmHg corresponde a la reducción masiva lograda por la pérdida de peso corporal. Una reducción de 4 a 9 mmHg se consigue con ejercicio aeróbico aislado. La caída de 2 a 4 mmHg se logra suspender el consumo excesivo de alcohol.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento de la Hipertensión Arterial en el Primer Nivel de Atención, 2021, Anexos, Página 78."
+    },
+    {
+        id: 29,
+        question: "En la evaluación por ultrasonido, ¿qué diferencia de tamaño entre ambos riñones levanta sospecha diagnóstica de estenosis arterial secundaria?",
+        options: ["> 1.0 cm", "> 0.5 cm", "> 2.0 cm", "> 1.5 cm"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial en el Primer Nivel, la isquemia crónica por placa ateroesclerótica o displasia fibromuscular induce atrofia parenquimatosa progresiva en el riñón afectado, generando una marcada disparidad anatómica frente al riñón sano.<br><br>Perla ENARM: \"Se recomienda solicitar ultrasonido renal en caso de sospecha de estenosis de la arteria renal al presentar diferencias de 1.5 cm entre ambos riñones. Esto se observa en el 70% de los casos.\"<br><br>Análisis de Distractores: Diferencias menores como 0.5 cm o 1.0 cm son variaciones anatómicas normales derivadas del desarrollo embriológico y la posición hepática derecha, careciendo de valor predictivo para hipertensión renovascular.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento de la Hipertensión Arterial en el Primer Nivel de Atención, 2021, Diagnóstico, Página 65."
+    },
+    {
+        id: 30,
+        question: "¿Qué prueba de laboratorio debe solicitarse obligatoriamente para la estimación temprana de daño a órgano blanco en el parénquima renal?",
+        options: ["Examen general de orina simple", "Depuración de urea en 24 horas", "Relación albúmina y creatinina", "Proteína C reactiva ultrasensible"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial en el Primer Nivel, el incremento sostenido de la presión hidrostática altera tempranamente la permeabilidad de la membrana basal glomerular, provocando fuga proteica antes de que la creatinina sérica se eleve.<br><br>Perla ENARM: \"El médico familiar debe buscar de manera intencionada daño a órgano blanco: Micro albuminuria o elevación del cociente albumina/creatinina.\"<br><br>Análisis de Distractores: El examen general de orina convencional no detecta proteínas en estadios incipientes. La depuración de urea no forma parte del protocolo basal de estratificación. La proteína C reactiva documenta el nivel inflamatorio sistémico vascular, pero no el daño glomerular focalizado.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento de la Hipertensión Arterial en el Primer Nivel de Atención, 2021, Diagnóstico, Página 32."
+    },
+    {
+        id: 31,
+        question: "En la evaluación metabólica del paciente hipertenso, ¿qué alteración electrolítica espontánea sugiere la presencia de aldosteronismo primario?",
+        options: ["Hiponatremia refractaria", "Hipopotasemia sustancial", "Hipocalcemia moderada", "Hipermagnesemia aguda"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial en el Primer Nivel, el exceso crónico de mineralocorticoides estimula intensamente la reabsorción de sodio a nivel del túbulo contorneado distal, forzando un intercambio excesivo con potasio hacia la luz tubular.<br><br>Perla ENARM: \"Se recomienda la detección de aldosteronismo primario en presencia de: hipertensión resistente, hipopotasemia (espontánea o sustancial por diuréticos), masa suprarrenal.\"<br><br>Análisis de Distractores: La actividad incrementada de la aldosterona produce retención sódica, descartando la hiponatremia. Las concentraciones de calcio y magnesio se alteran mínimamente en el aldosteronismo, estando mediadas por la paratohormona y no por ejes suprarrenales primarios.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento de la Hipertensión Arterial en el Primer Nivel de Atención, 2021, Diagnóstico, Página 65."
+    },
+    {
+        id: 32,
+        question: "En un paciente con hemorragia cerebral espontánea de 3 horas de evolución y tensión arterial de 170/110 mmHg, ¿cuál es la indicación de manejo hemodinámico?",
+        options: ["Evitar la reducción inmediata a < 140 mmHg", "Reducción inmediata a < 120 mmHg", "Reducción inmediata a < 140 mmHg", "Mantener tensión > 180 mmHg"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial en el Primer Nivel, abatir bruscamente la presión sistólica en la fase aguda del sangrado anula la presión de perfusión de la penumbra isquémica circundante, precipitando un infarto masivo adicional y deterioro fatal.<br><br>Perla ENARM: \"No se recomienda la reducción inmediata de la PAS a < 140 mm Hg en adultos con hemorragia cerebral espontánea que se presentan dentro de las 6 horas posteriores al evento agudo y tienen una PAS entre 150 y 220 mmHg ya que no es benéfica para reducir la muerte o la discapacidad grave, y puede ser potencialmente dañino.\"<br><br>Análisis de Distractores: Reducir drásticamente a < 140 mmHg o < 120 mmHg induce isquemia del tejido nervioso periférico al hematoma. Elevarla intencionadamente por arriba de 180 mmHg favorece la expansión continua del sangrado subyacente.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento de la Hipertensión Arterial en el Primer Nivel de Atención, 2021, Tratamiento, Página 58."
+    },
+    {
+        id: 33,
+        question: "¿En qué escenario clínico se justifica el inicio del esquema farmacológico antihipertensivo exclusivamente con monoterapia?",
+        options: ["Diabetes Mellitus tipo 1", "Hipertensión sistólica aislada", "Obesidad de alto grado", "Adulto mayor con fragilidad"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial en el Primer Nivel, el impacto de una caída brusca de presión en individuos ancianos depletados de volumen o sarcopénicos genera disautonomía, síncope o fracturas, requiriendo un abordaje singular y escalonado muy cauteloso.<br><br>Perla ENARM: \"En pacientes con fragilidad se sugiere la monoterapia, con metas de PA < 140/90mmHg en pacientes de edad > a 65 años (frágiles) o > de 80 años.\"<br><br>Análisis de Distractores: Todo paciente diabético u obeso requiere terapia dual combinada desde el inicio (Paso 1) dada la altísima carga inflamatoria endotelial concurrente y el gran riesgo aórtico aterosclerótico establecido.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento de la Hipertensión Arterial en el Primer Nivel de Atención, 2021, Tratamiento, Página 58."
+    },
+    {
+        id: 34,
+        question: "Para el tratamiento de la hipertensión arterial sistémica en enfermedad renal crónica terminal, ¿qué estrategia farmacológica de combinación debe evitarse siempre?",
+        options: ["Inhibidor de enzima y antagonista de receptor", "Diurético de asa y calcioantagonista", "Antagonista de receptor y diurético", "Inhibidor de enzima y betabloqueador"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial en el Primer Nivel, el uso de IECA y ARA II de forma simultánea induce parálisis irreversible del glomérulo, precipitando hiperpotasemia fatal sin otorgar ninguna mejoría antiproteinúrica o nefroprotectora adicional.<br><br>Perla ENARM: \"En pacientes con ERC terminal la estrategia recomendada de tratamiento debe incluir un inhibidor del sistema de renina-angiotensina BRA o IECA por el beneficio ante la reducción de albuminuria, evitando el uso de estos de manera simultánea.\"<br><br>Análisis de Distractores: La adición de diuréticos de asa es mandatoria en falla terminal para movilizar líquidos intraextracelulares. El uso de betabloqueadores y calcioantagonistas ofrece rutas complementarias seguras de reducción tensional que no deterioran directamente la arteriola eferente renal.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento de la Hipertensión Arterial en el Primer Nivel de Atención, 2021, Tratamiento, Página 57."
+    },
+    {
+        id: 35,
+        question: "¿Qué comorbilidad específica obliga a elegir el monitoreo ambulatorio de 24 horas sobre el monitoreo domiciliario debido al riesgo de pérdida del declive tensional nocturno?",
+        options: ["Enfermedad vascular periférica", "Fibrilación auricular paroxística", "Apnea obstructiva del sueño", "Dislipidemia mixta familiar"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial en el Primer Nivel, la microasfixia somnolienta de la vía aérea inyecta repetidas descargas adrenérgicas simpáticas a lo largo de la madrugada impidiendo el reposo endotelial (\"non-dipper\").<br><br>Perla ENARM: \"La MAPA está indicado antes que la monitorización domiciliaria, cuando se requiera evaluación de la presión arterial nocturna o haya sospecha de Hipertensión Arterial Nocturna o dipping: Apnea del Sueño.\"<br><br>Análisis de Distractores: Las fibrilaciones auriculares falsean los resultados de los manguitos oscilométricos pero no se evalúan específicamente para dipping. La dislipidemia y la enfermedad periférica son factores ateroescleróticos macrovasculares no ligados primordialmente a eventos noradrenérgicos del sueño.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento de la Hipertensión Arterial en el Primer Nivel de Atención, 2021, Diagnóstico, Página 40."
+    },
+    {
+        id: 36,
+        question: "Una vez alcanzada la meta terapéutica de presión arterial, ¿con qué periodicidad deben programarse las citas clínicas de mantenimiento?",
+        options: ["Evaluaciones cada 1 a 2 meses", "Evaluaciones cada 6 a 12 meses", "Evaluaciones cada 3 a 6 meses", "Evaluaciones anuales estrictas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial en el Primer Nivel, la estabilización de los receptores farmacológicos otorga protección constante; sin embargo, este espaciamiento prudente garantiza detectar escapes bioquímicos o funcionales no percibidos antes de generar daño irreversible.<br><br>Perla ENARM: \"Los pacientes que reciben tratamiento con antihipertensivos deben ser vigilados... Y cuando alcanzan PA objetivo debe ser atendido de 3 a 6 meses.\"<br><br>Análisis de Distractores: Visitar al médico cada 1 a 2 meses es exclusivo para periodos de ajuste inicial. Posponer la vigilancia anual o más de 6 meses facilita el abandono subrepticio de la terapia y el paso silente a etapas de hipertrofia ventricular isquémica.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento de la Hipertensión Arterial en el Primer Nivel de Atención, 2021, Seguimiento, Página 60."
+    },
+    {
+        id: 37,
+        question: "En pacientes mayores de 60 años, ¿qué riesgo principal confiere el diagnóstico sostenido de efecto de hipertensión de bata blanca?",
+        options: ["Insuficiencia cardiaca con fracción reducida", "Progresión a hipertensión enmascarada", "Evento vascular isquémico lacunar", "Desarrollo de hipertensión arterial sostenida"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial en el Primer Nivel, los picos adrenérgicos intermitentes del paciente añoso maltratan continuamente las paredes vasculares, estableciendo finalmente un engrosamiento hipertrófico de la capa media arterial que termina siendo permanente.<br><br>Perla ENARM: \"Se recomienda que, en las personas > de 60 años de edad, que presenten efecto de hipertensión de bata blanca, se identifiquen factores de riesgo cardiovascular y se dé seguimiento por la posibilidad de desarrollar hipertensión arterial sostenida.\"<br><br>Análisis de Distractores: La progresión a hipertensión enmascarada obedece a otras condicionantes inflamatorias. Si bien la falla cardíaca y la trombosis de vasos pequeños son desenlaces lejanos, el riesgo primordial marcado en normativas clínicas sobre la reactividad geriátrica es el daño endotelial persistente y consolidación de la enfermedad.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento de la Hipertensión Arterial en el Primer Nivel de Atención, 2021, Diagnóstico, Página 44."
+    },
+    {
+        id: 38,
+        question: "Tras un evento isquémico neurológico transitorio, ¿en qué momento clínico se debe reiniciar la terapia farmacológica antihipertensiva previamente prescrita?",
+        options: ["A las 4 semanas del egreso", "Inmediatamente al ingreso", "Después de los primeros días", "Posterior al egreso hospitalario"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial en el Primer Nivel, en la fase inmediata del insulto isquémico se tolera una reactividad hipertensiva para optimizar el flujo capilar colateral, requiriendo un periodo corto de ventana antes de reestablecer los medicamentos.<br><br>Perla ENARM: \"Se recomienda que los adultos con HAS previamente tratada que experimentan un accidente cerebrovascular o AIT reinicien el tratamiento antihipertensivo después de los primeros días del evento, para reducir el riesgo de accidente cerebrovascular recurrente.\"<br><br>Análisis de Distractores: El reinicio inmediato o hipertemprano reduce bruscamente el rescate isquémico del tejido. Esperar al alta o postergarlo 4 semanas expone inminentemente al paciente a presentar otro coágulo trombótico o progresión a déficit irreversible y edema citotóxico.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento de la Hipertensión Arterial en el Primer Nivel de Atención, 2021, Tratamiento, Página 58."
+    },
+    {
+        id: 39,
+        question: "Durante el examen de fondo de ojo, ¿qué hallazgos clasifican a la retinopatía como avanzada e indicativa de daño agudo orgánico o urgencia mayor?",
+        options: ["Hemorragias, exudados o papiledema", "Tortuosidad venosa periférica", "Cruces arteriovenosos patológicos", "Estrechamiento arteriolar generalizado"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial en el Primer Nivel, la pérdida de la barrera hematorretiniana genera microinfartos locales e inflamación compresiva del nervio óptico, traduciéndose en una emergencia que habitualmente acompaña cuadros encefalopáticos mortales.<br><br>Perla ENARM: \"Daño a Órgano Blanco... Retinopatía: hemorragias o exudados, papiledema.\"<br><br>Análisis de Distractores: El estrechamiento arteriolar, los hilos de cobre y los cruces arteriovenosos representan estadíos crónicos degenerativos incipientes que no marcan el paso de urgencia inmediata de referencia para preservación del órgano visual.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento de la Hipertensión Arterial en el Primer Nivel de Atención, 2021, Anexos, Página 76."
+    },
+    {
+        id: 40,
+        question: "En el algoritmo de tratamiento en escalones, ¿qué condición clínica autoriza la adición de un betabloqueador en cualquier fase del manejo antihipetensivo?",
+        options: ["Resistencia al tratamiento triple", "Insuficiencia cardiaca o isquemia", "Edad menor a 40 años", "Síndrome metabólico severo"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Hipertensión Arterial en el Primer Nivel, los frenos adrenérgicos específicos reducen severamente el consumo miocárdico de oxígeno y modulan el automatismo del nódulo sinusal, evadiendo la secuencia estándar farmacológica por su beneficio dual de supervivencia.<br><br>Perla ENARM: \"Considerar BB en cualquier paso, cuando exista una indicación específica: Insuficiencia cardiaca, fibrilación auricular, cardiopatía isquémica, mujeres en edad fértil con posibilidad de embarazo.\"<br><br>Análisis de Distractores: La falla a los 3 fármacos requiere el empleo de antialdosterónicos de primera instancia. Los betabloqueadores provocan un ligero enmascaramiento y resistencia de la insulina, por lo que su indicación primordial ante síndrome metabólico está restringida o desplazada.",
+        source: "GPC-IMSS-076-21, Promoción, Prevención, Diagnóstico y Tratamiento de la Hipertensión Arterial en el Primer Nivel de Atención, 2021, Anexos, Página 70."
+    }
+
+       ];
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('ExMI10LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('ExMI10Progress');
+                localStorage.removeItem('ExMI10LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-purple-500 shadow-md z-10 border-purple-500 dark:border-purple-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-fuchsia-500 to-purple-600 hover:from-purple-600 hover:to-fuchsia-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-purple-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-fuchsia-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "MEDICINA INTERNA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "IMSS-076-21 • Promoción, prevención, diagnóstico y tratamiento de la hipertensión arterial en el primer nivel de atención";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-purple-600 dark:text-slate-400 dark:hover:text-purple-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="login.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-purple-100 dark:border-purple-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-purple-50 has-[:checked]:border-purple-400 dark:has-[:checked]:bg-purple-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-purple-600 focus:ring-purple-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-purple-600 dark:hover:bg-purple-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-fuchsia-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('ExMI10Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('ExMI10LastQId', currentQuestionId);
+                else localStorage.removeItem('ExMI10LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('ExMI10Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

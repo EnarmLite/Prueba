@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-purple-500 to-fuchsia-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+
+    {
+        id: 1,
+        question: "¿Cuál es el límite temporal estricto para definir la tos aguda de acuerdo a la GPC?",
+        options: ["< 2 semanas", "< 3 semanas", "3 a 8 semanas", "> 8 semanas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, la clasificación del padecimiento depende de la cronicidad de la tos, siendo el límite de 3 semanas el punto de inflexión para descartar cuadros agudos.<br><br>Perla ENARM: Tos aguda, definida como tos que persiste menos de 3 semanas. Empeora a medida que la enfermedad progresa y persiste más allá del cuadro de inflamación aguda.<br><br>Análisis de Distractores: La opción A es un límite arbitrario sin sustento. La opción C define a la tos subaguda (frecuentemente posinfecciosa). La opción D corresponde a la definición de tos crónica, obligando a descartar asma, rinitis o reflujo gastroesofágico.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Diagnóstico, Página 14."
+    },
+    {
+        id: 2,
+        question: "¿Cuál es el objetivo clínico principal e innegociable al evaluar inicialmente a un paciente con sospecha de esta patología?",
+        options: ["Identificar el agente etiológico", "Iniciar tratamiento antibiótico empírico", "Descartar la presencia de neumonía", "Solicitar estudios de imagen torácica"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, la patología es autolimitada y el riesgo real reside en las complicaciones parenquimatosas subyacentes que puedan pasar desapercibidas.<br><br>Perla ENARM: El diagnóstico de BA, es siempre clínico y se realiza en el momento en que el paciente es evaluado. El objetivo principal en los pacientes con sospecha de BA es descartar la presencia de neumonía.<br><br>Análisis de Distractores: La opción A es incorrecta porque la etiología es viral y autolimitada. La opción B fomenta la resistencia bacteriana. La opción D no está indicada de rutina a menos que haya signos clínicos de consolidación.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Diagnóstico, Página 14."
+    },
+    {
+        id: 3,
+        question: "¿Qué porcentaje de los pacientes con síntomas sugestivos de este padecimiento presenta realmente una neumonía bacteriana?",
+        options: ["5 %", "15 %", "48 %", "50 %"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, es fundamental conocer la prevalencia epidemiológica de las complicaciones para evitar el sobreuso de antibióticos empíricos.<br><br>Perla ENARM: Solo 5 % de los pacientes con síntomas sugestivos de BA presentan neumonía bacteriana.<br><br>Análisis de Distractores: La opción B carece de sustento epidemiológico nacional. La opción C corresponde a la incidencia de esputo purulento en cuadros de bronquitis sin neumonía. La opción D corresponde a la prevalencia de tos productiva en el cuadro general.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Diagnóstico, Página 14."
+    },
+    {
+        id: 4,
+        question: "¿Qué patógenos virales específicos causan un cuadro clínico de mayor gravedad en pacientes > 60 años que habitan en asilos?",
+        options: ["Adenovirus y rinovirus", "Virus sincitial respiratorio o influenza", "Coronavirus y bocavirus", "Parainfluenza y metapneumovirus"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, las poblaciones seniles institucionalizadas y los huéspedes inmunosuprimidos tienen alto riesgo de morbilidad cuando se exponen a estos dos agentes etiológicos en particular.<br><br>Perla ENARM: En personas mayores de 60 años de edad, especialmente aquellos que habitan en comunidades cerradas y huéspedes inmunosuprimidos, el cuadro clínico suele ser más sintomático y grave, en particular cuando la etiología es por virus sincicial respiratorio o virus de influenza.<br><br>Análisis de Distractores: Las opciones A, C y D representan virus respiratorios comunes causantes de resfriado o bronquitis leve en la población general, pero no están catalogados normativamente como los principales generadores de gravedad en este grupo etario.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Diagnóstico, Página 14."
+    },
+    {
+        id: 5,
+        question: "¿Qué hallazgo exploratorio pulmonar es determinante documentar para confirmar clínicamente el padecimiento y omitir la toma de radiografías?",
+        options: ["Sibilancias inspiratorias y espiratorias", "Roncus de tono bajo dispersos", "Murmullo vesicular simétrico", "Ausencia de semiología de condensación"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, para cumplir el objetivo de descartar neumonía sin estudios de imagen, la exploración física negativa para datos de ocupación alveolar es indispensable.<br><br>Perla ENARM: En el examen físico: ausencia de semiología de condensación pulmonar. Habitualmente el examen es normal, aunque en algunos pacientes pueden auscultarse sibilancias y roncus.<br><br>Análisis de Distractores: Las opciones A y B son hallazgos bronquiales que pueden presentarse comúnmente en la enfermedad, pero no definen el diagnóstico ni excluyen neumonía por sí solos. La opción C es un hallazgo normal, pero la normativa exige la redacción específica de ausencia de condensación.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Diagnóstico, Página 14."
+    },
+    {
+        id: 6,
+        question: "¿Cuál es el valor diagnóstico real del esputo purulento para predecir una infección bacteriana en esta enfermedad?",
+        options: ["Posee alto valor predictivo positivo", "Indica necesidad absoluta de cultivo", "No es un buen predictor de infección", "Es patognomónico de etiología atípica"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, el cambio de coloración de la flema es un fenómeno normal derivado de la descamación de células epiteliales e inflamatorias virales, no de proliferación bacteriana.<br><br>Perla ENARM: El esputo purulento no es un buen predictor de infección bacteriana pulmonar. Se presenta en el 48 % de los pacientes con BA sin neumonía.<br><br>Análisis de Distractores: La opción A es un error conceptual frecuente en la práctica diaria. La opción B está contraindicada en pacientes previamente sanos. La opción D asume erróneamente un agente bacteriano sin evidencia clínica.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Diagnóstico, Página 14."
+    },
+    {
+        id: 7,
+        question: "¿Cuál es la intervención farmacológica indicada como primera línea de tratamiento para la resolución de los síntomas?",
+        options: ["Macrólidos de nueva generación", "Agonistas beta 2 de acción corta", "Corticoesteroides sistémicos o inhalados", "Antiinflamatorios no esteroideos"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, al ser una patología predominantemente viral y autolimitada, la piedra angular del manejo busca exclusivamente mitigar el disconfort general y la inflamación de la vía aérea.<br><br>Perla ENARM: En pacientes con diagnóstico de BA se recomienda otorgar medidas sintomáticas como: antipiréticas, desinflamatorios y analgésicos, según sea necesario.<br><br>Análisis de Distractores: La opción A es una mala praxis y genera resistencia antimicrobiana. La opción B no ha demostrado acortar los síntomas y aumenta los efectos adversos de forma rutinaria. La opción C carece de evidencia a favor y eleva los costos.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Tratamiento, Página 21."
+    },
+    {
+        id: 8,
+        question: "¿Qué antimicrobiano está estrictamente prohibido utilizar de forma empírica en sospecha bacteriana por su falta de beneficio y riesgo epidemiológico?",
+        options: ["Amoxicilina con ácido clavulánico", "Eritromicina base", "Azitromicina oral", "Doxiciclina oral"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, el uso irracional de este macrólido es un problema de salud pública, y la normativa es explícita en su proscripción dentro del abordaje de este padecimiento, ya que no ofrece diferencias clínicas contra placebo.<br><br>Perla ENARM: No utiliza azitromicina en pacientes con BA con sospecha bacteriana.<br><br>Análisis de Distractores: Las opciones A y B sí están listadas en el cuadro básico de medicamentos de la guía para casos de infecciones del tracto inferior complicadas, pero no son la primera línea rutinaria. La opción D no se menciona de forma prohibitiva específica como la respuesta correcta.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Cédula de Verificación, Página 34."
+    },
+    {
+        id: 9,
+        question: "¿Qué eventualidad clínica justifica invariablemente la solicitud de una radiografía de tórax en este padecimiento?",
+        options: ["Presencia de esputo purulento espeso", "Deterioro clínico y fiebre persistente", "Tos productiva de 10 días de evolución", "Auscultación de roncus aislados"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, los estudios de gabinete se reservan para escenarios que abandonan la evolución natural autolimitada de la patología, donde es forzoso realizar diagnóstico diferencial.<br><br>Perla ENARM: Se solicita exclusivamente para realizar el diagnóstico diferencial con otras patologías pulmonares (ej. exclusión de neumonía) ante deterioro del paciente, taquipnea, fiebre persistente o datos de consolidación.<br><br>Análisis de Distractores: La opción A (esputo) ocurre en casi la mitad de casos virales sanos. La opción C (tos 10 días) entra en el rango esperado (< 3 semanas). La opción D (roncus) es un hallazgo normal y esperado en la vía aérea central inflamada.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Diagnóstico y Diagramas de Flujo."
+    },
+    {
+        id: 10,
+        question: "¿Cuál es el tiempo de duración posológico recomendado para la administración de AINEs en la terapia sintomática inicial?",
+        options: ["1 a 2 días", "3 a 5 días", "7 a 10 días", "10 a 14 días"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, los ciclos cortos de antiinflamatorios mitigan la fase aguda sintomática sin exponer al paciente a la toxicidad gástrica o renal prolongada.<br><br>Perla ENARM: Ibuprofeno: Oral 600 mg cada 6 a 8 horas. Tres a cinco días. Paracetamol: Oral 250 a 500 mg cada 4 o 6 horas. Tres a cinco días.<br><br>Análisis de Distractores: La opción A es insuficiente para la respuesta inflamatoria de la vía aérea. Las opciones C y D superan el límite de seguridad de los AINEs sin supervisión y se asocian a esquemas de antimicrobianos, los cuales no están indicados.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Tabla de Medicamentos, Página 29."
+    },
+    {
+        id: 11,
+        question: "Respecto al empleo del extracto herbolario Pelargonium sidoides (Umckaloabo), ¿cuál es la conducta normativa a seguir?",
+        options: ["Administrar en cuadros leves", "No se recomienda su uso", "Prescribir solo en tos productiva", "Es tratamiento herbolario de elección"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, los estudios sobre herbolaria carecen de homogeneidad y no logran demostrar una superioridad contundente frente al placebo en la resolución total de los síntomas agudos.<br><br>Perla ENARM: No se recomienda el uso de P. sidoides en el tratamiento de BA.<br><br>Análisis de Distractores: Las opciones A, C y D representan un riesgo clínico por fomentar el gasto de bolsillo en terapias alternativas sin grado de evidencia sólida en las normativas nacionales.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Tratamiento, Página 19."
+    },
+    {
+        id: 12,
+        question: "¿Qué indicación médica precisa establece la guía respecto al aumento sistemático de la ingesta de líquidos en el paciente?",
+        options: ["Aumentar la ingesta en 2 litros", "Restringir líquidos por secreción de ADH", "Continuar aporte normal o ajustar pérdidas", "Administrar hidratación intravenosa profiláctica"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, forzar la hiperhidratación puede ser riesgoso debido al aumento documentado de hormona antidiurética durante las infecciones del tracto respiratorio inferior.<br><br>Perla ENARM: Actualmente no hay evidencia a favor o en contra de la recomendación de aumentar los fluidos en las infecciones respiratorias agudas. Sin embargo se recomienda continuar con su aporte normal de líquidos o ajustar de acuerdo a aumento de perdidas insensibles.<br><br>Análisis de Distractores: La opción A puede precipitar hiponatremia en pacientes susceptibles. La opción B predispone a deshidratación severa si existe fiebre o diaforesis. La opción D es un recurso hospitalario injustificado en manejo ambulatorio.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Tratamiento, Página 20."
+    },
+    {
+        id: 13,
+        question: "¿Cuál de los siguientes se considera un dato de alarma primordial que obliga al paciente a regresar para descartar infección agregada?",
+        options: ["Tos de predominio nocturno", "Esputo de coloración verdosa", "Fiebre > 38 °C", "Dolor torácico mecánico leve"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, la hipertermia sostenida o de alta intensidad sugiere una consolidación parenquimatosa que requiere abordaje clínico avanzado y radiografía de tórax.<br><br>Perla ENARM: Se recomienda dar a conocer los datos de alarma a los pacientes (dificultad para respirar, taquipnea, disnea, fiebre >38º, sibilancias, hemoptisis, cianosis, somnolencia, confusión) y en su caso acudir a revaloración con el fin de descartar infección agregada.<br><br>Análisis de Distractores: La opción A y D son síntomas esperados por la mecánica del espasmo tusígeno. La opción B representa la descamación epitelial viral esperada en el 48% de los casos.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Tratamiento, Página 21."
+    },
+    {
+        id: 14,
+        question: "¿Cómo se debe reclasificar médicamente un cuadro tusígeno que alcanza una duración confirmada de 5 semanas?",
+        options: ["Tos aguda", "Tos subaguda", "Tos crónica", "Tos hiperreactiva"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, la categorización de la temporalidad guía la sospecha etiológica, separando los eventos infecciosos puros de las secuelas inflamatorias.<br><br>Perla ENARM: Tos subaguda: tos con duración de 3 a 8 semanas siendo de etiología posinfecciosa en su mayor parte.<br><br>Análisis de Distractores: La opción A se reserva estrictamente para cuadros < 3 semanas. La opción C aplica a casos > 8 semanas, indicativos de asma o reflujo gastroesofágico. La opción D no es una categoría temporal estructurada en la guía operativa.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Glosario, Página 35."
+    },
+    {
+        id: 15,
+        question: "¿Qué posición establece la guía nacional sobre prescribir corticoesteroides inhalados en el tratamiento de primera vez?",
+        options: ["Uso mandatorio en tos severa", "Prescripción si hay sibilancias", "No se recomienda su uso", "Emplear solo como terapia de rescate"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, no existe superioridad clínica para resolver el cuadro con este grupo farmacológico y expone a efectos adversos innecesarios (candidiasis bucal).<br><br>Perla ENARM: No se recomienda el uso de ICS en pacientes con bronquitis aguda, ya que puede aumentar los costos del tratamiento, manejo de complicaciones y efectos adversos.<br><br>Análisis de Distractores: Las opciones A, B y D confunden el abordaje de una infección aguda autolimitada con el manejo del asma o enfermedad pulmonar obstructiva crónica (EPOC).",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Tratamiento, Página 18."
+    },
+    {
+        id: 16,
+        question: "Cuál es el riesgo clínico demostrado del uso rutinario de agonistas beta 2 de acción corta en individuos sin antecedente pulmonar?",
+        options: ["Previenen el broncoespasmo severo", "Acortan el número de días con tos", "No se recomiendan rutinariamente", "Mejoran la saturación arterial de oxígeno"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, su uso injustificado no disminuye la tos, pero eleva drásticamente los efectos sistémicos, reportando mayor incidencia de temblores musculares.<br><br>Perla ENARM: No se recomienda el su uso rutinario de beta 2 agonistas en el tratamiento de BA.<br><br>Análisis de Distractores: Las opciones A, B y D carecen de sustento en la evidencia disponible para adultos previamente sanos; la limitación del flujo es mínima en la mayoría de los casos sin hiperreactividad documentada.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Tratamiento, Página 21."
+    },
+    {
+        id: 17,
+        question: "Según la epidemiología de la enfermedad, ¿en qué porcentaje de los pacientes la tos aguda presenta características productivas?",
+        options: ["15 %", "25 %", "50 %", "85 %"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, la expectoración es un componente esperado de la evolución natural, dividiendo la semiología de la tos a partes iguales.<br><br>Perla ENARM: Es productiva en aproximadamente el 50 % de los pacientes.<br><br>Análisis de Distractores: La opción A y B infravaloran la incidencia de la fase exudativa de la enfermedad. La opción D la sobreestima, asumiendo que casi todos cursarán con secreciones altas.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Diagnóstico, Página 14."
+    },
+    {
+        id: 18,
+        question: "¿En qué escenario clínico está indicado solicitar pruebas de reacción en cadena de la polimerasa en esputo en adultos previamente sanos?",
+        options: ["Expectación amarilla de 5 días", "Tos persistente por 10 días", "Fiebre de 24 horas de evolución", "No están recomendados rutinariamente"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, el abordaje paraclínico genera reportes de colonización que fomentan la iatrogenia prescriptiva.<br><br>Perla ENARM: Los estudios complementarios y microbiológicos de esputo (cultivos, técnicas de inmunofluorescencia o PCR) no están recomendados en individuos previamente sanos, debido a que en la mayoría de los casos de BA la etiología es viral.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Diagnóstico, Página 15."
+    },
+    {
+        id: 19,
+        question: "Ante el hallazgo de imágenes con anomalías parenquimatosas en la radiografía de tórax, ¿cuál es la conducta clínica de seguimiento?",
+        options: ["Iniciar antibióticos de alto espectro", "Realizar tomografía axial computarizada", "Envío a siguiente nivel de atención", "Prescribir esteroides orales urgentes"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, el primer nivel de atención debe referir al paciente ante datos que sugieran comorbilidades complejas estructurales o neumonías que ameriten protocolo diagnóstico hospitalario.<br><br>Perla ENARM: Realizar diagnóstico diferencial con otras patologías pulmonares -> Envío a siguiente nivel de atención.<br><br>Análisis de Distractores: La opción A fomenta manejo ciego de etiologías inciertas. La opción B consume tiempo y recursos fuera del protocolo de primer nivel. La opción D está proscrita en infecciones activas del tracto respiratorio inferior sin documentar hiperreactividad severa.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Diagramas de Flujo, Página 28."
+    },
+    {
+        id: 20,
+        question: "Si los episodios de tos provocan insomnio y dolor muscular incapacitante, ¿qué fármaco se autoriza como coadyuvante sintomático?",
+        options: ["Benzonatato", "Oseltamivir", "Salbutamol", "Corticoestereoide sistémico"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, el tratamiento antitusígeno o mucolítico directo solo se reserva para morbilidad severa y disconfort extremo.<br><br>Perla ENARM: Si la tos o las secreciones causan incapacidad clínica, se pueden utilizar opciones como Ambroxol, Benzonatato o Bromhexina.<br><br>Análisis de Distractores: La opción B requiere confirmación epidemiológica de influenza. La opción C está contraindicada de forma sistemática y la opción D no tiene aval por carecer de eficacia demostrada para calmar la tos aguda simple.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Tratamiento (Tabla de Medicamentos), Página 31."
+    },
+    {
+        id: 21,
+        question: "¿A partir de qué punto de corte temporal se clasifica a la tos como de etiología crónica y obliga a descartar patologías ajenas a una infección aguda?",
+        options: ["> 3 semanas", "> 4 semanas", "> 6 semanas", "> 8 semanas"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, la prolongación del síntoma más allá de este periodo indica que el cuadro inicial ya no es el responsable, debiendo investigar otras enfermedades crónicas.<br><br>Perla ENARM: Tos crónica: tos con duración mayor a 8 semanas y es secundaria a otras etiologías (asma, rinitis o la enfermedad de reflujo gastroesofágico así como otras neumopatías).<br><br>Análisis de Distractores: La opción A define el límite superior de la tos aguda. Las opciones B y C son rangos intermedios que recaen en la clasificación de tos subaguda (3 a 8 semanas).",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Glosario, Página 35."
+    },
+    {
+        id: 22,
+        question: "¿Cuál es el valor de corte del porcentaje de células en esputo utilizado para clasificar la inflamación como bronquitis eosinofílica?",
+        options: ["≥ 1.5 %", "> 2.5 %", "> 5.0 %", "≥ 10.0 %"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, la evaluación citológica del esputo permite identificar fenotipos inflamatorios específicos distintos a los de origen viral o bacteriano clásico.<br><br>Perla ENARM: Bronquitis eosinofílica: inflamación eosinofílica de las vías respiratorias con esputo eosinofilico mayor de 2.5%.<br><br>Análisis de Distractores: Las opciones A, C y D representan valores de corte que no cumplen con los criterios estrictos del glosario normativo nacional para definir esta variante clínica.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Glosario, Página 35."
+    },
+    {
+        id: 23,
+        question: "En caso de confirmar o tener alta sospecha de infección por el virus de la influenza, ¿cuál es el esquema posológico normativo del oseltamivir?",
+        options: ["75 mg cada 12 horas por 5 días", "150 mg cada 24 horas por 7 días", "75 mg cada 24 horas por 5 días", "150 mg cada 12 horas por 10 días"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, el uso de antivirales no es rutinario, pero cuando está indicado epidemiológicamente, este es el régimen validado en el cuadro básico institucional.<br><br>Perla ENARM: Oseltamivir 75 mg vía oral, cada 12 h Durante 5 días.<br><br>Análisis de Distractores: La opción C se emplea para profilaxis, no para tratamiento. Las opciones B y D son esquemas de dosificación erróneos y con riesgo de toxicidad gastrointestinal o fracaso terapéutico.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Tabla de Medicamentos, Página 31."
+    },
+    {
+        id: 24,
+        question: "De acuerdo con la clasificación anatómica de las enfermedades infecciosas, ¿cuál de las siguientes se categoriza como infección del tracto respiratorio inferior?",
+        options: ["Faringitis aguda", "Traqueítis aguda", "Laringitis aguda", "Rinosinusitis aguda"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, delimitar la barrera anatómica es clave para la categorización sindromática y el abordaje diferencial de las complicaciones parenquimatosas.<br><br>Perla ENARM: Las infecciones de las vías respiratorias inferiores (IVRI) incluyen bronquitis aguda, bronquiolitis, neumonía y traqueítis.<br><br>Análisis de Distractores: Las opciones A, C y D están listadas normativamente como Infecciones del Tracto Respiratorio Superior (ITRS), cuyo abordaje y riesgos de morbilidad difieren de la vía aérea baja.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Introducción, Página 11."
+    },
+    {
+        id: 25,
+        question: "¿Qué efecto adverso aumenta significativamente en los adultos que reciben terapia empírica con agonistas beta 2 sin cursar con hiperreactividad bronquial?",
+        options: ["Broncoespasmo paradójico", "Candidiasis bucofaríngea", "Temblores o nerviosismo", "Hemorragia gastrointestinal"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, el uso de broncodilatadores en vías aéreas sanas no acorta la enfermedad y expone al paciente a una sobreestimulación sistémica innecesaria.<br><br>Perla ENARM: Se observó que los adultos que recibieron beta2-agonistas tenían más probabilidades de reportar temblores o nerviosismo (RR 7.94, en 211 participantes, con un número necesario para tratar un resultado perjudicial adicional de 2).<br><br>Análisis de Distractores: La opción A es rara y no es el principal marcador de toxicidad reportado. La opción B es un evento adverso clásico de los corticoesteroides inhalados. La opción D es un riesgo asociado a los AINEs.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Evidencias (Tratamiento), Página 19."
+    },
+    {
+        id: 26,
+        question: "¿Con qué grupo de medicamentos el uso concomitante de ibuprofeno documenta una reducción farmacológica de su eficacia terapéutica?",
+        options: ["Corticoesteroides inhalados", "Antivirales como oseltamivir", "Macrólidos de nueva generación", "Furosemida y diuréticos tiazídicos"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, al ser el ibuprofeno la primera línea de tratamiento, el médico debe vigilar las interacciones en pacientes con comorbilidades crónicas para evitar la descompensación de sus patologías de base.<br><br>Perla ENARM: Interacciones Ibuprofeno: Reduce eficacia de: furosemida, diuréticos tiazídicos. Reduce efecto hipotensor de: beta-bloqueantes, IECA.<br><br>Análisis de Distractores: Las opciones A, B y C no presentan interacciones clínicamente relevantes mediadas por el mecanismo de inhibición de prostaglandinas renales características de los AINEs descritas en el cuadro básico.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Tabla de Medicamentos, Página 29."
+    },
+    {
+        id: 27,
+        question: "En el escenario donde el uso de antimicrobianos esté justificado, ¿cuál es la dosis normativa de amoxicilina/ácido clavulánico?",
+        options: ["250/125 mg cada 8 horas", "500/125 mg cada 8 horas", "875/125 mg cada 12 horas", "500/250 mg cada 12 horas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, cuando el cuadro deja de ser autolimitado y amerita erradicación bacteriana, se deben utilizar los esquemas estandarizados para alcanzar las concentraciones inhibitorias mínimas tisulares sin sobredosificar.<br><br>Perla ENARM: Amoxicilina - Acido Clavulánico 500 mg/125 mg cada 8 horas por 7 a 10 días.<br><br>Análisis de Distractores: Las opciones A, C y D representan esquemas alternativos o pediátricos no listados como la recomendación primaria en el cuadro básico para adultos de esta guía en particular.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Tabla de Medicamentos, Página 31."
+    },
+    {
+        id: 28,
+        question: "En la mayoría de los casos de los pacientes que acuden por presentar una tos clasificada clínicamente como subaguda, ¿cuál es su origen?",
+        options: ["Etiología posinfecciosa", "Reflujo gastroesofágico", "Hiperreactividad bronquial", "Rinitis alérgica crónica"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, entre las semanas 3 y 8 el proceso inflamatorio suele ser una secuela irritativa del evento inicial y no requiere abordaje para padecimientos estructurales crónicos inmediatos.<br><br>Perla ENARM: Tos subaguda: tos con duración de 3-8 semanas siendo de etiología posinfecciosa en su mayor parte.<br><br>Análisis de Distractores: Las opciones B, C y D son las principales causas etiológicas que se deben sospechar y protocolizar únicamente cuando la tos supera el límite de las 8 semanas (tos crónica).",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Glosario, Página 35."
+    },
+    {
+        id: 29,
+        question: "¿Cuál es el dictamen respecto a prescribir antibióticos con indicación \"tardía\" (instruyendo al paciente a tomarlos solo si no mejora)?",
+        options: ["Mejora satisfacción del paciente", "Reduce la resistencia bacteriana", "No se recomienda su uso", "Indicada ante esputo purulento"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, la evidencia proscribe la prescripción anticipada o diferida porque incrementa los efectos adversos sin acortar la tos y disminuye falsamente la confianza del paciente en el manejo sintomático.<br><br>Perla ENARM: No se recomienda el uso de antibióticos ni de forma inmediata o tardía, ya que no solo no muestran ningún beneficio, también aumenta los efectos adversos.<br><br>Análisis de Distractores: La opción A es falsa, ya que la prescripción tardía reduce la satisfacción (87% vs 83%). La opción B es de perspectiva incorrecta y la opción D fomenta la falsa asociación visual de la descamación viral.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Evidencias y Recomendaciones, Página 17."
+    },
+    {
+        id: 30,
+        question: "Derivado de la escasa evidencia existente, ¿qué efectos adversos documentados se asocian al consumo de hierbas medicinales chinas para esta enfermedad?",
+        options: ["Hepatotoxicidad fulminante", "Sangrado de tubo digestivo", "Falla renal aguda", "Reacciones gastrointestinales leves"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, las terapias alternativas no tienen demostrada su eficacia, y su ingesta expone al paciente a eventos de toxicidad menores pero documentados que el médico debe reconocer.<br><br>Perla ENARM: No pudieron sacar conclusiones sobre los efectos de las hierbas medicinales chinas para la BA, ni reportar evidencia sobre efectos toxicológicos, solo encontraron algunos efectos adversos como reacciones gastrointestinales leves y erupción cutánea en algunos casos.<br><br>Análisis de Distractores: Las opciones A, B y C son eventos de toxicidad severos que no están reportados explícitamente en los ensayos evaluados por la guía operativa para este tipo de productos herbolarios.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Evidencias, Página 19."
+    },
+    {
+        id: 31,
+        question: "El riesgo de desarrollar hepatotoxicidad al emplear paracetamol aumenta significativamente si el paciente ingiere de forma concomitante:",
+        options: ["Diuréticos tiazídicos", "Fenitoína y carbamazepina", "Corticoesteroides inhalados", "Penicilinas y cefalosporinas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, se debe realizar un adecuado interrogatorio de los fármacos de base, ya que el uso de inductores metabólicos satura las vías de conjugación hepática, aumentando el riesgo de toxicidad.<br><br>Perla ENARM: Interacciones Paracetamol: El riesgo de hepatotoxicidad al paracetamol aumenta en pacientes alcohólicos y en quienes ingieren medicamentos inductores del metabolismo como: fenobarbital, fenitoína y carbamazepina.<br><br>Análisis de Distractores: Las opciones A, C y D no interactúan con el citocromo hepático de una manera que potencie la acumulación de los metabolitos tóxicos (NAPQI) del paracetamol.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Tabla de Medicamentos, Página 29."
+    },
+    {
+        id: 32,
+        question: "¿En qué grupo etario se encuentra contraindicado normativamente el uso de ácido acetilsalicílico por el riesgo de síndrome de Reye?",
+        options: ["Niños menores de 6 años", "Pacientes mayores de 65 años", "Pacientes con falla renal leve", "Pacientes con diabetes mellitus"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, aunque la guía está enfocada en adultos, el cuadro básico emite una alerta estricta sobre la administración de este AINE en la población infantil por su toxicidad neurológica y hepática.<br><br>Perla ENARM: Contraindicaciones Ácido acetilsalicílico: Hipersensibilidad al fármaco, úlcera péptica o gastritis activas, hipoprotrombinemia, niños menores de 6 años.<br><br>Análisis de Distractores: Las opciones B, C y D representan condiciones donde los AINEs requieren ajuste o vigilancia estrecha, pero la contraindicación absoluta marcada por el síndrome de Reye es exclusiva de la edad pediátrica.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Tabla de Medicamentos, Página 29."
+    },
+    {
+        id: 33,
+        question: "¿Cuál es la población blanco específica a la que están dirigidas las recomendaciones primarias de esta GPC?",
+        options: ["Mayores de 12 años", "Mayores de 60 años", "Población general", "Adultos mayores de 18 años"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, las guías establecen cortes de edad estrictos debido a que la etiología, anatomía y riesgos de las infecciones respiratorias cambian drásticamente entre pacientes pediátricos y adultos.<br><br>Perla ENARM: GPC: Diagnóstico y tratamiento de bronquitis aguda en el paciente adulto, mayor de 18 años de edad, en primer y segundo nivel de atención.<br><br>Análisis de Distractores: La opción A incluye población pediátrica. La opción B restringe el uso del documento al grupo geriátrico de forma artificial. La opción C es incorrecta por no delimitar el enfoque adulto de la intervención.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Título y Población Blanco, Páginas 1 y 7."
+    },
+    {
+        id: 34,
+        question: "¿Cuál de las siguientes complicaciones se reporta como un efecto adverso específico a vigilar tras la prescripción de eritromicina?",
+        options: ["Necrosis tubulorrenal", "Ictericia colestática", "Síndrome de Reye", "Hemorragia gastrointestinal"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, los macrólidos tienen un perfil de seguridad gastrointestinal y hepático particular que debe advertirse al paciente si se requiere su uso excepcional.<br><br>Perla ENARM: Efectos adversos Eritromicina: Vómito, diarrea, náusea, erupciones cutáneas, gastritis aguda, ictericia colestática.<br><br>Análisis de Distractores: La opción A ocurre con nefrotóxicos mayores (aminoglucósidos) o paracetamol en sobredosis. La opción C es exclusiva del uso de ácido acetilsalicílico en niños. La opción D es un riesgo gastrointestinal atribuible al uso de AINEs.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Tabla de Medicamentos, Página 31."
+    },
+    {
+        id: 35,
+        question: "Dentro de las manifestaciones clínicas cardinales de esta enfermedad, ¿cuál es el límite de duración esperado para la fiebre (si se presenta)?",
+        options: ["Menor a 14 días", "Menor a 7 días", "Menor a 3 días", "Menor a 5 días"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, la hipertermia es una respuesta inflamatoria temprana y autolimitada; su persistencia sugiere complicaciones que obligan a escalar el abordaje clínico.<br><br>Perla ENARM: El cuadro clínico de BA se caracteriza por: El cuadro puede acompañarse de fiebre de menos de 3 días de duración.<br><br>Análisis de Distractores: Las opciones A, B y D son periodos anormalmente prolongados para una infección viral del tracto inferior no complicada y constituyen un signo de alarma (bandera roja) para descartar neumonía bacteriana.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Diagnóstico, Página 14."
+    },
+    {
+        id: 36,
+        question: "¿En qué grupo de pacientes se prohíbe de forma absoluta la administración de benzonatato según las indicaciones del cuadro básico?",
+        options: ["Sospecha de etiología bacteriana", "Adultos mayores de 60 años", "Insuficiencia renal crónica", "Niños menores de 6 años"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, los antitusígenos centrales y periféricos poseen un riesgo alto de depresión neurológica o de toxicidad en edades tempranas.<br><br>Perla ENARM: Contraindicaciones Benzonatato: Hipersensibilidad al fármaco y anestésicos locales del tipo de la procaína. Menores de 6 años.<br><br>Análisis de Distractores: Las opciones A, B y C no representan contraindicaciones normativas absolutas para utilizar este coadyuvante cuando los accesos de tos generan incapacidad clínica severa.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Tabla de Medicamentos, Página 32."
+    },
+    {
+        id: 37,
+        question: "En un paciente adulto con diagnóstico confirmado que no presenta signos de alarma, ¿cuál es la pauta correcta sobre las consultas de seguimiento?",
+        options: ["No requiere nueva valoración", "Cita de control a los 7 días", "Cita al terminar el tratamiento", "Cita de revaloración a las 48 horas"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, optimizar los recursos del primer nivel implica educar al paciente en la naturaleza autolimitada del cuadro y evitar consultas subsecuentes innecesarias.<br><br>Diagrama de Flujo: ¿Se presentan datos de alarma? -> NO -> No requiere nueva valoración.<br><br>Análisis de Distractores: Las opciones B, C y D representan conductas de medicina defensiva o sobre-utilización de servicios que la guía intenta disminuir al instruir educación exclusiva sobre datos de alarma.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Diagramas de Flujo, Página 28."
+    },
+    {
+        id: 38,
+        question: "¿En qué momento de la cronología de la enfermedad suele presentarse típicamente el compromiso moderado de las vías aéreas superiores?",
+        options: ["De forma intermitente", "Después de las 3 semanas", "En los primeros días", "Al resolver la tos aguda"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, reconocer el patrón descendente de la infección (de faringe/rinitis hacia la vía aérea inferior) es esencial para la historia clínica y el diagnóstico temprano.<br><br>Perla ENARM: El cuadro clínico de BA se caracteriza por: Compromiso moderado de vías aéreas superiores en los primeros días de la enfermedad.<br><br>Análisis de Distractores: Las opciones A, B y D son patrones atípicos que no corresponden con la cascada sintomática inflamatoria del tracto respiratorio agudo convencional.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Diagnóstico, Página 14."
+    },
+    {
+        id: 39,
+        question: "En caso de requerir un agente mucolítico por secreciones incapacitantes, ¿cuál es la dosis oral estándar de la bromhexina en el adulto?",
+        options: ["30 mg cada 8 horas", "8 mg cada 8 horas", "100 mg cada 12 horas", "200 mg cada 8 horas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, si el disconfort lo exige, se emplean adyuvantes respetando la posología que garantice la movilización de fluidos sin toxicidad gástrica excesiva.<br><br>Perla ENARM: Medicamento: Bromhexina. Vía y dosis: Oral 8 mg cada 8 horas.<br><br>Análisis de Distractores: La opción A corresponde a la dosis habitual del ambroxol. La opción C es incorrecta. La opción D corresponde a la dosificación estandarizada del benzonatato.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Tabla de Medicamentos, Página 32."
+    },
+    {
+        id: 40,
+        question: "Si un paciente cursa con tos persistente por más de 8 semanas sin alteraciones radiológicas evidentes, ¿qué etiologías principales se ven obligados a descartar según la guía?",
+        options: ["Infección por virus sincitial", "Neumonía bacteriana atípica", "Colonización bacteriana crónica", "Asma y reflujo gastroesofágico"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Bronquitis Aguda, superado el periodo agudo y subagudo (posinfeccioso), el origen del reflejo tusígeno deja de ser patología infecciosa pura y apunta a la vía reactiva o alteraciones mecánicas extrapulmonares.<br><br>Perla ENARM: Tos crónica: tos con duración mayor a 8 semanas y es secundaria a otras etiologías (asma, rinitis o la enfermedad de reflujo gastroesofágico así como otras neumopatías).<br><br>Análisis de Distractores: Las opciones A, B y C son eventos infecciosos cuya temporalidad cursa habitualmente de forma aguda (menos de 3 semanas) y provocarían descompensación sistémica antes de las 8 semanas.",
+        source: "SS-189-10, Diagnóstico y Tratamiento de Bronquitis Aguda, Glosario, Página 35."
+    }
+        
+       ];
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('ExMI10LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('ExMI10Progress');
+                localStorage.removeItem('ExMI10LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-purple-500 shadow-md z-10 border-purple-500 dark:border-purple-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-fuchsia-500 to-purple-600 hover:from-purple-600 hover:to-fuchsia-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-purple-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-fuchsia-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "MEDICINA INTERNA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "SS-189-10 • Diagnóstico y tratamiento de bronquitis aguda en el paciente adulto, mayor de 18 años de edad, en primer y segundo nivel de atención";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-purple-600 dark:text-slate-400 dark:hover:text-purple-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="login.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-purple-100 dark:border-purple-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-purple-50 has-[:checked]:border-purple-400 dark:has-[:checked]:bg-purple-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-purple-600 focus:ring-purple-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-purple-600 dark:hover:bg-purple-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-fuchsia-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('ExMI10Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('ExMI10LastQId', currentQuestionId);
+                else localStorage.removeItem('ExMI10LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('ExMI10Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

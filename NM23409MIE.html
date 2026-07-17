@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-purple-500 to-fuchsia-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+
+
+    {
+        id: 1,
+        question: "¿Qué intervención de inmunización está recomendada específicamente para prevenir la enfermedad invasiva y neumonía bacterémica en pacientes mayores de 65 años?",
+        options: ["Vacuna de polisacáridos 23", "Vacuna conjugada de 13 serotipos", "Vacuna de virus atenuados", "Vacuna recombinante tetravalente"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, la edad avanzada se asocia a inmunosenescencia, requiriendo vacunas conjugadas que generen una respuesta dependiente de células T para una protección efectiva contra patógenos encapsulados.<br><br>Perla ENARM: Se recomienda utilizar la vacuna PCV13 en adultos mayores de 65 años de edad para prevenir neumonía adquirida en la comunidad bacterémica, no bacterémica, y la enfermedad invasiva por pneumococo.<br><br>Análisis de Distractores: La vacuna de polisacáridos se sugiere en adultos jóvenes sanos para evitar enfermedad invasiva. Las opciones virales no otorgan protección antibacteriana directa contra el neumococo.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de Neumonía Adquirida en la Comunidad, 2017, Prevención, Página 15."
+    },
+    {
+        id: 2,
+        question: "¿Cuál es la razón inmunológica fisiológica por la cual la vacuna de polisacáridos puros está contraindicada para la prevención primaria en niños?",
+        options: ["Causa anafilaxia severa", "Induce inmunidad cruzada", "Genera hepatotoxicidad aguda", "Es pobremente inmunogénica"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, el sistema inmunitario inmaduro pediátrico no reconoce eficazmente los antígenos T-independientes como los polisacáridos capsulares, impidiendo la formación de memoria celular duradera.<br><br>Perla ENARM: Se recomienda utilizar las vacunas de polisacáridos de pneumococo para prevenir la enfermedad por pneumococo invasiva en adultos sanos; no se recomienda su uso en niños ya que en este grupo de edad es pobremente inmunogénica.<br><br>Análisis de Distractores: Esta vacuna no presenta una tasa superior de anafilaxia, hepatotoxicidad o autoinmunidad; el motivo de su exclusión es puramente la ineficacia antigénica en menores.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de Neumonía Adquirida en la Comunidad, 2017, Prevención, Página 14."
+    },
+    {
+        id: 3,
+        question: "En el esquema de vacunación contra el virus de la influenza para pacientes pediátricos menores de 8 años sin inmunización previa, ¿cuál es la pauta profiláctica de administración?",
+        options: ["Dosis única anual rutinaria", "Dosis doble calendarizada", "Profilaxis oral pos-exposición", "Refuerzo semestral continuo"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, la falta de exposición previa a cepas circulantes en niños pequeños exige una dosis de \"priming\" seguida de un refuerzo para alcanzar un título protector de anticuerpos adecuado.<br><br>Perla ENARM: Se recomienda inmunización anual en todas las personas, con una dosis doble calendarizada en niños menores de 8 años de edad que no han sido previamente inmunizados y una dosis única para el resto de la gente.<br><br>Análisis de Distractores: La dosis única se reserva para mayores de 8 años o niños ya inmunizados en temporadas pasadas. La profilaxis y los refuerzos semestrales no forman parte del esquema universal preventivo de influenza.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de Neumonía Adquirida en la Comunidad, 2017, Prevención, Página 15."
+    },
+    {
+        id: 4,
+        question: "Ante la triada clínica de fiebre, taquicardia y crepitaciones a la auscultación, ¿cuál es el estudio de gabinete inicial e indispensable para obtener certeza diagnóstica?",
+        options: ["Tomografía de alta resolución", "Radiografía de tórax", "Gammagrama ventilatorio", "Ultrasonido pulmonar focalizado"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, el abordaje exige la demostración anatómica de un infiltrado nuevo o zona de consolidación para confirmar la etiología infecciosa alveolar y evitar el uso ciego de antibióticos.<br><br>Perla ENARM: Se debe realizar una radiografía de tórax, si se requiere de certeza diagnóstica en el manejo de un paciente con sospecha de neumonía.<br><br>Análisis de Distractores: La tomografía es superior pero no se usa de escrutinio inicial por radiación y costo. El ultrasonido es una alternativa si hay disponibilidad, pero la radiografía es el estándar universal establecido indispensablemente.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de Neumonía Adquirida en la Comunidad, 2017, Diagnóstico clínico, Página 17."
+    },
+    {
+        id: 5,
+        question: "Si existe el equipo y el personal capacitado en urgencias, ¿qué modalidad de imagen se sugiere como alternativa debido a su sensibilidad de 0.95 y especificidad de 0.90?",
+        options: ["Ultrasonido pulmonar", "Resonancia magnética simple", "Tomografía axial computarizada", "Ecocardiograma transesofágico"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, la ecografía \"point-of-care\" identifica consolidaciones subpleurales y líneas B de manera rápida y sin exposición a radiación ionizante, superando la sensibilidad de la placa simple.<br><br>Perla ENARM: Se sugiere realizar radiografía de tórax a todo paciente con datos sugestivos de neumonía o, de contar con el recurso, utilizar ultrasonido.<br><br>Análisis de Distractores: La tomografía no se usa de primera intención en urgencias básicas. La resonancia y el ecocardiograma carecen de indicación inicial en el diagnóstico del parénquima pulmonar agudo.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de Neumonía Adquirida en la Comunidad, 2017, Diagnóstico, Página 19."
+    },
+    {
+        id: 6,
+        question: "¿Qué biomarcadores séricos tienen indicación para predecir los desenlaces de manera objetiva y apoyar al clínico en la selección del tratamiento antimicrobiano?",
+        options: ["Dímero D y lactato deshidrogenasa", "Fibrinógeno y velocidad sedimentación", "Ferritina y recuento reticulocitario", "Procalcitonina y proteína C reactiva"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, ambos reactantes de fase aguda poseen una cinética que responde directamente a la carga bacteriana, ayudando a diferenciar la gravedad y a decidir el escalamiento o suspensión terapéutica.<br><br>Perla ENARM: Se recomienda utilizar la medición de procalcitonina y proteína C reactiva para predecir desenlaces y como apoyo en la selección de tratamiento en pacientes con NAC.<br><br>Análisis de Distractores: El dímero D y la LDH se utilizan para evaluar tromboembolismo o daño celular general. El fibrinógeno y la VSG son muy inespecíficos y permanecen elevados por semanas.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de Neumonía Adquirida en la Comunidad, 2017, Diagnóstico, Página 21."
+    },
+    {
+        id: 7,
+        question: "En el abordaje microbiológico, ¿en qué escenario clínico específico está justificado solicitar la obtención de un cultivo de esputo?",
+        options: ["Neumonía severa e intubados", "Neumonía leve ambulatoria", "Sospecha de origen viral", "Fracaso a tratamiento oral"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, la toma de muestras de vía aérea inferior en el entorno ambulatorio se asocia a alta contaminación cruzada orofaríngea; su alta rentabilidad se limita al paciente crítico bajo soporte mecánico.<br><br>Perla ENARM: Se sugiere realizar cultivo de esputo en pacientes con NAC severa y que estén intubados.<br><br>Análisis de Distractores: En manejo ambulatorio o fallos leves se prefiere ajustar empíricamente o referir, sin esperar días por un cultivo. En sospecha viral se solicitan paneles específicos rápidos, no cultivos bacterianos tradicionales.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de Neumonía Adquirida en la Comunidad, 2017, Diagnóstico, Página 23."
+    },
+    {
+        id: 8,
+        question: "Para evaluar el pronóstico, ¿cuál escala multidimensional está recomendada como primera opción para determinar con alta especificidad el sitio de tratamiento (ambulatorio o intrahospitalario)?",
+        options: ["Criterios mayores de IDSA", "Puntaje de Fine o PSI", "Escala clínica SCAP", "Puntaje agudo CRB-65"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, el \"Pneumonia Severity Index\" (PSI) incluye 20 variables clínicas y paraclínicas, ofreciendo la estratificación más rigurosa para clasificar a los pacientes en 5 clases de riesgo predictivo de mortalidad a 30 días.<br><br>Perla ENARM: Se recomienda utilizar PSI como primera opción para determinar el sitio de tratamiento inicial (ambulatorio o intrahospitalario) en pacientes con NAC.<br><br>Análisis de Distractores: IDSA/ATS se utiliza solo para decidir el ingreso directo a Terapia Intensiva. SCAP estratifica severidad pero no es la primera opción de triage general. CRB-65 es útil pero simplificado para escenarios sin acceso rápido a laboratorio.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de Neumonía Adquirida en la Comunidad, 2017, Evaluación de la gravedad, Página 26."
+    },
+    {
+        id: 9,
+        question: "Según el puntaje acrónimo CURB-65, ¿a partir de qué puntuación clínica se recomienda de forma estricta el ingreso hospitalario del paciente?",
+        options: ["Superior a un punto", "Cero puntos asociados", "Mayor a tres puntos", "Cinco puntos exactos"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, obtener de 0 a 1 punto indica riesgo bajo y manejo en casa. Un puntaje de 2 o superior incrementa exponencialmente el riesgo y amerita observación estricta o ingreso definitivo a sala.<br><br>Perla ENARM: De acuerdo a CURB-65, se recomienda el ingreso hospitalario cuando la puntuación es superior a 1 punto, especialmente si existen otros factores de gravedad asociados.<br><br>Análisis de Distractores: Un puntaje de cero es egreso inmediato. Un puntaje de tres marca el ingreso a Terapia Intensiva, no solo hospitalización básica.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de Neumonía Adquirida en la Comunidad, 2017, Evaluación de la gravedad, Página 26."
+    },
+    {
+        id: 10,
+        question: "Dentro de los criterios de la IDSA/ATS para el ingreso directo a Unidad de Cuidados Intensivos, ¿qué hallazgo hematológico clasifica como un criterio menor de severidad infecciosa?",
+        options: ["Hiperglucemia mayor 250 mg/dl", "Hematocrito inferior a 30%", "Leucopenia menor 4000 cel/mm3", "Trombocitosis mayor 400,000"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, la disminución en el conteo leucocitario indica fracaso en la respuesta medular, consumo severo y un estado inminente de disfunción orgánica en sepsis pulmonar grave.<br><br>Perla ENARM: Criterios menores: Leucopenia (recuento leucocitario < 4000 cel/mm3) como resultado únicamente de la infección.<br><br>Análisis de Distractores: La hiperglucemia y la anemia (hematocrito <30%) son variables de riesgo en la escala PSI, no en IDSA/ATS. La trombocitosis es un reactante de fase aguda pero no define falla orgánica como la citopenia de consumo.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de Neumonía Adquirida en la Comunidad, 2017, Cuadros o figuras, Página 38."
+    },
+    {
+        id: 11,
+        question: "Aplicando la escala de gravedad SCAP (Severity Community-Acquired Pneumonia), ¿cuál alteración gasométrica suma de manera absoluta 13 puntos y se cataloga como criterio mayor?",
+        options: ["Bicarbonato menor a 15", "pH arterial menor 7.3", "Saturación venosa reducida", "Presión arterial oxígeno menor 60"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, la acidosis respiratoria o metabólica profunda marca un colapso en la homeostasis celular sistémica, siendo un predictor casi letal si no se interviene inmediatamente en terapia avanzada.<br><br>Perla ENARM: Puntos de corte para gravedad SCAP. Variable: pH < 7.3 (Criterio Mayor, Puntos: 13).<br><br>Análisis de Distractores: La PaO2 menor a 54 o 60 aporta puntos, pero se considera un criterio menor (6 puntos). El bicarbonato y la saturación venosa no forman parte de las mediciones primarias acrónimas en esta escala específica.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de Neumonía Adquirida en la Comunidad, 2017, Cuadros o figuras, Página 39."
+    },
+    {
+        id: 12,
+        question: "En caso de requerirse suplementación de oxígeno en el adulto, ¿cuál estrategia ventilatoria está recomendada de primera instancia para evitar complicaciones invasivas?",
+        options: ["Ventilación no invasiva", "Mascarilla con reservorio", "Intubación orotraqueal temprana", "Puntas nasales de alto flujo"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, aplicar presión positiva apoya el reclutamiento alveolar continuo y reduce el trabajo muscular, evadiendo los riesgos de la sedación profunda y la neumonía asociada a ventilador.<br><br>Perla ENARM: Se recomienda la suplementación de oxígeno con ventilación no invasiva en pacientes adultos con neumonía adquirida en la comunidad.<br><br>Análisis de Distractores: La intubación orotraqueal se reserva para fracaso terapéutico o paro respiratorio inminente. Las mascarillas y puntas ofrecen FiO2 elevado pero no aportan la presión de apertura alveolar mecánica.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de Neumonía Adquirida en la Comunidad, 2017, Manejo inicial, Página 27."
+    },
+    {
+        id: 13,
+        question: "¿Cuál es el grupo farmacológico indicado como terapia de elección sintomática para el dolor pleurítico agudo secundario a inflamación parietal?",
+        options: ["Bloqueo nervioso intercostal", "Antiinflamatorios no esteroideos", "Opioides de acción rápida", "Corticosteroides sistémicos"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, el dolor punzante limitante se debe a la fricción de las capas pleurales hiperémicas e inflamadas, respondiendo velozmente a la reducción de prostaglandinas sin inhibir el centro respiratorio.<br><br>Perla ENARM: Se sugiere dar tratamiento con antiinflamatorios no esteroideos en aquellos pacientes adultos con NAC que presenten dolor torácico de origen pleural.<br><br>Análisis de Distractores: Los opioides deprimen el impulso ventilatorio. Los corticosteroides causan inmunosupresión no justificada. El bloqueo nervioso es un procedimiento invasivo excesivo para este cuadro sintomático reversible.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de Neumonía Adquirida en la Comunidad, 2017, Manejo inicial, Página 28."
+    },
+    {
+        id: 14,
+        question: "¿Cuál es el tratamiento antimicrobiano sugerido en monoterapia para iniciar de manera empírica en un paciente con diagnóstico de Neumonía Adquirida en la Comunidad leve?",
+        options: ["Amoxicilina", "Azitromicina", "Levofloxacino", "Cefotaxima"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, al predominar la etiología por el estreptococo, un aminopenicilínico logra altas concentraciones tisulares sin fomentar la inducción de resistencias que generarían antibióticos de amplio espectro.<br><br>Perla ENARM: Se sugiere dar monoterapia en pacientes con NAC leve. Se sugiere iniciar con amoxicilina en lugar de un macrólido o una tetraciclina.<br><br>Análisis de Distractores: Las cefalosporinas intravenosas son de uso hospitalario exclusivo. El uso rutinario inicial de fluoroquinolonas está contraindicado en riesgo leve.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de Neumonía Adquirida en la Comunidad, 2017, Tratamiento farmacológico, Página 30."
+    },
+    {
+        id: 15,
+        question: "Si el paciente ambulatorio presenta una alergia documentada a betalactámicos, ¿qué grupo farmacológico indica la guía utilizar como alternativa de monoterapia inicial?",
+        options: ["Fluoroquinolonas respiratorias", "Macrólidos o tetraciclinas", "Aminoglucósidos parenterales", "Cefalosporinas de primera generación"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, en ausencia de tolerancia a amoxicilina, se deben preferir grupos bacteriostáticos con cobertura atípica y grampositiva evitando el uso excesivo de quinolonas que predisponen a patógenos multirresistentes.<br><br>Perla ENARM: En pacientes alérgicos a penicilina se sugiere iniciar con macrólido o tetraciclina. No se debe iniciar tratamiento con fluoroquinolonas en pacientes con NAC leve.<br><br>Análisis de Distractores: Existe riesgo de reactividad cruzada con las cefalosporinas. Los aminoglucósidos no actúan eficazmente sobre la mucosa respiratoria aerobia. Las quinolonas están estrictamente desalentadas para el entorno de bajo riesgo.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de Neumonía Adquirida en la Comunidad, 2017, Tratamiento farmacológico, Página 30."
+    },
+    {
+        id: 16,
+        question: "Al ingresar a piso a un paciente clasificado en la categoría de riesgo moderado (Clase IV), ¿qué régimen antibiótico empírico recomienda instaurar la directriz?",
+        options: ["Aminopenicilina oral exclusiva", "Aminoglucósido más betalactámico", "Quinolona en monoterapia", "Macrólido en monoterapia"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, al existir fallo potencial o riesgo de gérmenes resistentes hospitalarios, las opciones se escalan hacia la levofloxacina intravenosa u oral, la cual otorga una cobertura tisular potente frente al espectro atípico y neumococo severo.<br><br>Perla ENARM: Se recomienda iniciar el tratamiento de pacientes con NAC moderada severa con: 1. Quinolona en monoterapia ó 2. Cefalosporina de tercera generación o amoxicilina/clavulanato con un macrólido.<br><br>Análisis de Distractores: La aminopenicilina y el macrólido en monoterapia no cubren el espectro requerido para el fallo moderado. Los aminoglucósidos carecen de impacto penetrante óptimo en el alveolo en estas circunstancias.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de Neumonía Adquirida en la Comunidad, 2017, Tratamiento farmacológico, Página 31."
+    },
+    {
+        id: 17,
+        question: "Para un paciente con choque séptico que es admitido en la Unidad de Cuidados Intensivos, ¿cuál es el esquema antibiótico inicial sugerido por poseer impacto sobre la sobrevida?",
+        options: ["Fluoroquinolona respiratoria oral", "Betalactámico IV asociado a macrólido", "Amoxicilina con ácido clavulánico", "Betalactámico IV en monoterapia"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, la terapia combinada garantiza la erradicación celular inmediata y tiene propiedades inmunomoduladoras comprobadas en la falla multisistémica originada por patógenos clásicos e intracelulares.<br><br>Perla ENARM: Se recomienda iniciar tratamiento en pacientes admitidos a UCI con: 1. betalactámico IV asociado a un macrólido por la misma vía.<br><br>Análisis de Distractores: La monoterapia intravenosa de betalactámico demostró tener mayor porcentaje de fallas y readmisiones. La vía oral no debe utilizarse en choque séptico por fallo en absorción esplácnica.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de Neumonía Adquirida en la Comunidad, 2017, Tratamiento farmacológico, Página 32."
+    },
+    {
+        id: 18,
+        question: "Frente al deterioro mecánico, ¿cuál técnica de rehabilitación está contraindicada explícitamente ya que no demuestra curación ni disminución de la mortalidad en la neumonía?",
+        options: ["Posición semi recostada", "Fisioterapia de tórax", "Ejercicios respiratorios profundos", "Oxigenoterapia escalonada"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, la manipulación osteopática y presiones espiratorias en el tejido ya frágil e inflamado no logra movilizar secreciones eficientemente y agota al paciente.<br><br>Perla ENARM: No se sugiere utilizar fisioterapia de tórax en el tratamiento de pacientes adultos con neumonía hasta encontrar evidencia de su utilidad.<br><br>Análisis de Distractores: La posición semi-Fowler previene la neumonía asociada a la ventilación, no está contraindicada. Las demás maniobras se ajustan por el clínico y no cuentan con restricción formal como sí lo tiene la fisioterapia mecánica vigorosa.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de Neumonía Adquirida en la Comunidad, 2017, Manejo inicial, Página 28."
+    },
+    {
+        id: 19,
+        question: "Con base en los desenlaces de impacto terapéutico intrahospitalario, ¿en qué lapso de tiempo límite la guía establece el inicio obligatorio de la terapia antimicrobiana?",
+        options: ["Menos de 30 minutos", "Antes de 24 horas", "Primeras 4 a 8 horas", "Al obtener el hemocultivo"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, iniciar oportunamente tras el diagnóstico acorta el tiempo de sepsis persistente en el torrente sanguíneo, limitando marcadamente las disfunciones de órganos blanco.<br><br>Perla ENARM: Iniciar el tratamiento antibiótico entre las primeras 4 y 8 horas se asocia con reducciones relativas del 5% al 43% en la mortalidad en pacientes hospitalizados con NAC.<br><br>Análisis de Distractores: Menos de 30 minutos es utópico o exclusivo para meningitis. Esperar 24 horas o a los resultados microbiológicos retrasa críticamente el control infeccioso empírico.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de Neumonía Adquirida en la Comunidad, 2017, Tratamiento farmacológico, Página 31."
+    },
+    {
+        id: 20,
+        question: "De forma selectiva, ¿en qué momento exacto del abordaje de urgencia está recomendada la obtención de hemocultivos en un paciente que cursa con Neumonía severa?",
+        options: ["Antes de iniciar antibioticoterapia", "A las 48 horas de ingreso", "Después del fallo empírico", "Al corroborarse choque séptico"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, la sensibilidad y el aislamiento de gérmenes bacterémicos colapsan drásticamente una vez que se impregna al paciente con dosis de antibiótico intravenoso.<br><br>Perla ENARM: Se sugiere obtener hemocultivo antes de iniciar antibioticoterapia y su uso principal debe ser en pacientes con NAC severa para descartar agentes como S. aureus, P. aeruginosa que puedan modificar la selección.<br><br>Análisis de Distractores: Diferirlo a 48 horas o al fallo empírico inutiliza la prueba por efecto medicamentoso y retarda el desescalamiento dirigido que exigen los pacientes en alto riesgo.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de Neumonía Adquirida en la Comunidad, 2017, Diagnóstico, Página 23."
+    },
+    {
+        id: 21,
+        question: "En la evaluación extrahospitalaria sin laboratorios, ¿cuál puntaje en la escala CRB-65 indica un incremento clínico del riesgo de muerte y obliga a considerar la hospitalización?",
+        options: ["1 punto", "0 puntos", "3 puntos", "4 puntos"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, la escala simplificada CRB-65 permite al médico de primer contacto estratificar la mortalidad basándose exclusivamente en datos clínicos (confusión, taquipnea, hipotensión y edad avanzada). Al detectar al menos un parámetro alterado, el riesgo asciende del 2.4% al 6.8%.<br><br>Perla ENARM: CRB-65 score 1: Incremento en el riesgo de muerte, considerar hospitalización.<br><br>Análisis de Distractores: Un puntaje de 0 representa muy bajo riesgo y manejo ambulatorio. Los puntajes de 3 o 4 indican riesgo alto de muerte y requieren hospitalización urgente, pero el \"incremento inicial\" que marca el punto de inflexión para considerar el ingreso se da a partir de 1 punto.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de la Neumonía Adquirida en la Comunidad, 2017, Anexos, Página 36."
+    },
+    {
+        id: 22,
+        question: "Ante la depleción de volumen frecuente detectada en el estado de choque de esta patología, ¿cuál es la solución intravenosa de primera elección para la reposición hídrica inicial?",
+        options: ["Solución salina 0.9%", "Solución glucosada 10%", "Solución coloide sintética", "Agua bidestilada estéril"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, la reanimación de la precarga en el proceso séptico busca expandir el volumen intravascular para asegurar la perfusión tisular sin alterar drásticamente la osmolaridad sérica, calculando cuidadosamente la velocidad para evitar edema agudo de pulmón.<br><br>Perla ENARM: Se recomienda la reposición de líquidos y electrolitos con solución salina o solución glucosada al 5%.<br><br>Análisis de Distractores: La solución glucosada al 10% es hipertónica y no se indica para reanimación de volumen primario. Los coloides sintéticos no han demostrado superioridad sobre los cristaloides básicos en sepsis aguda. El agua bidestilada induciría hemólisis severa e hiponatremia.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de la Neumonía Adquirida en la Comunidad, 2017, Evidencias y Recomendaciones, Página 27."
+    },
+    {
+        id: 23,
+        question: "¿Cuál es la indicación terapéutica respecto al uso de fármacos mucolíticos como tratamiento adjunto a los antibióticos en estos pacientes?",
+        options: ["Uso empírico sistemático", "Carecen de evidencia suficiente", "Disminuyen riesgo de intubación", "Reducen mortalidad a 30 días"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, el aclaramiento mucociliar debe optimizarse mediante un adecuado estado de hidratación y manejo de la inflamación subyacente. Los agentes químicos expectorantes no han demostrado alterar el curso de la consolidación alveolar infecciosa aguda.<br><br>Perla ENARM: ...no encontró evidencia suficiente que soporte la utilización de medicamentos para la tos (mucolíticos: bromhexina, ambroxol) como tratamiento adjunto a los antibióticos.<br><br>Análisis de Distractores: Su uso empírico sistemático no está respaldado por guías de infectología. No existe evidencia validada que indique que los mucolíticos impacten variables duras como el riesgo de ventilación mecánica o la mortalidad general por sepsis.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de la Neumonía Adquirida en la Comunidad, 2017, Evidencias y Recomendaciones, Página 28."
+    },
+    {
+        id: 24,
+        question: "En pacientes jóvenes, ¿cuál manifestación clínica exploratoria duplica de manera específica la probabilidad de que la etiología corresponda a Mycoplasma pneumoniae?",
+        options: ["Dolor torácico", "Vómito persistente", "Diarrea acuosa", "Hemoptisis franca"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, los patógenos atípicos intracelulares tienen una predilección por inflamar la vía respiratoria inferior de forma subaguda, irritando las terminaciones nerviosas pleuroparietales en estadios iniciales.<br><br>Perla ENARM: En revisiones sistemáticas, la presencia de dolor torácico aumentó al doble la probabilidad clínica de infección por M. pneumoniae.<br><br>Análisis de Distractores: Los síntomas gastrointestinales pueden presentarse, particularmente con bacterias atípicas como Legionella, pero estadísticamente no son el pivote para confirmar patología por Mycoplasma pneumoniae. La hemoptisis es característica de tuberculosis, cavitación o tromboembolia, no de patógenos atípicos leves.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de la Neumonía Adquirida en la Comunidad, 2017, Evidencias y Recomendaciones, Página 16."
+    },
+    {
+        id: 25,
+        question: "¿Cuál es la utilidad clínica de realizar una tinción de Gram de alta calidad en una muestra de expectoración al momento del ingreso intrahospitalario?",
+        options: ["Descartar origen viral", "Seleccionar antibiótico inicial", "Evaluar eosinofilia tisular", "Sustituir cultivo definitivo"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, la morfología microscópica bacteriana obtenida tempranamente permite al clínico enfocar un tratamiento empírico de amplio espectro hacia una pauta más dirigida, mejorando la respuesta hemodinámica en estadios críticos.<br><br>Perla ENARM: La tinción de Gram del esputo es un examen diagnóstico confiable para el diagnóstico etiológico temprano de NAC bacteriana que ayuda a seleccionar el tratamiento antibiótico inicial.<br><br>Análisis de Distractores: No descarta la coinfección viral ni sustituye el aislamiento y antibiograma que aporta un cultivo formal. La eosinofilia es un parámetro buscado en asma o neumopatías alérgicas, no en síndromes infecciosos de la comunidad.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de la Neumonía Adquirida en la Comunidad, 2017, Evidencias y Recomendaciones, Página 23."
+    },
+    {
+        id: 26,
+        question: "En la vigilancia laboratorial intrahospitalaria, ¿qué comportamiento de la proteína C reactiva al tercer día se asocia a un fracaso inminente e incremento marcado de la mortalidad?",
+        options: ["Disminución menor al 50%", "Elevación brusca a 10 mg/dL", "Normalización metabólica completa", "Carencia de fluctuación inicial"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, el seguimiento dinámico de los reactantes de fase aguda es más valioso que un valor aislado. Si la carga bacteriana no ha sido suprimida tras 72 horas de antibioterapia, la producción hepática de PCR se mantiene acelerada, reflejando falla al esquema.<br><br>Perla ENARM: El riesgo mayor de mortalidad se encontró en los pacientes en los que no disminuyó en al menos 50% el nivel de PCR al tercer día, independientemente del nivel actual.<br><br>Análisis de Distractores: Una normalización completa reflejaría éxito, no riesgo. El valor de 10 mg/dL dependerá de la escala del laboratorio, pero la guía toma en cuenta la cinética (el porcentaje de descenso), no solamente los topes absolutos aislados.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de la Neumonía Adquirida en la Comunidad, 2017, Evidencias y Recomendaciones, Página 21."
+    },
+    {
+        id: 27,
+        question: "¿En cuál de los siguientes escenarios clínicos está formalmente contraindicado aplicar la herramienta pronóstica de Fine (PSI) para determinar el abordaje?",
+        options: ["Adultos mayores", "Mujeres embarazadas", "Pacientes diabéticos", "Sujetos cardiópatas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, el índice de Fine no fue estructurado metodológicamente ni validado para los cambios fisiológicos maternos ni para condiciones con inmunosupresión extrema de origen secundario, limitando su seguridad en la predicción de mortalidad en dichas poblaciones.<br><br>Perla ENARM: No se sugiere utilizar PSI en niños, mujeres embarazadas, pacientes inmunocomprometidos, pacientes con neumonía intrahospitalaria, por aspiración o con sospecha de tuberculosis.<br><br>Análisis de Distractores: Los adultos mayores, diabéticos y cardiópatas forman el núcleo exacto para el cual fue diseñada la herramienta PSI, ponderando sus comorbilidades con puntos extra para escalar el riesgo y decidir el ingreso a piso.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de la Neumonía Adquirida en la Comunidad, 2017, Evidencias y Recomendaciones, Página 26."
+    },
+    {
+        id: 28,
+        question: "De acuerdo a los criterios internacionales IDSA/ATS, ¿cuál de las siguientes descompensaciones orgánicas conforma un criterio mayor absoluto que amerita Terapia Intensiva?",
+        options: ["Infiltrados multilobares bilaterales", "Choque con necesidad de vasopresores", "Uremia mayor de 20 mg/dL", "Frecuencia respiratoria de 35 rpm"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, la falla de la microcirculación que no responde a la infusión de cristaloides implica un síndrome de respuesta inflamatoria sistémica severo. Esta vasoplejía fulminante obliga a monitorización invasiva central exclusiva del entorno crítico.<br><br>Perla ENARM: Criterios Mayores de ingreso a UCI: Necesidad de ventilación mecánica o Shock con necesidad de vasopresores.<br><br>Análisis de Distractores: La uremia >20 mg/dL, los infiltrados multilobares y la frecuencia respiratoria acelerada representan focos rojos sustanciales, pero se clasifican como criterios menores dentro del algoritmo de la IDSA/ATS para decidir intubación o soporte vital intermedio.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de la Neumonía Adquirida en la Comunidad, 2017, Cuadros o figuras, Página 38."
+    },
+    {
+        id: 29,
+        question: "¿En cuál paciente adulto menor de 65 años está justificada por norma la administración profiláctica de la vacuna conjugada de 13 serotipos (PCV13)?",
+        options: ["Obesidad mórbida grado uno", "Asma intermitente aguda", "Diabetes y tabaquismo activo", "Hipertensión arterial sistémica"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, ciertas noxas estructurales o deficiencias de quimiotaxis y fagocitosis rompen prematuramente las defensas del adulto joven, ameritando adelantar la inmunización dirigida para bloquear bacteriemias letales.<br><br>Perla ENARM: No se recomienda el uso de PCV13 en adultos sanos < 65 años de edad que no tengan un factor de riesgo específico para infección por pneumococo (Ej. fumadores, pacientes con enfermedad cardiaca crónica, enfermedad pulmonar crónica, Diabetes o alcoholismo).<br><br>Análisis de Distractores: La obesidad aislada, la hipertensión esencial y el asma no complicada no representan indicaciones oficiales tempranas para la aplicación del antígeno capsular de acuerdo a este documento.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de la Neumonía Adquirida en la Comunidad, 2017, Evidencias y Recomendaciones, Página 14."
+    },
+    {
+        id: 30,
+        question: "Además de las muestras microbiológicas rutinarias, ¿en qué circunstancia clínico-epidemiológica es mandatorio solicitar el cultivo específico de secreciones para Legionella?",
+        options: ["Presencia de antecedente viral", "Paciente proveniente de área endémica", "Convivencia intradomiciliaria con aves", "Inmunosupresión inducida por esteroides"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, la Legionella requiere medios de cultivo especiales (ej. agar BCYE) y suele eludir el abordaje empírico convencional intrahospitalario, generando brotes severos en sistemas de ventilación acuosa geográficamente documentados.<br><br>Perla ENARM: Se debe solicitar cultivo de las secreciones respiratorias en pacientes con NAC severa en áreas en donde Legionella sea endémica.<br><br>Análisis de Distractores: El antecedente de aves se asocia a Chlamydia psittaci (Psitacosis). La infección viral predispone a neumococo o S. aureus. La inmunosupresión eleva el riesgo a múltiples agentes, pero la pauta dictada para Legionella subraya primariamente la variable endémica local y severidad.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de la Neumonía Adquirida en la Comunidad, 2017, Evidencias y Recomendaciones, Página 23."
+    },
+    {
+        id: 31,
+        question: "Durante el triaje de urgencias en un paciente mayor de 75 años con neumonía demostrada por TAC, ¿qué signo clínico cardinal puede estar suprimido hasta en 30% de estos casos?",
+        options: ["Taquicardia", "Taquipnea", "Fiebre", "Desaturación"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, el centro termorregulador hipotalámico y la producción de pirógenos endógenos (como IL-1) se encuentran mitigados por la inmunosenescencia senil, ocasionando presentaciones subclínicas catastróficas.<br><br>Perla ENARM: Algunos pacientes (adultos mayores) no tosen, no producen esputo, ni tienen elevación de glóbulos blancos, y alrededor del 30% no presentan fiebre a su admisión hospitalaria.<br><br>Análisis de Distractores: La taquipnea es el signo compensatorio más constante y sensible ante la hipoxemia tisular oculta. La taquicardia refleja el gasto cardíaco incrementado. La fiebre es engañosa al descartar sepsis si no se busca intencionadamente hipotermia compensatoria u otros datos clínicos orgánicos.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de la Neumonía Adquirida en la Comunidad, 2017, Evidencias y Recomendaciones, Página 17."
+    },
+    {
+        id: 32,
+        question: "De acuerdo con la patogenia y virulencia bacteriana en imagenología, ¿qué hallazgos destructivos son marcadamente más sugestivos de neumonía por Staphylococcus aureus?",
+        options: ["Infiltrados intersticiales difusos", "Hepatización lobar broncográfica", "Cavitación y neumotórax secundario", "Borramiento unilateral cardiofrénico"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, la producción de toxinas necrotizantes (como la leucocidina de Panton-Valentine) y enzimas líticas lisosomales estafilocócicas destruyen agresivamente la citoarquitectura alvéolo-capilar, generando microabscesos que confluyen y rompen la pleura visceral.<br><br>Perla ENARM: Se ha observado que los infiltrados homogéneos son más frecuentes en las NAC bacterianas... y en S. aureus es más común la cavitación y el neumotórax.<br><br>Análisis de Distractores: Los infiltrados intersticiales orientan hacia neumonías atípicas o virales difusas. La hepatización homogénea clásica es la marca del neumococo no complicado. El borramiento de los contornos es un signo de ocupación hídrica general (derrame), inespecífico de necrosis.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de la Neumonía Adquirida en la Comunidad, 2017, Evidencias y Recomendaciones, Página 20."
+    },
+    {
+        id: 33,
+        question: "Durante el internamiento, ¿qué efecto secundario demostró la estrategia de ajustar el tratamiento empírico prematuramente basándose en los resultados de detección de antígeno urinario?",
+        options: ["Desarrollo de superinfección aspergilar", "Falla miocárdica hemodinámica franca", "Mayor riesgo de recaída clínica infecciosa", "Hepatotoxicidad aguda parenquimatosa"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, limitar la terapia (desescalamiento ciego) guiado por una única prueba extrarrespiratoria de baja sensibilidad eleva el fracaso bactericida sobre cepas coexistentes. El esquema empírico inicial asegura protección universal contra las letalidades más comunes hasta tener aislamientos definitivos.<br><br>Perla ENARM: El tratamiento antibiótico oral que se inició de acuerdo a los resultados de las pruebas de antígeno presentó un riesgo mayor estadísticamente significativo de recaída clínica comparado con el empírico (12% vs 3%).<br><br>Análisis de Distractores: Esta falla diagnóstica no provoca intoxicación hepática ni superinfecciones por hongos, sino que permite el redesarrollo y perpetuación del cuadro respiratorio original mal erradicado.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de la Neumonía Adquirida en la Comunidad, 2017, Evidencias y Recomendaciones, Página 22."
+    },
+    {
+        id: 34,
+        question: "Tras clasificar variables vitales en la herramienta validada SCAP (Severity Community-Acquired Pneumonia), ¿qué puntaje numérico ubica al paciente en riesgo inminente y severo de mortalidad?",
+        options: ["Mayor a 20 puntos", "Entre 10 y 19 puntos", "Menor de 9 puntos", "Menos de 5 puntos"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, la integración de la acidosis metabólica grave y el colapso vascular periférico suman masivamente en esta categorización, denotando un punto de quiebre donde la reserva funcional pulmonar se ha perdido.<br><br>Perla ENARM: Puntos de corte para gravedad SCAP: 0-9 puntos bajo riesgo; 10-19 puntos riesgo intermedio; > 20 puntos riesgo alto.<br><br>Análisis de Distractores: Los valores menores a 9 puntos confieren seguridad razonable para vigilancia general, mientras que el rango de 10 a 19 exige observación precautoria pero no refleja el tope extremo del impacto letal predecible superior a 20.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de la Neumonía Adquirida en la Comunidad, 2017, Cuadros o figuras, Página 39."
+    },
+    {
+        id: 35,
+        question: "Frente a un paciente grave con enfermedad bronquial destructiva previa, ¿qué biomarcadores han demostrado utilidad fidedigna para distinguir una infección pulmonar sobreagregada frente a una crisis de EPOC puro?",
+        options: ["Enzima convertidora de angiotensina", "Procalcitonina y proteína C reactiva", "Fibrinógeno y conteo leucocitario", "Dímero D y lactato deshidrogenasa"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, las exacerbaciones por irritantes o cambios broncoespásticos desencadenan escasa activación del inflamasoma bacteriano en comparación con el impacto masivo de la invasión parenquimatosa aguda purulenta.<br><br>Perla ENARM: Los niveles séricos de procalcitonina y de proteína C reactiva fueron significativamente mayores en el grupo de neumonía comparados con el grupo de EPOC exacerbado, permitiendo el diagnóstico diferencial.<br><br>Análisis de Distractores: El fibrinógeno es inespecífico y el conteo celular total (leucocitos) se eleva crónicamente en el paciente fumador/EPOC debido a la ingesta frecuente de esteroides y estrés, perdiendo su nitidez para dictaminar antibióticos de urgencia inmediata.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de la Neumonía Adquirida en la Comunidad, 2017, Evidencias y Recomendaciones, Página 21."
+    },
+    {
+        id: 36,
+        question: "Aislamientos fidedignos demuestran la invasión torrente sanguínea de S. pneumoniae. ¿A qué catástrofe clínica subaguda intrahospitalaria está predipuesto gravemente este enfermo de acuerdo a la GPC?",
+        options: ["Trombosis venosa cerebral", "Cor pulmonale hiperagudo", "Choque séptico refractario", "Taponamiento pericárdico"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, la sobrecarga toxigénica en la circulación capilar sistémica genera disfunción endotelial profunda, vasodilatación descontrolada por óxido nítrico y escape de tercer espacio progresivo.<br><br>Perla ENARM: Los pacientes con bacteremia neumocóccica presentan un aumento significativo en la mortalidad general y mayor riesgo de shock séptico durante su estancia hospitalaria.<br><br>Análisis de Distractores: La trombosis venosa, el cor pulmonale por hipertensión del parénquima y el taponamiento pericárdico por vecindad supurativa son escenarios fisiopatológicos posibles pero de rara manifestación directa como causa principal de fracaso orgánico por bacteriemia neumocócica descrita en la norma.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de la Neumonía Adquirida en la Comunidad, 2017, Evidencias y Recomendaciones, Página 22."
+    },
+    {
+        id: 37,
+        question: "Como excepción imperativa, y obviando cualquier resultado obtenido por el algoritmo CURB-65 o PSI, ¿qué condición somática demanda indefectiblemente el manejo intrahospitalario del adulto?",
+        options: ["Presencia de asma intermitente leve", "Hipertensión arterial esencial estadio uno", "Problemas anatómicos para alimentación oral", "Osteoartritis degenerativa crónica"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, el fracaso para mantener un esquema antibiótico enteral, aunado al riesgo de deshidratación grave extrahospitalaria o eventos repetidos de broncoaspiración neurológica, dictaminan el internamiento protector.<br><br>Perla ENARM: Se debe considerar ingreso hospitalario en pacientes con problemas para alimentarse vía oral, con déficit cognitivo, y con enfermedad neuromuscular severa independientemente de su estratificación.<br><br>Análisis de Distractores: Las patologías leves y estables como la osteoartritis, la hipertensión uno y el asma controlada son factores a seguir, pero no anulan la confiabilidad de las escalas para prescribir un manejo de antibiótico a domicilio.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de la Neumonía Adquirida en la Comunidad, 2017, Evaluación de la gravedad, Página 26."
+    },
+    {
+        id: 38,
+        question: "¿A partir de qué límite de oxigenación transcutánea por pulsioximetría, sin considerar antecedentes previos en Urgencias, se indica iniciar la terapia de suplementación gaseosa de manera inmediata?",
+        options: ["Menor de 98%", "Menor de 94%", "Menor de 85%", "Inferior al 90%"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, ante el shunt alvéolo-capilar generado por el exudado bronquiolar, corregir tempranamente el desajuste V/Q previene las cascadas de hipoxia miocárdica y cerebral compensatorias durante la evaluación del paciente.<br><br>Perla ENARM: Los pacientes que tienen una saturación de oxígeno < 94% deben ser considerados para suplementación de oxígeno, aun sin condiciones médicas preexistentes o comorbilidades agudas.<br><br>Análisis de Distractores: Esperar a saturaciones críticas de < 90% o < 85% enmascara la pérdida real de la PO2 de la curva de disociación de hemoglobina. Por otro lado, hiperoxigenar agresivamente para buscar 98-100% genera formación de radicales libres perjudiciales y colapso reabsortivo alveolar.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de la Neumonía Adquirida en la Comunidad, 2017, Manejo inicial, Página 27."
+    },
+    {
+        id: 39,
+        question: "Tomando en cuenta los grupos vulnerables descritos en los apartados profilácticos, ¿qué condición fisiológica o morfológica exacerba notablemente el peligro de complicaciones letales por influenza?",
+        options: ["Menopausia temprana posquirúrgica", "Embarazo y obesidad sistémica", "Tabaquismo ocasional y atopia", "Hipertrigliceridemia familiar asintomática"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, la disminución de la capacidad residual funcional torácica secundaria a la mecánica restrictiva, combinada con un entorno basal proinflamatorio severo, vuelve catastrófica a la infección viral epitelial.<br><br>Perla ENARM: El embarazo y la obesidad también se consideran factores de riesgo determinantes e independientes para desarrollar complicaciones severas intrahospitalarias por cepas de influenza.<br><br>Análisis de Distractores: El tabaquismo afecta pero no en el grado sistémico restrictivo del embarazo u obesidad. La menopausia o hipertrigliceridemia no comprometen directamente la inmunidad celular respiratoria a los virus a diferencia de la restricción masiva del fuelle pulmonar observada en la gestación avanzada.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de la Neumonía Adquirida en la Comunidad, 2017, Evidencias y Recomendaciones, Página 15."
+    },
+    {
+        id: 40,
+        question: "En adultos mayores cursando una probable infección bronquial, ¿cuál es el margen reportado por la GPC donde una placa simple resulta fallida u oculta los infiltrados pulmonares visibilizados únicamente en Tomografía?",
+        options: ["Alrededor del 9%", "Mayor al 50%", "Menor del 1%", "Exactamente el 35%"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Neumonía Adquirida en la Comunidad, la superposición de estructuras óseas degenerativas, el atrapamiento aéreo senil o estados tempranos de condensación subpleural impiden la formación adecuada de interfaces en imágenes bidimensionales convencionales.<br><br>Perla ENARM: Se detectaron infiltrados neumónicos por medio de TAC, y la radiografía de tórax no pudo detectar estos infiltrados neumónicos en un 9.4% de los pacientes adultos mayores evaluados prospectivamente.<br><br>Análisis de Distractores: Asumir que la radiografía simple es inservible en el 50% de los casos o 35% es falso y contravendría su rol como escrutinio universal indispensable; sin embargo, no es perfecta (1%), existiendo casi una décima parte de la población vulnerable que ameritará escalar a TAC ante duda fuerte.",
+        source: "IMSS-234-09, Prevención, Diagnóstico y Tratamiento de la Neumonía Adquirida en la Comunidad, 2017, Evidencias y Recomendaciones, Página 20."
+    }
+
+
+        
+       ];
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('ExMI10LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('ExMI10Progress');
+                localStorage.removeItem('ExMI10LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-purple-500 shadow-md z-10 border-purple-500 dark:border-purple-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-fuchsia-500 to-purple-600 hover:from-purple-600 hover:to-fuchsia-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-purple-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-fuchsia-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "MEDICINA INTERNA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "IMSS-234-09 • Prevención, diagnóstico y tratamiento de la neumonía adquirida en la comunidad";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-purple-600 dark:text-slate-400 dark:hover:text-purple-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="login.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-purple-100 dark:border-purple-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-purple-50 has-[:checked]:border-purple-400 dark:has-[:checked]:bg-purple-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-purple-600 focus:ring-purple-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-purple-600 dark:hover:bg-purple-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-fuchsia-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('ExMI10Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('ExMI10LastQId', currentQuestionId);
+                else localStorage.removeItem('ExMI10LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('ExMI10Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

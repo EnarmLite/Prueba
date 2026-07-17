@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-purple-500 to-fuchsia-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+
+    {
+        id: 1,
+        question: "¿Cuál es el criterio espirométrico post-broncodilatador para confirmar la limitación irreversible del flujo aéreo?",
+        options: ["Volumen espiratorio forzado < 80%", "Capacidad vital forzada < 50%", "Relación VEF1/CVF < 0.70", "Reversibilidad bronquial > 200 ml"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, la demostración objetiva de la obstrucción requiere identificar una disminución en el flujo de aire espiratorio que no se normaliza tras la administración de un fármaco dilatador.<br><br>Perla ENARM: \"Se confirma EPOC cuando una persona con síntomas compatibles presenta una limitación irreversible del flujo aéreo (por ej. una relación FEV1/FVC < 0.7) y no existe otra explicación alterna para los síntomas\".<br><br>Análisis de Distractores: El volumen espiratorio forzado < 80% (A) define el grado de severidad en la escala GOLD 2 o peor, pero no el diagnóstico inicial. La capacidad vital forzada < 50% (B) indica un patrón restrictivo pulmonar grave. La reversibilidad > 200 ml (D) es el criterio clásico diagnóstico de asma bronquial.",
+        source: "GPC-IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Diagnóstico por laboratorio e imagenología, pág. 23."
+    },
+    {
+        id: 2,
+        question: "¿Cuál es el factor de riesgo ambiental con mayor asociación para el desarrollo de la enfermedad en pacientes no fumadores?",
+        options: ["Contaminación atmosférica urbana", "Humo de combustibles de biomasa", "Exposición a polvos industriales", "Tabaquismo pasivo de segunda mano"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, en entornos de países en vías de desarrollo, la exposición intra-domiciliaria al quemar madera o carbón representa una carga de morbilidad enorme, explicando hasta el 53.85% de los casos en ciertas poblaciones.<br><br>Perla ENARM: \"Se debe evitar la exposición a humo de combustibles de biomasa (cocinar con carbón o leña) ya que esto disminuye de forma importante el riesgo de desarrollar EPOC\".<br><br>Análisis de Distractores: La contaminación urbana (A), polvos industriales (C) y el tabaquismo pasivo (D) son factores ambientales comprobados, pero su peso epidemiológico y fuerza de asociación es menor frente a la alta toxicidad prolongada de cocinar con leña en espacios cerrados.",
+        source: "GPC-IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Prevención de otros factores de riesgo, pág. 18."
+    },
+    {
+        id: 3,
+        question: "Según los estudios epidemiológicos en Latinoamérica, ¿qué porcentaje aproximado de pacientes diagnosticados con la enfermedad reportan exposición a combustibles de biomasa?",
+        options: ["10%", "20%", "40%", "66%"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, el estudio PUMA evidenció la magnitud regional de este factor ambiental en la atención primaria, diferenciando radicalmente la epidemiología latinoamericana frente a los países europeos.<br><br>Perla ENARM: \"El estudio PUMA... en Latinoamérica mostró que el 40% de personas con EPOC reportaron exposición a combustibles de biomasa comparados con el 30% de personas sin EPOC\".<br><br>Análisis de Distractores: El 10% (A) y 20% (B) subestiman severamente el problema regional. El 66% (D) corresponde a la proporción de pacientes con la patología que fumaban más de 30 paquetes al año en el mismo estudio, no a la exposición a leña.",
+        source: "GPC-IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Prevención de otros factores de riesgo, pág. 17."
+    },
+    {
+        id: 4,
+        question: "¿Cuál es el síntoma de presentación temprana más frecuente que obliga al paciente a buscar atención médica inicial?",
+        options: ["Disnea con el ejercicio", "Tos productiva matutina", "Opresión torácica nocturna", "Hemoptisis de inicio súbito"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, aunque la tos suele aparecer primero cronológicamente como la llamada \"tos de fumador\", es la limitación física por falta de aire al esfuerzo lo que motiva la primera consulta, marcando el declive de la calidad de vida funcional.<br><br>Perla ENARM: \"Los tres síntomas cardinales de EPOC son: disnea, tos crónica, y producción de esputo y el síntoma de presentación temprana más común es disnea con el ejercicio\".<br><br>Análisis de Distractores: La tos productiva (B) es común pero subestimada por el paciente (\"tos normal\"). La opresión torácica nocturna (C) es un dato intermitente más indicativo de hiperreactividad mixta o falla cardiaca. La hemoptisis (D) es un dato de alarma absoluto para descartar cáncer broncogénico, no un síntoma típico basal.",
+        source: "GPC-IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Diagnóstico clínico, pág. 20."
+    },
+    {
+        id: 5,
+        question: "¿Cuál es el cuestionario validado y recomendado para identificar tempranamente la enfermedad no diagnosticada y el riesgo de exacerbaciones en la atención primaria?",
+        options: ["Cuestionario respiratorio Saint George", "Índice pronóstico multidimensional BODE", "Cuestionario de tamizaje CAPTURE", "Escala modificada del Medical Research Council"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, se necesita una herramienta ágil en el primer nivel para captar pacientes subdiagnosticados expuestos a factores de riesgo antes de enviar a espirometría.<br><br>Perla ENARM: \"Cuestionario CAPTURE (Chronic obstructive pulmonary disease Assessment in Primary care To identify Undiagnosed Respiratory disease and Exacerbation risk) para identificar pacientes con enfermedad respiratoria y riesgo de exacerbaciones en atención primaria\".<br><br>Análisis de Distractores: El cuestionario Saint George (A) evalúa calidad de vida detallada post-diagnóstico. El índice BODE (B) es pronóstico de mortalidad que requiere la prueba de caminata. La escala mMRC (D) cuantifica el nivel subjetivo de disnea una vez establecida la enfermedad.",
+        source: "GPC-IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Anexos, pág. 47."
+    },
+    {
+        id: 6,
+        question: "¿Cuál es la indicación absoluta para solicitar una tomografía computarizada de tórax en el paciente estable?",
+        options: ["Confirmación del diagnóstico espirométrico límite", "Valorar abordaje de reducción de volumen", "Descartar la existencia de hipertensión pulmonar", "Medición exacta del diámetro anteroposterior torácico"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, la tomografía no es una herramienta de escrutinio ni de seguimiento rutinario debido al costo y la radiación. Solo se requiere para plantear anatomía quirúrgica o descartar diagnósticos alternos letales.<br><br>Perla ENARM: \"Se debe realizar tomografía computarizada de tórax únicamente... cuando se esté considerando realizar cirugía para reducir el volumen pulmonar, válvulas endobronquiales, o trasplante pulmonar\".<br><br>Análisis de Distractores: El diagnóstico siempre se confirma con fisiología (espirometría) y no con anatomía (A). La hipertensión pulmonar (C) se evalúa con ecocardiograma transtorácico. El diámetro anteroposterior (D) es un dato de la simple clínica y radiografía convencional.",
+        source: "GPC-IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Diagnóstico por laboratorio e imagenología, pág. 24."
+    },
+    {
+        id: 7,
+        question: "Durante la exploración física, ¿qué hallazgo extrapulmonar es característico del estadio terminal con hipercapnia severa?",
+        options: ["Sibilancias espiratorias forzadas", "Aumento de la resonancia percutoria", "Asterixis o temblor aleteante", "Hipocratismo digital pronunciado"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, la retención progresiva de bióxido de carbono induce encefalopatía hipercápnica, que neurológicamente se manifiesta por incapacidad de mantener el tono postural distal.<br><br>Perla ENARM: \"En etapas terminales los pacientes pueden presentarse encorvados... usar músculos accesorios, el signo de Hoover, cianosis, asterixis, y con distensión de las venas del cuello\".<br><br>Análisis de Distractores: Las sibilancias (A) y la resonancia aumentada (B) son signos bronquiales y torácicos presentes desde etapas moderadas, no exclusivamente terminales. El hipocratismo digital (D) nunca es un signo de esta patología per se y obliga a buscar cáncer o bronquiectasias.",
+        source: "GPC-IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Diagnóstico clínico, pág. 21."
+    },
+    {
+        id: 8,
+        question: "¿Cuál es la meta terapéutica estricta de saturación de oxígeno medida por oximetría de pulso durante una agudización intrahospitalaria?",
+        options: ["85 a 88%", "88 a 92%", "93 a 95%", "96 a 100%"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, el uso de altas fracciones inspiradas de oxígeno en pacientes retenedores crónicos suprime el reflejo respiratorio medular mediado por hipoxia, conduciendo a narcosis por bióxido de carbono.<br><br>Perla ENARM: \"Se recomienda administrar oxígeno de bajo flujo para los pacientes con hipoxemia debida a una exacerbación... Se sugiere que el objetivo sea alcanzar una saturación de oxígeno de 88 a 92%\".<br><br>Análisis de Distractores: Las saturaciones inferiores al 88% (A) mantienen al paciente en riesgo de isquemia miocárdica y disfunción orgánica. Valores de 93 a 95% (C) o mayores a 96% (D) incrementan estadísticamente el riesgo de acidosis respiratoria y necesidad de ventilación mecánica invasiva.",
+        source: "GPC-IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Tratamiento de Exacerbación de EPOC, pág. 35."
+    },
+    {
+        id: 9,
+        question: "¿Qué agente etiológico viral es el detectado con mayor frecuencia como desencadenante primario de las exacerbaciones agudas?",
+        options: ["Virus sincitial respiratorio", "Rinovirus o picornavirus", "Virus de la influenza A", "Adenovirus y coronavirus"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, aunque la carga bacteriana (Haemophilus, Neumococo, Moraxella) justifica el antibiótico en caso de esputo purulento, los paneles moleculares documentan que el rinovirus (picornavirus) lidera la epidemiología infecciosa viral global.<br><br>Perla ENARM: \"La prevalencia media ponderada de infecciones respiratorias virales... el picornavirus fue el más comúnmente detectado con un 17.3%, seguido de influenza con 7.4%\".<br><br>Análisis de Distractores: El virus sincitial (A) representa un 5.3% de las exacerbaciones virales. La influenza (C) abarca el 7.4% de los episodios detectados. Los adenovirus/coronavirus (D) agrupan porcentajes menores al 4%.",
+        source: "GPC-IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Factores desencadenantes, pág. 33."
+    },
+    {
+        id: 10,
+        question: "¿Cuál es la complicación y causa independiente de letalidad intrahospitalaria más frecuente en un paciente admitido por agudización de la enfermedad?",
+        options: ["Tromboembolia pulmonar aguda", "Falla cardiaca descompensada", "Neumonía nosocomial severa", "Neumotórax secundario a bulas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, la hiperinsuflación aguda y la hipoxemia imponen una sobrecarga brutal a la función ventricular (cor pulmonale agudo o descompensación de miocardiopatía isquémica previa).<br><br>Perla ENARM: \"Las complicaciones más comunes fueron falla cardiaca (37.2%), tromboembolia pulmonar (20.9%), neumonía (27.9%) y neumotórax... se debe realizar diagnóstico diferencial\".<br><br>Análisis de Distractores: La tromboembolia pulmonar (A) es causante del 20.9% de los decesos. La neumonía (C) explica el 27.9%. El neumotórax (D) ocurre por ruptura de un espacio aéreo distal, pero es numéricamente la menos frecuente de las 4 principales.",
+        source: "GPC-IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Tratamiento de Exacerbación de EPOC, pág. 34."
+    },
+    {
+        id: 11,
+        question: "¿Cuál es el fármaco, dosis y duración exacta de primera línea con glucocorticoides sistémicos recomendados en una agudización moderada a grave?",
+        options: ["Metilprednisolona 1 gramo diario por 3 días", "Dexametasona 8 mg dosis única intravenosa", "Hidrocortisona 100 mg intravenosa cada 8 horas", "Prednisona 40 mg diarios por 5 a 7 días"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, la terapia antiinflamatoria sistémica acorta el periodo de hospitalización y acelera la recuperación del flujo aéreo, limitándose a ciclos cortos para minimizar inmunosupresión y miopatía.<br><br>Perla ENARM: \"Corticoesteroides: considerar nebulizaciones y/o prednisona 40 mg/d por 5-7 días o IV con las dosis en correspondencia a la de la prednisona\".<br><br>Análisis de Distractores: La metilprednisolona en pulsos (A) se utiliza para actividad inmunológica fulminante, no para la vía aérea. La dexametasona (B) no es el régimen estandarizado para este contexto. La hidrocortisona (C) tiene indicación franca en crisis adrenal o como choque refractario.",
+        source: "GPC-IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Anexos, pág. 44."
+    },
+    {
+        id: 12,
+        question: "Según el análisis de una gasometría arterial en una exacerbación, ¿cuál hallazgo dictamina la indicación para instaurar ventilación mecánica no invasiva (BiPAP)?",
+        options: ["PaO2 < 55 mmHg al aire ambiente", "pH < 7.30 o PaCO2 > 45 mmHg", "Bicarbonato sérico estándar < 18 mEq/L", "Gradiente alvéolo-arterial > 20 mmHg"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, el desarrollo de falla ventilatoria con acidosis hipercápnica refleja agotamiento diafragmático; la ventilación no invasiva reduce la mortalidad y la tasa de intubación a la mitad.<br><br>Perla ENARM: \"Se recomienda el tratamiento habitual más BiPAP en lugar de únicamente el tratamiento habitual en los pacientes con falla respiratoria hipercápnica aguda (PaCO2 > 45 mmHg o pH < 7.30)\".<br><br>Análisis de Distractores: La hipoxemia severa pura (A) requiere oxigenoterapia, no presión positiva inicial. El bicarbonato bajo (C) indica acidosis metabólica, donde la BiPAP es ineficaz. Un gradiente elevado (D) revela cortocircuito o alteración en la difusión, sin ser criterio formal para ventilación mecánica.",
+        source: "GPC-IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Ventilación no invasiva, pág. 35."
+    },
+    {
+        id: 13,
+        question: "En el algoritmo de terapia inhalada escalonada, ¿qué cifra analítica sanguínea justifica iniciar una terapia dual combinando beta-agonista de acción prolongada y un corticoesteroide inhalado?",
+        options: ["Neutrófilos absolutos > 500 células/µL", "Eosinófilos absolutos > 300 células/µL", "Linfocitos absolutos > 1000 células/µL", "Monocitos absolutos > 200 células/µL"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, la identificación de inflamación sistémica tipo 2 subyacente indica un componente de hiperreactividad y excelente respuesta biológica a la terapia esteroidea, de lo contrario, su uso eleva el riesgo de neumonía.<br><br>Perla ENARM: \"En pacientes con un conteo de eosinófilos > 300 células/microL o características de solapamiento asma-EPOC, se puede utilizar una combinación de LABA con glucocorticoide inhalado\".<br><br>Análisis de Distractores: Las otras células de la serie blanca (A, C, D) no se correlacionan clínicamente con la respuesta a los corticoides inhalados según las guías internacionales para estadiaje bronquial.",
+        source: "GPC-IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Tratamiento de EPOC estable, pág. 32."
+    },
+    {
+        id: 14,
+        question: "Como estrategia fundamental preventiva no farmacológica, ¿cuál intervención de inmunización tiene impacto directo en la reducción de neumonía y exacerbaciones?",
+        options: ["Vacuna contra neumococo polisacárida y conjugada", "Vacuna toxoide acelular contra Bordetella pertussis", "Vacuna viva atenuada contra la tuberculosis bacilar", "Vacuna conjugada contra Haemophilus influenzae B"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, la susceptibilidad al daño estructural tras un evento neumónico justifica inmunizar obligatoriamente a esta población contra el agente capsular más frecuente.<br><br>Perla ENARM: \"Se debe vacunar contra neumococo a toda persona con EPOC ya que esto reduce la probabilidad de desarrollar neumonía adquirida en la comunidad y reduce también la probabilidad de presentar exacerbaciones\".<br><br>Análisis de Distractores: La vacuna de Tosferina (B) se prioriza en embarazo y pediatría. La vacuna BCG (C) previene formas diseminadas en la infancia. Haemophilus influenzae (D) causa exacerbaciones, pero la guía resalta como grado de recomendación \"A\" exclusivamente a Influenza y Neumococo.",
+        source: "GPC-IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Vacunación en pacientes con EPOC, pág. 19."
+    },
+    {
+        id: 15,
+        question: "En base a la estratificación multidimensional \"ABCD\", ¿cuál es el régimen farmacológico inicial recomendado en un paciente encuadrado en el Grupo C?",
+        options: ["Beta-agonista de corta duración a demanda", "Antagonista muscarínico de larga duración", "Corticoesteroide inhalado en monoterapia diaria", "Terapia triple con teofilina en dosis nocturna"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, los pacientes de la categoría C son sujetos con pocos síntomas basales (mMRC 0-1) pero con alto riesgo de visitas a urgencias; el LAMA ha demostrado prevenir mejor estos episodios frente a otros broncodilatadores en este grupo.<br><br>Perla ENARM: \"Se sugiere iniciar tratamiento con un antagonista muscarínico de larga duración (LAMA) debido a su baja probabilidad de exacerbación, en los pacientes mínimamente sintomáticos en el día a día... pero que tienen alto riesgo de exacerbación\".<br><br>Análisis de Distractores: El fármaco de corta duración a demanda (A) es el soporte único solo en el Grupo A inicial. El esteroide inhalado aislado (C) está proscrito en monoterapia respiratoria para esta patología. La teofilina (D) es un recurso marginal de tercera línea.",
+        source: "GPC-IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Tratamiento de EPOC estable, pág. 31."
+    },
+    {
+        id: 16,
+        question: "¿Cuál es la limitación principal que condiciona que la teofilina no se utilice como broncodilatador de primera o segunda elección en el tratamiento de mantenimiento?",
+        options: ["Efecto taquifiláctico en el receptor bronquial a los 3 meses", "Riesgo elevado de generar infecciones micóticas orales", "Estrecho margen terapéutico con alto riesgo de arritmias", "Desarrollo temprano de osteoporosis severa por desmineralización"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, las metilxantinas requieren monitorización sérica constante (10-20 mg/L) y sus efectos tóxicos letales superan la marginal mejora en volumen espiratorio.<br><br>Perla ENARM: \"La utilización de Teofilina puede provocar una gran cantidad de eventos adversos, como náuseas, vómitos, dolor abdominal, acidosis metabólica, convulsiones y arritmias, además de que su rango terapéutico es muy estrecho... por lo que se sugiere no utilizar como medicamento de primera línea\".<br><br>Análisis de Distractores: La taquifilaxia (A) es teóricamente un fenómeno de los estimulantes Beta-2 adrenérgicos sobre-utilizados. Las infecciones micóticas orales (B) son el riesgo clásico del mal aseo bucal post-esteroide inhalado. La osteoporosis (D) es el gran riesgo del uso crónico de glucocorticoides sistémicos.",
+        source: "GPC-IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Tratamiento de EPOC estable, pág. 30."
+    },
+    {
+        id: 17,
+        question: "Según las pautas de rehabilitación pulmonar, ¿cuál es el tiempo de duración y la periodicidad semanal mínima recomendada para realizar ejercicio aeróbico?",
+        options: ["10 a 15 minutos en 1 a 2 sesiones", "20 a 30 minutos en 3 a 4 sesiones", "40 a 50 minutos en 5 a 6 sesiones", "60 a 90 minutos en 1 a 2 sesiones"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, el acondicionamiento físico paulatino (caminar, ciclismo ligero) mejora el aclaramiento del ácido láctico y reduce la dependencia de ventilación compensatoria para una calidad de vida sustentable.<br><br>Perla ENARM: \"Se recomienda que los pacientes con EPOC realicen ejercicio aeróbico (caminar, trotar, ciclismo, aerobics de bajo impacto) en sesiones de 20 a 30 minutos, 3 o 4 veces por semana\".<br><br>Análisis de Distractores: Esfuerzos menores a 20 minutos (A) no alcanzan el umbral para mejoría cardiovascular real. Sesiones de más de 40 minutos (C) o masivas (D) generan fatiga muscular severa y abandono precoz del programa rehabilitatorio en el enfermo obstructivo crónico.",
+        source: "GPC-IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Rehabilitación pulmonar, pág. 37."
+    },
+    {
+        id: 18,
+        question: "Como sistema validado de medición pronóstica, ¿qué variables integran exactamente el índice multidimensional BODE para predecir mortalidad a largo plazo?",
+        options: ["Saturación arterial, Presión pulmonar, Disnea y Exacerbaciones", "Índice de masa corporal, VEF1, mMRC y Caminata de 6 minutos", "Calidad de vida CAT, Tabaquismo, Frecuencia respiratoria y Edad", "Hematocrito alto, Disnea basal, Proteína C reactiva y VEF1"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, la supervivencia de la enfermedad no recae solo en la estrechez bronquial, la pérdida de tejido muscular (caquexia) y el nivel de sedentarismo sentencian el futuro del paciente de manera más fidedigna.<br><br>Perla ENARM: \"El índice BODE (Body mass index, airflow Obstruction, Dysnea and Excercise capacity index). Clasificación de EPOC según cuatro variables: IMC, FEV1, Disnea y Distancia caminada en 6 min... Las puntuaciones BODE altas indican mayor riesgo clínico\".<br><br>Análisis de Distractores: Aunque la presión pulmonar, las exacerbaciones, el CAT o la edad sean marcadores reales de morbilidad, la conformación académica purista del acrónimo anglosajón BODE (B: BMI, O: Obstruction, D: Dyspnea, E: Exercise) no los incluye en su suma matemática.",
+        source: "GPC-IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Glosario y Escalas, pág. 48, 73."
+    },
+    {
+        id: 19,
+        question: "Para impactar en la supervivencia global, ¿qué criterio gasométrico exacto en reposo es indicativo absoluto de oxigenoterapia domiciliaria por al menos 16 horas diarias?",
+        options: ["PaO2 < 55 mmHg o SaO2 < 88%", "PaO2 < 60 mmHg con hematocrito normal", "PaO2 < 65 mmHg en reposo diurno", "PaO2 < 50 mmHg independiente de la saturación"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, la indicación del manejo oxigenatorio crónico previene la vasoconstricción pulmonar hipóxica generalizada, frenando el daño irreversible del ventrículo derecho.<br><br>Perla ENARM: \"Terapia de oxígeno domiciliaria: PaO2 <55 mmHg o SaO2 <88% ... EPOC estable e hipoxemia crónica: Oxígeno domiciliario ≥16 horas\".<br><br>Análisis de Distractores: Una PaO2 entre 55 y 60 mmHg (B) solo se justifica si se acompaña ya de Cor Pulmonale o poliglobulia. Cifras de 65 mmHg (C) no ameritan terapia. La opción de < 50 mmHg (D) retrasa la indicación, que inicia médicamente debajo de 55 mmHg exactos.",
+        source: "GPC-IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Terapia con oxígeno, pág. 45."
+    },
+    {
+        id: 20,
+        question: "En el contexto de cuidados paliativos y enfermedad terminal, ¿cuál es el abordaje farmacológico compasivo indicado para el manejo de la disnea intensa refractaria?",
+        options: ["Sedación con lorazepam endovenoso continuo", "Sulfato de morfina de liberación sostenida oral", "Terapia de reemplazo total con hidrocortisona", "Infusión con relajantes musculares no despolarizantes"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, la disnea es el síntoma final más angustiante. El uso mesurado y crónico de opioides deprime la percepción central de la sofocación de forma segura.<br><br>Perla ENARM: \"Se recomienda utilizar opioides para aliviar la sensación de falta de aire en personas en etapa terminal de EPOC que no responde a otros tratamientos médicos... utilizar una preparación de liberación sostenida de 20 mg de sulfato de morfina una vez al día para mejorar significativamente la sintomatología\".<br><br>Análisis de Distractores: Las benzodiacepinas como el lorazepam (A) calman el pánico, pero no anulan la necesidad central de la disnea directa como monoterapia primaria. Los esteroides sistémicos (C) desinflaman agudizaciones, pero no palían mecánicamente el enfisema terminal. Los relajantes musculares (D) inducirían paro ventilatorio si no hay tubo endotraqueal.",
+        source: "GPC-IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Cuidados paliativos, pág. 41."
+    },
+    {
+        id: 21,
+        question: "¿Cuál es el criterio clínico temporal estricto para definir la presencia de bronquitis crónica en un paciente adulto?",
+        options: ["Tos productiva por > 3 meses en 2 años consecutivos", "Expectoración hialina por 6 meses ininterrumpidos", "Disnea progresiva asociada a tos durante 1 año", "Tos matutina purulenta por > 4 semanas seguidas"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, la bronquitis crónica se diagnostica bajo un marco de tiempo sostenido y recurrente, descartando causas infecciosas agudas aisladas.<br><br>Perla ENARM: \"La producción de moco puede ser indicativa de bronquitis crónica si dura más de 3 meses en dos años consecutivos\".<br><br>Análisis de Distractores: El tiempo de 6 meses (opción B) o 1 año continuo (opción C) no son los marcos de definición estandarizados. Un cuadro de 4 semanas (opción D) representa una bronquitis aguda o subaguda.",
+        source: "GPC IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Introducción, pág. 9."
+    },
+    {
+        id: 22,
+        question: "En la evaluación de una exacerbación aguda, ¿cuál síntoma de los criterios de Anthonisen determina de forma principal la necesidad absoluta de prescribir antibióticos?",
+        options: ["Incremento agudo de la disnea", "Incremento del volumen de esputo", "Incremento de la purulencia del esputo", "Presencia de temperatura > 38 °C"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, el cambio en la coloración y consistencia del moco refleja una alta carga bacteriana local, justificando la terapia antimicrobiana combinada con otra manifestación.<br><br>Perla ENARM: \"Antibióticos: 2 o más criterios de Anthonisen... Tipo 2. Antibioticoterapia y hospitalización si la expectoración es purulenta\".<br><br>Análisis de Distractores: La disnea (opción A) y el volumen de esputo (opción B) son criterios válidos, pero sin purulencia no obligan al inicio de antibióticos empíricos de forma aislada. La fiebre (opción D) no pertenece a la triada clásica de Anthonisen.",
+        source: "GPC IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Anexos, pág. 44."
+    },
+    {
+        id: 23,
+        question: "¿Cuál de las siguientes condiciones clínicas representa una contraindicación absoluta para iniciar soporte con ventilación mecánica no invasiva (BiPAP)?",
+        options: ["Escala de coma de Glasgow < 10 puntos", "Frecuencia respiratoria > 25 respiraciones", "Presencia de acidosis respiratoria severa", "Retención crónica de bióxido de carbono"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, el uso de presión positiva mediante mascarilla exige que el paciente esté consciente para proteger su vía aérea y evitar la broncoaspiración de secreciones o contenido gástrico.<br><br>Perla ENARM: \"No se debe administrar ventilación no invasiva en pacientes con falla orgánica aguda... pobre estado mental, con altos volúmenes de secreciones, pacientes que no pueden toser, Glasgow < 10\".<br><br>Análisis de Distractores: La taquipnea (opción B), la acidosis respiratoria aguda (opción C) y la hipercapnia crónica (opción D) son precisamente las indicaciones primarias para instaurar la terapia con BiPAP.",
+        source: "GPC IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Tratamiento en exacerbación, pág. 36."
+    },
+    {
+        id: 24,
+        question: "En la evaluación inicial de urgencias ante una exacerbación severa, ¿cuál es el primer estudio de imagen indicado para excluir complicaciones estructurales agudas?",
+        options: ["Tomografía de tórax de alta resolución", "Radiografía de tórax en dos proyecciones", "Angiotomografía de arterias pulmonares", "Ecocardiograma transtorácico de urgencia"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, se requiere un método rápido, accesible y de bajo costo para descartar rápidamente entidades letales que simulen un cuadro de broncoespasmo severo.<br><br>Perla ENARM: \"En los pacientes que presentan una exacerbación de EPOC que requiere manejo hospitalario en Urgencias, la evaluación inicial debe incluir: Realizar una radiografía de tórax, para excluir neumonía, neumotórax, edema pulmonar o derrame pleural\".<br><br>Análisis de Distractores: La tomografía (opción A) o angiotomografía (opción C) implican traslados y retrasos, reservándose para duda diagnóstica posterior (ej. tromboembolia). El ecocardiograma (opción D) es útil para falla cardíaca, pero no suple el abordaje radiológico inicial.",
+        source: "GPC IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Tratamiento en exacerbación, pág. 34."
+    },
+    {
+        id: 25,
+        question: "¿Cuál es el microorganismo bacteriano aislado con mayor frecuencia como causante de infecciones del tracto respiratorio que desencadenan exacerbaciones agudas?",
+        options: ["Staphylococcus aureus", "Pseudomonas aeruginosa", "Haemophilus influenzae", "Klebsiella pneumoniae"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, la inflamación crónica altera el aclaramiento mucociliar, permitiendo la colonización y sobrecrecimiento de este microorganismo gramnegativo en casi la mitad de los episodios purulentos.<br><br>Perla ENARM: \"Las bacterias causales más comúnmente asociadas son: Haemophilus influenzae (13-50%), Moraxella catarrhalis (9 a 21%), Streptococcus pneumoniae (7-26%)\".<br><br>Análisis de Distractores: S. aureus (opción A) y Klebsiella (opción D) son menos frecuentes en este entorno bronquial específico. Pseudomonas aeruginosa (opción B) se asocia en hasta un 13%, habitualmente en fenotipos con daño pulmonar estructural muy severo previo.",
+        source: "GPC IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Factores desencadenantes, pág. 32."
+    },
+    {
+        id: 26,
+        question: "En un paciente ambulatorio con hipoxemia documentada por gasometría con Presión Arterial de Oxígeno de 58 mmHg, ¿qué condición clínica justifica prescribir oxigenoterapia domiciliaria?",
+        options: ["Antecedente de 2 agudizaciones en 1 año", "Clasificación de riesgo Grupo D de GOLD", "Presencia documentada de cor pulmonale", "Índice de masa corporal < 21"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, cuando la PaO2 está entre 55 y 60 mmHg, el oxígeno sólo impacta la supervivencia si ya existe evidencia de daño orgánico secundario a la hipoxia tisular.<br><br>Perla ENARM: \"Terapia de oxígeno domiciliaria: PaO2 <55 mmHg o SaO2 <88% o PaO2 >55 pero <60 mmHg con HAP, poliglobulia o trastornos del ritmo cardíaco\".<br><br>Análisis de Distractores: Las agudizaciones (opción A), pertenecer al Grupo D (opción B) y un IMC bajo (opción D) marcan severidad clínica, pero no son criterios fisiológicos absolutos autorizados para subsidiar terapia prolongada de oxígeno.",
+        source: "GPC IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Anexos, pág. 45."
+    },
+    {
+        id: 27,
+        question: "¿Cuál es el manejo farmacológico inicial exclusivo sugerido para un paciente con reciente diagnóstico ubicado en la categoría de riesgo Grupo A?",
+        options: ["Glucocorticoide inhalado en dosis baja", "Broncodilatador de acción corta a demanda", "Terapia dual muscarínica y adrenérgica", "Inhibidor de fosfodiesterasa tipo 4"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, en pacientes mínimamente sintomáticos y sin historial de exacerbaciones, no se justifica el uso de medicamentos prolongados o esteroideos de inicio.<br><br>Perla ENARM: \"Se recomienda que, para todos los pacientes con EPOC, se inicie tratamiento con un SABA, un SAMA, o su combinación, por razón necesaria, para aliviar los incrementos intermitentes de disnea\".<br><br>Análisis de Distractores: Los esteroides (opción A) incrementan el riesgo de neumonía. La terapia dual (opción C) se usa en el Grupo D o disnea grave (CAT > 20). Los inhibidores de fosfodiesterasa (opción D) son de tercera línea para fenotipo bronquítico crónico con VEF1 bajo.",
+        source: "GPC IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Tratamiento EPOC estable, pág. 29."
+    },
+    {
+        id: 28,
+        question: "¿Cuál es el criterio clínico o funcional explícito de la guía para el envío de un paciente al Neumólogo en el tercer nivel de atención?",
+        options: ["Falla respiratoria aguda hipercápnica", "Duda diagnóstica con asma bronquial", "Presencia de hipertensión arterial pulmonar", "Falla a la monoterapia con broncodilatador"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, el reto de diferenciar síndromes de sobreposición obstructiva requiere la medición de la difusión de gases alveolares y volúmenes estáticos, tecnología exclusiva de alta especialidad.<br><br>Perla ENARM: \"Duda entre EPOC y Asma o incongruencia disnea/espirometría, envío a tercer nivel para Pletismografía con Difusión Pulmonar de Monóxido de Carbono (DLCO)\".<br><br>Análisis de Distractores: Las fallas agudas o hipercápnicas (opción A) se manejan en urgencias de segundo nivel. El Cor pulmonale (opción C) y los ajustes al tratamiento (opción D) son de manejo habitual del Neumólogo o Internista en segundo nivel.",
+        source: "GPC IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Anexos, pág. 42."
+    },
+    {
+        id: 29,
+        question: "Durante la exploración física, la presencia de hipocratismo digital (dedos en palillo de tambor) en un paciente con antecedente de tabaquismo pesado sugiere enfáticamente la existencia de:",
+        options: ["Cáncer broncopulmonar primario coexistente", "Enfisema pulmonar centrolobulillar avanzado", "Retención crónica de bióxido de carbono", "Falla ventricular derecha descompensada aguda"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, las alteraciones morfológicas distales de los falanges derivan de la angiogénesis por hipoxia local intensa y supuración, procesos ausentes en la vía patogénica exclusiva de la obstrucción bronquial pura.<br><br>Perla ENARM: \"Los dedos en palillo de tambor o el hipocratismo digital no son un signo típico de EPOC... su presencia sugiere comorbilidades como cáncer pulmonar, enfermedad pulmonar intersticial, o bronquiectasias\".<br><br>Análisis de Distractores: El enfisema (opción B), la hipercapnia (opción C) y el cor pulmonale (opción D) generan cianosis, uso de músculos accesorios y asterixis, pero nunca hipocratismo digital directo.",
+        source: "GPC IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Diagnóstico clínico, pág. 22."
+    },
+    {
+        id: 30,
+        question: "Si en la espirometría inicial se documenta una relación post-broncodilatador VEF1/CVF de 0.65, ¿cuál es la conducta diagnóstica indicada en ese momento?",
+        options: ["Diagnosticar fenotipo mixto de asma severa", "Repetir la espirometría para confirmar obstrucción", "Solicitar tomografía computarizada de alta resolución", "Iniciar tratamiento con esteroide sistémico por 7 días"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, los valores limítrofes cercanos al umbral fisiológico (0.7) requieren validación por el riesgo de falsos positivos asociados a mala técnica de soplado o variabilidad bronquial mínima transitoria.<br><br>Perla ENARM: \"Las guías GOLD sugieren repetir la espirometría para demostrar la persistencia de la limitación al flujo aéreo en pacientes con un VEF1/FVC entre 0.6 y 0.8\".<br><br>Análisis de Distractores: Los diagnósticos directos (opción A) no se pueden sentar sin persistencia validada. La tomografía (opción C) evalúa anatomía, no el flujo funcional. Los esteroides (opción D) son manejos de exacerbación, no pruebas diagnósticas.",
+        source: "GPC IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Diagnóstico por laboratorio e imagenología, pág. 24."
+    },
+    {
+        id: 31,
+        question: "¿Cuál comorbilidad psiquiátrica se considera un factor de riesgo independiente validado para mayor mortalidad y readmisión hospitalaria?",
+        options: ["Trastorno por déficit de atención", "Esquizofrenia paranoide activa", "Trastorno depresivo mayor", "Trastorno límite de la personalidad"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, el impacto sistémico de la disnea y la limitación al esfuerzo merman drásticamente la esfera afectiva, condicionando abandono del tratamiento, aislamiento y mayor riesgo de desenlaces letales tempranos.<br><br>Perla ENARM: \"La depresión y la ansiedad disminuyen la calidad de vida... y la depresión es un factor de riesgo independiente para mortalidad, readmisión hospitalaria, y estancias hospitalarias más prolongadas\".<br><br>Análisis de Distractores: Aunque el abordaje es multidimensional, entidades como déficit de atención (opción A), esquizofrenia (opción B) o alteraciones limítrofes (opción D) no están protocolizadas textualmente como predictores universales de mortalidad respiratoria intrahospitalaria.",
+        source: "GPC IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Cuidados paliativos, pág. 41."
+    },
+    {
+        id: 32,
+        question: "En pacientes ambulatorios muy sintomáticos (Grupo B), ¿cuál es la ventaja estadísticamente comprobada al preferir usar LAMA sobre LABA como monoterapia prolongada?",
+        options: ["Mayor reducción de exacerbaciones agudas", "Reversión completa de la hiperinsuflación", "Prevención total de candidiasis oral", "Menor riesgo de retención urinaria"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, los estudios con seguimiento a un año en pacientes estables muestran que los antagonistas muscarínicos poseen mayor impacto en disminuir los ingresos a urgencias en comparación con los adrenérgicos.<br><br>Perla ENARM: \"En los pacientes con EPOC estable, los LAMA se asociaron con una mayor reducción en las exacerbaciones agudas y menos eventos adversos comparados con los LABA\".<br><br>Análisis de Distractores: La hiperinsuflación estructural (opción B) nunca es reversible por completo. La candidiasis (opción C) ocurre con esteroides inhalados, no con LABA/LAMA. La retención urinaria (opción D) es el efecto adverso anticolinérgico propio de los LAMA, por lo que su incidencia es mayor, no menor.",
+        source: "GPC IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Tratamiento de EPOC estable, pág. 28."
+    },
+    {
+        id: 33,
+        question: "¿Cuál es el principal riesgo metabólico y gasométrico derivado de aplicar oxigenoterapia a dosis altas (> 95%) en la exacerbación aguda de esta patología?",
+        options: ["Desarrollo de alcalosis respiratoria masiva", "Supresión del centro ventilatorio e hipercapnia", "Inducción de vasoespasmo pulmonar y cor pulmonale", "Elevación súbita de concentraciones de ácido láctico"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, la sensibilidad de los quimiorreceptores centrales al CO2 está abolida; el drive respiratorio del paciente depende de la hipoxia. Eliminarla induce narcosis, hipoventilación y paro respiratorio consecuente.<br><br>Perla ENARM: \"El oxígeno de bajo flujo fue superior... Los pacientes que recibieron oxígeno de bajo flujo fueron menos propensos a desarrollar acidosis respiratoria o hipercapnia comparados con los pacientes que recibieron oxígeno de alto flujo\".<br><br>Análisis de Distractores: La complicación genera acidosis respiratoria, no alcalosis (opción A). El vasoespasmo pulmonar crónico y cor pulmonale se revierten, no se inducen, con el oxígeno (opción C). El ácido láctico (opción D) eleva en falla cardiaca o sepsis, no por altas FIO2.",
+        source: "GPC IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Tratamiento con Oxígeno, pág. 34."
+    },
+    {
+        id: 34,
+        question: "Dentro del componente central de rehabilitación pulmonar física, ¿cuál es el entrenamiento que reporta mejoría primordial en resistencia global y percepción de la falta de aire?",
+        options: ["Entrenamiento pasivo de músculos inspiratorios", "Ejercicio de resistencia de miembros inferiores", "Estimulación eléctrica neuromuscular periférica", "Sesiones de entrenamiento de Tai Chi"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, mejorar la masa y el aclaramiento láctico de los grupos musculares grandes (caminata, cicloergometría) reduce la demanda de ventilación-minuto, abatiendo directamente la disnea de esfuerzo.<br><br>Perla ENARM: \"El entrenamiento de resistencia de miembros inferiores (ciclismo, caminata) es benéfico en diversas áreas... y debe ser parte de todos los programas de rehabilitación pulmonar\".<br><br>Análisis de Distractores: Los músculos inspiratorios (opción A), la electroestimulación (opción C) y terapias orientales (opción D) son adyuvantes en pacientes que no toleran caminadoras, pero el núcleo obligatorio internacionalmente de la rehabilitación recae en las piernas.",
+        source: "GPC IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Rehabilitación pulmonar, pág. 39."
+    },
+    {
+        id: 35,
+        question: "Empleando la estratificación multidimensional ABCD, ¿cuál historial de exacerbaciones coloca de inmediato al paciente en una categoría catalogada de \"alto riesgo\"?",
+        options: ["1 exacerbación manejada en forma ambulatoria", "2 exacerbaciones o > 1 que requiera hospitalización", "3 exacerbaciones moderadas resueltas en casa", "Ninguna exacerbación pero CAT basal en 15"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, la historia del último año predice con altísima exactitud el curso prospectivo, dictaminando subir del eje horizontal (A y B) hacia los grupos superiores (C y D) para escalamiento preventivo dual.<br><br>Perla ENARM: \"Evaluar riesgo de exacerbación: > 2 exacerbaciones o > 1 hospitalización... Grupos C y D\".<br><br>Análisis de Distractores: Tener solo 1 evento ambulatorio (opción A) o 0 eventos (opción D) cataloga como bajo riesgo vertical, independientemente de los síntomas. 3 exacerbaciones (opción C) aplican, pero la respuesta protocolizada exacta abarca la necesidad de hospitalización y el número base \"2\".",
+        source: "GPC IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Cuadros o figuras, pág. 46."
+    },
+    {
+        id: 36,
+        question: "Tras abandonar el consumo de tabaco, ¿cuál es el tiempo cronológico necesario para evidenciar una reducción en el riesgo intrínseco para desarrollar alteraciones obstructivas pulmonares?",
+        options: ["6 meses", "1 año", "5 años", "15 años"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, el daño genético y alveolar se modula a largo plazo. Se enfatiza el umbral lustro para motivar la persistencia de las medidas preventivas.<br><br>Perla ENARM: \"Después de 5 años de dejar de fumar el riesgo de desarrollo de EPOC disminuyó, pero el riesgo de complicaciones para otras patologías solo bajó después de 15 años de dejar de fumar\".<br><br>Análisis de Distractores: El umbral de 6 meses (opción A) o 1 año (opción B) reduce reactividad mucosa e infecciones banales, no el desarrollo enfisematoso crónico subyacente. Los 15 años (opción D) son el lapso validado para abatir la patología cardiovascular coexistente general.",
+        source: "GPC IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Prevención de tabaquismo, pág. 15."
+    },
+    {
+        id: 37,
+        question: "¿Cuál de las siguientes presentaciones hemodinámicas o respiratorias dicta la indicación para iniciar de inmediato con ventilación mecánica invasiva mediante intubación?",
+        options: ["pH de 7.28 persistente con PaCO2 de 50 mmHg", "Saturación oximétrica del 85% al ingreso", "Inestabilidad hemodinámica y respiración agónica", "Taquipnea severa con uso de músculos accesorios"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, la vía aérea definitiva se emplea cuando el paciente ha colapsado su reserva energética y entra en paro inminente, o donde no puede tolerar interfaces faciales.<br><br>Perla ENARM: \"Se debe intubar a un paciente con EPOC que presenta falla respiratoria que pone en peligro su vida... con respiración agónica, falla cardiopulmonar, e inestabilidad hemodinámica severa\".<br><br>Análisis de Distractores: Un pH ácido controlable (opción A) y la taquipnea con tiraje (opción D) son indicaciones clásicas de la presión positiva no invasiva (BiPAP). La saturación baja sin estado de choque (opción B) se corrige con puntas nasales o mascarilla venturi inicial.",
+        source: "GPC IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Ventilación invasiva, pág. 36."
+    },
+    {
+        id: 38,
+        question: "Acorde a las variaciones sintomáticas documentadas, ¿en qué momento del día ocurre el mayor empeoramiento fisiológico de la tos y la disnea en los pacientes graves?",
+        options: ["En el transcurso de las mañanas", "Al mediodía posprandial agudo", "Durante la exposición a cambios climáticos", "En decúbito obligado durante las noches"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, la acumulación de secreciones y la disminución circadiana del tono simpático generan que el momento tras el despertar condicione la mayor incapacidad de la jornada.<br><br>Perla ENARM: \"El 62% de los pacientes con EPOC moderada a severa reportan variabilidad en su sintomatología... los síntomas empeoran frecuentemente durante las mañanas, siendo este el peor momento del día\".<br><br>Análisis de Distractores: Aunque la ortopnea (opción D) y los climas extremos (opción C) precipitan descompensaciones, el patrón diurno interrogado y que motiva el uso de agonistas prolongados matutinos marca a la mañana de manera consistente y universal.",
+        source: "GPC IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Diagnóstico clínico, pág. 20."
+    },
+    {
+        id: 39,
+        question: "En pacientes que ya están usando esteroides inhalados, ¿cuál es el único impacto leve demostrado al añadir teofilina oral al régimen, desaconsejando su uso generalizado?",
+        options: ["Remisión completa de la percepción de disnea", "Disminución absoluta de incidencia de neumonía", "Reducción en la tasa de hospitalizaciones", "Mejoría irreversible del VEF1 medido"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, las metilxantinas carecen de evidencia contundente para justificar su alto riesgo arritmogénico; el ensayo clínico de referencia no reportó grandes beneficios sistémicos o funcionales.<br><br>Perla ENARM: \"Una dosis baja de teofilina no tuvo efectos significativos en la función pulmonar, neumonía, mortalidad, disnea, o calidad de vida... Solamente se observó una ligera mejoría en las hospitalizaciones por exacerbación\".<br><br>Análisis de Distractores: La GPC subraya explícitamente que la teofilina no ofrece las ventajas terapéuticas enunciadas en el VEF1 (opción A), protección infecciosa (opción B) o disnea (opción D).",
+        source: "GPC IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Tratamiento de EPOC estable, pág. 30."
+    },
+    {
+        id: 40,
+        question: "Ante un paciente de alto riesgo (Grupo D) cuya evaluación mMRC/CAT revela una disnea catastrófica con puntuación de escala CAT mayor de 20, ¿cuál es la pauta farmacológica inicial sugerida en este caso extremo?",
+        options: ["Terapia dual combinando esteroide con LAMA", "Terapia dual muscarínica y adrenérgica de larga duración", "Monoterapia exclusiva con teofilina a liberación máxima", "Instauración de oxigenoterapia con puntas a flujo alto"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de EPOC en adultos, frente a una carga sintomática abrumadora sin características de fenotipo asma/eosinófilos, la máxima broncodilatación desde dos receptores celulares simultáneos es prioritaria.<br><br>Perla ENARM: \"Se sugiere iniciar tratamiento con LAMA, aunque una combinación LAMA-LABA podría preferirse en algunos pacientes con dificultad respiratoria severa (CAT > 20)\".<br><br>Análisis de Distractores: El esteroide inhalado (opción A) solo se agrega si el paciente posee eosinófilos séricos > 300 cél/µL. La teofilina (opción C) está fuera del algoritmo de primer intento. El oxígeno (opción D) responde a criterios de hipoxemia (PaO2 < 55), no a puntos de cuestionario de disnea por sí solo.",
+        source: "GPC IMSS-037-21, Diagnóstico y Tratamiento de la Enfermedad Pulmonar Obstructiva Crónica, 2021, Tratamiento de EPOC estable, pág. 31."
+    }
+
+        
+       ];
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('ExMI10LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('ExMI10Progress');
+                localStorage.removeItem('ExMI10LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-purple-500 shadow-md z-10 border-purple-500 dark:border-purple-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-fuchsia-500 to-purple-600 hover:from-purple-600 hover:to-fuchsia-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-purple-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-fuchsia-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "MEDICINA INTERNA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "IMSS-037-21 • Diagnóstico y tratamiento de la enfermedad pulmonar obstructiva crónica";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-purple-600 dark:text-slate-400 dark:hover:text-purple-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="login.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-purple-100 dark:border-purple-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-purple-50 has-[:checked]:border-purple-400 dark:has-[:checked]:bg-purple-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-purple-600 focus:ring-purple-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-purple-600 dark:hover:bg-purple-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-fuchsia-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('ExMI10Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('ExMI10LastQId', currentQuestionId);
+                else localStorage.removeItem('ExMI10LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('ExMI10Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

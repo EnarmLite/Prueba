@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-purple-500 to-fuchsia-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+
+    {
+        id: 1,
+        question: "¿Cuál es la alteración estructural cardiaca que define la presencia de Cor Pulmonale Crónico?",
+        options: ["Hipertrofia del ventrículo derecho", "Dilatación de aurícula izquierda", "Dinfunción del ventrículo izquierdo", "Estenosis de válvula mitral"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, el aumento crónico de la resistencia del lecho vascular pulmonar genera sobrecarga de trabajo mecánico exclusivo a las cámaras derechas, resultando en remodelado anatómico compensatorio.<br><br>Perla ENARM: \"El CP se define como la hipertrofia del ventrículo derecho, dilatación o ámbas, debido a hipertensión pulmonar como resultado de enfermedades que involucran al parénquima pulmonar\".<br><br>Análisis de Distractores: La dilatación auricular izquierda, disfunción ventricular izquierda y patología valvular mitral pertenecen a trastornos del corazón izquierdo (Grupo 2), los cuales excluyen por definición el diagnóstico de esta entidad puramente pulmonar.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Aspectos Generales, Página 12."
+    },
+    {
+        id: 2,
+        question: "¿Cuál es la enfermedad subyacente que representa la causa más frecuente de Cor Pulmonale Crónico?",
+        options: ["Fibrosis pulmonar idiopática", "Síndrome de apnea obstructiva", "Enfermedad pulmonar obstructiva crónica", "Tromboembolia pulmonar crónica"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, la hipoxia crónica sostenida y la destrucción alveolar generan una vasoconstricción constante, incrementando la poscarga, siendo el enfisema o bronquitis crónica la etiología epidemiológica principal.<br><br>Perla ENARM: \"La causa más frecuente de CP es la enfermedad pulmonar obstructiva crónica (EPOC) secundaria a bronquitis crónica o enfisema\".<br><br>Análisis de Distractores: La fibrosis pulmonar y el síndrome de apnea obstructiva son causas documentadas (Grupo 3) pero con menor prevalencia poblacional. La tromboembolia crónica (Grupo 4) es un mecanismo obstructivo vascular diferente y de menor incidencia global.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 14."
+    },
+    {
+        id: 3,
+        question: "¿Cuál es el valor de Presión Media de la Arteria Pulmonar en reposo que define a la hipertensión pulmonar secundaria a enfermedades respiratorias?",
+        options: ["≥ 15 mmHg", "≥ 20 mmHg", "≥ 25 mmHg", "≥ 30 mmHg"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, el diagnóstico hemodinámico requiere comprobación de aumento de presiones en el circuito derecho mediante cateterismo, utilizando un punto de corte absoluto universal.<br><br>Perla ENARM: \"La HP secundaria a enfermedades respiratorias crónicas y que dá lugar a CP crónico, se define como la presencia de presión arteria pulmonar media (PMAP) mayor o igual a 25 mmHg en reposo\".<br><br>Análisis de Distractores: Las presiones menores a 25 mmHg no alcanzan el umbral de hipertensión. Valores de 30 mmHg o superiores indican hipertensión pero el punto de corte diagnóstico preciso validado es a partir de 25.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Aspectos Generales, Página 12."
+    },
+    {
+        id: 4,
+        question: "¿Cuál es el mecanismo fisiopatológico predominante que origina la alteración vascular en pacientes con Cor Pulmonale Crónico por neumopatía crónica?",
+        options: ["Vasoconstricción pulmonar hipóxica", "Proliferación endotelial primaria", "Trombosis vascular in situ", "Dinfunción diastólica ventricular"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, la deficiencia de oxígeno en los alveolos desencadena un reflejo arteriolar que reduce el flujo hacia zonas no ventiladas, provocando un aumento sostenido de la resistencia vascular pulmonar global.<br><br>Perla ENARM: \"El mecanismo que predomina en las formas con hipoxemia está relacionado a la hipoxia alveolar la cual condiciona vasoconstricción pulmonar hipóxica, disminución de la presión arterial de oxígeno e incremento de la resistencia vascular\".<br><br>Análisis de Distractores: La proliferación endotelial primaria es típica del Grupo 1. La trombosis in situ ocurre primariamente en el Grupo 4. La disfunción diastólica ventricular pertenece a la falla cardiaca izquierda (Grupo 2).",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Aspectos Generales, Página 9."
+    },
+    {
+        id: 5,
+        question: "¿Cuál es el estudio inicial recomendado para la evaluación diagnóstica no invasiva ante la sospecha de repercusión hemodinámica derecha?",
+        options: ["Gammagrama pulmonar ventilatorio perfusorio", "Ecocardiograma transtorácico", "Angiotomografía de tórax", "Cateterismo cardiaco derecho"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, las pruebas de imagen iniciales deben evaluar directamente el impacto anatómico sobre las cámaras derechas y estimar las presiones sin requerir métodos invasivos.<br><br>Perla ENARM: \"Se recomienda la realización de un ecocardiograma como parte de la evaluación diagnóstica no invasiva de sujetos con sospecha de hipertensión pulmonar\".<br><br>Análisis de Distractores: El gammagrama y la angiotomografía están dirigidos a descartar enfermedad tromboembólica venosa. El cateterismo es el estándar de oro pero es invasivo y no se realiza como abordaje inicial en todos los pacientes.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 19."
+    },
+    {
+        id: 6,
+        question: "¿Cuál parámetro ecocardiográfico se utiliza primariamente para calcular indirectamente la presión sistólica de la arteria pulmonar?",
+        options: ["Excursión sistólica del anillo tricuspídeo", "Velocidad pico de regurgitación tricuspídea", "Área de la aurícula derecha", "Diámetro de vena cava inferior"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, la diferencia de presiones entre el ventrículo y la aurícula derecha durante la contracción se infiere matemáticamente usando la ecuación de Bernoulli aplicada al flujo del chorro tricuspídeo.<br><br>Perla ENARM: \"El cálculo de la presión sistólica de la arteria pulmonar (PSAP) se basa en la velocidad pico de regurgitación tricuspídea, de acuerdo a la ecuación de Bernoulli simplificada\".<br><br>Análisis de Distractores: La excursión sistólica mide la función contráctil longitudinal. El área auricular y el diámetro de la vena cava inferior estiman cambios anatómicos y presión de retorno, pero no calculan el pico de presión sistólica pulmonar directamente.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 20."
+    },
+    {
+        id: 7,
+        question: "Durante la exploración física, ¿cuál signo clínico se asocia independientemente con una menor supervivencia a 5 años?",
+        options: ["Plétora yugular", "Soplo holosistólico tricuspídeo", "Reflujo hepatoyugular", "Edema de miembros inferiores"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, la falla progresiva de bomba genera estasis sistémica severa. La incapacidad de manejar volúmenes distales traduce claudicación ventricular avanzada.<br><br>Perla ENARM: \"Se recomienda hacer énfasis en la búsqueda de los siguientes signos que se asocian a hipertensión pulmonar... Edema de miembros inferiores (el cual se asocia con menor supervivencia a 5 años)\".<br><br>Análisis de Distractores: La plétora, soplo y reflujo hepatoyugular son datos universales de congestión derecha, pero la retención hídrica claudicante en miembros pélvicos está específicamente categorizada como factor deletéreo pronóstico a largo plazo.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 17."
+    },
+    {
+        id: 8,
+        question: "¿Qué hallazgo de despolarización eléctrica en el electrocardiograma se asocia con mayor mortalidad en pacientes con enfermedad pulmonar subyacente?",
+        options: ["Eje de onda P ≥ 90 grados", "Amplitud de onda P > 2.5 milímetros", "Eje de onda P ≤ 60 grados", "Inversión de onda P precordial"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, el remodelado y crecimiento de la aurícula derecha ante las altas presiones desvía el vector de despolarización notoriamente hacia la derecha.<br><br>Perla ENARM: \"La presencia de un eje de P mayor de 90° en el electrocardiograma de sujetos con CP secundario a EPOC se asocia con mayor mortalidad\".<br><br>Análisis de Distractores: La amplitud alta traduce crecimiento auricular pero el eje desviado a ≥ 90 grados está estadificado como predictor formal de mortalidad. Ejes menores a 60 grados o cambios precordiales inespecíficos no tienen este valor pronóstico letal.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 18."
+    },
+    {
+        id: 9,
+        question: "¿Cuál es el criterio gasométrico de presión arterial de oxígeno que indica prescribir oxígeno suplementario continuo a largo plazo?",
+        options: ["< 50 mmHg", "< 55 mmHg", "< 60 mmHg", "< 65 mmHg"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, revertir el gatillo fisiopatológico es la única intervención farmacológica que altera la historia natural y la hemodinámica.<br><br>Perla ENARM: \"La terapia con oxígeno contínuo a largo plazo se recomienda en pacientes con CP cuando la presión de oxígeno en sangre arterial es menor de 60 mmHg o saturación menor de 88%\".<br><br>Análisis de Distractores: Cortar en 50 o 55 retrasa un soporte vital probado. Iniciar en 65 mmHg sobreoxigena a pacientes retenedores de CO2 sin aportar beneficio crónico normado.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 24."
+    },
+    {
+        id: 10,
+        question: "¿Cuáles fármacos están indicados como primera línea para el manejo de los signos de retención hídrica sistémica?",
+        options: ["Bosentán o ambrisentán", "Furosemida o espironolactona", "Sildenafil o tadalafil", "Nifedipino o diltiazem"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, el fallo ventricular derecho culmina en estasis venosa (hepatomegalia, ascitis, edema), y su manejo sintomático primario exige descongestión mediante deplesión de volumen.<br><br>Perla ENARM: \"Se recomienda tratamiento diurético (furosemide o espironolactona) en pacientes con CP y HAP con signos de retención hídrica y falla del ventrículo derecho\".<br><br>Análisis de Distractores: Bosentán, sildenafil y nifedipino son potentes vasodilatadores del lecho arterial pulmonar, pero no facilitan la excreción renal de volumen ni resuelven el edema agudo periférico.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 24."
+    },
+    {
+        id: 11,
+        question: "¿Qué medicamento con propiedades inotrópicas está explícitamente contraindicado en pacientes puramente crónicos para evitar toxicidad?",
+        options: ["Dobutamina", "Levosimendán", "Milrinona", "Digoxina"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, a diferencia del fracaso cardiaco izquierdo, los glucósidos carecen de beneficio comprobado para la fracción de expulsión derecha y la hipoxia constante disminuye su umbral tóxico arritmogénico.<br><br>Perla ENARM: \"En el tratamiento del CP por hipertensión pulmonar no se recomienda el uso de medicamentos: ... Digoxina (excepto para el tratamiento de la fibrilación auricular)\".<br><br>Análisis de Distractores: Dobutamina, levosimendán y milrinona son inotrópicos intravenosos para estados de choque, no contraindicados en las listas restrictivas crónicas absolutas como sí lo está la digoxina oral rutinaria.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 26."
+    },
+    {
+        id: 12,
+        question: "Qué grupo farmacológico vascular está proscrito en pacientes con patología pulmonar crónica obstructiva debido al empeoramiento del intercambio gaseoso?",
+        options: ["Vasodilatadores pulmonares específicos", "Antagonistas de aldosterona", "Anticoagulantes orales", "Diuréticos de asa"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, la inhibición de la vasoconstricción compensatoria en alvéolos no ventilados genera desequilibrios de la relación ventilación/perfusión (V/Q), empeorando la saturación sistémica.<br><br>Perla ENARM: \"No se recomiendan los vasodilatadores pulmonares específicos en el CP secundario a enfermedad respiratoria como EPOC (Grupo 3 en la clasificación de HP)\".<br><br>Análisis de Distractores: Antagonistas de aldosterona y diuréticos de asa son vitales para el control de la congestión derecha. Los anticoagulantes orales están indicados en etiologías primarias y tromboembólicas.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 26."
+    },
+    {
+        id: 13,
+        question: "¿A partir de qué porcentaje límite de hematocrito se debe considerar realizar terapia de flebotomía paliativa local?",
+        options: ["> 55 %", "> 60 %", "> 65 %", "> 70 %"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, la eritropoyesis hipóxica causa aumento de viscosidad hemática extrema agravando el trabajo de bomba, pero el drenaje venoso rutinario eleva el riesgo isquémico y solo se justifica bajo cortes estrictos.<br><br>Perla ENARM: \"La flebotomia debe ser restringida al alivio temporal de los síntomas de hiperviscosidad cuando el hematócrito sea mayor a 65% a pesar de tratamiento óptimo\".<br><br>Análisis de Distractores: Valores de 55 o 60 % son tolerados como adaptación fisiológica poliglobúlica secundaria a la hipoxemia, sin requerir drenaje invasivo.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 28."
+    },
+    {
+        id: 14,
+        question: "¿Qué procedimiento determina rigurosamente la indicación terapéutica inicial con bloqueadores de los canales de calcio?",
+        options: ["Excursión sistólica del anillo tricuspídeo", "Fracción de expulsión del ventrículo derecho", "Prueba de vasorreactividad pulmonar positiva", "Ecocardiograma bidimensional de reposo"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, los pacientes con patología vascular idiopática precisan exposición a óxido nítrico invasivo para demostrar dilatación capilar aguda rescatable y evitar respuestas fatales.<br><br>Perla ENARM: \"La administración de medicamentos bloqueadores de los canales del calcio depende de la respuesta positiva a la prueba de vasoreactividad vascular pulmonar\".<br><br>Análisis de Distractores: La medición contráctil tricuspídea, fracción de expulsión o el tamizaje ecocardiográfico definen probabilidad o daño anatómico, pero no predicen en tiempo real el comportamiento endotelial a fármacos sistémicos.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 24."
+    },
+    {
+        id: 15,
+        question: "¿Cuál límite inferior de la excursión sistólica del anillo tricuspídeo se considera ecocardiográficamente como factor protector independiente?",
+        options: ["> 10 mm", "> 15 mm", "> 18 mm", "> 25 mm"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, la evaluación del movimiento longitudinal sistólico de la pared libre comprueba una adecuada reserva inotrópica ventricular frente al aumento de la resistencia pulmonar.<br><br>Perla ENARM: \"La función sistólica normal del ventrículo derecho determinada mediante TAPSE >18 mm como factor protector, HR 0.56\".<br><br>Análisis de Distractores: Un valor mayor a 10 o 15 mm se encuentra por debajo del corte de normalidad normativa. 25 mm es función conservada amplia, pero el umbral mínimo validado es mayor a 18 mm.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 30."
+    },
+    {
+        id: 16,
+        question: "¿Cuál hallazgo electrolítico agudo categoriza al paciente como alto riesgo y obliga a su referencia de segundo a tercer nivel de atención?",
+        options: ["Potasio < 3.5 mEq/L", "Sodio < 136 mEq/L", "Cloro > 145 mEq/L", "Calcio < 8.5 mg/dL"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, la disfunción neurohumoral progresiva diluye los líquidos vasculares, reflejando el agotamiento severo del corazón y el inicio inminente de inestabilidad hemodinámica letal.<br><br>Perla ENARM: \"Si el paciente hospitalizado en segundo nivel con diagnóstico de CP padece... hiponatremia (sodio menor a 136 mEq/L) o hipotensión se considera de alto riesgo y debe ser referido a tercer nivel\".<br><br>Análisis de Distractores: Las fluctuaciones de potasio, cloro y calcio son alteraciones metabólicas manejables o atribuibles a terapia farmacológica y no configuran un predictor directo validado de mortalidad en esta patología.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 31."
+    },
+    {
+        id: 17,
+        question: "¿Cuál diámetro basal de la rama pulmonar derecha descendente en una placa torácica simple sugiere radiológicamente aumento de las resistencias capilares?",
+        options: ["> 10 mm", "> 12 mm", "> 14 mm", "> 16 mm"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, el aumento en la tensión intraluminal genera un ensanchamiento vascular crónico en arterias centrales, provocando una silueta hiliar prominente.<br><br>Perla ENARM: \"El diámetro de la rama descendente de la arteria pulmonar derecha mayor de 16 mm o mayor de 18 mm en la rama izquierda en la radiografía de tórax sugiere hipertensión pulmonar\".<br><br>Análisis de Distractores: Los diámetros de 10, 12 o 14 milímetros se consideran dentro de rangos paramétricos normales sin dilatación estructural vascular compensatoria.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 18."
+    },
+    {
+        id: 18,
+        question: "¿En qué grupo etiológico internacional se clasifican los trastornos de hipoventilación alveolar y síndromes de apnea obstructiva del sueño?",
+        options: ["Grupo 1", "Grupo 2", "Grupo 3", "Grupo 4"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, los desórdenes que generan desaturación diurna o nocturna alteran mecánicamente las presiones a través de hipoxia constante compartiendo origen fisiopatológico con otras enfermedades parenquimatosas.<br><br>Perla ENARM: \"Grupo 3. Hipertensión pulmonar secundaria a enfermedad pulmonar y/o hipoxia... 3.4 Trastornos respiratorios del sueño\".<br><br>Análisis de Distractores: El Grupo 1 es hipertensión arterial aislada, el Grupo 2 corresponde a disfunción cardiaca izquierda y el Grupo 4 pertenece exclusivamente a obstrucciones trombóticas crónicas grandes.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Anexos (Cuadro 2), Página 38."
+    },
+    {
+        id: 19,
+        question: "¿Cuál es el estudio de imagen específico superior recomendado para descartar hipertensión de origen tromboembólico crónico por su alta sensibilidad?",
+        options: ["Gammagrama pulmonar ventilatorio perfusorio", "Tomografía computada de alta resolución", "Resonancia magnética nuclear", "Ecocardiograma transtorácico bidimensional"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, a nivel capilar y microvascular obstructivo antiguo, los métodos isotópicos sobrepasan a los contrastes convencionales logrando sensibilidades de hasta el 100%.<br><br>Perla ENARM: \"El gammagrama pulmonar ventilatorio/perfusorio (V/Q) puede ser realizado en enfermos con HP para buscar hipertensión pulmonar tromboembólica crónica, debido a su alta sensibilidad comparado con la angiotomografía\".<br><br>Análisis de Distractores: La tomografía de alta resolución detalla el parénquima y fibrosis. La resonancia valora tamaño ventricular. El ecocardiograma mide presiones secundarias pero no define la oclusión lobar isquémica.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 20."
+    },
+    {
+        id: 20,
+        question: "¿Cuál cifra de tensión arterial sistólica aguda advierte inestabilidad de bomba ventricular derecha y pronostica alto grado de letalidad hospitalaria?",
+        options: ["< 90 mmHg", "< 100 mmHg", "< 110 mmHg", "< 120 mmHg"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, la hipotensión sintomática resulta de una reducción abrupta de precarga al ventrículo izquierdo por falla catastrófica de salida pulmonar.<br><br>Perla ENARM: \"Los predictores de mortalidad hospitalaria en pacientes con HAP incluyen:... Presión arterial sistólica menor a 100 mmHg, OR 4.32\".<br><br>Análisis de Distractores: Cifras de 110 o 120 mmHg indican perfusión tisular conservada. El umbral clínico establecido en la guía que detona el protocolo de referencia obligatoria y mal pronóstico es menor de 100 mmHg.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 30."
+    },
+    {
+        id: 21,
+        question: "¿Cuál es la indicación de realizar polisomnografía en el abordaje del paciente con sospecha de Cor Pulmonale Crónico?",
+        options: ["Síndrome de apnea obstructiva del sueño", "Fibrosis pulmonar idiopática", "Enfermedad pulmonar venooclusiva", "Hipertensión portal asociada"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, los trastornos respiratorios del sueño alteran significativamente las presiones pulmonares debido a la hipoxia e hipercapnia intermitentes, por lo que su documentación objetiva es imperativa.<br><br>Perla ENARM: \"Se recomienda la realización de polisomnografía en sujetos con sospecha de síndrome de apnea obstructiva de sueño o síndrome de hipoventilación-obesidad\".<br><br>Análisis de Distractores: La fibrosis pulmonar requiere tomografía de alta resolución y pruebas de función pulmonar. La enfermedad venooclusiva y la patología portal son causas vasculares primarias (Grupo 1) cuyo tamizaje no se fundamenta en el análisis de las fases del sueño.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 19."
+    },
+    {
+        id: 22,
+        question: "¿Qué medicamento es considerado de primera elección para realizar la prueba de vasorreactividad pulmonar en el cateterismo derecho?",
+        options: ["Epoprostenol intravenoso", "Adenosina intravenosa", "Óxido nítrico inhalado", "Iloprost inhalado"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, la evaluación aguda del tono vascular requiere un vasodilatador de acción ultracorta y administración alveolar directa para minimizar los efectos hipotensores sistémicos durante la monitorización invasiva.<br><br>Perla ENARM: \"El óxido nítrico es el fármaco de elección para la prueba de vasorreactividad pulmonar, a una dosis de 10 a 20 partes por millón\".<br><br>Análisis de Distractores: El epoprostenol y la adenosina intravenosa son alternativas validadas de segunda línea. El iloprost inhalado se considera la tercera opción de reserva normativa para realizar la prueba.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 21."
+    },
+    {
+        id: 23,
+        question: "¿Cuál es el valor hemodinámico necesario durante la prueba de vasorreactividad para considerarla formalmente como una respuesta positiva?",
+        options: ["Reducción absoluta menor a 25 mmHg", "Reducción ≥ 10 mmHg y valor absoluto $\\leq$ 40 mmHg", "Descenso del 20 % de la presión basal", "Normalización de las resistencias vasculares"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, la respuesta vasomotora favorable exige una caída cuantificable y un tope numérico seguro para garantizar que el paciente responderá con éxito a la terapia oral a largo plazo.<br><br>Perla ENARM: \"Una respuesta positiva a la prueba de vaso-reactividad pulmonar se define como la reducción de más de 10 mmHg en la PMAP y alcanzar un valor absoluto ≤ 40 mmHg\".<br><br>Análisis de Distractores: Una reducción porcentual (20 %) o cualitativa de resistencias no está estandarizada por guías internacionales como umbral. Una presión final menor a 25 mmHg es ideal, pero el corte diagnóstico validado para respuesta terapéutica marca $\\leq$ 40 mmHg.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 21."
+    },
+    {
+        id: 24,
+        question: "¿Cuántas horas al día como mínimo debe prescribirse el oxígeno suplementario continuo para asegurar la disminución de la mortalidad?",
+        options: ["$\\geq$ 8 horas al día", "$\\geq$ 10 horas al día", "$\\geq$ 12 horas al día", "$\\geq$ 15 horas al día"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, la inhibición efectiva del reflejo de vasoconstricción pulmonar hipóxica requiere exposición sostenida, demostrando impacto real sobre el perfil hemodinámico del ventrículo derecho solo si se supera este umbral temporal.<br><br>Perla ENARM: \"La terapia continua con oxígeno durante mas de 15 horas al día, en pacientes con enfermedad pulmonar obstructiva cronica e hipoxemia ha demostrado disminuir la mortalidad\".<br><br>Análisis de Distractores: Suplementos intermitentes de 8, 10 o 12 horas no logran prevenir la hipertensión reactiva durante los periodos sin soporte y fallan en modificar el pronóstico letal de la enfermedad.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 24."
+    },
+    {
+        id: 25,
+        question: "En el cálculo de la presión auricular derecha por ecocardiografía, ¿qué presión se estima directamente si la vena cava inferior mide más de 21 mm y colapsa menos del 50 %?",
+        options: ["3 mmHg", "8 mmHg", "15 mmHg", "25 mmHg"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, la dilatación y rigidez respiratoria de los grandes vasos de capacitancia se traduce mecánicamente en estasis y pérdida de la compliance de llenado de la cámara derecha.<br><br>Perla ENARM: \"Para estimar la presión auricular derecha, se considera: VCI $>$ 21 mm y colapso $<$ 50 % = 15 (10-20) mm Hg\".<br><br>Análisis de Distractores: Una presión de 3 mmHg corresponde a una vena cava $\\leq$ 21 mm con un colapso adecuado $>$ 50 % (normalidad). Los valores de 8 o 25 mmHg no son las constantes matemáticas fijas que la ecuación simplificada de Bernoulli utiliza en este protocolo ecográfico.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 20."
+    },
+    {
+        id: 26,
+        question: "¿Qué terapia quirúrgica de elección se recomienda considerar rigurosamente para los pacientes diagnosticados con patología del Grupo 4?",
+        options: ["Trasplante pulmonar bilateral", "Cirugía de reducción de volumen", "Tromboendarterectomía", "Valvuloplastia tricuspídea"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, la oclusión crónica y organizada del lecho vascular por trombos fibróticos representa un impedimento mecánico corregible quirúrgicamente con fines curativos en centros de alta experiencia.<br><br>Perla ENARM: \"Se recomienda que los pacientes con CP secundario a hipertensión pulmonar tromboembólica crónica sean evaluados para tromboendarterectomía\".<br><br>Análisis de Distractores: El trasplante se reserva para enfermedad parenquimatosa terminal o idiopática sin opciones. La reducción de volumen pulmonar aplica para enfisema grave. La valvuloplastia no resuelve el problema obstructivo primario capilar.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 27."
+    },
+    {
+        id: 27,
+        question: "¿A partir de qué corte en la espirometría del volumen espiratorio forzado (FEV1) se estima una prevalencia de hipertrofia ventricular derecha hasta en el 70 % de los pacientes?",
+        options: ["< 1.5 L", "< 1.2 L", "< 1.0 L", "< 0.6 L"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, existe una correlación inversa directa entre la gravedad del colapso bronquial espiratorio, la magnitud de la hipoxemia/hipercapnia y la prevalencia del remodelado anatómico miocárdico.<br><br>Perla ENARM: \"La hipertrofia ventricular derecha se encuentra presente en 40% de los pacientes con FEV1 menor a 1.0 L y 70% de los pacientes con un FEV1 menor a 0.6 L\".<br><br>Análisis de Distractores: Valores de 1.2 L o 1.5 L marcan estadios de menor gravedad obstructiva y menor desarrollo de sobrecarga ventricular. Un FEV1 menor a 1.0 L se asocia apenas a un 40 % de hipertrofia.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 14."
+    },
+    {
+        id: 28,
+        question: "En un paciente con Cor Pulmonale por patología respiratoria primaria, ¿qué fármaco cardiovascular profiláctico de uso rutinario en atención primaria está contraindicado sin otra indicación concurrente?",
+        options: ["Inhibidores de la enzima convertidora", "Diuréticos de asa", "Antagonistas de aldosterona", "Anticoagulantes orales"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, estos medicamentos carecen de eficacia para reducir la poscarga derecha asilada y ocasionan hipotensión sistémica peligrosa al mermar mecanismos compensatorios de perfusión.<br><br>Perla ENARM: \"En el tratamiento del CP por hipertensión pulmonar (Grupo 3, 4 y 5) no se recomienda el uso de medicamentos: ... Inhibidores de la enzima convertidora de angiotensina (IECA)\".<br><br>Análisis de Distractores: Diuréticos de asa y antagonistas de aldosterona son las terapias pilar para descongestión. Los anticoagulantes orales no tienen la misma prohibición absoluta general y se utilizan rutinariamente en etiologías selectas (Grupos 1 y 4).",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 26."
+    },
+    {
+        id: 29,
+        question: "Durante la ejecución de una flebotomía paliativa en Cor Pulmonale, ¿qué solución cristaloide indica la directriz para el reemplazo inmediato de volumen?",
+        options: ["Albúmina humana", "Solución salina o Hartmann", "Paquete globular lavado", "Solución glucosada al 5 %"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, el objetivo de la sangría es reducir puramente la masa eritrocitaria tóxica (viscosidad) manteniendo el volumen intravascular circulante íntegro para evitar choque por precarga insuficiente.<br><br>Perla ENARM: \"No se debe de extraer mas de una unidad de sangre y reemplazar el volúmen con solucion salina o Hartmann\".<br><br>Análisis de Distractores: La albúmina no justifica su costo-beneficio para reposición temporal por hiperviscosidad. El paquete globular es contraproducente (empeora poliglobulia). La glucosada no expande el espacio vascular eficientemente (se fuga a intracelular).",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 28."
+    },
+    {
+        id: 30,
+        question: "¿Cuál es la única excepción clínica autorizada por la guía para permitir el uso crónico de digoxina en un paciente con insuficiencia derecha pura?",
+        options: ["Fibrilación auricular concomitante", "Fracción de expulsión disminuida", "Insuficiencia renal crónica", "Hipertensión arterial sistémica"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, este fármaco falla en mejorar la contractilidad ventricular derecha frente al aumento de resistencias, pero conserva su indicación electrofisiológica para abatir la respuesta ventricular rápida.<br><br>Perla ENARM: \"No se recomienda el uso de medicamentos: ... Digoxina (excepto para el tratamiento de la fibrilación auricular)\".<br><br>Análisis de Distractores: La reducción de la fracción de expulsión derecha no justifica un inotrópico de estrecho margen y nulo impacto validado en esta patología. La falla renal incrementa el riesgo de toxicidad letal de la misma digoxina.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 26."
+    },
+    {
+        id: 31,
+        question: "¿Qué complicación isquémica grave se incrementa significativamente al someter profilácticamente a un paciente a flebotomías?",
+        options: ["Infarto agudo de miocardio", "Eventos vasculares cerebrales", "Trombosis venosa profunda", "Necrosis mesentérica"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, retirar de forma repetida volumen sanguíneo puede propiciar estasis, alteraciones hemodinámicas y rebotes trombogénicos paradójicos en lechos distales de alta demanda.<br><br>Perla ENARM: \"La flebotomía incrementa el riesgo de eventos vasculares cerebrales\".<br><br>Análisis de Distractores: Infarto agudo y trombosis profunda son riesgos teóricos inherentes de hiperviscosidad, pero la literatura y la evidencia de la guía documentan puntualmente el daño cerebrovascular como efecto deletéreo de su uso sistemático.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 27."
+    },
+    {
+        id: 32,
+        question: "¿En qué periodo máximo se recomienda reevaluar el éxito clínico en un paciente con hipertensión pulmonar primaria al que se le prescribieron bloqueadores de los canales de calcio?",
+        options: ["1 a 2 meses", "3 a 4 meses", "6 a 8 meses", "10 a 12 meses"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, los pacientes respondedores inicialmente pueden perder tolerancia y experimentar deterioro rápido de clase funcional, ameritando transición oportuna a vasodilatadores complejos.<br><br>Perla ENARM: \"Se recomienda seguimiento y re-evaluación después de 3-4 meses de tratamiento con bloqueadores de los canales del calcio en este mismo grupo de pacientes\".<br><br>Análisis de Distractores: La evaluación a 1 mes es prematura. Un control dilatado a 6 o 12 meses incrementa catastróficamente la mortalidad secundaria a falla derecha asintomática temprana por pérdida de la acción del calcioantagonista.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 25."
+    },
+    {
+        id: 33,
+        question: "Además de la forma idiopática y tóxica, ¿en qué de etiología específica del Grupo 1 se recomienda formalmente el tratamiento universal con anticoagulantes orales?",
+        options: ["Hipertensión portal", "Infección por VIH", "Enfermedades del tejido conectivo", "Hipertensión arterial pulmonar hereditaria"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, se ha demostrado beneficio de supervivencia ante la prevalencia de trombosis in situ por disfunción endotelial en fenotipos primarios.<br><br>Perla ENARM: \"Se recomienda considerar el tratamiento con anticoagulantes orales en pacientes con HAP idiopática, HAP hereditaria, HAP debido a uso de anorexígenos y HP tromboembólica crónica\".<br><br>Análisis de Distractores: La enfermedad del tejido conectivo, la infección por VIH y la hipertensión portal (todas variantes secundarias del Grupo 1) no presentan evidencia contundente rutinaria que justifique los riesgos hemorrágicos gastrointestinales de los dicumarínicos.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 25."
+    },
+    {
+        id: 34,
+        question: "En la proyección lateral de la radiografía de tórax simple, ¿qué hallazgo anatómico se traduce clínicamente como hipertrofia franca del ventrículo derecho?",
+        options: ["Reducción del espacio aéreo retroesternal", "Aplanamiento de los hemidiafragmas", "Incremento del diámetro traqueal", "Obliteración del ángulo costofrénico"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, el crecimiento de la cámara ventricular presiona la silueta anterior del corazón hacia la caja torácica, borrando fisiológicamente el volumen alveolar de esta región anterior.<br><br>Perla ENARM: \"En la telerradiografía de tórax la presencia de un corazón globular con ápex elevado y la consecuente reducción del espacio aéreo retroesternal en la proyección lateral son signos de dilatación o hipertrofia ventricular derecha\".<br><br>Análisis de Distractores: El aplanamiento diafragmático es signo radiológico estricto de hiperinsuflación por EPOC, no de crecimiento cardiaco per se. La obliteración del ángulo indica derrame pleural.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 18."
+    },
+    {
+        id: 35,
+        question: "Utilizando los parámetros ecocardiográficos complementarios de tamizaje, ¿qué medida de área de la aurícula derecha clasifica como criterio predictivo de la patología?",
+        options: ["> 10 cm2", "> 14 cm2", "> 18 cm2", "> 25 cm2"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, la sobrecarga ventricular genera incompetencia valvular tricuspídea severa, que al impactar retrógradamente infla la cavidad auricular más allá de un umbral métrico específico y cuantificable.<br><br>Perla ENARM: \"Área de la aurícula derecha al final de la sístole $>$ 18 cm2\" (Signos ecocardiográficos de hipertensión pulmonar).<br><br>Análisis de Distractores: Las áreas de 10 o 14 cm2 se consideran adaptaciones toleradas con baja correlación aislada de hipertensión aguda. Mediciones $\geq$ 25 cm2 son extremas. El corte límite validado que asienta un factor de sospecha es mayor a 18 cm2.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Anexos (Cuadro 4), Página 41."
+    },
+    {
+        id: 36,
+        question: "¿Qué terapia combinada no farmacológica marca la evidencia de forma concomitante en pacientes con sobreposición de apnea del sueño y neumopatía obstructiva con hipoxemia?",
+        options: ["Oxígeno y presión positiva continua", "Oxígeno y ventilación de alta frecuencia", "Presión positiva continua y flebotomía", "Presión de soporte biliar y diuréticos"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, abatir la desaturación crónica nocturna (vía el soporte de O2) y evitar el colapso periódico de la vía aérea superior (vía presión mecánica) maximiza la prevención de la lesión ventricular derecha progresiva.<br><br>Perla ENARM: \"Se recomienda que los pacientes con CP e hipoxemia y sobreposición con SAOS, se traten con presión positiva continua de la vía aérea y oxígeno de forma concomitante\".<br><br>Análisis de Distractores: La flebotomía no ataca la fisiopatología respiratoria directa. La alta frecuencia se utiliza en pacientes neonatales o con daño agudo restrictivo severo tipo SDRA, no en clínicas de sueño ambulatorias.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 27."
+    },
+    {
+        id: 37,
+        question: "¿A partir de qué valor hemodinámico invasivo de presión media arterial se advierte un aumento independiente en la letalidad de un paciente con síndrome de sobreposición respiratoria?",
+        options: ["> 25 mmHg", "> 35 mmHg", "> 45 mmHg", "> 55 mmHg"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, superado un nivel límite crítico de impedancia, la pared del corazón derecho colapsa sistólicamente induciendo un estado bajo gasto incurable y refractario.<br><br>Perla ENARM: \"La PMAP mayor de 45 mmHg es un factor de riesgo independiente de mortalidad en pacientes con exacerbación de EPOC y SAOS\".<br><br>Análisis de Distractores: El valor de 25 mmHg sirve solo para definir diagnóstico inicial. Los 35 mmHg denotan progresión clínica, pero es al rebasar 45 mmHg que el riesgo estadístico de letalidad se dispara independiente a otras variables.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 29."
+    },
+    {
+        id: 38,
+        question: "¿Cuál es la indicación temporal estricta recomendada para el seguimiento clínico de ajuste y revisión funcional por el especialista en Neumología?",
+        options: ["Mensualmente", "Trimestralmente", "Semestralmente", "Anualmente"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, en etapas de control o de estabilización, las consultas especializadas persiguen equilibrar gases y síntomas evitando visitas injustificadas al hospital sin descuidar virajes en la sobrevida.<br><br>Perla ENARM: \"La valoración subsecuente por parte de Neumología debe realizarse semestralmente para ajuste de tratamiento\".<br><br>Análisis de Distractores: Un seguimiento mensual sobrecarga la disponibilidad del tercer nivel inútilmente en pacientes estables. El ecocardiograma de imagen y escrutinio morfológico es el que se programa formalmente de forma anual.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones, Página 28."
+    },
+    {
+        id: 39,
+        question: "Según la ecocardiografía del ventrículo izquierdo, ¿qué valor del índice de excentricidad corrobora el aplanamiento disfuncional del septum interventricular?",
+        options: ["> 0.8", "> 1.1", "> 1.5", "> 2.0"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, ante presiones desorbitadas del lado derecho, el tabique muscular pierde su convexidad y se abomba hacia el lado izquierdo, alterando la geometría de eyección y llenado.<br><br>Perla ENARM: \"Aplanamiento del septum interventricular. Índice de excentricidad VI $>$ 1.1\".<br><br>Análisis de Distractores: Valores menores a 1.0 demuestran una dominancia de presiones de cavidades izquierdas estables. Cifras superiores a 1.5 demuestran compresión, pero el corte oficial de estratificación paramétrica estandarizada exige cualquier índice mayor a 1.1.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Anexos (Cuadro 4), Página 41."
+    },
+    {
+        id: 40,
+        question: "Además de la rehabilitación y la oxigenoterapia, ¿qué otra intervención de tipo global profiláctica debe iniciarse como prescripción obligatoria en todos los pacientes de este rubro clínico?",
+        options: ["Terapia psicológica y consejería reproductiva", "Restricción hídrica menor a mil mililitros", "Profilaxis antibiótica trimestral obligatoria", "Anticoagulación terapéutica ambulatoria"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Cor Pulmonale Crónico, el impacto sobre la limitación funcional es devastador para la mente y el riesgo hemodinámico por los incrementos de volumen gestacionales dictamina evitar de forma absoluta los embarazos.<br><br>Perla ENARM: \"Iniciar a todo los pacientes con CP con medidas generales y no farmacológicas: Vacunación, Terapia psicológica, Consejería reproductiva, Corrección de anemia, Rehabilitación física y pulmonar\".<br><br>Análisis de Distractores: La restricción hídrica de 1,000 ml no se pauta ciegamente en toda la población, su indicación es de rescate. La profilaxis antibiótica genérica trimestral no tiene lugar ni evidencia en la guía. La anticoagulación no se da a etiologías respiratorias.",
+        source: "IMSS-036-08, Diagnóstico y tratamiento de Cor Pulmonale Crónico en el segundo y tercer nivel, 2017, Evidencias y Recomendaciones (Algoritmo 2), Página 44."
+    }
+
+
+
+
+
+
+
+
+
+
+
+        
+       ];
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('ExMI10LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('ExMI10Progress');
+                localStorage.removeItem('ExMI10LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-purple-500 shadow-md z-10 border-purple-500 dark:border-purple-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-fuchsia-500 to-purple-600 hover:from-purple-600 hover:to-fuchsia-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-purple-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-fuchsia-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "MEDICINA INTERNA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-purple-600 dark:text-slate-400 dark:hover:text-purple-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="login.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-purple-100 dark:border-purple-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-purple-50 has-[:checked]:border-purple-400 dark:has-[:checked]:bg-purple-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-purple-600 focus:ring-purple-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-purple-600 dark:hover:bg-purple-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-fuchsia-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('ExMI10Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('ExMI10LastQId', currentQuestionId);
+                else localStorage.removeItem('ExMI10LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('ExMI10Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-purple-500 to-fuchsia-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+
+
+
+    {
+        id: 1,
+        question: "¿Cuál es el tiempo mínimo de persistencia de las alteraciones estructurales o funcionales para establecer el diagnóstico de la enfermedad?",
+        options: ["1 mes", "3 meses", "6 meses", "12 meses"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica Temprana, se exige cronicidad confirmada para distinguir el cuadro de una lesión aguda reversible.<br><br>Perla ENARM: \"Presencia de marcadores de daño renal o disminución de la tasa de filtrado glomerular < 60 ml/min/1.73 m2 durante al menos 3 meses\".<br><br>Análisis de Distractores: 1 mes corresponde al intervalo para reevaluar algunas lesiones agudas e isquémicas. 6 y 12 meses retrasan de manera injustificada la estadificación clínica y el envío temprano a especialidad.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Anexos (Cuadro 2), p. 37."
+    },
+    {
+        id: 2,
+        question: "¿En qué edad inicia la búsqueda activa asintomática en pacientes con hipertensión arterial sistémica?",
+        options: ["≥ 30 años", "≥ 40 años", "≥ 50 años", "≥ 60 años"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica Temprana, el tamizaje poblacional abierto no es costo-efectivo, limitándose de manera estricta a los grupos demográficos de alta prevalencia.<br><br>Perla ENARM: \"En pacientes de más de 50 años con hipertensión o Diabetes se debe determinar la presencia de Enfermedad renal ya que resulta ser una intervención costo efectiva\".<br><br>Análisis de Distractores: 30 y 40 años generan sobrediagnóstico sin rentabilidad clínica demostrada, salvo en escenarios hereditarios. 60 años retrasa el diagnóstico preventivo primario de manera significativa.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Tamizaje, p. 17."
+    },
+    {
+        id: 3,
+        question: "¿Qué ecuación matemática tiene mayor precisión comprobada para estimar la filtración en pacientes mayores de 60 años?",
+        options: ["CKD-EPI", "MDRD", "Cockcroft-Gault", "Schwartz"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica Temprana, el rendimiento de las fórmulas varía intrínsecamente según la masa muscular residual y la edad metabólica del paciente.<br><br>Perla ENARM: \"Se recomienda utilizar la ecuación MDRD para el cálculo de la tasa de filtrado glomerular en pacientes adultos con diabetes. Esta ecuación tiene una mayor precisión en estadios avanzados y en pacientes > 60 años\".<br><br>Análisis de Distractores: CKD-EPI es la ecuación idónea para adultos jóvenes. Cockcroft-Gault predice de forma eficaz la mortalidad para ajustes farmacológicos pero falla en estadificación. Schwartz es de uso exclusivo en pediatría.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Diagnóstico, p. 20."
+    },
+    {
+        id: 4,
+        question: "¿Qué fórmula predictiva reduce el sesgo diagnóstico al estadificar la filtración de pacientes menores de 60 años?",
+        options: ["MDRD", "Cockcroft-Gault", "Jelliffe", "CKD-EPI"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica Temprana, el adulto joven requiere de algoritmos de corrección matemática distintos debido a que su reserva funcional y masa magra no están abatidas.<br><br>Perla ENARM: \"En pacientes jóvenes, la precisión fue mayor con la ecuación CKD-EPI (18 a 39 años: 63.7%, 40 a 49 años: 72.8%)\".<br><br>Análisis de Distractores: MDRD subestima significativamente el filtrado en etapas tempranas juveniles. Cockcroft-Gault sobreestima al no emplear variables de superficie corporal ajustada al milímetro. Jelliffe es obsoleta.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Diagnóstico, p. 20."
+    },
+    {
+        id: 5,
+        question: "¿Cuál es el estudio de laboratorio inicial preferido para la cuantificación clínica de la proteinuria?",
+        options: ["Tira reactiva convencional", "Recolección orina 24 horas", "Cociente albúmina/creatinina", "Electroforesis de proteínas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica Temprana, el cociente aislado matutino cancela los enormes sesgos de recolección preanalítica que existen con el método ambulatorio volumétrico.<br><br>Perla ENARM: \"Se recomienda utilizar la relación albúmina/creatinina para la evaluación inicial de proteinuria\".<br><br>Análisis de Distractores: La recolección de 24 horas (opción B) es compleja y ha dejado de ser el estándar primario de tamizaje. La tira reactiva (opción A) es meramente cualitativa. La electroforesis (opción D) pesquisa cadenas monoclonales mielomatosas.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Diagnóstico, p. 22."
+    },
+    {
+        id: 6,
+        question: "¿Cuál de las siguientes comorbilidades se clasifica patogénicamente como un factor de riesgo \"iniciador\" directo del daño renal?",
+        options: ["Obesidad", "Tabaquismo", "Diabetes Mellitus", "Hiperuricemia"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica Temprana, existen vulnerabilidades somáticas diversas, pero solo contadas patologías destruyen directamente el ovillo capilar como primer golpe agresor.<br><br>Perla ENARM: \"Factores iniciadores: inician directamente el daño renal... Diabetes, Hipertensión arterial, Enfermedades autoinmunes\".<br><br>Análisis de Distractores: La obesidad y el tabaquismo fungen como aceleradores del declive (factores perpetuadores/progresión). La hiperuricemia daña el endotelio vascular acelerando la esclerosis, pero no es el \"iniciador\" canónico.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Anexos (Cuadro 1), p. 37."
+    },
+    {
+        id: 7,
+        question: "¿Qué combinación farmacológica antihipertensiva está formalmente contraindicada por ausencia de beneficio y mayor toxicidad?",
+        options: ["Tiazida y betabloqueador", "Calcioantagonista y tiazida", "IECA y ARA-II", "IECA y calcioantagonista"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica Temprana, el bloqueo masivo del eje renina-angiotensina no suma efectos neurohormonales protectores, pero exacerba letalidad por azoemia e hipercalemia brusca.<br><br>Perla ENARM: \"No se recomienda combinar IECAs con bloqueadores del receptor de angiotensina ya que no se han demostrado beneficios al combinarlos para disminuir el riesgo de daño renal\".<br><br>Análisis de Distractores: Tiazidas, calcioantagonistas y betabloqueadores son agentes antihipertensivos aditivos y validados de segunda o tercera línea indispensables para estados de presión arterial resistente.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Tratamiento, p. 25."
+    },
+    {
+        id: 8,
+        question: "¿Qué grupo de hipoglucemiantes reduce de forma directa hasta un 45 % el riesgo de progresión del daño crónico?",
+        options: ["Sulfonilureas", "Inhibidores SGLT-2", "Agonistas GLP-1", "Inhibidores DPP-4"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica Temprana, esta familia modula la hemodinámica de la arteriola aferente revirtiendo la hiperfiltración nefrotóxica independientemente de la carga glucémica basal.<br><br>Perla ENARM: \"Los inhibidores SGLT-2 redujeron el riesgo de progresión de enfermedad renal en un 45%. El tratamiento con inhibidores SGLT-2 puede reducir el riesgo de progresión\".<br><br>Análisis de Distractores: Las sulfonilureas (opción A) carecen de perfil nefroprotector. Agonistas GLP-1 (opción C) mejoran el perfil aterosclerótico sistémico, pero no detienen la pérdida del filtrado per se. Inhibidores DPP-4 (opción D) resultan neutrales funcionalmente.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Tratamiento, p. 24."
+    },
+    {
+        id: 9,
+        question: "¿Cuál es la ingesta proteica diaria recomendada en pacientes con filtrado glomerular < 60 ml/min/1.73 m² sin terapia dialítica?",
+        options: ["0.4 g/kg", "0.6 g/kg", "0.8 g/kg", "1.2 g/kg"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica Temprana, un riñón lastimado fracasa excretando sobrecargas nitrogenadas, pero empujar al paciente hacia la subnutrición incrementa severamente la mortalidad precoz.<br><br>Perla ENARM: \"En pacientes con una tasa de filtrado glomerular < 60 ml/min/1.73 m2 y que no se encuentren en diálisis se sugiere una ingesta diaria de proteínas de 0.8 g/kg\".<br><br>Análisis de Distractores: Dosis de 1.2 g/kg (opción D) exacerban la hiperfiltración compensatoria destructiva. Bajar el consumo a 0.4 o 0.6 g/kg (opciones A y B) sin administración estricta de cetoanálogos dispara sarcopenia.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Tratamiento, p. 33."
+    },
+    {
+        id: 10,
+        question: "¿Cuál es el límite estricto de consumo diario de sodio sugerido para favorecer el control hemodinámico y presor?",
+        options: ["< 50 mEq", "< 100 mEq", "< 150 mEq", "< 200 mEq"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica Temprana, frenar la hipervolemia retarda la hipertensión capilar intraglomerular, coadyuvando contundentemente al efecto terapéutico de los fármacos.<br><br>Perla ENARM: \"Se sugiere una ingesta de < 100 mEq/día de sodio para que la restricción pueda ser sostenible y se pueda mantener a lo largo del tiempo\".<br><br>Análisis de Distractores: Intentar un descenso < 50 mEq induce rápido fracaso dietético por palatabilidad nula y activa sistemas presores. Niveles > 100 mEq bloquean la cascada antiproteinúrica de los ARA-II.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Tratamiento, p. 31."
+    },
+    {
+        id: 11,
+        question: "¿Cuál es el manejo farmacológico obligado para reducir desenlaces isquémicos en pacientes mayores de 50 años con esta alteración?",
+        options: ["Fibratos", "Estatinas", "Resinas biliares", "Ezetimiba"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica Temprana, el ambiente urémico con microinflamación sistémica equivale biológicamente a un riesgo cardiovascular aterogénico máximo.<br><br>Perla ENARM: \"Se recomienda iniciar tratamiento con estatinas en pacientes con una tasa de filtración glomerular < 60 ml/min/1.73 m2 para disminuir la presentación de eventos cardiovasculares\".<br><br>Análisis de Distractores: Ezetimiba y resinas no disminuyen morbilidad miocárdica utilizándose aisladamente. Fibratos multiplican el riesgo tóxico (rabdomiólisis) en ambiente de filtrado pobre sin comprobar rescate vital solitario.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Tratamiento, p. 28."
+    },
+    {
+        id: 12,
+        question: "¿A partir de qué cifra de triglicéridos está justificado el uso de fibratos asumiendo el riesgo potencial de miopatía urémica?",
+        options: ["≥ 200 mg/dl", "≥ 400 mg/dl", "≥ 500 mg/dl", "≥ 886 mg/dl"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica Temprana, la inhibición ppar-alfa acarrea una altísima letalidad muscular a menos que el riesgo de pancreatitis isquémica fulminante exceda dicho costo tóxico.<br><br>Perla ENARM: \"No se sugiere utilizar fibratos, ya que pueden producir una mayor cantidad de eventos adversos... Únicamente valorar su uso en pacientes con triglicéridos > 10 mmol/L (886 mg/dL)\".<br><br>Análisis de Distractores: Cifras de 200, 400 o 500 mg/dl obligan a intensificar dietoterapia y estatinas como escalón preliminar ante los efectos secundarios cruzados severos que imponen los fibratos en pacientes nefrópatas.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Tratamiento, p. 28."
+    },
+    {
+        id: 13,
+        question: "¿Cuál es el umbral cuantitativo de hemoglobina sérica que define la anemia de causa renal en pacientes masculinos?",
+        options: ["< 11.0 g/dl", "< 12.0 g/dl", "< 13.0 g/dl", "< 14.0 g/dl"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica Temprana, el parénquima fibrosado merma críticamente la cascada productora de eritropoyetina limitando la maduración medular e impidiendo la respiración tisular.<br><br>Perla ENARM: \"Se debe diagnosticar anemia en adultos y niños > 15 años de edad con ERC cuando la concentración de hemoglobina sea < 13 g/dL en hombres y < 12 g/dL en mujeres\".<br><br>Análisis de Distractores: 11.0 g/dl advierte el techo terapéutico tope tras tratamiento sintético. 12.0 g/dl delimita el percentil inferior estricto exclusivamente para la población femenina.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Tratamiento, p. 29."
+    },
+    {
+        id: 14,
+        question: "¿Cuál es la vía de administración preferida para la suplementación inicial de hierro considerando su eficacia pre-diálisis?",
+        options: ["Vía oral", "Vía intravenosa", "Vía subcutánea", "Vía intramuscular"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica Temprana, el factor hepcidina derivado de inflamación urémica anula virtualmente el canal de absorción digestivo del hierro.<br><br>Perla ENARM: \"Se debe preferir el tratamiento con hierro IV en los pacientes con ERC que requieran de suplementación debido a que presenta una menor cantidad de eventos adversos gastrointestinales y llenado rápido\".<br><br>Análisis de Distractores: El hierro oral topa con un muro absortivo de hipoacidez. Las inyecciones subcutáneas e intramusculares originan dolor extremo, tatuaje tisular permanente e irregularidad biodisponible.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Tratamiento, p. 29."
+    },
+    {
+        id: 15,
+        question: "¿Qué vía de administración exige menor dosis de estimulantes de eritropoyesis logrando mejor estabilidad ambulatoria?",
+        options: ["Vía subcutánea", "Vía intravenosa", "Vía intramuscular", "Vía intralesional"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica Temprana, el panículo adiposo retarda estratégicamente la fuga y el aclaramiento de la hormona clonada maximizando la rampa receptorial.<br><br>Perla ENARM: \"Se recomienda la administración subcutánea de eritropoyetina porque presenta una menor cantidad de eventos adversos y se requiere una dosis menor para alcanzar los niveles deseados\".<br><br>Análisis de Distractores: Vía intravenosa demanda consumir un sobreprecio del 25 % y somete al paciente a fluctuaciones, utilizándose únicamente por conveniencia en terapia trisemanaria de hemodiálisis con catéter funcional.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Tratamiento, p. 30."
+    },
+    {
+        id: 16,
+        question: "¿Cuál es la cifra máxima estricta de hemoglobina que no debe superarse con el uso de estimulantes de eritropoyesis sintéticos?",
+        options: ["10.5 g/dl", "11.5 g/dl", "12.5 g/dl", "13.5 g/dl"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica Temprana, presionar el torrente sanguíneo crónicamente anémico hacia concentraciones normales de la población sana induce hiperviscosidad y catástrofe arterial súbita.<br><br>Perla ENARM: \"Se sugiere que los ESA no se utilicen para mantener la concentración de Hb por arriba de 11.5 g/dL en pacientes adultos con ERC por los riesgos que esto conlleva\".<br><br>Análisis de Distractores: < 10.5 g/dl es insuficiente para revertir isquemia celular e hipertrofia cardíaca adaptativa. Forzar registros hacia 12.5 o 13.5 g/dl precipita de forma aguda infartos cerebrales masivos.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Tratamiento, p. 30."
+    },
+    {
+        id: 17,
+        question: "¿Qué umbral cuantitativo de filtrado glomerular se considera criterio absoluto para derivación urgente a tercer nivel?",
+        options: ["< 60 ml/min", "< 45 ml/min", "< 30 ml/min", "< 15 ml/min"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica Temprana, referir antes del colapso inminente faculta al cirujano vascular a madurar anastomosis periféricas y brinda soporte psicológico pre-dialítico valioso.<br><br>Perla ENARM: \"Se sugiere referir con el nefrólogo a todos aquellos pacientes con una tasa de filtrado glomerular < 30 ml/min/1.73 m2\".<br><br>Análisis de Distractores: Tasas de < 60 o < 45 ml/min exigen intervención conservadora interdepartamental. Una derivación extremadamente tardía con un filtrado < 15 ml/min asocia inserción desesperada de catéteres y septicemias.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Criterios de Referencia, p. 33."
+    },
+    {
+        id: 18,
+        question: "¿Qué alteración electrolítica persistente asintomática constituye un criterio estricto de derivación al especialista?",
+        options: ["Sodio < 130 mEq/L", "Potasio > 5.5 mEq/L", "Calcio > 10.5 mEq/L", "Magnesio > 2.5 mEq/L"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica Temprana, la claudicación oculta de los túbulos distales para eliminar cargas de potasio enmascara un desenlace arrítmico fulminante inminente y obliga ajuste dialítico.<br><br>Perla ENARM: \"Se sugiere referir a pacientes con alteraciones persistentes en el potasio (> 5.5 mEq/L sin tratamiento diurético)\".<br><br>Análisis de Distractores: Un déficit de sodio es frecuente por disolución y se revierte manipulando asa de Henle. Hipercalcemia o hipermagnesemia no disparan un traslado solitario de emergencia en ausencia de sintomatología urológica.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Criterios de Referencia, p. 33."
+    },
+    {
+        id: 19,
+        question: "¿Cuál es el hallazgo de imagen en ultrasonido que indica consistentemente daño cortical terminal irreversible en el órgano?",
+        options: ["Longitud renal < 10 cm", "Aumento de vascularidad", "Dilatación pielocalicial", "Diferenciación corticomedular nítida"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica Temprana, la fibrosis tisular y la sustitución nefronal por colágena producen atrofia de todo el eje vertical rebasando las posibilidades de rescate clínico.<br><br>Perla ENARM: \"El incremento en la ecogenicidad y en la longitud renal < 10 cm casi siempre indica enfermedad no tratable (irreversible)\".<br><br>Análisis de Distractores: Una vía pielocalicial francamente dilatada es la estampa típica de uropatía obstructiva aguda rescatable. Diferenciación visual adecuada o hiperflujo vascular marcan vitalidad orgánica o fenómenos parenquimatosos reversibles.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Diagnóstico, p. 23."
+    },
+    {
+        id: 20,
+        question: "¿Cuál es la cifra metabólica objetivo de bicarbonato sérico requerida para evitar la esclerosis túbulo-intersticial de forma acelerada?",
+        options: ["> 16 mmol/L", "> 18 mmol/L", "> 20 mmol/L", "> 22 mmol/L"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica Temprana, la perpetuación ácida sanguínea incrementa las vías celulares amoniogénicas locales estimulando mediadores colagénicos y desgastando agresivamente el depósito cálcico óseo.<br><br>Perla ENARM: \"Evaluación de complicaciones... Acidosis: meta bicarbonato > 22 mmol/L\".<br><br>Análisis de Distractores: Cifras de 16, 18 o 20 mmol/L se categorizan fisiopatológicamente como acidosis latente crónica sin reponer; esta brecha química perpetúa la degeneración fibroblástica y aboca a la insuficiencia total.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Anexos (Algoritmo 2), p. 36."
+    },
+    {
+        id: 21,
+        question: "¿En qué categoría pronóstica y funcional se clasifica a un paciente con una tasa de filtrado glomerular documentada de 35 ml/min/1.73 m²?",
+        options: ["Categoría G2", "Categoría G3a", "Categoría G3b", "Categoría G4"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica, la estadificación actual divide el estadio 3 en dos subgrupos por su diferencia drástica en riesgo cardiovascular y progresión a diálisis, marcando el punto de quiebre en 45 ml/min.<br><br>Perla ENARM: \"G3b: Descenso moderado a severo de la tasa de filtrado glomerular (30-44 ml/min/1.73 m²)\".<br><br>Análisis de Distractores: La categoría G2 abarca de 60 a 89 ml/min. La categoría G3a corresponde a 45 a 59 ml/min. La categoría G4 (fase prediálisis franca) es de 15 a 29 ml/min.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Anexos (Cuadro 3), p. 38."
+    },
+    {
+        id: 22,
+        question: "¿Qué término categoriza a una excreción de albúmina urinaria confirmada mediante cociente de 150 mg/g?",
+        options: ["Categoría A1", "Categoría A2", "Categoría A3", "Categoría A4"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica, estratificar el daño endotelial es fundamental, ya que cualquier nivel superior a 30 mg/g marca el inicio de medidas antiproteinúricas estrictas.<br><br>Perla ENARM: \"Categoría A2: Incremento moderadamente incrementado con rango de 30 a 300 mg/g\".<br><br>Análisis de Distractores: La categoría A1 es normal o leve (< 30 mg/g). La categoría A3 es severamente incrementada (> 300 mg/g). La categoría A4 no existe en la estadificación universal KDIGO.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Anexos (Cuadro 4), p. 38."
+    },
+    {
+        id: 23,
+        question: "¿Cuál es la caída anual de la tasa de filtrado glomerular que define una progresión acelerada y obliga a realizar una ecografía renal?",
+        options: ["> 1 ml/min/1.73 m²", "> 3 ml/min/1.73 m²", "> 5 ml/min/1.73 m²", "> 10 ml/min/1.73 m²"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica, un riñón con declive funcional fisiológico pierde aproximadamente 1 ml/min anual después de los 40 años. Una pérdida veloz exige descartar uropatía obstructiva o daño agudo agregado.<br><br>Perla ENARM: \"Se debe realizar un ultrasonido renal a todas las personas con progresión acelerada de la enfermedad renal crónica (disminución del filtrado glomerular > 5 ml/min/1.73 m² en un año)\".<br><br>Análisis de Distractores: Una caída de 1 a 3 ml/min se considera progresión lenta o esperada según la comorbilidad. La cifra de 10 ml/min supera el umbral, pero el punto de corte definitorio normado es 5 ml/min.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Diagnóstico (Imagen), p. 23."
+    },
+    {
+        id: 24,
+        question: "¿Cuál es el requerimiento calórico basal mínimo recomendado en la dieta para prevenir catabolismo en un paciente adulto sin obesidad severa?",
+        options: ["> 20 kcal/kg/día", "> 25 kcal/kg/día", "> 30 kcal/kg/día", "> 35 kcal/kg/día"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica, al restringir las proteínas para proteger el ovillo glomerular, se debe compensar estrictamente la carga energética con grasas y carbohidratos para evitar desnutrición urémica.<br><br>Perla ENARM: \"Ingesta dietética recomendada en pacientes con Enfermedad Renal Crónica: Energía > 35 kcal/kg/día\".<br><br>Análisis de Distractores: Aportes de 20, 25 o 30 kcal/kg inducen un balance nitrogenado negativo en pacientes restringidos de proteínas, obligando al cuerpo a degradar músculo esquelético propio (sarcopenia).",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Anexos (Cuadro 7), p. 40."
+    },
+    {
+        id: 25,
+        question: "¿Cuál es la meta estricta de presión arterial en pacientes que documentan albuminuria severa mayor a 300 mg/g?",
+        options: ["< 140/90 mmHg", "< 130/80 mmHg", "< 120/80 mmHg", "< 110/70 mmHg"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica, ante un daño masivo de la barrera de filtración endotelial, la reducción absoluta de la presión de perfusión intraglomerular es obligatoria para retrasar la insuficiencia terminal.<br><br>Perla ENARM: \"Considerar meta de tensión arterial < 130/80 mmHg si cociente albúmina/creatinina > 300 mg/g\".<br><br>Análisis de Distractores: < 140/90 mmHg es la meta poblacional general para nefrópatas sin albuminuria masiva. Bajar intencionadamente de < 120/80 o < 110/70 mmHg incrementa paradójicamente el riesgo de infarto y lesión isquémica tubular aguda.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Anexos (Algoritmo 2), p. 36."
+    },
+    {
+        id: 26,
+        question: "¿A partir de qué límite inferior de saturación de transferrina y de ferritina sérica se indica el inicio estricto de hierro intravenoso?",
+        options: ["< 20 % y < 100 ng/ml", "< 30 % y < 500 ng/ml", "< 40 % y < 800 ng/ml", "< 50 % y < 1000 ng/ml"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica, la inflamación sistémica urémica requiere umbrales de depósitos férricos mucho más elevados que la población general para garantizar una respuesta eritropoyética adecuada.<br><br>Perla ENARM: \"Se sugiere tratamiento con hierro IV en pacientes con ERC si la saturación de transferrina es < 30 % y la ferritina es < 500 ng/mL\".<br><br>Análisis de Distractores: < 20 % y < 100 ng/ml refleja ferropenia absoluta crítica que amerita atención, pero el corte de indicación profiláctica marca el límite más alto (30/500). Niveles de 800 o 1000 ng/ml contraindican infusiones por riesgo de hemosiderosis y sobrecarga hepática oxidativa.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Tratamiento, p. 30."
+    },
+    {
+        id: 27,
+        question: "¿Qué condición sistémica contraindica formalmente la administración de suplementación con hierro intravenoso?",
+        options: ["Falla cardiaca congestiva", "Desnutrición calórica", "Infección sistémica activa", "Trombosis venosa profunda"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica, la infusión de hierro libre en un estado séptico cataliza la replicación bacteriana (el hierro es nutriente vital patógeno) y empeora el choque por secuestro de macrófagos.<br><br>Perla ENARM: \"No se recomienda administrar hierro IV en pacientes con infecciones sistémicas\".<br><br>Análisis de Distractores: La falla cardiaca congestiva (opción A) se beneficia notablemente de la corrección de hierro IV. La desnutrición (opción B) y la trombosis venosa (opción D) no tienen un veto fisiopatológico directo absoluto para las infusiones de hierro sintético.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Tratamiento, p. 30."
+    },
+    {
+        id: 28,
+        question: "¿Cuál es la principal enfermedad etiológica que origina el 59 % de los casos incidentes de falla renal crónica en México?",
+        options: ["Glomerulonefritis autoinmune", "Uropatía obstructiva baja", "Hipertensión arterial sistémica", "Diabetes Mellitus tipo 2"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica, el problema de salud pública nacional radica en la alta susceptibilidad genética y dietética al descontrol glucémico, originando hiperfiltración y esclerosis masiva.<br><br>Perla ENARM: \"En México... en el 59% de los casos, la Diabetes Mellitus fue la principal causa de ERC\".<br><br>Análisis de Distractores: La hipertensión arterial sistémica (opción C) es la segunda causa más relevante, pero no alcanza la estadística mayoritaria del 59 %. Las glomerulonefritis (opción A) y la uropatía (opción B) representan porcentajes etiológicos menores al 10 % en el adulto.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Introducción, p. 7."
+    },
+    {
+        id: 29,
+        question: "¿A partir de qué nivel de filtrado glomerular se exige evitar por completo el uso del hipoglucemiante metformina?",
+        options: ["< 60 ml/min/1.73 m²", "< 45 ml/min/1.73 m²", "< 30 ml/min/1.73 m²", "< 15 ml/min/1.73 m²"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica, al cruzar esta frontera funcional (Estadio G4), la acumulación tóxica de la biguanida precipita una acidosis láctica metabólica fulminante.<br><br>Perla ENARM: \"TFG < 30: Evitar metformina\".<br><br>Análisis de Distractores: En filtrados > 60 ml/min (opción A), se continúa con seguridad. En filtrados de 30 a 45 ml/min (opción B), se realiza vigilancia estrecha con ajuste al 50 % de la dosis máxima. El nivel < 15 ml/min (opción D) es fase terminal donde ya está ampliamente proscrita.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Anexos (Algoritmo 2), p. 36."
+    },
+    {
+        id: 30,
+        question: "¿En qué grupo etario con un filtrado glomerular severamente disminuido no es obligatoria la derivación a Nefrología si carece de factores de aceleración proteínicos?",
+        options: ["Mayores de 65 años", "Mayores de 70 años", "Mayores de 75 años", "Mayores de 80 años"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica, el envejecimiento provoca esclerosis glomerular natural y los pacientes en esta edad, sin datos de alerta activos, responden mejor al manejo médico conservador que a terapias dialíticas invasivas sin mejora en su calidad de vida.<br><br>Perla ENARM: \"Se sugiere referir con el nefrólogo a todos aquellos pacientes con una tasa de filtrado glomerular < 30 ml/min/1.73 m² (excepto pacientes > 80 años sin progresión de albuminuria y sin planteamiento de tratamiento sustitutivo)\".<br><br>Análisis de Distractores: En pacientes de 65, 70 o 75 años la ventana de supervivencia y el perfil cardiovascular justifican el abordaje quirúrgico y la pre-diálisis temprana con el especialista para modificar su pronóstico vital.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Criterios de Referencia, p. 33."
+    },
+    {
+        id: 31,
+        question: "¿Cuál es la meta absoluta de control glucémico medida en hemoglobina glucosilada para frenar activamente la cascada microvascular renal?",
+        options: ["< 6.0 %", "< 6.5 %", "< 7.0 %", "< 7.5 %"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica, lograr un equilibrio exacto estabiliza la excreción de proteínas, sin incurrir en hipoglucemias asintomáticas severas típicas del paciente urémico que ha perdido aclaramiento insulínico endógeno.<br><br>Perla ENARM: \"Se recomienda controlar la glucosa en sangre... Diabetes Meta HbA1c < 7%\".<br><br>Análisis de Distractores: Reducciones extremas a < 6.0 % o < 6.5 % demostraron en ensayos pivotales un aumento en la mortalidad de causa neuroglucopénica nocturna. Relajar la meta a < 7.5 % reactiva el estrés oxidativo e hiperfiltración destructiva.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Anexos (Algoritmo 2), p. 36."
+    },
+    {
+        id: 32,
+        question: "¿Qué fármaco debe formar parte obligatoriamente del esquema triple antihipertensivo para poder clasificar una presión arterial como médicamente refractaria?",
+        options: ["Betabloqueador selectivo", "Calcioantagonista no dihidropiridínico", "Vasodilatador directo", "Diurético"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica, el volumen extracelular mal manejado por el riñón enfermo perpetúa cifras tensionales altísimas; sin movilizar agua, ningún bloqueo receptorial funciona.<br><br>Perla ENARM: \"Se debe referir al nefrólogo a los pacientes con hipertensión arterial con pobre control (con cifras > 140/90 mmHg) a pesar del uso de tres fármacos antihipertensivos a dosis máximas y siendo al menos uno de ellos un diurético\".<br><br>Análisis de Distractores: Vasodilatadores, betabloqueadores o calcioantagonistas fungen como excelentes complementos del espectro neurohormonal y vascular, pero el factor mandatorio de las guías clínicas para agotar la terapia basal es la diuresis sistémica.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Criterios de Referencia, p. 33."
+    },
+    {
+        id: 33,
+        question: "¿Qué combinación de fármacos comprobó una reducción adicional del 11.3 % en desenlaces ateroscleróticos en el ensayo clínico especializado SHARP?",
+        options: ["Atorvastatina y bezafibrato", "Simvastatina y ezetimiba", "Rosuvastatina y colestiramina", "Pravastatina y gemfibrozilo"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica, en estadios moderados a severos, el doble mecanismo reductor de lípidos (síntesis hepática y absorción entérica) disminuye infartos al miocardio y eventos cerebrovasculares sin cruzar toxicidad muscular excesiva.<br><br>Perla ENARM: \"El ensayo SHARP... evaluó la eficacia y seguridad de la combinación de ezetimibe y simvastatina en pacientes con enfermedad renal crónica... presentaron una reducción en efectos ateroscleróticos mayores del 11.3%\".<br><br>Análisis de Distractores: Combinar estatinas con bezafibrato o gemfibrozilo cuadruplica el riesgo de rabdomiólisis letal. Las resinas (colestiramina) alteran la biodisponibilidad de fármacos concomitantes nefroprotectores por atrapamiento coloidal en tubo digestivo.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Tratamiento (Dislipidemia), p. 27."
+    },
+    {
+        id: 34,
+        question: "¿Cuál es el límite máximo recomendado para la ingesta dietética de fósforo al día para evitar el desarrollo de hiperparatiroidismo secundario?",
+        options: ["200 a 400 mg/día", "400 a 600 mg/día", "600 a 800 mg/día", "800 a 1000 mg/día"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica, un riñón claudicante pierde la fosfaturia mediada por el factor de crecimiento fibroblástico 23, acumulando sustrato que descalcifica agresivamente el hueso cortical por acción de la hormona paratiroidea compensatoria.<br><br>Perla ENARM: \"Ingesta dietética recomendada en pacientes con Enfermedad Renal Crónica: Fósforo 600 a 800 mg/día\".<br><br>Análisis de Distractores: Dietas por debajo de 600 mg/día arrastran invariablemente desnutrición proteica clínica y limitan alimentos fundamentales. Valores > 800 mg/día saturan las concentraciones séricas exigiendo quelantes químicos pesados con calcio para evitar metástasis calcificadas.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Anexos (Cuadro 7), p. 40."
+    },
+    {
+        id: 35,
+        question: "¿Qué porcentaje de caída volumétrica del filtrado glomerular dentro del plazo de un solo mes es criterio de envío inmediato para descartar daño agudo agregado?",
+        options: ["> 10 %", "> 15 %", "> 20 %", "> 25 %"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica, un colapso brusco del 25 % advierte de isquemia intercurrente profunda, nefrotoxicidad oculta o glomerulonefritis rápidamente progresiva que sepultará el órgano remanente de no tratarse de forma intrahospitalaria.<br><br>Perla ENARM: \"Se debe referir a los pacientes con progresión del deterioro de la función renal... descenso de la tasa de filtrado glomerular > 25% en un mes\".<br><br>Análisis de Distractores: Fluctuaciones del 10 al 20 % son vigilables en la consulta de medicina familiar tras ajuste de diuréticos, restricción hídrica drástica o ajuste de antagonistas del sistema renina, sin representar obligadamente un cataclismo medular necrótico.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Criterios de Referencia, p. 33."
+    },
+    {
+        id: 36,
+        question: "¿Qué biológicos profilácticos se enlistan como una recomendación preventiva estandarizada para disminuir los picos inflamatorios sistémicos del paciente urémico?",
+        options: ["Vacuna contra sarampión y rubeola", "Vacuna contra tétanos y difteria", "Vacuna contra influenza y neumococo", "Vacuna contra meningococo y rotavirus"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica, los procesos neumónicos agudos desestabilizan el metabolismo catabólico desatando crisis azoémicas letales, siendo costo-efectivo inmunizar anualmente la barrera pulmonar.<br><br>Perla ENARM: \"Medidas no farmacológicas de nefroprotección: Vacunación contra influenza y neumococo\".<br><br>Análisis de Distractores: Tétanos y difteria (opción B) son rutinarias poblacionales, pero no frenan la descompensación urémica típica. Meningococo, rotavirus, sarampión y rubeola son vacunas exclusivas de escenarios infantiles, epidemiológicos dirigidos o esplenectomía anatómica.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Anexos (Algoritmo 2), p. 37."
+    },
+    {
+        id: 37,
+        question: "En el abordaje del paciente en estadio 4 o pre-diálisis que no se encuentra con estimulantes sintéticos, ¿con qué frecuencia se debe cuantificar la biometría para vigilar hemoglobina?",
+        options: ["Una vez al mes", "Cada tres meses", "Dos veces al año", "Una vez al año"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica, el monitoreo previene la hipoxia microvascular sostenida y la hipertrofia cardiaca sin sobresaturar el costo analítico institucional del paciente en control clínico asintomático.<br><br>Perla ENARM: \"Se recomienda medir la concentración de hemoglobina en pacientes con enfermedad renal crónica y sin anemia al menos una vez al año si se encuentran en estadio 3, dos veces al año si se encuentran en estadios 4 y 5\".<br><br>Análisis de Distractores: Una vez al año aplica exclusivamente a la estabilidad temprana del estadio 3. Revisiones mensuales o cada tres meses aplican únicamente a pacientes ya detectados con anemia en intervención con eritropoyetina y hemodiálisis.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Tratamiento, p. 29."
+    },
+    {
+        id: 38,
+        question: "¿Qué hallazgo detectado en el sedimento urinario, que se acompaña de albuminuria mayor a 300 mg/g, exige envío urgente para realizar biopsia percutánea especializada?",
+        options: ["Leucocitosis no infecciosa", "Cilindros hialinos tubulares", "Hematuria persistente", "Cristales de ácido úrico"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica, la combinación de destrucción capilar masiva (albúmina) y disrupción de los podocitos que deja pasar eritrocitos sugiere poderosamente el brote de una enfermedad autoinmune primaria o vasculitis.<br><br>Perla ENARM: \"Se debe referir a los pacientes con un cociente albúmina/creatinina > 300 mg/g... con hematuria y a pesar de un adecuado tratamiento y control de la presión arterial\".<br><br>Análisis de Distractores: Piuria o leucocitosis (opción A) se relaciona a pielonefritis crónica o infecciones recurrentes. Los cilindros hialinos (opción B) son normales en concentración u oliguria extrema. La cristaluria (opción D) es orientativa de litiasis urotelial benigna funcional.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Criterios de Referencia, p. 33."
+    },
+    {
+        id: 39,
+        question: "¿A partir de qué corte de tasa de filtrado glomerular se prohíbe de manera absoluta cualquier uso empírico de fármacos antiinflamatorios no esteroideos?",
+        options: ["< 60 ml/min/1.73 m²", "< 45 ml/min/1.73 m²", "< 30 ml/min/1.73 m²", "< 15 ml/min/1.73 m²"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica, la inhibición severa de las prostaglandinas vasodilatadoras (cox) de la arteriola aferente desencadena infartos corticales asintomáticos y dependencia dialítica inmediata en nefronas terminales.<br><br>Perla ENARM: \"TFG < 30: Evitar cualquier antiinflamatorio no esteroideo\".<br><br>Análisis de Distractores: Con filtrados entre 30 y 60 ml/min (opciones A y B), la restricción recae en evitar su uso crónico o prolongado intermitente, pero la interdicción drástica, enérgica y fulminante marca su umbral al cruzar a estadio severo pre-diálisis.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Anexos (Algoritmo 2), p. 36."
+    },
+    {
+        id: 40,
+        question: "¿Cada cuánto tiempo se debe monitorizar obligatoriamente el nivel de hemoglobina en pacientes sometidos a hemodiálisis y que cursan tratamiento con eritropoyetina exógena?",
+        options: ["Semanalmente", "Quincenalmente", "Mensualmente", "Trimestralmente"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Renal Crónica, el desgaste constante del eritrocito en la bomba extracorpórea obliga a titular la hormona milimétricamente para no cruzar el peligroso umbral trombótico.<br><br>Perla ENARM: \"Se recomienda medir la concentración de hemoglobina en pacientes con ERC y anemia que están siendo tratados... al menos una vez al mes en pacientes 5 HD (Hemodiálisis)\".<br><br>Análisis de Distractores: Las revisiones trimestrales (opción D) competen a quienes reciben estimulantes pero aún gozan de aclaramiento intrínseco (fase 3 a 5 sin diálisis) o están en diálisis peritoneal. Intervalos semanales o quincenales representan sobreutilización institucional innecesaria por la vida media eritrocitaria funcional de la respuesta endógena.",
+        source: "GPC-IMSS-335-19, Prevención, Diagnóstico y Tratamiento de la Enfermedad Renal Crónica, 2019, Tratamiento, p. 29."
+    }
+
+
+
+
+
+
+
+
+
+        
+       ];
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('ExMI10LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('ExMI10Progress');
+                localStorage.removeItem('ExMI10LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-purple-500 shadow-md z-10 border-purple-500 dark:border-purple-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-fuchsia-500 to-purple-600 hover:from-purple-600 hover:to-fuchsia-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-purple-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-fuchsia-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "MEDICINA INTERNA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "IMSS-335-19 • Prevención, diagnóstico y tratamiento de la enfermedad renal crónica";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-purple-600 dark:text-slate-400 dark:hover:text-purple-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="login.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-purple-100 dark:border-purple-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-purple-50 has-[:checked]:border-purple-400 dark:has-[:checked]:bg-purple-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-purple-600 focus:ring-purple-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-purple-600 dark:hover:bg-purple-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-fuchsia-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('ExMI10Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('ExMI10LastQId', currentQuestionId);
+                else localStorage.removeItem('ExMI10LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('ExMI10Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

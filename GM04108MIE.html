@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-purple-500 to-fuchsia-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+
+
+    {
+        id: 1,
+        question: "¿Cuál es el factor de riesgo ambiental fuertemente asociado a la modificación del microbioma para el desarrollo de rinitis alérgica en etapas tempranas?",
+        options: ["Exposición a humo de leña", "Uso temprano de antibióticos", "Convivencia con mascotas", "Uso de purificadores de aire"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Rinitis Alérgica, la alteración de la flora normal durante los primeros meses de vida desvía la respuesta inmunológica hacia el fenotipo celular T cooperador 2, favoreciendo el desarrollo de atopia clínica posterior.<br><br>Perla ENARM: Los factores de riesgo que se han asociado con rinitis alérgica son: historia familiar de atopia, sexo masculino, ser primogénito, uso temprano de antibióticos, madre fumadora durante el primer año de vida y niveles de Inmunoglobulina E sérica mayores a 100 antes de los 6 años de edad.<br><br>Análisis de Distractores: La exposición al humo de leña no es el principal factor documentado para atopia primaria. La convivencia con mascotas es debatida y no presenta evidencia causal contundente. El uso de purificadores no es un factor de riesgo; es una medida de control de utilidad limitada.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Introducción, Página 20."
+    },
+    {
+        id: 2,
+        question: "¿Cuál característica demográfica y familiar establece un mayor riesgo primario para el desarrollo del fenotipo atópico respiratorio?",
+        options: ["Ser el hijo menor", "Pertenecer al sexo femenino", "Ser el primogénito", "Antecedente de prematurez"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Rinitis Alérgica, el orden de nacimiento limita la exposición temprana a infecciones cruzadas con otros hermanos (hipótesis de la higiene), lo cual incrementa el riesgo en el primer hijo.<br><br>Perla ENARM: Los factores de riesgo incluyen ser primogénito y pertenecer al sexo masculino en la infancia.<br><br>Análisis de Distractores: Ser el hijo menor otorga un factor protector relativo. En la niñez, el sexo masculino tiene mayor predominio que el femenino. La prematurez no se lista como un factor de riesgo primario directo.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Introducción, Página 20."
+    },
+    {
+        id: 3,
+        question: "¿Qué nivel exacto de Inmunoglobulina E sérica cuantificada antes de los 6 años de edad incrementa el riesgo de rinitis alérgica?",
+        options: ["Mayor a 50 UI/mL", "Mayor a 100 UI/mL", "Mayor a 200 UI/mL", "Mayor a 500 UI/mL"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Rinitis Alérgica, la elevación sérica temprana de este marcador biológico demuestra una sensibilización sistémica que predispone al desarrollo de hiperreactividad de mucosas.<br><br>Perla ENARM: Constituye un factor de riesgo tener niveles de Inmunoglobulina E sérica mayores a 100 UI/mL antes de los 6 años de edad.<br><br>Análisis de Distractores: Los valores de 50, 200 o 500 UI/mL no representan el punto de corte epidemiológico establecido para delimitar el factor de riesgo pediátrico.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Introducción, Página 20."
+    },
+    {
+        id: 4,
+        question: "A la inspección directa, ¿cuál es el hallazgo rinoscópico cardinal que diferencia una inflamación atópica de una infecciosa?",
+        options: ["Mucosa hiperémica y congestiva", "Mucosa pálida o azulada", "Presencia de costras hemáticas", "Pólipos nasales sangrantes"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Rinitis Alérgica, el estasis venoso crónico secundario a la liberación de histamina provoca edema frío, reflejándose visualmente como palidez o un tono violáceo.<br><br>Perla ENARM: Se debe hacer diagnóstico cuando existan hallazgos consistentes como inflamación y coloración azulada o palidez de mucosa nasal, acompañada de hipertrofia de cornetes.<br><br>Análisis de Distractores: La hiperemia denota un origen infeccioso (rojo brillante). Las costras hemáticas indican irritación desecante o granulomatosis. Los pólipos pueden acompañar la alergia crónica, pero su sangrado sugiere etiologías alternativas o manipulaciones mecánicas.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Anexos (Cuadro 1), Página 100."
+    },
+    {
+        id: 5,
+        question: "Utilizando la escala clínica Score for Allergic Rhinitis, ¿a partir de qué puntaje numérico se fundamenta una alta probabilidad diagnóstica?",
+        options: ["Mayor a 3 puntos", "Mayor a 5 puntos", "Mayor a 7 puntos", "Mayor a 10 puntos"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Rinitis Alérgica, este cuestionario integra sintomatología y antecedentes familiares. Alcanzar este umbral validado minimiza la necesidad de serologías iniciales costosas.<br><br>Perla ENARM: Un puntaje mayor a 7 se utiliza para el diagnóstico de rinitis alérgica, basado en la curva ROC y en el índice de Youden sobre un total de 16 posibles.<br><br>Análisis de Distractores: Los umbrales de 3 o 5 son insuficientes para separar rinitis vasomotora o infecciosa episódica. Un corte de 10 disminuiría drásticamente la sensibilidad clínica.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Anexos, Página 106."
+    },
+    {
+        id: 6,
+        question: "¿Cuál es el criterio clínico absoluto para autorizar la solicitud de pruebas de Inmunoglobulina E específica (cutánea o sérica)?",
+        options: ["Desde el abordaje diagnóstico inicial", "Sospecha de pólipos nasales", "Falla al tratamiento farmacológico empírico", "Previo a manejo quirúrgico septal"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Rinitis Alérgica, identificar el antígeno no modifica la terapia de primera línea; se reserva para justificar una inmunoterapia únicamente tras fracaso médico.<br><br>Perla ENARM: Se debe realizar e interpretar la prueba específica de Inmunoglobulina E en pacientes con diagnóstico clínico de rinitis alérgica que no respondan al tratamiento empírico.<br><br>Análisis de Distractores: El abordaje inicial es clínico cien por ciento. Ante pólipos se solicita tomografía o cirugía, no inmunología primaria. La septoplastia corrige estructuras, siendo independiente del perfil IgE.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Diagnóstico, Página 46."
+    },
+    {
+        id: 7,
+        question: "¿Qué fármaco representa la piedra angular y primera línea de tratamiento ante sintomatología que compromete la calidad de vida del paciente?",
+        options: ["Antihistamínicos orales", "Antagonistas de leucotrienos", "Esteroides nasales", "Descongestivos tópicos"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Rinitis Alérgica, para la enfermedad persistente o que causa disrupción laboral/escolar (especialmente obstructiva), la potencia antiinflamatoria tópica es superior a la sistémica.<br><br>Perla ENARM: Se debe recomendar el uso de esteroides nasales en pacientes con diagnóstico clínico de Rinitis Alérgica cuyos síntomas afecten su calidad de vida.<br><br>Análisis de Distractores: Los antihistamínicos orales abaten la rinorrea pero son débiles para obstrucción grave. Los antileucotrienos no son primera línea. Los descongestivos causan rinitis medicamentosa post 5 días.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Tratamiento, Página 55."
+    },
+    {
+        id: 8,
+        question: "¿Cuál es el manejo inicial de elección para un fenotipo clínico donde el cuadro predominante se basa en estornudos repetitivos y prurito nasal?",
+        options: ["Antihistamínicos orales de segunda generación", "Esteroides nasales en dosis tope", "Antihistamínicos orales de primera generación", "Montelukast como monoterapia"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Rinitis Alérgica, cuando los mecanismos son mediados aguda y localmente por histamina sin remodelación mucosa severa, el bloqueo sistémico con baja penetración del SNC logra control veloz y seguro.<br><br>Perla ENARM: Se deben recomendar antihistamínicos orales de segunda generación en pacientes en que predominen síntomas como estornudos y prurito.<br><br>Análisis de Distractores: Los esteroides nasales se prefieren cuando predomina obstrucción limitante. La primera generación causa sedación extrema inaceptable en manejo crónico ambulatorio. Montelukast posee baja eficacia analítica sobre el prurito.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Tratamiento, Página 59."
+    },
+    {
+        id: 9,
+        question: "¿Qué agente terapéutico está contraindicado como monoterapia de primera elección debido a su inferioridad de eficacia clínica general?",
+        options: ["Fluticasona intranasal", "Levocetirizina oral", "Antagonistas del receptor de leucotrieno", "Desloratadina oral"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Rinitis Alérgica, inhibir la vía de los leucotrienos impacta marginalmente los síntomas nasales frente al bloqueo H1 o esteroideo; su uso empírico inicial retrasa la curación salvo que coexista asma bronquial.<br><br>Perla ENARM: No se deben recomendar antagonistas del receptor de leucotrieno como primera línea en el tratamiento de pacientes con Rinitis Alérgica.<br><br>Análisis de Distractores: Fluticasona, levocetirizina y desloratadina conforman el arsenal primario y más potente avalado para frenar las fases temprana y tardía del padecimiento.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Tratamiento, Página 70."
+    },
+    {
+        id: 10,
+        question: "¿En qué ventana temporal exacta debe agendarse la revaloración clínica tras prescribir un régimen terapéutico empírico inicial?",
+        options: ["3 a 5 días", "1 a 2 semanas", "2 a 4 semanas", "6 a 8 semanas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Rinitis Alérgica, los medicamentos tópicos (esteroides) requieren semanas de acumulación tisular para revertir el remodelamiento atópico al máximo, definiendo así el verdadero éxito o fracaso médico.<br><br>Perla ENARM: El algoritmo de seguimiento demanda que la revaloración clínica por posible falla terapéutica se ejecute entre las 2 a 4 semanas de instaurado el esquema.<br><br>Análisis de Distractores: 3 a 5 días evalúa el límite de uso de descongestivos adrenérgicos. 1 a 2 semanas subestima el poder antiinflamatorio tardío. 6 a 8 semanas permite un daño excesivo a la calidad de vida si el fármaco fue erróneo.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Anexos, Página 98."
+    },
+    {
+        id: 11,
+        question: "Como estrategia de control ambiental terciario, ¿cuál es la única medida intradomiciliaria con eficacia estadísticamente demostrada sobre los síntomas?",
+        options: ["Purificadores de aire comerciales", "Uso de acaricidas tópicos", "Retiro definitivo de mascotas", "Colchones impermeables exclusivos"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Rinitis Alérgica, la neutralización química directa del Dermatophagoides en reservorios disminuye de manera sustancial la carga antigénica y la severidad sintomática.<br><br>Perla ENARM: Los acaricidas fueron los más eficaces tanto en monoterapia como en combinación con otras medidas para reducir la exposición y mejorar síntomas.<br><br>Análisis de Distractores: El retiro de mascotas posee evidencia no concluyente. Los colchones impermeables reducen el conteo del ácaro pero fracasan clínicamente cuando se usan de forma aislada.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Medidas de control ambiental, Página 31."
+    },
+    {
+        id: 12,
+        question: "¿Qué evento adverso encabeza la incidencia tras la administración sostenida de corticosteroides tópicos de la mucosa olfatoria?",
+        options: ["Rinitis medicamentosa", "Anosmia neurológica", "Perforación septal", "Epistaxis y resequedad local"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Rinitis Alérgica, el vehículo aerosolizado y la vasoconstricción regional menor inducen desecación e irritación mecánica en el área de Kiesselbach.<br><br>Perla ENARM: Los efectos adversos más comunes son resultado de irritación local e incluyen: resequedad, quemazón, secreciones sanguinolentas y epistaxis (incidencia 4 al 8%).<br><br>Análisis de Distractores: La rinitis medicamentosa sobreviene por fenilefrina u oximetazolina. La anosmia no se asocia al esteroide. La perforación septal ocurre raramente y deriva de mala técnica direccional durante la aplicación, no es lo más frecuente.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Tratamiento, Página 53."
+    },
+    {
+        id: 13,
+        question: "Tras agotar el tiempo óptimo de vigilancia con un esteroide tópico sin mejoría, ¿cuál es el ajuste farmacológico normado inmediato?",
+        options: ["Indicar corticoesteroide sistémico", "Terapia con esteroide y antihistamínico intranasal", "Suspender esteroide e iniciar inmunoterapia", "Agregar antibiótico macrólido"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Rinitis Alérgica, se maximiza el ataque sumando un mecanismo bloqueador de receptores local (acción rápida) a la terapia genética celular (esteroide).<br><br>Perla ENARM: Los médicos pueden recomendar terapia farmacológica combinada en pacientes con rinitis alérgica que presentaron falla a la monoterapia.<br><br>Análisis de Distractores: Los corticoides sistémicos implican morbilidad severa, se usan en rescate muy selecto. La inmunoterapia exige referimiento previo a inmunología, no es paso del primer nivel de inmediato. Los macrólidos no aplican para atopia.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Tratamiento, Página 79."
+    },
+    {
+        id: 14,
+        question: "¿Cuál es el criterio cardiovascular y respiratorio de exclusión absoluta para derivar e instaurar la inmunoterapia específica con alérgenos?",
+        options: ["Alergia estacional polivalente", "Dermatitis atópica generalizada", "Asma severa o no controlada", "Edad mayor a los 65 años"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Rinitis Alérgica, introducir dosis ascendentes de un antígeno exógeno en un árbol bronquial hiperreactivo y lábil expone al paciente a un evento agudo de broncoespasmo fulminante.<br><br>Perla ENARM: No se debe iniciar inmunoterapia en pacientes con asma severa, inestable o no controlada.<br><br>Análisis de Distractores: La alergia a polen justifica crear vacunas multivalentes. La dermatitis severa dificulta las pruebas, mas no contraindica el riesgo vital. La vejez aislada no prohíbe el uso si la capacidad vital se conserva.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Tratamiento, Página 86."
+    },
+    {
+        id: 15,
+        question: "Desde el punto de vista quirúrgico, ¿cuál es la estructura diana a intervenir cuando la obstrucción persiste a pesar de manejo farmacológico escalonado?",
+        options: ["Cornete superior", "Válvula nasal interna", "Tabique cartilaginoso", "Cornete inferior"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Rinitis Alérgica, el cornete inferior captura la mayor proporción de alérgenos inhalados y posee el lecho eréctil capilar mediado por histamina más abundante, cuyo remodelamiento origina la oclusión física.<br><br>Perla ENARM: Se deben referir a cirugía para una reducción de cornetes inferiores a los pacientes con síntomas nasales persistentes e hipertrofia tisular que hayan presentado falla terapéutica médica.<br><br>Análisis de Distractores: El cornete superior está lejos de la vía aérea inferior primaria. La válvula interna y el tabique originan desvíos mecánicos, pero no son focos principales de la respuesta alérgica tisular IgE mediada.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Tratamiento, Página 87."
+    },
+    {
+        id: 16,
+        question: "¿Cuál hallazgo derivado de la cascada inflamatoria nasal obliga a derivar al paciente de primer contacto hacia un alergólogo u otorrinolaringólogo?",
+        options: ["Secreción y descarga retronasal", "Otitis media o sinusitis recurrente", "Pliegues infraorbitarios de Dennie-Morgan", "Prurito limitante en el paladar"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Rinitis Alérgica, el edema crónico sostenido produce colapso de trompas de Eustaquio e infundíbulos paranasales, provocando un terreno estancado propicio para morbilidad sobreagregada bacteriana refractaria.<br><br>Perla ENARM: Se recomienda referir a alergología a los pacientes con complicaciones significativas, como otitis media o sinusitis recurrente.<br><br>Análisis de Distractores: La secreción hialina, los estigmas oculares y el prurito palatino (incluso intensos) son signos primarios esperados que deben responder a corticosteroides tópicos o antihistamínicos sistémicos de inicio ambulatorio.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Criterios de Referencia, Página 94."
+    },
+    {
+        id: 17,
+        question: "Durante el interrogatorio inicial, ¿qué manifestación \"atípica\" prohíbe asumir un cuadro alérgico simple y exige una ruta de descarte neoplásico u obstructivo?",
+        options: ["Taponamiento nasal unilateral", "Cefalea vespertina leve", "Estornudos en salva y matutinos", "Lagrimeo simétrico profuso"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Rinitis Alérgica, los antígenos aéreos ingresan simultáneamente en ambas coanas ocasionando inflamación bilateral. La asimetría absoluta dicta un defecto arquitectónico local: desviación severa, cuerpo extraño, o masa proliferativa.<br><br>Perla ENARM: Los síntomas atípicos como epistaxis severa, rinorrea unilateral, taponamiento nasal unilateral, cefalea severa o anosmia, sugieren diagnósticos alternativos.<br><br>Análisis de Distractores: La cefalea tensional leve suele acompañar el cansancio alérgico. Los estornudos en salva y los síntomas oculares simétricos son manifestaciones pilares de la hipersensibilidad tipo I, no de neoplasias.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Diagnóstico, Página 39."
+    },
+    {
+        id: 18,
+        question: "¿En qué escenario patológico específico queda plenamente justificado el apoyo del estudio tomográfico en cabeza y cuello?",
+        options: ["Clasificar el grado inflamatorio alérgico", "Sospecha de poliposis nasal o tumores", "Planear dosis de esteroides tópicos", "Previo a pruebas cutáneas intradérmicas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Rinitis Alérgica, los recursos de radiología carecen de indicación basal para la patología atópica; someter a cortes axiales innecesarios genera radiación sin aporte terapéutico salvo en fenotipos atípicos confirmados.<br><br>Perla ENARM: La tomografía computarizada y la resonancia magnética están indicadas para detectar otras enfermedades como poliposis nasal, rinosinusitis o tumores.<br><br>Análisis de Distractores: La clasificación y tratamiento son clínicos. Las pruebas cutáneas exigen retiro de antihistamínicos, no placas tomográficas.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Diagnóstico, Página 48."
+    },
+    {
+        id: 19,
+        question: "Si en la atención primaria el paciente ha requerido prescripciones de depósito, ¿cuál es la conducta dictada normativamente para optimizar su morbimortalidad?",
+        options: ["Sustituir por descongestivo nasal", "Interrumpir abruptamente el fármaco", "Referir al servicio de Alergología", "Realizar turbinectomía de urgencia"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Rinitis Alérgica, la dependencia de corticosteroides sistémicos genera graves estragos en el metabolismo mineral u óseo. Esto denota un fenotipo refractario que precisa inmunoterapia avanzada y monitoreo de tercer nivel.<br><br>Perla ENARM: Se recomienda enviar a alergología a los pacientes que hayan requerido esteroides sistémicos para controlar la sintomatología.<br><br>Análisis de Distractores: Los descongestivos no suplen la potencia de un corticoide sistémico. La suspensión abrupta desencadena una exacerbación brutal o crisis adrenales. La cirugía se indica ante bloqueo mecánico, no per se por uso de corticoides sin previa valoración inmunológica.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Criterios de Referencia, Página 95."
+    },
+    {
+        id: 20,
+        question: "Desde las bases genéticas y serológicas de la enfermedad, ¿cuál es el isótopo de anticuerpo cuya especificidad dirige la activación de mastocitos e histamina?",
+        options: ["Inmunoglobulina G", "Inmunoglobulina A", "Inmunoglobulina E", "Inmunoglobulina M"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Rinitis Alérgica, esta reacción clásica de hipersensibilidad de tipo I se cimenta cuando los antígenos inhalados (polvo, polen) establecen puentes sobre las moléculas fijadas a los basófilos.<br><br>Perla ENARM: La rinitis alérgica es resultado de una reacción inflamatoria mediada por la Inmunoglobulina E, con grados variables de inflamación, generada en respuesta a un alérgeno.<br><br>Análisis de Distractores: La IgG modula tolerancia y memoria de largo plazo. La IgA defiende barreras mucosas infecciosas. La IgM inicia la respuesta humoral temprana a microorganismos y no desgranula mastocitos alérgicos.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Introducción, Página 17."
+    },
+    {
+        id: 21,
+        question: "¿Cuál es el impacto epidemiológico documentado del contacto temprano con perros o gatos sobre el desarrollo primario de rinitis alérgica?",
+        options: ["Disminuye significativamente", "Retrasa la presentación", "Incrementa el riesgo", "Evidencia no concluyente"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Rinitis Alérgica, múltiples revisiones y metaanálisis que agrupan cohortes pediátricas no han encontrado asociación directa ni evidencia sólida que confirme que tener mascotas en los primeros años de vida cause atopia, ni tampoco que proteja de ella.<br><br>Perla ENARM: Una revisión de la literatura para investigar si el contacto con mascotas (perros y gatos) se asocia con el desarrollo de atopia no encontró evidencia concluyente.<br><br>Análisis de Distractores: Disminuir el riesgo es una creencia derivada de la hipótesis de la higiene, pero la evidencia actual no lo soporta de manera aislada. Retrasar la presentación no tiene fundamento estadístico. Incrementar el riesgo no se sostiene en los estudios de prevención primaria, aunque en pacientes ya sensibilizados, el epitelio animal desencadena crisis.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Medidas de control ambiental, Página 12."
+    },
+    {
+        id: 22,
+        question: "Como medida de control ambiental aislada, ¿cuál es el efecto clínico demostrado del uso de cobertores impermeables para colchón?",
+        options: ["Reducción exclusiva de ácaros", "Disminución de estornudos", "Erradicación de la enfermedad", "Prevención de asma"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Rinitis Alérgica, el aislamiento físico de los reservorios intradomiciliarios logra abatir las colonias de Dermatophagoides locales, pero esta disminución microscópica no se traduce en mejoría clínica de los síntomas ni previene el desarrollo de alergias si se utiliza sin otras intervenciones.<br><br>Perla ENARM: No existe evidencia que soporte el uso de colchones impermeables para la prevención primaria de enfermedades alérgicas o para la prevención terciaria de los síntomas, sólo se observó la disminución en los niveles de ácaros de polvo caseros en los colchones.<br><br>Análisis de Distractores: La disminución de estornudos no ocurre al usar el cobertor de forma aislada. La erradicación de la enfermedad es imposible con control ambiental básico. La prevención del asma alérgica primaria fracasa sin el apoyo de acaricidas químicos u otras terapias sistémicas.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Medidas de control ambiental, Página 12."
+    },
+    {
+        id: 23,
+        question: "En el tratamiento de rinitis alérgica, ¿cuál es el tiempo de inicio de acción esperado al administrar azelastina intranasal?",
+        options: ["2 a 4 semanas", "15 a 30 minutos", "12 a 24 horas", "3 a 5 días"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Rinitis Alérgica, el depósito tópico de inhibidores H1 directamente sobre la mucosa inflamada asegura un bloqueo casi inmediato de los receptores, superando la latencia de absorción gastrointestinal de las tabletas y la transcripción génica lenta de los esteroides.<br><br>Perla ENARM: Los antihistamínicos nasales muestran una eficacia mayor que los antihistamínicos orales y además tienen un inicio de acción más rápido que los esteroides nasales, demostrando mejoría estadísticamente significativa desde los 15 minutos.<br><br>Análisis de Distractores: 2 a 4 semanas es el tiempo necesario para evaluar la respuesta a los esteroides nasales. 12 a 24 horas es la ventana para los antihistamínicos orales de segunda generación. 3 a 5 días es el tiempo de retiro obligado de los descongestivos locales.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Tratamiento, Página 24."
+    },
+    {
+        id: 24,
+        question: "¿Cuál es un efecto adverso local e incómodo asociado directamente a la instilación de antihistamínicos intranasales?",
+        options: ["Perforación del septum", "Sensación de boca agria", "Rinitis medicamentosa", "Anosmia permanente"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Rinitis Alérgica, el arrastre mucociliar fisiológico transporta el vehículo y el principio activo del fármaco tópico hacia la nasofaringe, donde los receptores gustativos detectan la amargura característica de la formulación (ej. azelastina u olopatadina).<br><br>Perla ENARM: Los eventos adversos más comunes relacionados al uso de antihistamínicos nasales son: sensación de boca agria, epistaxis, cefalea, somnolencia y sensación de quemazón en la nariz.<br><br>Análisis de Distractores: La perforación septal ocurre de forma excepcional por mala técnica de esteroides intranasales, no por antihistamínicos. La rinitis medicamentosa es secuela de la oximetazolina. La anosmia no se relaciona con la familia de bloqueadores H1.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Tratamiento, Página 25."
+    },
+    {
+        id: 25,
+        question: "Al decidir el abordaje diagnóstico, ¿en qué condición sistémica se contraindica el uso de pruebas cutáneas de punción (Skin Prick Test)?",
+        options: ["Hipertrofia de cornetes", "Rinitis alérgica estacional", "Asma severa no controlada", "Antecedente de prematurez"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Rinitis Alérgica, la inoculación percutánea del alérgeno induce una respuesta inmune que, aunque pequeña, conlleva riesgo de degranulación mastocitaria descontrolada. En pacientes con vía aérea inestable, el riesgo de anafilaxia fulminante o crisis asmática fatal supera el beneficio.<br><br>Perla ENARM: Las pruebas cutáneas por medio de la técnica de punción están contraindicadas en los enfermos con asma grave o no controlada.<br><br>Análisis de Distractores: La hipertrofia de cornetes y la rinitis estacional son escenarios cotidianos que justifican el diagnóstico, no lo contraindican. El antecedente de prematurez no incide en la seguridad de la prueba a nivel inmunológico actual.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Diagnóstico, Página 16."
+    },
+    {
+        id: 26,
+        question: "Si las pruebas cutáneas de punción resultan negativas pero la sospecha de sensibilización es muy alta, ¿cuál es el siguiente paso diagnóstico indicado?",
+        options: ["Pruebas de provocación nasal", "Tomografía computarizada", "Pruebas intradérmicas", "Rinometría acústica"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Rinitis Alérgica, inyectar el extracto antigénico directamente en el lecho dérmico ofrece una mayor carga de contacto local, lo que eleva el rendimiento analítico cuando el método de punción (rasguño) no rompe el umbral de detección en un paciente atópico.<br><br>Perla ENARM: Las pruebas intradérmicas son particularmente útiles cuando las pruebas de punción son negativas, en pacientes con sospecha clínica alta para sensibilización alérgica a un alérgeno particular o si se requiere una sensibilidad mayor.<br><br>Análisis de Distractores: La provocación nasal expone a broncoespasmo y no se recomienda. La tomografía evalúa anatomía, no sensibilización. La rinometría acústica mide flujo aerodinámico, y no tiene cabida para detectar alérgenos.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Diagnóstico, Página 16."
+    },
+    {
+        id: 27,
+        question: "Al evaluar las modalidades de inmunoterapia disponibles, ¿cuál ha demostrado poseer un mayor tamaño del efecto global para reducir los síntomas?",
+        options: ["Inmunoterapia subcutánea", "Inmunoterapia sublingual", "Inmunoterapia oral", "Inmunoterapia intranasal"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Rinitis Alérgica, aunque ambas vías son útiles, el depósito hipodérmico del antígeno asegura una captación y presentación directa a las células dendríticas sistémicas, logrando un control clínico más robusto y consistente comparado con la vía de mucosas.<br><br>Perla ENARM: Un metaanálisis demostró que el tamaño del efecto global de la inmunoterapia subcutánea para el score de síntomas fue mayor que el de la inmunoterapia sublingual, administrada tanto por gotas como por tabletas.<br><br>Análisis de Distractores: La inmunoterapia sublingual es efectiva y más segura, pero matemáticamente menos potente de forma global. Las inmunoterapias oral (deglución) e intranasal no figuran como el estándar terapéutico consolidado para alérgenos inhalados en esta normatividad.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Tratamiento, Página 30."
+    },
+    {
+        id: 28,
+        question: "Para asegurar una remisión clínica duradera postratamiento, ¿cuál es el tiempo de duración óptimo normado para aplicar la inmunoterapia sublingual?",
+        options: ["1 año", "2 años", "4 años", "6 meses"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Rinitis Alérgica, la inducción de tolerancia inmunológica mediada por linfocitos T reguladores exige una exposición antigénica sostenida; tratamientos cortos fallan al suspenderse, mientras que a partir del cuarto año se alcanza una meseta de memoria inmune permanente.<br><br>Perla ENARM: La inmunoterapia sublingual a 4 años induce una mejoría clínica que perdura en el tiempo (similar a la producida a los 5 años de uso y mayor que la producida con 3 años de uso).<br><br>Análisis de Distractores: 6 meses a 2 años son insuficientes para establecer la memoria inmunológica que prevenga las recaídas. Superar los 4 años (ej. 5 o 6 años) ya no otorga un beneficio diferencial estadístico que justifique el costo.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Tratamiento, Página 30."
+    },
+    {
+        id: 29,
+        question: "En un paciente que padece concomitantemente asma y rinitis alérgica, ¿cuál monoterapia ha demostrado superioridad clínica para el control simultáneo?",
+        options: ["Montelukast oral", "Fluticasona intranasal", "Levocetirizina oral", "Salbutamol inhalado"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Rinitis Alérgica, el bloqueo del proceso inflamatorio en la vía aérea superior (nariz) disminuye drásticamente el goteo retronasal y el reflejo nasobronquial, estabilizando indirectamente la hiperreactividad del pulmón inferior con alta eficacia.<br><br>Perla ENARM: Fluticasona intranasal fue superior para el control de asma, rinitis alérgica y de la función pulmonar comparado con el Montelukast oral.<br><br>Análisis de Distractores: A pesar de que Montelukast se mercadea para ambas vías, su potencia inflamatoria es menor. La levocetirizina domina síntomas nasales pero aporta poco al control del asma severa. Salbutamol es terapia de rescate bronquial exclusiva, sin beneficio para la rinitis atópica.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Tratamiento, Página 18."
+    },
+    {
+        id: 30,
+        question: "¿Qué efecto adverso se incrementa invariablemente al añadir pseudoefedrina al manejo basal con un antihistamínico de segunda generación?",
+        options: ["Rinitis medicamentosa", "Epistaxis recurrente", "Insomnio y nerviosismo", "Sedación profunda"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Rinitis Alérgica, la pseudoefedrina es un potente agonista adrenérgico sistémico que estimula el sistema nervioso simpático central, acelerando el metabolismo y alterando los ciclos de sueño.<br><br>Perla ENARM: El añadir descongestionantes orales a un antihistamínico de segunda generación incrementa efectos adversos como insomnio, cefalea, boca seca, y nerviosismo.<br><br>Análisis de Distractores: La rinitis medicamentosa se asocia al uso de descongestivos nasales tópicos (oximetazolina), no orales. La epistaxis es propia de la irritación por aerosoles esteroideos locales. La sedación profunda es efecto adverso de los antihistamínicos de primera generación (clorfenamina), y se contrarrestaría, no potenciaría, por la pseudoefedrina.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Tratamiento, Página 26."
+    },
+    {
+        id: 31,
+        question: "Durante el tamizaje de un cuadro atópico clásico, ¿cuál de los siguientes estudios no otorga valor y debe evitarse por falta de sustento clínico?",
+        options: ["Cuestionario Score For Allergic Rhinitis", "Determinación sérica de IgE específica", "Pruebas cutáneas intradérmicas", "Rinometría acústica"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Rinitis Alérgica, medir los volúmenes y resistencias del flujo de aire nasal en consultorio no permite discriminar si la inflamación obstructiva es alérgica, vasomotora o infecciosa crónicamente, añadiendo solo un costo injustificado.<br><br>Perla ENARM: No se recomienda el uso rutinario de estudios de imagen u otros estudios como rinometría acústica, las pruebas olfatorias, la determinación de óxido nítrico, pruebas de alergia alimentaria y provocación nasal.<br><br>Análisis de Distractores: El cuestionario es la herramienta diagnóstica de primera línea recomendada. La Inmunoglobulina E y las pruebas intradérmicas son el pilar para pacientes refractarios y candidatos a vacunas desensibilizantes.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Diagnóstico, Página 17."
+    },
+    {
+        id: 32,
+        question: "Con base en la evidencia comparativa, ¿cuál antihistamínico oral muestra un impacto estadísticamente mayor para abatir los síntomas de máxima severidad?",
+        options: ["Loratadina", "Fexofenadina", "Ebastina", "Levocetirizina"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Rinitis Alérgica, el enantiómero activo puro posee una mayor afinidad y tiempo de ocupación en los receptores H1 periféricos, lo que asegura un bloqueo contundente de la fase temprana aguda incluso frente a cargas antigénicas muy altas.<br><br>Perla ENARM: La monoterapia con levocetirizina fue significativamente más efectiva para reducir el resultado en el Total Symptom Score y muestra un efecto positivo mayor en relación a la severidad clínica en casos con sintomatología severa frente a desloratadina, ebastina y fexofenadina.<br><br>Análisis de Distractores: La loratadina, ebastina y fexofenadina son eficaces para enfermedad leve o moderada, pero los metaanálisis de gran escala demostraron que la levocetirizina los supera en los cuadros de alta puntuación.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Tratamiento, Página 21."
+    },
+    {
+        id: 33,
+        question: "Ante una rinitis alérgica que no cede a dosis tope, ¿qué beneficio ofrece la terapia nasal combinada de fluticasona con azelastina frente a monoterapias?",
+        options: ["Superioridad clínica estadísticamente significativa", "Equivalencia absoluta en eficacia y seguridad", "Mayor incidencia de perforación septal", "Inferioridad por antagonismo de receptor"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Rinitis Alérgica, fusionar en una misma instilación un potente inhibidor H1 inmediato y un glucocorticoide de efecto genómico aborda la fisiopatología en dos frentes temporales distintos, logrando una sinergia inalcanzable para cualquier molécula asilada.<br><br>Perla ENARM: Un estudio comparando azelastina/fluticasona con azelastina y fluticasona de forma individual encontró que la combinación mencionada fue estadísticamente superior, mejorando la escala de síntomas en mayor porcentaje.<br><br>Análisis de Distractores: No existe equivalencia; la mezcla superó a los controles aislados. No eleva la tasa de daño estructural ni perforación. Tampoco hay antagonismo, sino un claro aditivismo o sinergismo local.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Tratamiento, Página 28."
+    },
+    {
+        id: 34,
+        question: "Para pacientes con hipertrofia irreversible y bloqueo aerodinámico crónico, ¿cuál técnica quirúrgica turbinal asegura el mayor éxito terapéutico normado?",
+        options: ["Resección de cornetes superiores", "Polipectomía maxilar endoscópica", "Resección submucosa con desplazamiento lateral", "Cauterización química superficial"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Rinitis Alérgica, la exéresis del tejido submucoso eréctil (responsable de la congestión mediada por IgE) junto con la fractura e impactación hacia fuera del hueso turbinal inferior expanden definitivamente el calibre del flujo respiratorio interno sin causar atrofia limitante.<br><br>Perla ENARM: De las técnicas convencionales para reducir cornete inferior, la resección submucosa combinada con desplazamiento lateral es la más efectiva para disminuir la obstrucción nasal.<br><br>Análisis de Distractores: El cornete superior rara vez bloquea la vía principal. La polipectomía solo aplica cuando existen pólipos demostrados, no hipertrofia simple. La cauterización no reduce el hueso y la mucosa vuelve a hipertrofiarse a mediano plazo.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Tratamiento, Página 31."
+    },
+    {
+        id: 35,
+        question: "Bajo la rigurosa óptica de la medicina basada en evidencia actual, ¿qué lugar ocupa la indicación de acupuntura para el manejo de rinitis alérgica?",
+        options: ["Terapia curativa de primera línea", "En pacientes interesados en manejo no farmacológico", "Ante fracaso repetido de inmunoterapia", "Indicación en asma inestable concomitante"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Rinitis Alérgica, las terapias alternativas ostentan revisiones sistémicas mixtas. Su efecto carece del rigor bioquímico tradicional, pero por su bajo perfil de riesgo, se permite considerarla éticamente solo ante solicitud expresa del paciente como adyuvante.<br><br>Perla ENARM: No se recomienda el uso de acupuntura como tratamiento inicial; sólo se debe recomendar en aquellos pacientes interesados en tratamiento no farmacológico.<br><br>Análisis de Distractores: Carece de nivel científico para ser primera línea o suplir a la inmunoterapia de tercer nivel. Indicarla como salvavidas en asma inestable constituye una negligencia absoluta al retrasar fármacos vitales.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Tratamiento, Página 32."
+    },
+    {
+        id: 36,
+        question: "¿Qué grado de soporte científico avala prescribir rutinariamente fitoterapia (ej. planta Santa María o Biminne) como supresor de la cascada atópica en esta patología?",
+        options: ["Evidencia sólida y concluyente de grado A", "Eficacia superior a antihistamínicos orales", "Evidencia insuficiente y de calidad cuestionable", "Recomendación fuerte para estadios leves"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Rinitis Alérgica, la herbolaria no somete sus principios activos a los estándares de ensayos controlados aleatorizados necesarios para garantizar bioseguridad, dosis-respuesta o superioridad contra el placebo.<br><br>Perla ENARM: Hay muy poca evidencia y de baja calidad (metodología cuestionable) para generar recomendaciones respecto al uso de plantas como la Santa María (petasita) o combinaciones herbales.<br><br>Análisis de Distractores: Su nivel es de Grado 1- de NICE por el sesgo inmenso de las publicaciones. Jamás han superado a bloqueadores puros de receptores H1, ni ameritan ser recomendados formalmente en esquemas estandarizados institucionales.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Tratamiento, Página 32."
+    },
+    {
+        id: 37,
+        question: "En el abordaje inmunológico integral, la realización de pruebas cutáneas de punción frente a la serología para Inmunoglobulina E específica resulta en:",
+        options: ["Más sensibles y menos costosas", "Menos sensibles pero más específicas", "Idénticas en costo y sensibilidad", "Inferiores en rendimiento global a la IgE"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Rinitis Alérgica, la inyección epidérmica aprovecha la densidad natural in vivo de los mastocitos del paciente, visualizando una respuesta inflamatoria real, en contraste a las reacciones in vitro, además de omitir procesamientos reactivos caros de laboratorio.<br><br>Perla ENARM: Las pruebas cutáneas y las pruebas en sangre tienen las mismas propiedades diagnósticas intrínsecas, pero las primeras se consideran más sensibles y son sustancialmente menos costosas para el sistema de salud.<br><br>Análisis de Distractores: La serología no es netamente más específica ni tiene un rendimiento global que anule a las cutáneas. Es un hecho reportado que la IgE en sangre aumenta desmedidamente el impacto financiero sin sobrepasar la sensibilidad del prick test.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Diagnóstico, Página 16."
+    },
+    {
+        id: 38,
+        question: "¿En cuál de las siguientes condiciones clínicas se justifica solicitar obligatoriamente el perfil sérico in vitro de Inmunoglobulina E por encima del prick test?",
+        options: ["Rinitis alérgica leve intermitente", "Pacientes con dermografismo o eccema grave", "Ausencia de respuesta a corticosteroides", "Sospecha confirmada de pólipos nasales"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Rinitis Alérgica, el dermografismo provoca una pápula y un habón al simple roce con la lanceta sin requerir de alérgeno; el eccema arruina la superficie de lectura. Ambas patologías dermatológicas generan falsos positivos masivos imposibles de interpretar.<br><br>Perla ENARM: La prueba en sangre de Inmunoglobulina E específica es especialmente útil en pacientes con dermografismo o eccema grave ya que la interpretación de las pruebas cutáneas puede volverse en extremo difícil.<br><br>Análisis de Distractores: La rinitis leve no requiere pruebas. La falta de respuesta a los corticosteroides marca el inicio del protocolo inmunológico, donde las cutáneas siguen siendo el estándar inicial. Los pólipos no interactúan con el sitio de inyección cutánea.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Diagnóstico, Página 16."
+    },
+    {
+        id: 39,
+        question: "Durante la evaluación física, se encuentra una desviación septal severa; ¿qué impacto clínico limitante genera esta anormalidad anatómica sobre el tratamiento?",
+        options: ["Predispone a rinitis medicamentosa", "Impide la absorción sistémica de histamina", "Obstruye la distribución de los aerosoles medicados", "Acelera la hiperplasia del cornete superior"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Rinitis Alérgica, el tabique desviado colapsa la válvula interna y crea turbulencias aerodinámicas. Al disparar el esteroide nasal, el líquido choca contra la pared cartilaginosa sin bañar equitativamente la mucosa reactiva posterior ni los cornetes, fomentando la falla terapéutica local.<br><br>Perla ENARM: Una desviación septal puede obstruir la distribución de los aerosoles nasales medicados (sprays) y reducir críticamente su efectividad.<br><br>Análisis de Distractores: La rinitis medicamentosa es exclusivamente iatrogénica por el paciente abusando de descongestivos, no por el hueso. La histamina no se absorbe sistemáticamente sino que se libera in situ. El cornete superior está topográficamente marginado y no se relaciona primariamente.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Tratamiento, Página 23."
+    },
+    {
+        id: 40,
+        question: "¿Qué escenario secundario al uso de los esquemas farmacológicos normados constituye indicación ineludible de envío a la consulta de especialidad (Alergología)?",
+        options: ["Resequedad nasal leve por propionato de fluticasona", "Somnolencia transitoria ocasional por primera generación", "Efectos adversos intolerables que interfieren con el trabajo", "Sensación de amargura esporádica en faringe por azelastina"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Rinitis Alérgica, el propósito del tratamiento médico es restituir la funcionalidad; si el esquema genera iatrogenia (ej. hiperactividad cardiaca, sedación limitante severa o sangrados masivos), se decreta un fracaso farmacológico por intolerancia y se exige escalamiento al manejo biológico.<br><br>Perla ENARM: Se debe referir a alergología a pacientes con efectos adversos intolerables derivados del uso de medicamentos o que interfieran con el trabajo o las actividades escolares.<br><br>Análisis de Distractores: La resequedad leve y la boca agria son malestares superables con técnica correcta e ingesta de agua. La somnolencia es predecible en fármacos antiguos, por lo que primero se intenta el cambio a fármacos de segunda generación antes de saturar el tercer nivel.",
+        source: "IMSS-041-08, Diagnóstico y Tratamiento de Rinitis Alérgica, 2017, Criterios de Referencia, Página 33."
+    }
+        
+       ];
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('ExMI10LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('ExMI10Progress');
+                localStorage.removeItem('ExMI10LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-purple-500 shadow-md z-10 border-purple-500 dark:border-purple-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-fuchsia-500 to-purple-600 hover:from-purple-600 hover:to-fuchsia-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-purple-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-fuchsia-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "MEDICINA INTERNA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "IMSS-041-08 • Diagnóstico y tratamiento de rinitis alérgica";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-purple-600 dark:text-slate-400 dark:hover:text-purple-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="login.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-purple-100 dark:border-purple-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-purple-50 has-[:checked]:border-purple-400 dark:has-[:checked]:bg-purple-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-purple-600 focus:ring-purple-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-purple-600 dark:hover:bg-purple-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-fuchsia-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('ExMI10Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('ExMI10LastQId', currentQuestionId);
+                else localStorage.removeItem('ExMI10LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('ExMI10Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-purple-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-purple-500 to-fuchsia-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+
+
+
+    {
+        id: 1,
+        question: "¿Cuál es el sitio anatómico más frecuente de presentación de trombosis venosa profunda durante el embarazo debido a compresión mecánica extrínseca?",
+        options: ["Vena poplítea derecha", "Vena iliofemoral izquierda", "Vena subclavia derecha", "Vena femoral común derecha"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Tromboembólica Venosa, el útero grávido exacerba la compresión anatómica natural que ejerce la arteria ilíaca derecha sobre la vena ilíaca izquierda al cruzar la pelvis. Esto genera estasis venosa asimétrica, convirtiendo a esta extremidad en el sitio primario de oclusión en embarazadas.<br><br>Perla ENARM: El 80% de los eventos de ETV asociados a embarazo son TVP aislada, de éstos el 70% se localiza en pierna izquierda y frecuentemente en vena iliofemoral en un 72%.<br><br>Análisis de Distractores: Las opciones A y D son incorrectas porque la predilección anatómica es marcadamente hacia la extremidad pélvica izquierda (no derecha). La opción C es un sitio anatómico del miembro superior, generalmente afectado por dispositivos invasivos como catéteres centrales, no por el embarazo.",
+        source: "GPC-IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Trombosis y embarazo, Página 101."
+    },
+    {
+        id: 2,
+        question: "En la evaluación inicial de un paciente, ¿cuál es el riesgo de mortalidad a treinta días estimado para una embolia pulmonar que se presenta con choque hemodinámico?",
+        options: ["Menor al 1%", "Entre 3 y 15%", "Mayor al 15%", "Cercano al 50%"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Tromboembólica Venosa, la hipotensión sostenida indica una obstrucción vascular masiva con pérdida aguda de la reserva hemodinámica del ventrículo derecho. Clínicamente, el estado de choque reclasifica al paciente de forma automática a la categoría de \"riesgo alto\", marcando este umbral crítico de mortalidad.<br><br>Perla ENARM: El estado hemodinámico del paciente, si está en choque se clasifica como de alto riesgo o EP masiva con un riesgo estimado de mortalidad a 30 días > 15%.<br><br>Análisis de Distractores: La opción A corresponde a pacientes hemodinámicamente estables con riesgo bajo. La opción B agrupa a los pacientes de riesgo intermedio según escalas de estratificación. La opción D sobrestima la estadística general de mortalidad a 30 días establecida en las guías para cohorte general en choque.",
+        source: "GPC-IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Evidencias y Recomendaciones, Página 85."
+    },
+    {
+        id: 3,
+        question: "De acuerdo a la epidemiología descrita, ¿cuál es el único factor de riesgo conductual que la trombosis venosa comparte fuertemente con la enfermedad arterial cardiovascular?",
+        options: ["Obesidad grado tres", "Consumo de alcohol", "Tabaquismo crónico activo", "Sedentarismo por ocupación"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Tromboembólica Venosa, históricamente la trombosis venosa (asociada a estasis e hipercoagulabilidad) y la arterial (asociada a daño aterosclerótico y dislipidemia) se consideraban entidades sin traslape. Sin embargo, el estrés oxidativo del tabaco genera daño endotelial sistémico que precipita ambas patologías.<br><br>Perla ENARM: Un meta análisis de estudios prospectivos con ~250,000 pacientes reportó que el único factor de riesgo cardiovascular compartido con ETV fue el tabaquismo.<br><br>Análisis de Distractores: La opción A es un factor de riesgo puro para ETV y síndrome metabólico, pero no es el hallazgo epidemiológico compartido destacado en la GPC. Las opciones B y D son factores de riesgo generales, pero la normatividad subraya explícitamente al tabaquismo como el nexo patológico bidireccional.",
+        source: "GPC-IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Prevención, Página 22."
+    },
+    {
+        id: 4,
+        question: "En una paciente embarazada con diagnóstico establecido de síndrome de anticuerpos antifosfolípidos y antecedente de abortos, ¿cuál es el régimen profiláctico preparto indicado?",
+        options: ["Dosis altas de aspirina sola", "Antagonistas de vitamina K", "Heparina combinada con aspirina", "Anticoagulante oral directo solo"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Tromboembólica Venosa, el daño microvascular placentario inducido por los anticuerpos requiere bloqueo de la cascada de coagulación (heparina) y reducción de la reactividad plaquetaria (aspirina a dosis baja) simultáneamente para evitar microtrombosis y pérdida fetal temprana.<br><br>Perla ENARM: A la embarazada que reúne los requisitos para diagnóstico de SAAF, se recomienda antes del parto la administración de dosis profilácticas o intermedias de heparina... combinada con aspirina de 75 a 100 mg/día.<br><br>Análisis de Distractores: La opción A es insuficiente para inhibir la cascada de coagulación activada por el SAAF. La opción B está contraindicada por su alta teratogenicidad (embriopatía warfarínica). La opción D está proscrita en el embarazo por cruzar la barrera placentaria y generar sangrado fetal.",
+        source: "GPC-IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Trombosis y embarazo, Página 125."
+    },
+    {
+        id: 5,
+        question: "En un paciente adulto promedio que iniciará terapia con antagonistas de vitamina K, ¿cuál es la dosis de inicio recomendada sin utilizar esquemas de carga?",
+        options: ["2.5 mg por la mañana", "5 mg por la tarde", "10 mg como dosis única", "15 mg en dosis dividida"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Tromboembólica Venosa, las dosis de carga iniciales altas provocan una caída abrupta de la Proteína C (anticoagulante natural), lo que paradójicamente induce un estado hipercoagulable grave (necrosis por warfarina). El inicio progresivo es mandatorio.<br><br>Perla ENARM: Se recomienda iniciar la terapia anticoagulante con AVK en el día 1 o 2 del tratamiento con heparina... con una dosis de 5 mg/día de warfarina por la tarde, sin utilizar dosis de “carga”.<br><br>Análisis de Distractores: La opción A se utiliza en adultos mayores, fragilidad o disfunción hepática, no en un adulto promedio. Las opciones C y D corresponden a los históricos \"esquemas de carga\" que hoy están prohibidos por el riesgo de necrosis isquémica cutánea al depletar agudamente la Proteína C.",
+        source: "GPC-IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Tratamiento, Página 65."
+    },
+    {
+        id: 6,
+        question: "Si un paciente con probabilidad clínica intermedia presenta un ultrasonido por compresión negativo que se limitó únicamente a las venas proximales, ¿cuál es el abordaje a seguir?",
+        options: ["Egresar con alta médica", "Repetir estudio en 48 horas", "Repetir estudio en una semana", "Realizar pletismografía por impedancia"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Tromboembólica Venosa, un ultrasonido que no evalúa las venas de la pantorrilla no puede descartar de forma segura un trombo distal en evolución. Como la propagación a territorio proximal ocurre en un lapso de 5 a 7 días, se requiere vigilancia ecográfica para detectar y tratar oportunamente la extensión.<br><br>Perla ENARM: Sí el USG sólo se realiza en venas proximales y es negativo, se repite en una semana o agregar determinación del DD.<br><br>Análisis de Distractores: La opción A expone al paciente a una TEP no prevenida si el trombo asintomático asciende. La opción B es un tiempo demasiado corto para detectar extensión significativa. La opción D es un estudio obsoleto que ha perdido su lugar en las guías modernas debido a su baja sensibilidad.",
+        source: "GPC-IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Diagnóstico, Página 32."
+    },
+    {
+        id: 7,
+        question: "¿En qué ventana de tiempo gestacional la exposición fetal a antagonistas de la vitamina K produce el mayor riesgo de anomalías congénitas (embriopatía)?",
+        options: ["De la primera a la tercera semana", "De la cuarta a la octava semana", "De la décima a la duodécima semana", "Después de la semana veinte"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Tromboembólica Venosa, la warfarina atraviesa libremente la placenta. La organogénesis máxima del cartílago y tejido óseo ocurre en este período; el fármaco inhibe la osteocalcina, causando hipoplasia nasal, condrodisplasia punctata y malformaciones del SNC.<br><br>Perla ENARM: La warfarina es teratogénica... y está asociada con más de 30% de riesgo de anomalías congénitas si se toma durante la 4ª a 8ª semanas después de la concepción (período de organogénesis).<br><br>Análisis de Distractores: Las opciones A y C flanquean el período de mayor teratogenicidad crítica, aunque el riesgo basal de aborto sigue existiendo en todo el primer trimestre. La opción D (segunda mitad) se asocia más a microhemorragias cerebrales fetales que a las anomalías morfológicas clásicas de la embriopatía.",
+        source: "GPC-IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Trombosis y embarazo, Página 110."
+    },
+    {
+        id: 8,
+        question: "¿Cuál es el límite de peso corporal a partir del cual es obligatorio realizar monitoreo farmacológico con niveles de anti factor Xa para heparinas de bajo peso molecular?",
+        options: ["Peso mayor a 100 kg", "Peso mayor a 150 kg", "Peso mayor a 200 kg", "Peso mayor a 250 kg"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Tromboembólica Venosa, la lipofilia de las heparinas inyectables altera su volumen de distribución. En obesidad extrema, la farmacocinética lineal basada en peso se pierde, haciendo que las dosis calculadas por kilo generen picos plasmáticos supraterapéuticos impredecibles y altamente hemorrágicos.<br><br>Perla ENARM: En personas con peso >200 kg necesitan asesoría mediante farmacología para dosis mayores de 400 mg/día... La única justificación del monitoreo mediante la actividad de anti factor Xa es durante el embarazo, personas con TFG <30 ml/min o aquellas con obesidad mórbida.<br><br>Análisis de Distractores: Las opciones A y B representan obesidad grave pero la GPC establece que las fórmulas estandarizadas de mg/kg siguen siendo tolerables y seguras en esos rangos sin requerir pruebas especiales. La opción D excede el umbral crítico normado.",
+        source: "GPC-IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Tratamiento, Página 61."
+    },
+    {
+        id: 9,
+        question: "¿Qué fármaco anticoagulante inyectable debe ajustarse específicamente a una dosis de 7.5 mg al día en pacientes con un peso entre 50 y 100 kilogramos?",
+        options: ["Tinzaparina subcutánea", "Dalteparina subcutánea", "Fondaparinux subcutáneo", "Enoxaparina subcutánea"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Tromboembólica Venosa, a diferencia de las heparinas clásicas que se dosifican por miligramo o unidad por kilo estricto, este pentasacárido sintético se administra en dosis fijas preestablecidas por bandas amplias de peso corporal para simplificar el manejo ambulatorio.<br><br>Perla ENARM: Terapia inicial en personas con cáncer: Fondaparinux <50 Kg. 5.0 mg/día; 50-100 Kg. 7.5 mg/día; >100 Kg. 10 mg/día.<br><br>Análisis de Distractores: La opción A se calcula a 175 U/kg/día. La opción B se calcula a 200 U/kg/día. La opción D se calcula a 1 mg/kg cada 12 horas o 1.5 mg/kg cada 24 horas. Ninguna de estas utiliza el sistema de bloques fijos de peso.",
+        source: "GPC-IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Trombosis asociada a cáncer, Página 98."
+    },
+    {
+        id: 10,
+        question: "¿Cuál es la duración recomendada de la tromboprofilaxis extendida con heparina de bajo peso molecular posterior a cirugía abdominal mayor por cáncer de alto riesgo?",
+        options: ["Siete a diez días", "Catorce a veintiún días", "Mayor a cuatro semanas", "Hasta doce semanas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Tromboembólica Venosa, el estado procoagulante inducido por la manipulación del lecho tumoral (liberación de factor tisular) y la inmovilidad de la convalecencia no desaparece al alta hospitalaria. Cubrir al paciente solo la primera semana deja sin protección la ventana de mayor letalidad por embolia.<br><br>Perla ENARM: La profilaxis extendida con HBPM por más de 4 semanas pos operatorio. Se considerará en pacientes sometidos a cirugía abdominal o pélvica por cáncer con factores de alto riesgo.<br><br>Análisis de Distractores: La opción A es el tiempo estándar profiláctico general no oncológico. La opción B es un tiempo intermedio no especificado en esta guía. La opción D aplica a la terapia curativa del paciente con cáncer y evento trombótico confirmado (que dura de 3 a 6 meses mínimos), no a la profilaxis quirúrgica.",
+        source: "GPC-IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Trombosis y cáncer, Página 99."
+    },
+    {
+        id: 11,
+        question: "¿Qué parámetro evolutivo contraindica o excluye de la recomendación el uso de trombolisis dirigida por catéter en trombosis de miembro superior grave?",
+        options: ["Falla a anticoagulación previa", "Trombosis de la vena axilar", "Síntomas mayores a catorce días", "Expectativa de vida de un año"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Tromboembólica Venosa, pasado este umbral temporal, el trombo sufre organización fibrótica e infiltración por fibroblastos; el coágulo se endurece y pierde sensibilidad al activador del plasminógeno, aumentando el riesgo de sangrado masivo sin lograr la lisis del tejido.<br><br>Perla ENARM: La trombolisis guiada por catéter está indicada en los siguientes casos: Síntomas graves, trombosis que involucre la mayor parte de la vena subclavia y axilar, y Síntomas menores de 14 días.<br><br>Análisis de Distractores: Las opciones A, B y D son precisamente las indicaciones formales (criterios de inclusión) dictados por la guía para optar por la terapia fibrinolítica invasiva en un abordaje de salvamento para el brazo afectado.",
+        source: "GPC-IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Tratamiento, Páginas 80 y 81."
+    },
+    {
+        id: 12,
+        question: "En un paciente que cursa con un primer evento de trombosis venosa proximal no provocada y tiene bajo riesgo de hemorragia, ¿cuál es la duración indicada del tratamiento?",
+        options: ["Un trimestre de tratamiento", "Medio año de tratamiento", "Un año exacto de tratamiento", "Terapia anticoagulante indefinida"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Tromboembólica Venosa, los eventos \"idiopáticos\" o no provocados implican una falla basal intrínseca en la regulación hemostática. Suspender el medicamento tras el esquema agudo conlleva una altísima tasa de recurrencia en los siguientes años. Si el paciente tolera los fármacos sin sangrar, la protección permanente es la conducta costo-efectiva superior.<br><br>Perla ENARM: Terapia indefinida en persona con un primer evento no provocado de TVP proximal de la pierna o TEP y que tengan un riesgo bajo o moderado de sangrado con revaloración periódica (anual).<br><br>Análisis de Distractores: La opción A aplica para eventos provocados por un factor quirúrgico o inmovilización transitoria. Las opciones B y C prolongan la terapia pero dejan al paciente desprotegido a mediano plazo, contradiciendo el lineamiento de tratamiento de fase extendida de esta GPC.",
+        source: "GPC-IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Tratamiento, Página 70."
+    },
+    {
+        id: 13,
+        question: "En una paciente con trombofilia de alto riesgo documentada (deficiencia de antitrombina) y antecedente familiar de trombosis, ¿cuánto tiempo debe mantenerse la profilaxis después del parto?",
+        options: ["Siete días continuos", "Catorce días continuos", "Hasta seis semanas posteriores", "Un trimestre completo posparto"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Tromboembólica Venosa, la hipercoagulabilidad inducida por el trauma obstétrico y la caída abrupta de hormonas placentarias genera una ventana crítica procoagulante. El aclaramiento biológico de este riesgo dura aproximadamente 42 días, lapso innegociable en pacientes con genética trombofílica previa.<br><br>Perla ENARM: Deficiencia de antitrombina y proteína C, mutación del factor V de Leiden... y antecedente familiar de trombosis venosa se utilizará la tromboprofilaxis con HBPM hasta por 6 semanas post-parto.<br><br>Análisis de Distractores: Las opciones A y B son lapsos aplicables a profilaxis posquirúrgica ortopédica o general, dejando expuesta a la paciente puerperal en su pico máximo de riesgo tromboembólico. La opción D aplica para el manejo de una trombosis aguda ya establecida, no profilaxis.",
+        source: "GPC-IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Trombosis y embarazo, Página 124."
+    },
+    {
+        id: 14,
+        question: "¿Cuál es el parámetro laboratorial y la meta de ajuste para asegurar la eficacia terapéutica de la heparina no fraccionada en infusión continua?",
+        options: ["INR entre 2.0 y 3.0", "TTPa entre 1.5 y 2.5 veces el control", "Niveles de Dímero D negativos", "Anti factor Xa en nivel profiláctico"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Tromboembólica Venosa, la inhibición de la vía intrínseca mediada por heparina-antitrombina III requiere monitorización estricta por su farmacocinética impredecible. Superar este límite precipita hemorragias incontrolables, mientras que valores inferiores no detienen el crecimiento del trombo masivo.<br><br>Perla ENARM: La dosis terapéutica de la HNF inicial parenteral es de 80 UI/Kg, seguido de infusión continua... con el objetivo de obtener niveles terapéuticos del TTPa de 1.5 a 2.5 del valor control.<br><br>Análisis de Distractores: La opción A vigila antagonistas de Vitamina K (warfarina). La opción C no vigila tratamiento, solo descarta diagnóstico inicial en bajo riesgo. La opción D vigila el uso de heparinas de bajo peso molecular (HBPM) en casos excepcionales como obesidad mórbida o embarazo.",
+        source: "GPC-IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Trombosis y embarazo, Página 114."
+    },
+    {
+        id: 15,
+        question: "¿Qué grupo de fármacos anticoagulantes está explícitamente evaluado como seguro y recomendado para pacientes en período de lactancia materna exclusiva?",
+        options: ["Anticoagulantes orales directos", "Antagonistas de vitamina K", "Inhibidores directos del factor Xa", "Moduladores sintéticos heparínicos"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Tromboembólica Venosa, a pesar de su altísima toxicidad fetal intrauterina (teratogénicos), compuestos como la warfarina y el acenocumarol viajan altamente unidos a proteínas plasmáticas maternas, por lo que no se secretan en su forma activa ni en cantidades detectables hacia la leche materna.<br><br>Perla ENARM: La HBPM, warfarina y acenocumarol se pueden administrar a mujeres lactando... no están en su forma activa ni en cantidades significativas en leche materna.<br><br>Análisis de Distractores: Las opciones A y C (que incluyen moléculas orales como rivaroxabán o apixabán) están contraindicadas porque cruzan barreras biológicas libremente y se acumulan en la leche materna. La opción D incluye drogas experimentales no evaluadas en el protocolo de lactancia normado.",
+        source: "GPC-IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Trombosis y lactancia, Páginas 120 y 121."
+    },
+    {
+        id: 16,
+        question: "De acuerdo a la estadística basal señalada, ¿cuál es el porcentaje de pacientes con tromboembolia venosa aguda que debutan asintomáticos a nivel clínico pélvico?",
+        options: ["Cerca del diez por ciento", "Hasta el treinta por ciento", "Alrededor del cincuenta por ciento", "Más del ochenta por ciento"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Tromboembólica Venosa, el desarrollo de circulación colateral y el manejo del drenaje linfático compensatorio silencian las manifestaciones inflamatorias primarias en la mitad de los casos. Esto enfatiza por qué la evaluación clínica aislada (sin aplicar reglas probabilísticas) es insuficiente y peligrosa.<br><br>Perla ENARM: El 90% de los casos de TVP se presenta en piernas... El 50% no presenta datos clínicos y al menos 40% de los casos TVP proximal tendrán una Tromboembolia Pulmonar (TEP) que puede ser asintomática.<br><br>Análisis de Distractores: Las opciones A, B y D son estadísticamente falsas. La ausencia de signos clásicos de inflamación (como el signo de Homans o el empastamiento) en la mitad de los individuos obliga a utilizar herramientas estandarizadas como Wells o USG ante la simple sospecha.",
+        source: "GPC-IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Diagnóstico, Página 27."
+    },
+    {
+        id: 17,
+        question: "¿Cuáles son las tres variables clínicas que integran el modelo predictivo LEFt validado para identificar riesgo de trombosis pélvica en el embarazo?",
+        options: ["Dolor lumbar, eritema y falla renal", "Pierna izquierda, edema y primer trimestre", "Falla cardiaca, disnea y embarazo término", "Dolor poplíteo, hiperemia y puerperio"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Tromboembólica Venosa, debido a que la escala de Wells es inservible en gestantes, se utiliza este acrónimo anglosajón (Left leg, Edema >2cm, First Trimester) para sumar puntos y justificar el abordaje por imagen de manera racional sin someter a la madre a estudios por estasis hídrica fisiológica aislada.<br><br>Perla ENARM: Chan (2009) utilizó 3 variables clínicas predictores de TVP denominadas LEFt... que incluyen: síntomas en pierna izquierda, diferencia en la circunferencia de pantorrilla >2 cm y primer trimestre de embarazo.<br><br>Análisis de Distractores: Las opciones A, C y D incluyen hallazgos genéricos de choque o signos inflamatorios aislados que no conforman esta regla predictiva internacional. El énfasis en la pierna izquierda obedece a la compresión anatómica de la ilíaca.",
+        source: "GPC-IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Trombosis y embarazo, Página 103."
+    },
+    {
+        id: 18,
+        question: "¿Cuál de los siguientes fármacos incrementa el riesgo de hemorragia incontrolable por interacción farmacocinética al combinarse con Warfarina?",
+        options: ["Quinolonas sistémicas", "Macrólidos tópicos", "Aminoglucósidos parenterales", "Carbapenémicos de amplio espectro"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Tromboembólica Venosa, varios antibióticos compiten por el aclaramiento del citocromo P450 o erradican la flora intestinal productora de vitamina K, exacerbando exponencialmente el efecto del antagonista y disparando el INR a niveles de riesgo fatal de sangrado en sistema nervioso central.<br><br>Perla ENARM: Recomendar a la persona que toma AVK evitar... tratamientos que contengan antiinflamatorios no esteroideos... antibióticos como cotrimazol, quinolonas, cefalosporinas, metronidazol, amoxicilina con o sin clavulanato, doxiciclina y fluconazole.<br><br>Análisis de Distractores: Las opciones B, C y D no están reportadas en el listado primario de red flags farmacológicas de la guía para la warfarina, siendo relativamente más seguras en el manejo conjunto en infecciones habituales del paciente anticoagulado.",
+        source: "GPC-IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Tratamiento, Páginas 64 y 66."
+    },
+    {
+        id: 19,
+        question: "Si un paciente no muestra recuperación ventilatoria y cursa con disnea de esfuerzo meses después de sobrevivir a una embolia pulmonar aguda, ¿qué patología se debe descartar obligatoriamente?",
+        options: ["Fibrosis pulmonar idiopática", "Hipertensión pulmonar tromboembólica crónica", "Neumonía organizativa secundaria", "Derrame pleural recidivante"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Tromboembólica Venosa, la incapacidad de la fisiología fibrinolítica para disolver el trombo agudo resulta en la remodelación y organización de una cicatriz obstructiva en el árbol arterial, incrementando permanentemente la resistencia y la presión de la arteria pulmonar.<br><br>Perla ENARM: Se recomienda mantener vigilancia clínica en la fase de recuperación de una EP aguda. Sospechar e investigar CTEPH (Hipertensión pulmonar asociada a tromboembolismo crónico) si no hay una recuperación de la función pulmonar, en especial a medio año de esta haberse presentado.<br><br>Análisis de Distractores: Las opciones A y B son patologías intersticiales e inflamatorias, no macrovasculares. La opción D no genera fallo crónico ventricular derecho ni es la evolución natural del defecto de llenado arterial post-TEP.",
+        source: "GPC-IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Complicaciones, Página 97."
+    },
+    {
+        id: 20,
+        question: "Para clasificar a una embolia pulmonar como de alto riesgo y con choque, ¿a partir de qué valor normado debe presentarse la caída sostenida de la presión arterial sistólica basal?",
+        options: ["Caída ≥ 10 mmHg", "Caída ≥ 20 mmHg", "Caída ≥ 30 mmHg", "Caída ≥ 40 mmHg"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Enfermedad Tromboembólica Venosa, la definición de inestabilidad cardiopulmonar masiva excluye a las hipovolemias o arritmias simples; exige un colapso en la contractilidad ventricular derecha que reduce drásticamente el llenado del corazón izquierdo, provocando una caída catastrófica del gasto cardíaco.<br><br>Perla ENARM: Embolismo pulmonar de alto riesgo se caracteriza por presión venosa sistólica < de 90 mmHg o caída de la presión sistólica ≥ 40 mmHg > a 15 min sin relación con arritmias, hipovolemia o sepsis.<br><br>Análisis de Distractores: Las opciones A, B y C son fluctuaciones que pueden ocurrir por dolor, ansiedad compensada o respuesta vagal inicial, pero no cumplen el dintel de severidad universalmente validado para justificar el uso inmediato de trombolisis sistémica de salvamento.",
+        source: "GPC-IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Anexos, Página 150."
+    },
+    {
+        id: 21,
+        question: "¿Qué incremento de diámetro documentado por ultrasonido confirma objetivamente la extensión o recurrencia de una trombosis venosa profunda?",
+        options: ["Incremento ≥ 1 mm", "Incremento ≥ 2 mm", "Incremento ≥ 3 mm", "Incremento ≥ 4 mm"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, para justificar un cambio en la terapia o calificar el tratamiento como fallido, la variación del calibre venoso debe superar el error de medición interobservador; cambios menores obligan a repetir el estudio en lugar de asumir fracaso terapéutico.<br><br>Perla ENARM: Se recomienda documentar la recurrencia de la trombosis mediante los siguientes parámetros: Afección de un territorio vascular no afectado previamente o incremento del diámetro del trombo ≥ 4 mm.<br><br>Análisis de Distractores: Las opciones A, B y C representan un aumento milimétrico que puede atribuirse a la técnica de compresión, ángulo del transductor o estasis hídrica del día, motivo por el cual la normatividad exige repetir la imagen en una semana si el incremento oscila entre 1 a 3.9 mm.",
+        source: "GPC IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Tratamiento, Página 73."
+    },
+    {
+        id: 22,
+        question: "En un paciente ambulatorio con trombosis venosa y monitoreo de rutina, ¿cuál es el abordaje de un INR reportado en 11.0 sin presencia de hemorragia clínica?",
+        options: ["Administrar vitamina K intravenosa", "Iniciar vitamina K oral", "Transfundir plasma fresco congelado", "Omitir una dosis y vigilar"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, un nivel supraterapéutico masivo conlleva un altísimo riesgo de sangrado espontáneo; sin embargo, al no existir hemorragia activa, el uso de plasma o vitamina K intravenosa (que puede causar anafilaxia o resistencia prolongada) es excesivo. La vía oral revierte suavemente el defecto.<br><br>Perla ENARM: INR >10.0, sin hemorragia, iniciar vitamina K oral.<br><br>Análisis de Distractores: La opción A se reserva para hemorragia grave en conjunto con plasma. La opción C (plasma fresco) está indicada únicamente ante sangrado mayor que ponga en riesgo la vida para reversión rápida. La opción D aplica para elevaciones leves a moderadas del INR (ej. 4.5 a 10), donde solo se ajusta dosis sin administrar el antídoto.",
+        source: "GPC IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Tratamiento, Página 50."
+    },
+    {
+        id: 23,
+        question: "¿Cuál es la indicación terapéutica para una trombosis de venas pélvicas descubierta incidentalmente durante una tomografía de estadificación en un paciente oncológico?",
+        options: ["Tromboprofilaxis a dosis bajas", "Anticoagulación terapéutica plena", "Colocación de filtro de vena cava", "Vigilancia mensual con ultrasonido"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, la historia natural de los trombos silentes asociados a malignidad tiene el mismo potencial embolígeno fatal que los sintomáticos; muchos de estos pacientes ya cursaron con microembolias pulmonares que atribuyeron falsamente a la astenia del cáncer.<br><br>Perla ENARM: Se recomienda que a la persona con ETV incidental (detectada por estudios de gabinete) se le indique anticoagulación terapéutica, como aquellos casos sintomáticos.<br><br>Análisis de Distractores: La opción A subtrata un evento ya establecido (no es prevención, es tratamiento). La opción C se indica solo si hay contraindicación absoluta para usar heparina. La opción D abandona a un paciente de altísimo riesgo oncológico a una progresión trombótica inminente.",
+        source: "GPC IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Trombosis asociada a cáncer, Página 90."
+    },
+    {
+        id: 24,
+        question: "Según las evidencias actuales, ¿cuál de las siguientes intervenciones NO está recomendada para prevenir el desarrollo del síndrome postrombótico?",
+        options: ["Anticoagulación precoz y óptima", "Tromboprofilaxis primaria intrahospitalaria", "Medias de compresión elástica graduada", "Deambulación temprana postquirúrgica"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, aunque las prendas compresivas reducen eficientemente el dolor y el volumen hídrico (edema) agudo, los ensayos clínicos a largo plazo demostraron que no evitan la destrucción de las válvulas venosas ni la remodelación fibrótica que caracteriza al síndrome.<br><br>Perla ENARM: En el paciente con TVP aguda de miembro inferior no se recomienda el uso de medias de compresión para prevenir el síndrome pos trombótico.<br><br>Análisis de Distractores: Las opciones A y B son los pilares normados absolutos: evitar que se forme el trombo (profilaxis) o disolverlo rápido con dosis correctas (anticoagulación) preserva la anatomía valvular y previene la secuela crónica a nivel fisiopatológico.",
+        source: "GPC IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Complicaciones, Páginas 58, 80 y 81."
+    },
+    {
+        id: 25,
+        question: "En un paciente con secuelas graves a largo plazo tras una trombosis masiva, ¿cuál es el manejo indicado para las úlceras venosas postrombóticas crónicas que son refractarias?",
+        options: ["Tromboendarterectomía venosa profunda", "Safenectomía superficial completa", "Reconstrucción valvular venosa", "Amputación supracondílea electiva"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, el daño irreversible de la arquitectura valvular genera una columna de presión hidrostática constante que impide la microcirculación cutánea; cuando el soporte elástico y farmacológico fracasa, reparar quirúrgicamente la válvula defectuosa es la única vía curativa para cerrar el lecho ulceroso.<br><br>Perla ENARM: La reconstrucción valvular se puede considerar en pacientes con ulceras venosas postrombóticas refractarias crónicas.<br><br>Análisis de Distractores: La opción A se realiza en la arteria pulmonar para hipertensión crónica, no en extremidades. La opción B agravaría el retorno venoso al quitar el sistema colateral superficial. La opción D no es un manejo resolutivo estándar de la patología venosa crónica no isquémica.",
+        source: "GPC IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Complicaciones, Página 82."
+    },
+    {
+        id: 26,
+        question: "¿Qué anticoagulante oral de acción directa tiene la ventaja farmacocinética de poder iniciarse sin requerir una fase de inducción previa con heparina parenteral?",
+        options: ["Dabigatrán etexilato", "Rivaroxabán oral", "Acenocumarol potásico", "Warfarina sódica"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, este inhibidor del Factor Xa alcanza picos de anticoagulación en menos de 4 horas desde su ingesta, permitiendo un manejo ambulatorio inmediato sin inyecciones puente.<br><br>Perla ENARM: Rivaroxabán: 15 mg vía oral 2 veces al día X 3 semanas seguido de 20 mg una vez al día. No requiere iniciar con heparina.<br><br>Análisis de Distractores: La opción A (Dabigatrán) exige estrictamente de 5 a 10 días previos de anticoagulación parenteral antes de iniciar la vía oral. Las opciones C y D (Antagonistas de Vitamina K) requieren un puenteo largo debido a su inicio de acción retardado dependiente de la síntesis hepática de factores.",
+        source: "GPC IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Evidencias y Recomendaciones, Cuadro 14, Página 129."
+    },
+    {
+        id: 27,
+        question: "En el paciente al que se le colocó un filtro de vena cava por una hemorragia mayor intraespinal, ¿cuál es el momento normado para realizar la extracción del dispositivo?",
+        options: ["A las cuatro semanas exactas", "A los tres meses de colocación", "Al resolver contraindicación de anticoagulación", "Su permanencia es vitalicia y definitiva"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, las mallas endovasculares metálicas son potentes generadores de estasis y formación de coágulos \"de novo\". Su uso es una medida heroica temporal; en cuanto el paciente deja de sangrar y puede tolerar heparina, el filtro pierde su utilidad y se convierte en un riesgo inaceptable.<br><br>Perla ENARM: Se recomienda remover el filtro una vez resuelta la contraindicación para la anticoagulación y dar terapia anticoagulante de acuerdo a las características del paciente.<br><br>Análisis de Distractores: Las opciones A y B aplican plazos arbitrarios que podrían exponer al paciente si su sitio de hemorragia aún no ha sanado. La opción D conlleva complicaciones masivas a largo plazo como la trombosis completa de la cava inferior y falla renal.",
+        source: "GPC IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Filtro de vena cava, Página 115."
+    },
+    {
+        id: 28,
+        question: "Debido a los cambios fisiológicos en la tasa de filtración glomerular, ¿a partir de qué momento el intervalo de dosificación de enoxaparina terapéutica cambia obligatoriamente a cada 12 horas en la embarazada?",
+        options: ["Después de la semana doce", "Después de la semana veinte", "Después de la semana veintiocho", "Desde la concepción temprana"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, el volumen plasmático circulante y la depuración renal experimentan su aumento máximo en la mitad del embarazo. Mantener un intervalo de 24 horas resulta en niveles valle subterapéuticos que exponen a la madre a microinfartos placentarios y pérdida fetal.<br><br>Perla ENARM: Se prefiere administración diaria... a excepción de embarazadas que recibirán dosis C/12 h por el incremento en la Tasa Filtración Glomerular (TFG) >20 semanas de gestación.<br><br>Análisis de Distractores: Las opciones A, C y D marcan periodos trimestrales incorrectos que no se correlacionan con la farmacodinamia ajustada descrita en el protocolo de heparinas de la GPC.",
+        source: "GPC IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Tratamiento, Páginas 45 y 46."
+    },
+    {
+        id: 29,
+        question: "En la paciente puerperal que opta por lactancia materna exclusiva, ¿cuál de los siguientes fármacos antitrombóticos está avalado como seguro para el recién nacido?",
+        options: ["Rivaroxabán a dosis bajas", "Apixabán profiláctico", "Dabigatrán etexilato oral", "Aspirina a dosis bajas"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, el manejo profiláctico plaquetario tiene una excreción en leche materna nula o carente de impacto clínico neonatal, permitiendo el amamantamiento seguro sin requerir ablactación prematura.<br><br>Perla ENARM: Mujer lactando que usa dosis bajas de aspirina puede continuar con este medicamento.<br><br>Análisis de Distractores: Las opciones A, B y C pertenecen a los nuevos anticoagulantes orales de acción directa (AOAD), los cuales cruzan activamente a la glándula mamaria y carecen de estudios de seguridad, estando explícitamente proscritos en la lactancia por riesgo de hemorragia gástrica neonatal.",
+        source: "GPC IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Trombosis y embarazo, Página 109."
+    },
+    {
+        id: 30,
+        question: "Si un paciente diagnosticado con trombosis venosa profunda presenta una clara extensión clínica y ecográfica de su trombo a pesar de cursar con INR en metas (2.5) bajo uso de warfarina, ¿qué conducta terapéutica indica la guía?",
+        options: ["Cambiar temporalmente a heparina de bajo peso", "Aumentar la dosis objetivo de INR a 4.0", "Colocación de filtro de vena cava urgente", "Añadir ácido acetilsalicílico al esquema"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, la falla de un inhibidor enzimático oral sugiere un proceso protrombótico activo refractario a la vía dependiente de vitamina K (frecuente en neoplasias ocultas). La heparina inyectada asegura una saturación de antitrombina predecible para frenar la propagación de forma inmediata.<br><br>Perla ENARM: Sí la persona presenta trombosis recurrente recibiendo tratamiento anticoagulante con un AVK a dosis terapéuticas o alguno de los AOAD, con buen apego, se recomienda cambiar temporalmente a una HBPM.<br><br>Análisis de Distractores: La opción B no detiene la trombosis neoplásica y aumenta exponencialmente el riesgo de hemorragia fatal. La opción C es una barrera mecánica y no detiene la actividad procoagulante en la pierna. La opción D no tiene impacto curativo en el lecho venoso dominado por mallas de fibrina.",
+        source: "GPC IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Complicaciones, Páginas 74 y 75."
+    },
+    {
+        id: 31,
+        question: "En pacientes jóvenes sin antecedentes, ¿qué cuadro anatomo-clínico es causado directamente por la compresión de la vena subclavia durante movimientos repetitivos del brazo?",
+        options: ["Síndrome de May-Thurner", "Síndrome de Budd-Chiari", "Síndrome de Paget-Schroetter", "Síndrome de Trousseau"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, la hipertrofia de los escalenos en atletas o trabajadores manuales ocasiona microtrauma repetitivo sobre el endotelio venoso en el desfiladero torácico, precipitando una trombosis masiva aguda en un paciente por lo demás sano.<br><br>Perla ENARM: La trombosis de miembro superior (TMS) primaria... incluye casos idiopáticos o relacionados a esfuerzo físico, al síndrome de Paget-Schroetter (compresión de la vena subclavia por movimientos repetitivos o enérgicos del brazo).<br><br>Análisis de Distractores: La opción A es la compresión de la vena ilíaca izquierda por la arteria ilíaca derecha en la pelvis. La opción B es la trombosis de las venas suprahepáticas. La opción D es la flebitis migratoria clásica de los adenocarcinomas mucinosos.",
+        source: "GPC IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Trombosis de miembros superiores, Página 35."
+    },
+    {
+        id: 32,
+        question: "De acuerdo al Índice de Severidad de Embolia Pulmonar Simplificado (PESI), ¿qué variable clínica aislada otorga un punto y elimina la clasificación de riesgo bajo?",
+        options: ["Edad mayor a ochenta años", "Frecuencia respiratoria mayor a treinta", "Temperatura menor a treinta y seis", "Tensión arterial diastólica baja"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, este modelo predictivo busca identificar pacientes candidatos a manejo domiciliario seguro; la edad muy avanzada correlaciona de manera independiente con claudicación temprana del ventrículo derecho y alta mortalidad a 30 días, prohibiendo el egreso ambulatorio.<br><br>Perla ENARM: Escala de índice de gravedad para embolismo pulmonar (PESI) simplificada: Predictores (1 punto c/u): Edad > 80 años, Antecedente de cáncer, insuficiencia cardiaca, pulso >110, PAS <100, SatO2 <90%. Bajo riesgo es si el resultado es de 0.<br><br>Análisis de Distractores: Las opciones B y C son variables de la escala PESI original y completa, pero fueron descartadas en la versión Simplificada debido a su menor peso estadístico predictivo en urgencias. La opción D no pertenece a los umbrales hemodinámicos (el criterio es sistólica < 100).",
+        source: "GPC IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Anexos (Cuadro 17), Página 133."
+    },
+    {
+        id: 33,
+        question: "Durante la fase aguda intrahospitalaria, ¿cuál es la dosis farmacológica inicial de choque recomendada para la Heparina No Fraccionada vía intravenosa?",
+        options: ["60 UI/kg intravenoso", "80 UI/kg intravenoso", "100 UI/kg intravenoso", "120 UI/kg intravenoso"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, la rápida saturación de las proteínas plasmáticas no específicas y macrófagos es necesaria antes de que el fármaco libre alcance a la antitrombina III para inhibir al Factor IIa y Xa, requiriendo un bolo de carga preciso para no perder tiempo terapéutico.<br><br>Perla ENARM: La dosis terapéutica de la HNF inicial parenteral es de 80 UI/Kg, seguido de infusión continua.<br><br>Análisis de Distractores: La opción A es subterapéutica y causa persistencia del estado procoagulante en las primeras horas. Las opciones C y D causan niveles picos de TTPa mayores a 3.0 veces el control, incrementando el riesgo de sangrado cerebral espontáneo.",
+        source: "GPC IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Tratamiento, Página 99."
+    },
+    {
+        id: 34,
+        question: "Ante sospecha de trombosis primaria del miembro superior con una probabilidad clínica baja, ¿qué punto de corte de Dímero D descarta el evento sin requerir ultrasonografía?",
+        options: ["Menor a 250 µg/ml", "Menor a 500 µg/ml", "Menor a 750 µg/ml", "Menor a 1000 µg/ml"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, el valor predictivo negativo del biomarcador es suficientemente robusto para frenar cascadas diagnósticas invasivas e irradiación en brazos si se respeta estrictamente este límite validado en el tamizaje inicial del paciente sano.<br><br>Perla ENARM: Realizar dímero D, con punto de corte de 500 µg/ml. Si la probabilidad es baja y el DD negativo se descarta la trombosis sin necesidad de USG.<br><br>Análisis de Distractores: La opción A no es un punto de corte validado clínicamente. Las opciones C y D (ej. edad ajustada o umbral de 1000) aplican para la exclusión en trombosis venosa profunda de miembros inferiores dependiente de otros factores de riesgo, no para la especificidad braquial.",
+        source: "GPC IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Trombosis de miembros superiores, Página 37."
+    },
+    {
+        id: 35,
+        question: "¿Qué método de planificación familiar anticonceptiva indica la norma para una paciente con deficiencia documentada de Proteína C o S?",
+        options: ["Parches transdérmicos de estrógenos", "Anticonceptivo oral combinado estándar", "Método con base en solo progesterona", "Terapia de reemplazo hormonal cíclica"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, los estrógenos disminuyen la síntesis de proteína S e incrementan la resistencia a la proteína C activada; en una paciente que ya tiene esta deficiencia genética, su uso provoca una hipercoagulabilidad en cascada y eventos fatales. La progesterona aislada carece de este efecto hepático.<br><br>Perla ENARM: Mujer con deficiencia de antitrombina, proteína S o C tiene un incremento del riesgo ≥ 5 veces de ETV con el uso de AOC... El uso de métodos anticonceptivos con sólo progesterona no incrementa el riesgo de ETV en este grupo de personas. Se recomienda algún método anticonceptivo con sólo progesterona.<br><br>Análisis de Distractores: Las opciones A, B y D contienen formulaciones estrogénicas exógenas directas, estando absolutamente contraindicadas por un efecto sinérgico deletéreo con la trombofilia hereditaria.",
+        source: "GPC IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Trombosis y anticonceptivos, Páginas 111 y 112."
+    },
+    {
+        id: 36,
+        question: "En un paciente con trombosis venosa de la vena gastrocnemia, sin involucro proximal, pero que presenta dolor severo e incapacitante, ¿cuál es la pauta de tratamiento oficial?",
+        options: ["Iniciar terapia anticoagulante plena", "Realizar trombolisis local con catéter", "Vigilar con estudios ecográficos seriados", "Aplicar únicamente vendaje compresivo"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, aunque la trombosis distal pura tiene poco riesgo embólico y suele solo vigilarse, la presencia de síntomas graves o factores de riesgo (como el cáncer) alteran el equilibrio riesgo-beneficio obligando a tratar farmacológicamente para aliviar el dolor y frenar el proceso inflamatorio.<br><br>Perla ENARM: Tratamiento de TVP distal: Con síntomas graves o con factores de riesgo para extensión... se recomienda iniciar anticoagulación y no vigilancia por estudios de imagen.<br><br>Análisis de Distractores: La opción B está restringida a trombosis iliofemoral proximal masiva por su altísimo riesgo de hemorragia intracraneal. Las opciones C y D son la indicación para trombosis distal asintomática o de riesgo muy bajo sin factores predictivos de propagación.",
+        source: "GPC IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Tratamiento, Página 62."
+    },
+    {
+        id: 37,
+        question: "Para declarar que un ultrasonido dúplex venoso ha excluido de forma segura y completa una trombosis aguda en miembro inferior, ¿qué extensión anatómica debe haberse rastreado?",
+        options: ["Desde femoral común hasta poplítea", "Solo la vena iliofemoral y cayado safeno", "Desde femoral común hasta el tobillo", "Exclusivamente en las zonas dolorosas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, el estudio \"completo\" es el estándar de oro en centros con alta disponibilidad. Limitar el estudio arriba de la rodilla omitiría los trombos distales tempranos ocultos en venas tibiales y peroneas, obligando a re-citar al paciente.<br><br>Perla ENARM: Se recomienda realizar al ultrasonido dúplex completo (evaluando el sistema venoso profundo del miembro inferior, desde la femoral común hasta el tobillo, incluyendo la vena tibial posterior y peroneo de pantorrilla) para el diagnóstico de TVP aguda.<br><br>Análisis de Distractores: La opción A representa el protocolo \"proximal\" rápido de compresión de dos puntos, el cual si es negativo, no excluye patología y obliga a reevaluar en 7 días (no es un \"verdadero negativo\"). Las opciones B y D omiten el lecho venoso profundo central implicado en la embolia pulmonar.",
+        source: "GPC IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Diagnóstico, Páginas 32 y 33."
+    },
+    {
+        id: 38,
+        question: "Al decidir emplear antagonistas de la vitamina K (Warfarina) en un paciente que ha comenzado heparina inyectada, ¿en qué día se debe iniciar la administración oral?",
+        options: ["En el día uno o dos", "En el día cuatro o cinco", "Después de suspender la heparina", "Al obtener el INR deseado"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, la warfarina necesita de al menos 4 a 5 días para agotar de la sangre al Factor II (Protrombina), cuya vida media es larga; si no se inicia el puenteo desde las primeras 24-48 horas, se retrasa enormemente el efecto anticoagulante definitivo y se alarga la estancia hospitalaria de forma innecesaria.<br><br>Perla ENARM: Se recomienda iniciar la terapia anticoagulante con AVK en el día 1 o 2 del tratamiento con heparina (HBPM o HNF).<br><br>Análisis de Distractores: Las opciones B, C y D representan el principal error técnico en el pase de visita: si la warfarina se inicia al final de la terapia parenteral, el paciente cursará 5 días desprotegido o con hipercoagulabilidad paradójica por déficit agudo de Proteína C endógena.",
+        source: "GPC IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Tratamiento, Página 48."
+    },
+    {
+        id: 39,
+        question: "Desde una perspectiva epidemiológica para considerarlo un evento provocado transitorio, ¿qué duración mínima debe tener un viaje en avión para precipitar una tromboembolia?",
+        options: ["Vuelos de más de tres horas", "Vuelos de más de cuatro horas", "Vuelos de más de seis horas", "Vuelos de más de ocho horas"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, la hipoxia de cabina y la estasis por inmovilidad prolongada incrementan drásticamente el estancamiento sanguíneo infrapatelar superado este umbral temporal, cambiando la tasa de incidencia de manera significativa para estratificar el riesgo y fijar el tratamiento en 3 meses exactos.<br><br>Perla ENARM: La duración de la terapia: 3 meses, cuando es provocado por un factor de riesgo transitorio, no quirúrgico, como... viajes > 8h, con 15% de riesgo de recurrencia a 5 años.<br><br>Análisis de Distractores: La incidencia tras un vuelo de 4 horas es estadísticamente baja (1 en 4656); la guía marca enfáticamente que los viajes que otorgan un factor de riesgo sólido equiparable a una cirugía menor o terapia estrogénica son aquellos que superan el punto de corte fisiológico de las 8 horas.",
+        source: "GPC IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Tratamiento y Prevención, Página 55."
+    },
+    {
+        id: 40,
+        question: "Tras administrar el bolo intravenoso de impregnación, ¿cuál es la dosis de mantenimiento inicial recomendada en la infusión continua de Heparina No Fraccionada?",
+        options: ["12 UI/kg/h en infusión continua", "18 UI/kg/h en infusión continua", "24 UI/kg/h en infusión continua", "30 UI/kg/h en infusión continua"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, la farmacocinética de la heparina intravenosa exige reponer de forma constante la molécula aclarada por las enzimas tisulares. Esta titulación ponderal basal es la única demostrada para acercarse al objetivo de TTPa (1.5 a 2.5 veces el control) evitando hemorragias yatrógenicas en las primeras horas.<br><br>Perla ENARM: La dosis terapéutica de la HNF inicial parenteral es de 80 UI/Kg, seguido de infusión continua de 18 U/Kg/h con monitoreo a las 4-6 h del bolo inicial.<br><br>Análisis de Distractores: La opción A es subterapéutica y favorece el fracaso hemostático. Las opciones C y D provocarán un TTPa prolongado a niveles fatales, induciendo hemorragias de mucosas y tracto gastrointestinal temprano.",
+        source: "GPC IMSS-425-18, Diagnóstico y tratamiento de la enfermedad tromboembólica venosa, 2018, Trombosis y embarazo / Tratamiento, Páginas 99 y 47."
+    }
+
+
+
+
+
+
+
+
+
+        
+       ];
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('ExMI10LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('ExMI10Progress');
+                localStorage.removeItem('ExMI10LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-purple-500 shadow-md z-10 border-purple-500 dark:border-purple-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-fuchsia-500 to-purple-600 hover:from-purple-600 hover:to-fuchsia-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-purple-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-fuchsia-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "MEDICINA INTERNA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus las respuestas correctas/incorrectas en el tablero." 
+                : "IMSS-425-18 • Diagnóstico y tratamiento de la enfermedad tromboembólica venosa";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-purple-600 dark:text-slate-400 dark:hover:text-purple-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="login.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-purple-100 dark:border-purple-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-purple-50 has-[:checked]:border-purple-400 dark:has-[:checked]:bg-purple-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-purple-600 focus:ring-purple-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-purple-600 dark:hover:bg-purple-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-fuchsia-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('ExMI10Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('ExMI10LastQId', currentQuestionId);
+                else localStorage.removeItem('ExMI10LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('ExMI10Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>
