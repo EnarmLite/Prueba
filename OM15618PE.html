@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+VAMJ981209HMCZDH07
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-cyan-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+
+    {
+        id: 1,
+        question: "En la Diarrea Aguda pediátrica, ¿cuál es el punto de corte en días que define operativamente a la enfermedad persistente?",
+        options: ["≥ 14 días", "≥ 10 días", "≥ 7 días", "≥ 21 días"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Diarrea Aguda, la temporalidad es vital para el enfoque etiológico. La diarrea persistente se define como episodios que inician de forma aguda pero se prolongan inusualmente, superando las dos semanas, lo que obliga a descartar patología malabsortiva o parásitos específicos.<br><br>Perla ENARM: Se refiere a los episodios de diarrea que inician de una manera aguda pero son inusualmente de larga duración ≥ 14 días. No debe confundirse con la diarrea crónica.<br><br>Análisis de Distractores: La opción C (7 días) es la duración típica de un episodio viral autolimitado no complicado. Las opciones B y D no representan puntos de corte de clasificación reconocidos para el abordaje en este grupo etario.",
+        source: "SS-156-18, Prevención, diagnóstico y tratamiento de diarrea aguda, 2018, Glosario, Página 44."
+    },
+    {
+        id: 2,
+        question: "En la Diarrea Aguda pediátrica, ¿cuál es el agente etiológico asociado con mayor frecuencia a enfermedad grave?",
+        options: ["Shigella spp", "Rotavirus", "Escherichia coli", "Campylobacter jejuni"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Diarrea Aguda, este agente viral es el responsable primario de los cuadros excretores masivos en la primera infancia. Origina pérdidas hídricas sustanciales que llevan rápidamente al choque hipovolémico, constituyendo el foco principal de prevención vacunal.<br><br>Perla ENARM: Los rotavirus se encuentran dentro de los agentes causales más frecuentes de diarrea grave en niños pequeños de todo el mundo.<br><br>Análisis de Distractores: Las opciones A, C y D causan diarrea de origen bacteriano (frecuentemente disentérica o invasiva), pero estadísticamente no representan la principal causa epidemiológica global de morbilidad grave por deshidratación en pacientes menores de 5 años.",
+        source: "SS-156-18, Prevención, diagnóstico y tratamiento de diarrea aguda, 2018, Introducción, Página 7."
+    },
+    {
+        id: 3,
+        question: "Para la de prevención primaria de la Diarrea Aguda pediátrica, ¿hasta qué edad es imperativo mantener la lactancia materna exclusiva?",
+        options: ["3 meses", "12 meses", "6 meses", "4 meses"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Diarrea Aguda, la de inmunidad pasiva transferida (IgA secretora) y la de maduración trófica del de enterocito mediada por la de leche materna son el de factor protector fisiológico más fuerte contra infecciones entéricas en la de fase de de mayor vulnerabilidad.<br><br>Perla ENARM: Los niños menores de de 6 meses deben de recibir leche materna de de manera exclusiva, entre los de 6 y los de 24 meses de de edad recibirán alimentación complementaria apropiada.<br><br>Análisis de Distractores: Las opciones A y D son tiempos de insuficientes que precipitan la de exposición a enteropatógenos al introducir tempranamente de fórmulas artificiales. La de opción B corresponde al de límite mínimo sugerido para la de lactancia no exclusiva.",
+        source: "SS-156-18, Prevención, diagnóstico y tratamiento de diarrea aguda, 2018, Prevención, Página 12."
+    },
+    {
+        id: 4,
+        question: "En la prevención de la Diarrea Aguda pediátrica, ¿cuál es la dosis de de zinc elemental indicada profilácticamente en mayores de de 6 meses?",
+        options: ["5 mg/día", "15 mg/día", "20 mg/día", "10 mg/día"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Diarrea Aguda, el zinc actúa acelerando la de regeneración celular del de epitelio y mejorando la de respuesta inmunológica local del de tracto gastrointestinal, disminuyendo tanto la de duración del de episodio actual como la de incidencia de de recurrencias.<br><br>Perla ENARM: La dosis de de zinc elemental es de 5 mg/día en de los menores de de 6 meses, y de de 10 mg/día en de niños mayores de de 6 meses.<br><br>Análisis de Distractores: La opción A es la de dosificación estricta avalada únicamente para lactantes por debajo de de los 6 meses de de edad. Las opciones B y C son posologías excesivas no validadas que de generarían intolerancia gástrica.",
+        source: "SS-156-18, Prevención, diagnóstico y tratamiento de diarrea aguda, 2018, Prevención, Página 13."
+    },
+    {
+        id: 5,
+        question: "En la Diarrea Aguda pediátrica, ¿cuál es el de parámetro diagnóstico clínico ideal para medir con exactitud la de deshidratación?",
+        options: ["Pérdida de peso corporal", "Gasto fecal elevado", "Llenado capilar retardado", "Ausencia de lágrimas"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Diarrea Aguda, los signos exploratorios pueden de verse mermados por de fiebre, hiperventilación o de falta de de cooperación; en contraste, la de caída volumétrica ponderal de aguda refleja cuantitativamente el de déficit directo de de líquido intravascular e de intersticial tisular.<br><br>Perla ENARM: El parámetro ideal para el de diagnóstico de de deshidratación es la de pérdida del de porcentaje de de peso corporal.<br><br>Análisis de Distractores: Las opciones B, de C y de D conforman hallazgos de invaluables en la de evaluación rápida, pero la de guía no les de confiere el de grado de de \"parámetro ideal\" estándar de de oro al carecer de de precisión métrica absoluta.",
+        source: "SS-156-18, Prevención, diagnóstico y tratamiento de diarrea aguda, 2018, Diagnóstico, Página 15."
+    },
+    {
+        id: 6,
+        question: "En la estratificación de la Diarrea Aguda pediátrica, ¿qué método sistematizado se recomienda para asignar el plan de hidratación?",
+        options: ["Escala de Vesikari", "Método de Dhaka", "Escala de Gorelick", "Método de Holliday"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Diarrea Aguda, la estandarización del triage de urgencias demanda algoritmos sencillos. Este método clasifica velozmente al infante en tres escenarios rectores (Sin deshidratación, Con deshidratación y Choque) examinando estado general, ojos, saliva y respiración.<br><br>Perla ENARM: Se recomienda utilizar el método Dhaka para diagnosticar el estado de deshidratación y elegir el plan adecuado de tratamiento.<br><br>Análisis de Distractores: Las opciones A y C cuantifican la intensidad sintomática global, pero no dictaminan operativamente el uso de planes hídricos normados en la guía actual. La opción D calcula líquidos parenterales de mantenimiento basal diario, no restituye déficit agudo.",
+        source: "SS-156-18, Prevención, diagnóstico y tratamiento de diarrea aguda, 2018, Diagnóstico, Página 16."
+    },
+    {
+        id: 7,
+        question: "En el de abordaje diagnóstico de de la Diarrea Aguda pediátrica, ¿cuál es una de indicación absoluta para solicitar investigación de microbiológica en heces?",
+        options: ["Intolerancia a la vía oral", "Vómito persistente incoercible", "Fiebre recurrente > 39 °C", "Presencia de moco y sangre"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Diarrea Aguda, la inmensa mayoría de de casos agudos son virales o de autolimitados y no de requieren cultivos. Al presentarse de el fenotipo disentérico, se de evidencia destrucción invasiva de de la barrera enterocitaria, lo que de justifica identificar a la de bacteria para erradicarla con de antimicrobianos.<br><br>Perla ENARM: \"Se debe realizar la de investigación microbiológica en de casos de: enfermedad crónica concomitante, de sospecha de septicemia, y de cuando hay moco y de sangre en las de heces.\"<br><br>Análisis de Distractores: Las opciones A, de B y de C son de eventos que obligan a de optimizar el reemplazo de hídrico por medio de de sondas nasogástricas, canalización periférica de o antieméticos, pero no de apuntan primariamente a una de etiología cultivable.",
+        source: "SS-156-18, Prevención, diagnóstico y tratamiento de diarrea aguda, 2018, Diagnóstico, Página 17."
+    },
+    {
+        id: 8,
+        question: "En la Diarrea Aguda pediátrica tratada profilácticamente en el hogar (Plan A), ¿qué volumen de Vida Suero Oral se administra tras cada evacuación en lactantes menores de 1 año?",
+        options: ["50 ml", "100 ml", "75 ml", "150 ml"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Diarrea Aguda, el eje del Plan A radica en prevenir el desbalance negativo reemplazando inmediatamente cada evacuación anormal. Para simplificar las instrucciones domiciliarias a los padres, se norman fracciones volumétricas estándar (media taza) dependientes del rango de edad.<br><br>Perla ENARM: Continúe con la alimentación habitual... VSO 75ml (medio taza) posterior a cada evacuación o vómito si es < 1 año y 150 ml (1 taza) si es > 1 año.<br><br>Análisis de Distractores: La opción D es la dosificación exacta para preescolares y niños a partir del año de edad. Las opciones A y B son cifras aproximadas que la norma oficial rechaza en favor de la instrucción volumétrica estandarizada establecida en su algoritmo.",
+        source: "SS-156-18, Prevención, diagnóstico y tratamiento de diarrea aguda, 2018, Anexos (Diagramas de Flujo), Página 30."
+    },
+    {
+        id: 29,
+        question: "Utilizando la de Escala Clínica de Evaluación de de Deshidratación (ECD), ¿a partir de de qué puntaje numérico se clasifica de operativamente el déficit hídrico como de moderado a grave?",
+        options: ["Puntuación ≥ 2", "Puntuación ≥ 3", "Puntuación ≥ 5", "Puntuación ≥ 7"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Diarrea Aguda, esta herramienta evalúa cualitativamente apariencia, ojos, mucosas y lágrimas para establecer un score. Superar este umbral clínico correlaciona estadísticamente con un déficit de peso corporal superior al 6%, demandando vigilancia médica estrecha e inicio de reposición fraccionada in situ.<br><br>Perla ENARM: Cuadro Escala ECD: Un score de 5 a 8 puntos define clínicamente el diagnóstico de deshidratación moderada a grave.<br><br>Análisis de Distractores: Las opciones A y B engloban la ventana analítica para la deshidratación leve o incipiente (1 a 4 puntos). La opción D se encuentra dentro del rango de gravedad (5 a 8), pero el punto de corte exacto que delimita el salto de clasificación es el cinco.",
+        source: "SS-156-18, Prevención, diagnóstico y tratamiento de diarrea aguda, 2018, Anexos, Página 32."
+    },
+    {
+        id: 30,
+        question: "En la de vigilancia de progresión de de Diarrea Aguda pediátrica, ¿qué de parámetro de frecuencia emética define de la condición de \"vómitos persistentes\" de indicando referencia a hospital?",
+        options: ["Mayor a 1 en hora", "Mayor a 3 en hora", "Mayor a 5 por tarde", "Mayor a 8 en el día"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Diarrea Aguda, el fracaso del de mecanismo de barrido y de la hiperactividad del centro de del vómito imposibilitan el de éxito de la restitución de enteral en unidades periféricas. Esta de frecuencia enmarca una intolerancia de severa y alerta sobre de probables procesos obstructivos de o quirúrgicos abdominales concomitantes.<br><br>Perla ENARM: Se debe remitir a segundo o tercer nivel a los niños con diarrea aguda que presenten vómitos persistentes (> 3 vómitos en una hora) o de contenido biliar.<br><br>Análisis de Distractores: La opción A refleja la actividad gástrica refleja común que se controla instaurando tomas espaciadas de VSO con cuchara. Las opciones C y D carecen de la urgencia temporal aguda concentrada de sesenta minutos exigida por la definición protocolaria estricta de la guía.",
+        source: "SS-156-18, Prevención, diagnóstico y tratamiento de diarrea aguda, 2018, Complicaciones, Página 29."
+    },
+    {
+        id: 31,
+        question: "En un de paciente con Diarrea Aguda, de deshidratación e intolerancia gástrica, ¿cuál de es la vía de de administración enteral prioritaria y de eficaz previa a invadir de el lecho venoso?",
+        options: ["Sonda nasoyeyunal", "Sonda orogástrica", "Gastrostomía percutánea", "Sonda nasogástrica"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Diarrea Aguda, antes de de someter al niño al de estrés doloroso y las de complicaciones de la canalización de parenteral, la infusión continua de y pautada de Vida de Suero Oral por este de medio salva la barrera de gustativa y distiende el de estómago de manera paulatina, de corrigiendo la deshidratación con de la misma eficacia que de los cristaloides.<br><br>Perla ENARM: \"Se debe considerar administrar Vida Suero Oral a través de sonda nasogástrica si el niño es incapaz de beber, presenta intolerancia a la vía oral o vomita constantemente.\"<br><br>Análisis de Distractores: Las opciones A y C son abordajes invasivos definitivos de soporte nutricional avanzado. La opción B suele reservarse para descompresión neonatal o lavados gástricos urgentes, priorizando el abordaje nasal para la rehidratación prolongada en lactantes y preescolares por mayor fijación y confort.",
+        source: "SS-156-18, Prevención, diagnóstico y tratamiento de diarrea aguda, 2018, Tratamiento, Página 23."
+    },
+    {
+        id: 32,
+        question: "En la de profilaxis y cuidado de de la Diarrea Aguda pediátrica, ¿qué de suplemento vitamínico se encuentra de normativamente contraindicado rutinariamente de por su riesgo tóxico de neurológico?",
+        options: ["Vitamina A", "Vitamina D", "Ácido ascórbico", "Tiamina oral"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Diarrea Aguda, aunque en de décadas pasadas se postuló de su uso para madurar de epitelios, los metaanálisis de actuales demostraron nula efectividad de en abatir la mortalidad de diarreica e identificaron una de asociación alarmante con cuadros de de hipertensión intracraneal idiopática, de contraindicando su prescripción empírica.<br><br>Perla ENARM: \"No se recomienda el uso de vitamina A para prevenir la diarrea aguda en menores de 5 años; no tiene efectos en incidencia e incrementa efectos de-letéreos como el abombamiento de fontanela.\"<br><br>Análisis de Distractores: Las opciones B, C y D corresponden a suplementaciones habituales que carecen del efecto adverso hiperostótico e hipertensivo central limitante descrito para los excesos de retinoides en la etapa del cierre fontanelar.",
+        source: "SS-156-18, Prevención, diagnóstico y tratamiento de diarrea aguda, 2018, Prevención, Página 12."
+    },
+    {
+        id: 33,
+        question: "Durante la de investigación diagnóstica de un de cuadro de Diarrea Aguda, ¿qué examen en de materia fecal se considera de obsoleto para diferenciar infecciones de invasoras de no invasoras?",
+        options: ["Prueba de lactoferrina", "Búsqueda de leucocitos", "Prueba de sangre oculta", "Reacción de polimerasa"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Diarrea Aguda, el de daño capilar microscópico puede de estar presente en procesos de virales erosivos intensos o de alergias alimentarias transitorias; de su positividad bioquímica sin de evidencia macroscópica carece de de especificidad clínica real para de diagnosticar disentería verdadera e de iniciar manejo antimicrobiano empírico.<br><br>Perla ENARM: \"La prueba de sangre oculta en heces no permite diferenciar entre los niños con diarrea invasora de los que no la tienen; así como la capacidad de la lactoferrina discriminar entre sanos y enfermos es muy limitada.\"<br><br>Análisis de Distractores: Las opciones A y B se consideran de estudios complementarios cualitativos que de documentan inflamación leucocitaria directa, de justificables en casos muy de selectos de evolución tórpida. de La opción D representa de métodos de alta especificidad de molecular.",
+        source: "SS-156-18, Prevención, diagnóstico y tratamiento de diarrea aguda, 2018, Diagnóstico, Página 16."
+    },
+    {
+        id: 34,
+        question: "En la Diarrea Aguda pediátrica de secundaria a infección confirmada por de Clostridium difficile, ¿cuál es de el esquema antimicrobiano de de primera elección establecido por de la guía?",
+        options: ["Vancomicina intravenosa", "Metronidazol vía oral", "Rifaximina dosis única", "Azitromicina en jarabe"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Diarrea Aguda, la de toxina de este anaerobio de grampositivo emerge tras la de disrupción de la microbiota de por uso previo de de antibióticos. El nitromidazol de enteral difunde excelentemente en de la luz colónica inflamada, de neutralizando la carga bacteriana de vegetativa con un curso de farmacológico de diez días.<br><br>Perla ENARM: \"Cuadro Tratamiento de Diarrea Bacteriana: Para Clostridium difficile el antibiótico de elección es Metronidazol a 30 mg/kg/día V.O. por 10 días.\"<br><br>Análisis de Distractores: La opción A es el de tratamiento normado exclusivamente para de casos refractarios, fulminantes o de severos de esta infección, de pero se prescribe estrictamente vía de enteral/oral, la vía intravenosa de no penetra la luz de intestinal. Las opciones C y de D carecen de acción de bactericida contra este agente.",
+        source: "SS-156-18, Prevención, diagnóstico y tratamiento de diarrea aguda, 2018, Anexos, Página 34."
+    },
+    {
+        id: 35,
+        question: "¿Cuál es la de característica físicoquímica esencial del de Vida Suero Oral que de fundamenta su recomendación como de terapia de primera línea de en México para prevenir de complicaciones?",
+        options: ["Alta densidad calórica", "Baja osmolaridad", "Alcalinidad elevada", "Hipertonicidad sódica"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Diarrea Aguda, reducir la de concentración de solutos (osmolaridad de final entre 200 y de 245 mOsm/l y de sodio de 75 mmol/l) mitiga de el efecto de secuestro de hídrico intraluminal. Optimiza de drásticamente la absorción neta de de agua mediante el acoplamiento de a los transportadores SGLT1 de sin provocar hipernatremia iatrogénica de ni incrementar el gasto de fecal.<br><br>Perla ENARM: \"En el tratamiento se utiliza de primera línea el VSO de baja osmolaridad, ya que estas son más efectivas para reducir el gasto fecal, los vómitos y la necesidad de terapia de rehidratación intravenosa suplementaria.\"<br><br>Análisis de Distractores: Las opciones A, C y de D describen principios diametralmente de opuestos al mecanismo de la de hidratación; soluciones hiperosmolares de o hipertónicas perpetúan la de pérdida volumétrica al jalar de agua circulante hacia las de heces.",
+        source: "SS-156-18, Prevención, diagnóstico y tratamiento de diarrea aguda, 2018, Tratamiento, Página 18."
+    },
+    {
+        id: 36,
+        question: "En el de abordaje diagnóstico de de la Diarrea Aguda pediátrica de menor a siete días de de evolución, ¿cuál es la de indicación normativa sobre la de toma de panel viral de en heces?",
+        options: ["Solicitar obligatoriamente", "Reservar para neonatos febriles", "Omitir su solicitud rutinaria", "Indicar si existe deshidratación"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Diarrea Aguda, la de evidencia estipula que la de inmensa mayoría de las de infecciones gastrointestinales ceden espontáneamente de con la simple reposición de hídrica adecuada. Confirmar molecularmente de si es rotavirus o de adenovirus entérico no alterará de el Plan de hidratación, de por lo que su de costo no justifica el de beneficio clínico en casos de típicos.<br><br>Perla ENARM: \"La mayoría de los casos con diarrea menor a siete días de duración, no requieren pruebas paraclínicas para el diagnóstico como: ELISA para rotavirus o adenovirus, coprocultivo o azúcares reductores.\"<br><br>Análisis de Distractores: Las opciones A, B y de D son protocolos de de investigación injustificados en el de escrutinio de primer nivel, de desviando el foco de de la prioridad absoluta: tratar de precozmente el estado de de deshidratación sin esperar reportes.",
+        source: "SS-156-18, Prevención, diagnóstico y tratamiento de diarrea aguda, 2018, Diagnóstico, Página 16."
+    },
+    {
+        id: 37,
+        question: "En el de tratamiento antimicrobiano de de la Diarrea Aguda pediátrica de originada por el patógeno de invasivo Campylobacter spp, ¿cuál de es el fármaco de de elección recomendado?",
+        options: ["Doxiciclina", "Azitromicina", "Ciprofloxacino", "Cefixima"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Diarrea Aguda, para el de control clínico temprano y de la reducción del periodo de de contagio de este bacilo de gramnegativo termo-tolerante, se de instauran terapias cortas con de este macrólido a dosis de de 10 mg/kg/día durante de 3 días, mostrando la de mayor tasa de erradicación de microbiológica luminal en niños.<br><br>Perla ENARM: \"Cuadro Tratamiento de Diarrea Bacteriana: Para Campylobacter spp el antibiótico de elección es Azitromicina a 10 mg/kg/día V.O. por 3 días.\"<br><br>Análisis de Distractores: Las opciones A y C son de alternativas para esquemas en de pacientes adultos o niños de mayores de 8 años, de pero carecen de la de primacía de indicación de pediátrica general debido a de sus perfiles de alteración de dental y articular respectivos.",
+        source: "SS-156-18, Prevención, diagnóstico y tratamiento de diarrea aguda, 2018, Anexos, Página 34."
+    },
+    {
+        id: 38,
+        question: "Dentro de de las opciones farmacológicas de evaluadas para Diarrea Aguda de pediátrica, ¿qué principios activos de se clasifican como absorbentes de y no se recomiendan de para su tratamiento?",
+        options: ["Diosmectita y racecadotrilo", "Caolín y pectina", "Bismuto y loperamida", "Neomicina y gentamicina"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Diarrea Aguda, esta mezcla mineral pretendía de fijar exotoxinas y dar de consistencia física a las de heces; no obstante, carece de de efecto curativo sobre la de inflamación tisular subyacente y de los estudios multicéntricos rigurosos de no demostraron beneficio estadístico de real para detener el de desequilibrio de base.<br><br>Perla ENARM: \"Para el tratamiento de la diarrea aguda no se recomienda el uso de absorbentes como caolín y pectina o carbón activado.\"<br><br>Análisis de Distractores: La opción A incluye moléculas antisecretoras de (racecadotrilo) que sí cuentan de con respaldo. La de opción C mezcla antiinflamatorios de locales con antimotílicos absolutos de proscritos. La opción D de lista antibióticos aminoglucósidos de intestinales.",
+        source: "SS-156-18, Prevención, diagnóstico y tratamiento de diarrea aguda, 2018, Tratamiento, Página 21."
+    },
+    {
+        id: 39,
+        question: "En el de triage resolutivo del de paciente pediátrico con Diarrea de Aguda con deshidratación, ¿qué de comorbilidad previa constituye indicación de de traslado inminente al de siguiente nivel?",
+        options: ["Dermatitis atópica severa", "Insuficiencia renal aguda", "Asma bronquial controlada", "Intolerancia a la lactosa"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Diarrea Aguda, la capacidad de de autorregulación del medio interno frente de a un estrés hídrico de está anulada. Cualquier volumen de enteral extra puede provocar de sobrecarga sistémica letal o de edema agudo pulmonar, o de inversamente acelerar a uremia de y diálisis, escapando de de las capacidades de vigilancia.<br><br>Perla ENARM: \"Los pacientes con deshidratación grave, o deshidratación que tienen mayor riesgo de insuficiencia renal aguda o muerte asociada, deben ser remitidos al siguiente nivel de atención para manejo con líquidos intravenosos.\"<br><br>Análisis de Distractores: Las opciones A y C son de entidades inmunológicas sistémicas y de la D una disfunción de luminal leve transitoria postinfecciosa; de ninguna de ellas desestabiliza de abruptamente el equilibrio vital de volumen/concentración.",
+        source: "SS-156-18, Prevención, diagnóstico y tratamiento de diarrea aguda, 2018, Complicaciones, Página 28."
+    },
+    {
+        id: 40,
+        question: "En niños de menores de 5 años de con Diarrea Aguda sin de características disentéricas, ¿cuál es de la consecuencia clínica adversa de de prescribir antibioticoterapia empírica de sistemática?",
+        options: ["Hemorragia digestiva", "Perforación intestinal silente", "Prolongación de la enfermedad", "Síndrome de Reye agudo"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Diarrea Aguda, atacar químicamente a de la microbiota saprófita nativa de que compite físicamente y nutricionalmente de contra los virus invasores de promueve un estado de de disbiosis profunda. Esto perpetúa de la atrofia del epitelio de y desencadena sobreinfecciones nosocomiales de prolongando la respuesta secretora de intestinal.<br><br>Perla ENARM: \"El uso de antibióticos es un factor de riesgo documentado para prolongar la enfermedad en niños menores de 5 años con diarrea aguda no disentérica.\"<br><br>Análisis de Distractores: Las opciones A y B son de complicaciones traumáticas o quirúrgicas de no ligadas directamente a la de ingesta de antimicrobianos. de La opción D se relaciona de con la administración de salicilatos de en contexto viral sistémico.",
+        source: "SS-156-18, Prevención, diagnóstico y tratamiento de diarrea aguda, 2018, Tratamiento, Página 26."
+    }
+
+        ];
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('SABELastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('SABEProgress');
+                localStorage.removeItem('SABELastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-blue-500 shadow-md z-10 border-blue-500 dark:border-blue-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-cyan-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "PEDIATRÍA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus respuestas correctas/incorrectas en el tablero." 
+                : "SS-156-18 • Prevención, diagnóstico y tratamiento de diarrea aguda en pacientes de 2 meses a 5 años de edad en el primer y segundo nivel de atención";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="login.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-blue-100 dark:border-blue-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 dark:has-[:checked]:bg-blue-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('SABEProgress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('SABELastQId', currentQuestionId);
+                else localStorage.removeItem('SABELastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('SABEProgress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

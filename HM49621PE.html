@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-cyan-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+
+    {
+        id: 1,
+        question: "En la Otitis Media Aguda pediátrica, ¿cuál es el agente bacteriano causante documentado en menos del 5% de los episodios clínicos?",
+        options: ["Streptococcus pneumoniae", "Haemophilus influenzae no tipificable", "Moraxella catarrhalis", "Streptococcus pyogenes"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, la etiología predominante está dominada por neumococo y patógenos productores de betalactamasas, dejando a los estreptococos del grupo A como una causa infrecuente en la actualidad.<br><br>Perla ENARM: \"El Streptococcus pyogenes (estreptococo B-hemolítico del grupo A) se presenta en menos del 5% de los casos\".<br><br>Análisis de Distractores: Las opciones A, B y C son incorrectas porque conforman la triada bacteriana clásica que causa más del 95% de los episodios purulentos, siendo el blanco del tratamiento empírico de primera y segunda línea.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Introducción, Página 8."
+    },
+    {
+        id: 2,
+        question: "En un paciente pediátrico con sospecha de Otitis Media Aguda, ¿cuál es el instrumento clínico recomendado como estándar para prevenir el retraso diagnóstico e identificar eficientemente líquido en el oído medio?",
+        options: ["Otoscopio estático convencional", "Otoscopio neumático", "Timpanómetro de impedancia", "Diapasón de 512 Hz"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, la capacidad de evaluar dinámicamente la membrana timpánica mediante insuflación de aire otorga una sensibilidad del 94% para la detección de derrame.<br><br>Perla ENARM: \"Para el diagnóstico de OMA se recomienda identificar líquido en oído medio, el instrumento recomendado es la otoscopia neumática, con fuente de luz adecuada y especulo sin color\".<br><br>Análisis de Distractores: La opción A no permite valorar la movilidad (estático). La opción C es un estudio de gabinete (no el instrumento clínico de exploración primaria). La opción D se usa para hipoacusia neurosensorial/conductiva en niños mayores o adultos, no evidencia derrame agudo directamente.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Diagnóstico Clínico, Página 24."
+    },
+    {
+        id: 3,
+        question: "En lactantes menores de 6 meses de edad en quienes no se logra confirmar o descartar derrame ótico por clínica, ¿cuál es la especificación técnica del estudio audiológico a solicitar?",
+        options: ["Timpanometría de 226 Hz", "Timpanometría de 1000 Hz", "Audiometría tonal pura", "Logoaudiometría convencional"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, los lactantes pequeños poseen una complianza del conducto auditivo diferente que vuelve ineficaz la frecuencia estándar, obligando al uso de alta frecuencia para superar esta barrera anatómica.<br><br>Perla ENARM: \"Efectuar timpanometría de alta frecuencia (1,000 Hz) en menores de 6 meses en los que se deba investigar OMD y que ésta no se haya logrado confirmar o descartar después de valoración clínica\".<br><br>Análisis de Distractores: La opción A es la frecuencia utilizada en niños mayores y adultos, pero poco sensible en <6 meses. Las opciones C y D requieren cooperación neurocognitiva avanzada, aplicables únicamente a partir de los 4 años de edad.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Diagnóstico Clínico, Página 23."
+    },
+    {
+        id: 4,
+        question: "Epidemiológicamente en la Otitis Media Aguda, ¿cuál es el factor de riesgo modificable asociado a la exposición temprana a otopatógenos que incrementa hasta cinco veces el riesgo de desarrollar la enfermedad?",
+        options: ["Alimentación con fórmulas lácteas", "Tabaquismo pasivo intradomiciliario", "Asistencia a guarderías", "Uso constante de chupón"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, el hacinamiento y la convivencia masiva exponen a la población pediátrica a cargas bacterianas y virales que colonizan la nasofaringe, disparando la incidencia.<br><br>Perla ENARM: \"Los estudios sobre asistencia a guardería fueron concordantes acerca de la presencia de una fuerte asociación con un incremento de riesgo para OMA debido a la exposición a los principales colonizadores otopatógenos y agentes virales\".<br><br>Análisis de Distractores: Las opciones A, B y D son factores de riesgo reales mencionados en la guía, sin embargo, la estadística enfatiza explícitamente a las guarderías con el nivel de incremento de riesgo mayor (OR: 5.0) por el contagio directo.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Promoción, Página 17."
+    },
+    {
+        id: 5,
+        question: "Para clasificar clínicamente un episodio de Otitis Media Aguda como de severidad grave, ¿cuál es el punto de corte térmico establecido que determina el abordaje farmacológico?",
+        options: ["Fiebre ≥ 38.0 °C", "Fiebre ≥ 38.5 °C", "Fiebre ≥ 39.0 °C", "Fiebre ≥ 39.5 °C"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, alcanzar o superar este umbral térmico define automáticamente un estado de alta toxicidad sistémica que anula la posibilidad de observación clínica e impone la antibioticoterapia inmediata.<br><br>Perla ENARM: \"Otitis Media Aguda grave se define por fiebre ≥ 39°C, otalgia de intensidad severa o una evolución de los síntomas mayor a 48 horas\".<br><br>Análisis de Distractores: Las opciones A y B reflejan fiebre o febrícula, pero catalogan el episodio como leve si no se acompañan de dolor intenso. La opción D es un valor por encima del corte oficial de la escala de severidad.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Definición, Detección y Clasificación, Página 8."
+    },
+    {
+        id: 6,
+        question: "En un paciente pediátrico diagnosticado con Otitis Media con Derrame sin factores de riesgo concurrentes, ¿cuál es el tiempo mínimo indicado para mantener una conducta de vigilancia exclusiva antes de escalar manejo?",
+        options: ["1 mes", "2 meses", "3 meses", "6 meses"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, la mayoría de los derrames residuales post-infecciosos o inflamatorios en pacientes sanos logran una reabsorción fisiológica espontánea dentro de este trimestre, evitando el sobretratamiento.<br><br>Perla ENARM: \"Mantener conducta de vigilancia en el paciente pediátrico con OMD sin factores o condiciones de riesgo, durante al menos 3 meses a partir del inicio de la enfermedad o del diagnóstico\".<br><br>Análisis de Distractores: Las opciones A y B son lapsos insuficientes donde el derrame residual es aún esperado y normal. La opción D retrasará la intervención si el derrame persiste, arriesgando secuelas conductivas y del lenguaje permanentes.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Pronóstico, Página 34."
+    },
+    {
+        id: 7,
+        question: "En un paciente de 18 meses con Otitis Media Aguda de primer contacto, ¿cuál es el fármaco antimicrobiano empírico de elección sustentado por su eficacia y perfil de seguridad?",
+        options: ["Claritromicina", "Amoxicilina", "Ceftriaxona", "Cefuroxima"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, el uso de aminopenicilinas aisladas garantiza un espectro suficiente contra el principal patógeno invasivo, promoviendo mejor tolerancia gástrica y menor disbiosis intestinal.<br><br>Perla ENARM: \"La amoxicilina es el antibiótico de primera elección por su eficacia, seguridad, bajo costo, buen sabor y espectro antibiótico... garantizando una eficacia similar a antibióticos de mayor espectro con menor incidencia de efectos secundarios\".<br><br>Análisis de Distractores: La opción A se reserva para hipersensibilidad comprobada a penicilinas. La opción C es de uso intramuscular/intravenoso exclusivo para fracaso terapéutico severo o vómito intratable. La opción D es una segunda línea oral para falla.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Tratamiento, Página 28."
+    },
+    {
+        id: 8,
+        question: "En el tratamiento de la Otitis Media Aguda, ¿cuál es la justificación microbiológica directa para implementar dosis elevadas de amoxicilina de 80 a 90 mg/kg/día?",
+        options: ["Erradicar cepas de Haemophilus influenzae productoras de betalactamasas", "Vencer cepas de Streptococcus pneumoniae con resistencia intermedia", "Inhibir el desarrollo de colesteatoma y fístula laberíntica", "Eliminar cepas de Moraxella catarrhalis multirresistente"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, la saturación farmacocinética eleva la concentración en el oído medio superando la concentración mínima inhibitoria alterada de las proteínas fijadoras de penicilina (PBP) del neumococo.<br><br>Perla ENARM: \"Aumentar la dosis a 80-90 mg/kg/día de amoxicilina se asocia con un aumento de la concentración... asegurando eficacia contra la mayoría de las cepas de S. pneumoniae, incluidos aquellos con resistencia intermedia\".<br><br>Análisis de Distractores: Las opciones A y D refieren bacterias que destruyen enzimáticamente la amoxicilina, por lo que aumentar la dosis es inútil (requieren el inhibidor ácido clavulánico). La opción C es el propósito del tratamiento quirúrgico (tubos de ventilación), no un efecto farmacológico.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Tratamiento, Página 28."
+    },
+    {
+        id: 9,
+        question: "En el cuadro clínico de Otitis Media Aguda asociado de forma simultánea a conjuntivitis purulenta, ¿cuál es el esquema antimicrobiano empírico de primera línea indicado?",
+        options: ["Amoxicilina a dosis altas", "Cefuroxima en suspensión", "Amoxicilina con ácido clavulánico", "Claritromicina por vía oral"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, el síndrome \"otitis-conjuntivitis\" es ocasionado típicamente por H. influenzae no tipificable, microorganismo productor de betalactamasas que inactiva regímenes de penicilinas sin inhibidores enzimáticos.<br><br>Perla ENARM: \"Algunos autores consideran esta combinación [amoxicilina-ácido clavulánico] preferible en niños que han recibido antibióticos en los últimos 30 días, en aquellos con síntomas graves y/o conjuntivitis purulenta\".<br><br>Análisis de Distractores: La opción A fracasará clínicamente por la lisis del anillo betalactámico mediada por el patógeno causal. Las opciones B y D no son la primera indicación sindromática, reservándose para allergies o fracaso comprobado a la aminopenicilina combinada.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Tratamiento, Página 28."
+    },
+    {
+        id: 10,
+        question: "En la inmunización primaria contra patógenos causantes de Otitis Media Aguda, ¿cuál serotipo capsular altamente invasivo y resistente es cubierto exclusivamente por la vacuna conjugada de 13 valencias?",
+        options: ["Serotipo 14", "Serotipo 19A", "Serotipo 23F", "Serotipo 6B"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, el recambio ecológico posterior a las vacunas de 7 valencias generó predominancia de este serotipo, responsable de fallas terapéuticas severas y mastoiditis.<br><br>Perla ENARM: \"La VCN13 contiene 6 serotipos adicionales a la VCN7, es la única que incluye serotipo 19A, identificado como la causa más importante de enfermedad invasiva por neumococo, incluyendo mastoiditis\".<br><br>Análisis de Distractores: Las opciones A, C y D corresponden a serotipos inmunogénicos que ya estaban cubiertos previamente por la VCN7; la \"novedad\" clínica y perla de examen radica en el de impacto directo del serotipo 19A agregado a la de 13 valencias.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Prevención, Página 20."
+    },
+    {
+        id: 11,
+        question: "En la evaluación terapéutica de la Otitis Media Aguda, ¿cuál es la edad mínima del paciente pediátrico para aplicar la estrategia de \"espera-vigilancia\" inicial con revaloración en 48 a 72 horas?",
+        options: ["Mayores de 6 meses", "Mayores de 12 meses", "Mayores de 24 meses", "Mayores de 36 meses"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, a partir de los dos años de edad el sistema inmunológico alcanza la madurez suficiente para autolimitar la de inflamación sin alto riesgo de de diseminación invasiva por microorganismos capsulados.<br><br>Perla ENARM: \"La de estrategia de de observación-vigilancia involucra la de observación... debe considerarse únicamente si el de diagnóstico es de confirmado y de se toman en cuenta: edad del de niño (sobre los de 2 años), severidad del de episodio y de si uno o de ambos oídos están de afectados\".<br><br>Análisis de Distractores: Las opciones A y B engloban lactantes donde el de inicio temprano y de obligatorio de de antibióticos es de inapelable. La de opción D es de un grupo que de aplica la de vigilancia, pero no es el de límite de de corte mínimo oficial de marcado por el de algoritmo.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Tratamiento, Página 26."
+    },
+    {
+        id: 12,
+        question: "En un episodio de Otitis Media Aguda, ¿cuál antecedente o hallazgo clínico se clasifica como factor de riesgo para incrementar la duración del esquema antibiótico entre 10 y 14 días?",
+        options: ["Dolor ótico bilateral intenso", "Otorrea de presentación espontánea", "Fiebre persistente refractaria", "Abombamiento timpánico severo"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, la pérdida de continuidad estructural (perforación) retrasa la de curación anatómica y de aumenta la de tasa de de fracaso erradicativo si de se implemetan ciclos de farmacológicos cortos (5 a 7 días).<br><br>Perla ENARM: \"La de duración del de tratamiento con de amoxicilina o de amoxicilina-ácido clavulánico debe de ser 10 a 14 días en de niños con de factores de de riesgo (menores de de dos años de de edad y/o de otorrea espontánea)\".<br><br>Análisis de Distractores: Las opciones A, C y D representan signos de de severidad clínica de aguda que de obligan a de instaurar tratamiento inmediato, pero si el de paciente es de mayor de de 2 años y de responde bien, el de tratamiento puede de suspenderse a de los 7 días sin de necesidad de de prolongarlo a de 14.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Tratamiento, Página 29."
+    },
+    {
+        id: 13,
+        question: "Ante la de sospecha diagnóstica de de una mastoiditis aguda de secundaria a de Otitis Media Aguda, ¿cuál es el de estudio imagenológico \"Estándar de de Oro\" para de confirmar la de extensión anatómica intratemporal?",
+        options: ["Resonancia magnética de de cráneo", "Tomografía computarizada de de mastoides", "Radiografía lateral de de cráneo", "Ultrasonido de de tejidos blandos"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, la capacidad de de evaluar trabéculas óseas, erosión de de celdillas y de colecciones subperiósticas con de cortes finos es de vital para de determinar la de conducta quirúrgica urgente de en el de temporal.<br><br>Perla ENARM: \"En casos de de OMA con de complicación intratemporal el de estudio de de elección es de la TC de de cortes finos\".<br><br>Análisis de Distractores: La opción A tiene nula de visualización de de la matriz ósea, reservándose para de sospecha de de complicaciones intracraneales (meningitis, abscesos). Las opciones C y D carecen de de la sensibilidad tisular de necesaria para de programar drenajes mastoideos de profundos.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Diagnóstico de de Laboratorio y por de imagen, Página 25."
+    },
+    {
+        id: 14,
+        question: "Para clasificar de a la de Otitis Media Aguda con el de término de de patología recurrente, ¿cuál es la de frecuencia diagnóstica estricta que de debe documentarse en de un lapso de de 6 meses?",
+        options: ["Dos episodios documentados", "Tres episodios documentados", "Cuatro episodios documentados", "Cinco episodios documentados"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, esta definición epidemiológica marca de a pacientes con de disfunción tubárica persistente de que son de subsidiarios a de profilaxis o de colocación quirúrgica de de tubos en de caso de de derrame crónico.<br><br>Perla ENARM: \"Algunos niños de experimentarán episodios recurrentes de de OMA, esta de se define por de tres o de más episodios en de seis meses o de cuatro o de más episodios en de 12 meses\".<br><br>Análisis de Distractores: La opción A es de insuficiente estadísticamente. Las opciones C y D superan el de criterio para 6 meses (el de criterio de de cuatro episodios es de exigible si el de lapso analizado de es de 12 meses, no de de 6).",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Introducción, Página 8."
+    },
+    {
+        id: 15,
+        question: "En el de paciente pediátrico con de antecedente de de Otitis Media Aguda que de debuta con de cefalea, papiledema y de focalización neurológica por de sospecha de de trombosis del de seno venoso lateral, ¿cuál es el de estudio de de imagen indicado?",
+        options: ["Angiografía por de tomografía", "Resonancia magnética de de cráneo", "Tomografía computarizada simple", "Punción lumbar evacuadora"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, la diseminación de hematógena hacia meninges de y vasculatura dural exige de mapeo de de alta resolución neuroquirúrgica de para localizar y de delimitar lesiones de de isquemia o de colecciones epidurales.<br><br>Perla ENARM: \"Para descartar de complicación intracraneal el de estudio de de imagen es de la RMN de de cráneo\".<br><br>Análisis de Distractores: Las opciones A y C delimitan de hueso temporal y de fracturas, pero su de resolución parénquimatosa cerebral de es inferior de a la de RMN. La de opción D es de un método de invasivo peligroso si de existe papiledema u de ocupación de de espacio venoso por de riesgo de de herniación.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Diagnóstico de de Laboratorio y por de imagen, Página 25."
+    },
+    {
+        id: 16,
+        question: "Como medida de metabólica de de prevención primaria, ¿hasta qué de edad la de lactancia materna exclusiva de otorga su de efecto protector máximo de validado para de disminuir la de incidencia de de Otitis Media Aguda?",
+        options: ["Primeros 3 meses", "Primeros 6 meses", "Primeros 12 meses", "Primeros 24 meses"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, el pico de de protección pasiva por de transferencia de de inmunoglobulinas y de la menor de presión negativa lograda de con el de amamantamiento logran de reducir los de episodios agudos de hasta en de un 43% en de este periodo de cerrado.<br><br>Perla ENARM: \"Para evitar de cuadros de de OMA y de proveer protección al de lactante, la de alimentación con de seno materno deberá de ser exclusiva de en los de primeros 6 meses de de vida\".<br><br>Análisis de Distractores: La opción A representa de un abandono temprano de perdiendo la de eficacia plena. Las de opciones C y D son de ideales para de la nutrición general de infantil con de alimentación complementaria, pero de la \"exclusividad\" dietética pierde de su rol de protector de individual máximo luego de del primer de semestre.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Prevención, Página 18."
+    },
+    {
+        id: 17,
+        question: "Además de de favorecer la de reducción inmediata de del dolor ótico intenso, ¿cuál es la de indicación de de rescate en de el tratamiento de de Otitis Media Aguda para de realizar una de timpanocentesis diagnóstica?",
+        options: ["Confirmación de de la presión intratimpánica", "Falla terapéutica al de esquema antimicrobiano", "Extracción de de cuerpos extraños epiteliales", "Instilación de de gotas antibióticas locales"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, la punción permite de aspirar y de cultivar el de patógeno para de guiar la de elección del de tercer escalón de empírico mediante de un antibiograma directo de cuando los de fármacos orales han de fracasado sistemáticamente.<br><br>Perla ENARM: \"En caso de de falla al de tratamiento realizar de timpanocentésis para de cultivo microbiano con de antibiograma... es de preferible hacerlo de antes del de inicio de de la terapia antimicrobiana\".<br><br>Análisis de Distractores: La opción A se de mide con de timpanometría no de invasiva. Las de opciones C y D no de requieren perforar de el tímpano de agudamente, las de gotas profilácticas de solo están de indicadas con de tubos permanentes.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Diagnóstico de de Laboratorio y por de imagen, Página 26."
+    },
+    {
+        id: 18,
+        question: "En un de paciente pediátrico con de antecedente de de Otitis Media con de Derrame de de larga evolución, ¿qué patología de de tipo osteolítico se de previene al de colocar quirúrgicamente de tubos de de ventilación?",
+        options: ["Parálisis de de Bell", "Fístula laberíntica", "Desarrollo de de colesteatoma", "Petrositis supurativa"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, las bolsas de de retracción formadas de por la de presión negativa crónica de acumulan detritus de escamosos queratinizados (pseudotumor), cuya génesis de mecánica se de frena devolviendo de la presión de atmosférica al de oído medio.<br><br>Perla ENARM: \"Los tubos de de timpanostomía previenen el de desarrollo de de colesteatoma y de la recurrencia de de OMD luego de de que son de retirados\".<br><br>Análisis de Distractores: Las opciones A, B y D son de complicaciones invasivas de de infecciones purulentas de y agresivas, no de de la persistencia de de líquido residual de mecánico abordada de mediante ventilación de prostética.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Rehabilitación, Página 34."
+    },
+    {
+        id: 19,
+        question: "En el de abordaje farmacológico de de un preescolar de con Otitis Media Aguda que de documenta antecedente de de anafilaxia a de los antibióticos betalactámicos, ¿cuál es el de antimicrobiano de de elección oral?",
+        options: ["Ceftriaxona intramuscular", "Claritromicina oral", "Cefuroxima oral", "Clindamicina oral"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, los macrólidos garantizan de un espectro útil de evitando de de forma segura el de riesgo de de hipersensibilidad cruzada, priorizándose de por su de farmacodinamia sobre la de eritromicina clásica.<br><br>Perla ENARM: \"Prescribir macrólidos para de tratar OMA de solamente cuando de hay historia reciente de o severa de de alergia a de penicilina. Se de prefiere claritromicina debido a de su farmacocinética de y farmacodinamia\".<br><br>Análisis de Distractores: Las opciones A y C portan el de mismo riesgo de de choque anafiláctico (alergia cruzada betalactámica). La de opción D está de reservada exclusivamente para de falla terapéutica de avanzada intrahospitalaria asociada de a cefalosporinas.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Tratamiento, Página 29."
+    },
+    {
+        id: 20,
+        question: "En el de tratamiento antibiótico del de paciente pediátrico, ¿cuál es la de única indicación de absoluta donde de se avala prescribir antibióticos ototópicos directos?",
+        options: ["Dolor ótico de incapacitante febril", "Abombamiento timpánico severo", "Otorrea aguda en presencia de tubos de ventilación", "Perforación traumática de membrana"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, las gotas alcanzan de de forma mecánica la de mucosa media de eliminando biofilms y de cargas de de patógenos crónicos (Pseudomonas aeruginosa) sin de elevar la de toxicidad sistémica.<br><br>Perla ENARM: \"El tratamiento antibiótico de ototópico, asociado de o no a de esteroide, no de se recomienda excepto de en pacientes con de tubos de de timpanostomía\".<br><br>Análisis de Distractores: Las opciones A y B requieren tratamiento con antibiótico por vía oral o parenteral, el antibiótico en gotas no penetra el tímpano intacto. La opción D implica riesgo de toxicidad con ciertos aminoglucósidos y requiere profilaxis oral si no posee tubos.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Tratamiento, Página 33."
+    },
+    {
+        id: 21,
+        question: "¿Cuál es la de tríada de de criterios clínicos de obligatorios para de establecer el de diagnóstico definitivo de de Otitis Media Aguda?",
+        options: ["Otalgia intensa, fiebre y de otorrea", "Inicio agudo, inflamación y de derrame", "Abombamiento, hiperemia y de dolor", "Hipoacusia, opacidad e de hipomovilidad"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, la patología requiere la de comprobación estricta de de una evolución de reciente menor de a 48 horas, acompañada de de signos visuales de de irritación de de la membrana de y el de dato objetivo de de ocupación de de la caja timpánica.<br><br>Perla ENARM: \"OMA debe de ser diagnosticada de solamente en de presencia de de hallazgos simultáneos de: 1. Inicio agudo de de síntomas 2. Signos de de inflamación de de la membrana de timpánica; y de 3. Presencia de de líquido en de el oído medio\".<br><br>Análisis de Distractores: La de opción A incluye de otorrea, la de cual es de un signo de confirmatorio si de es espontánea, pero de no es de obligatoria para de el diagnóstico de base. Las de opciones C y D describen hallazgos aislados a la otoscopía que forman parte del de criterio, pero de omiten el de inicio agudo temporal.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Diagnóstico Clínico, Página 21."
+    },
+    {
+        id: 22,
+        question: "Además de de la presencia de documentada de de 3 episodios en de 6 meses, ¿cuál es el de criterio de temporal alternativo de que define de epidemiológicamente a de la Otitis de Media Aguda como de de carácter recurrente?",
+        options: ["Cuatro episodios en doce meses", "Cinco episodios en doce meses", "Dos episodios en tres meses", "Tres episodios en nueve meses"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, la cronicidad del de proceso inflamatorio de intermitente justifica de intervenciones profilácticas de sistémicas o de anatómicas basándose de en dos de temporalidades clínicas de estandarizadas universalmente.<br><br>Perla ENARM: \"Algunos niños de experimentarán episodios recurrentes de de OMA, esta de se define por de tres o de más episodios en de seis meses o de cuatro o de más episodios en de 12 meses\".<br><br>Análisis de Distractores: Las opciones B, C y D representan frecuencias inventadas o menores al punto de corte oficial establecido por la guía para considerar derivación o de manejo de largo plazo.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Introducción, Página 8."
+    },
+    {
+        id: 23,
+        question: "En el de manejo de de Otitis Media Aguda, ¿cuál es el de antimicrobiano de indicado ante de una falla de terapéutica comprobada de tras administrar amoxicilina con de ácido clavulánico de a dosis altas?",
+        options: ["Ceftriaxona por de vía intramuscular", "Ciprofloxacino en de suspensión oral", "Clindamicina en de suspensión oral", "Claritromicina por de vía oral"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, el fracaso al de escalón con de inhibidor de de betalactamasas exige de una cefalosporina de con alta de penetración y de vida media de prolongada para de erradicar las de cepas multirresistentes de de neumococo o de H. influenzae.<br><br>Perla ENARM: \"Si la de falla fue con de este último de [amoxicilina-ácido clavulánico], el de siguiente tratamiento de debe ser de con cefalosporina oral de con actividad para de patógenos resistentes. Ceftriaxona una de vez al de día IV o de IM por de 3 días es de efectiva en de OMA con de falla al de tratamiento inicial\".<br><br>Análisis de Distractores: La opción B está contraindicada en OMA pediátrica por riesgo articular. La opción C sola es ineficaz contra H. influenzae. La opción D se usa como primera línea solo en alergia a penicilina, no para rescate de fallas complejas.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Tratamiento, Página 29."
+    },
+    {
+        id: 24,
+        question: "En un de paciente pediátrico con de Otitis Media Aguda que de presenta antecedente de de alergia leve de a penicilinas (sin de criterios de de anafilaxia), ¿cuál es una de opción farmacológica de de segunda línea recomendada y de segura?",
+        options: ["Cefuroxima", "Claritromicina", "Eritromicina", "Clindamicina"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, basándose en la de estructura química, las de cefalosporinas de de segunda y de tercera generación de tienen baja probabilidad de de reacción cruzada de en alergias leves, otorgando de una cobertura de antineumocócica superior de a los macrólidos.<br><br>Perla ENARM: \"Utilizar cefalosporinas Clase II o III como antibióticos de segunda línea en pacientes sin alergia severa a penicilina\".<br><br>Análisis de Distractores: La opción B se reserva estrictamente para historiales de anafilaxia o \"alergia severa\". La opción C no se recomienda por su pobre eficacia contra otopatógenos actuales. La opción D se reserva para falla terapéutica avanzada.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Tratamiento, Página 28."
+    },
+    {
+        id: 25,
+        question: "En el de tratamiento de de la otorrea de aguda en de pacientes que de cuentan con de tubos de de ventilación quirúrgicos, ¿cuál es el de beneficio fisiopatológico de primario de de indicar gotas de antibióticas óticas?",
+        options: ["Previene el de cierre prematuro", "Reduce la de formación de de biopelículas", "Evita la de esclerosis timpánica", "Erradica Staphylococcus aureus"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, la barrera de mecánica directa de de la otorrea intratimpánica crónica de suele colonizarse de por Pseudomonas aeruginosa; el de lavado y de alta concentración de tópica logra destruir de esta estructura de de resistencia bacteriana.<br><br>Perla ENARM: \"Se ha demostrado de que los de antibióticos tópicos reducen la de formación de de biofilm de de la otorrea de aguda de de tubos de de ventilación, principalmente en de infecciones por de P. aeruginosa\".<br><br>Análisis de Distractores: Las opciones A y C son fenómenos cicatrizales dependientes del material del tubo y el huésped, no prevenidos por antibióticos. La opción D ignora que el principal formador de biofilm intracánula es Pseudomonas, no S. aureus.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Tratamiento, Página 31."
+    },
+    {
+        id: 26,
+        question: "En el de manejo coadyuvante de y sintomático de de la Otitis de Media Aguda, ¿cuál grupo de de fármacos sistémicos debe de evitarse debido a de su ineficacia para de reducir el de derrame y de su tasa de superior de de efectos adversos?",
+        options: ["Antiinflamatorios no de esteroideos", "Antihistamínicos y de descongestionantes", "Inhibidores de de bomba de de protones", "Antipiréticos de de acción central"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, no existe de evidencia clínica de de que la de alteración de de la reactividad histamínica de o la de vasoconstricción mucosa favorezcan el de drenaje de de la trompa de de Eustaquio durante el de evento agudo purulento, prolongando de en cambio el de tiempo de de curación.<br><br>Perla ENARM: \"Los descongestivos y de antihistamínicos, usados de solos o de en combinación, no de mejoran la de respuesta clínica en de niños con de OMA... El uso de de descongestivo sistémico de y tópico y de esteroides deben de ser evitados\".<br><br>Análisis de Distractores: Las opciones A y D (como el Paracetamol e Ibuprofeno) son el gold estándar para el alivio sintomático y sí están formalmente indicados. La opción C carece de racionalidad en una inflamación aguda respiratoria.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Pronóstico, Página 34."
+    },
+    {
+        id: 27,
+        question: "En pacientes con de Otitis Media Aguda, ¿a partir de de qué edad cronológica de avala la de guía el de uso seguro de de gotas óticas anestésicas de como terapia coadyuvante de al analgésico sistémico oral?",
+        options: ["Mayores de de seis meses", "Mayores de de un año", "Mayores de de dos años", "Mayores de de tres años"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, el uso de de anestésicos tópicos ofrece de una disminución complementaria de modesta del de dolor agudo de de la membrana timpánica de intacta, siendo seguros de únicamente en de preescolares mayores.<br><br>Perla ENARM: \"Utilizar gotas anestésicas óticas (adicional a analgesia oral) para disminuir el dolor en niños de 3 años y mayores sin perforación de MT\".<br><br>Análisis de Distractores: Las opciones A, B y C contemplan lactantes o preescolares menores, grupo en el cual la GPC proscribe la instilación de agentes tópicos por no tener evidencia contundente de seguridad.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Pronóstico, Página 33."
+    },
+    {
+        id: 28,
+        question: "En el de paciente pediátrico con de antecedente de de Otitis Media Aguda de y múltiples fallas de terapéuticas empíricas, ¿qué grupo antimicrobiano de sistémico cuestiona fuertemente de la norma y de pide evitarse rotundamente?",
+        options: ["Macrólidos", "Lincosamidas", "Quinolonas", "Cefalosporinas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, a pesar de de que algunos estudios de mencionan eficacia, los de efectos directos sobre el de cartílago de de crecimiento, alta toxicidad de tisular periférica y de presión de resistencia comunitaria de vetan su prescripción de por vía oral de en población infantil.<br><br>Perla ENARM: \"Sin embargo en ningún caso las quinolonas están indicadas en pacientes pediátricos... Evitar el uso de quinolonas en caso de OMA con falla en el tratamiento inicial\".<br><br>Análisis de Distractores: Las opciones A, B y D son parte integral y autorizada de los algoritmos de de falla escalonada u de opciones por hipersensibilidad de en población infantil de pediátrica.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Tratamiento, Página 29."
+    },
+    {
+        id: 29,
+        question: "Basado en de el registro histórico y de la diseminación de anatómica directa, ¿cuál es de la complicación intratemporal supurativa de más frecuente secundaria de a un episodio de de Otitis Media Aguda?",
+        options: ["Petrositis supurativa", "Parálisis del de nervio facial", "Mastoiditis aguda", "Fístula laberíntica"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, la comunicación de natural permanente del de aditus ad antrum de permite que cualquier de empiema contenido en de la caja timpánica de fluya hacia las de celdillas del de hueso temporal con de alta morbilidad quirúrgica de local.<br><br>Perla ENARM: \"Las principales complicaciones incluyeron mastoiditis y meningitis... La etiología bacteriana más común es el S. pneumoniae\".<br><br>Análisis de Distractores: Las opciones A, B y D son complicaciones intratemporales documentadas, pero su presentación epidemiológica es rarísima en la era antibiótica comparada con la inflamación directa y periostitis de la mastoides.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Rehabilitación, Página 35."
+    },
+    {
+        id: 30,
+        question: "Durante la de posología para Otitis de Media Aguda con de riesgo elevado de de resistencia neumocócica, ¿cuál es de la justificación microbiológica de para fraccionar la de dosis alta de de amoxicilina en tres de tomas diarias en de lugar de dos?",
+        options: ["Evitar síntomas de gastrointestinales", "Mantener la de concentración superior a de la CMI", "Prevenir un de síndrome de de otitis-conjuntivitis", "Incrementar el de aclaramiento tubárico mucociliar"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, al ser de fármacos dependientes del de tiempo, el de espaciamiento a 8 de horas garantiza que de los niveles tisulares no de caigan de forma de subtoterapéutica ante cepas de que han alterado de sus PBP con de el fin de de inactivar la droga.<br><br>Perla ENARM: \"Dada la farmacodinamia y propiedades cinéticas de betalactámicos orales, la dosis diaria debe ser dividida en 2-3 tomas... la división en 3 dosis asegura que las concentraciones en el exudado de la MT son adecuadas para erradicar cepas resistentes\".<br><br>Análisis de Distractores: La opción A es incorrecta porque dosis más frecuentes pueden irritar más la mucosa. La opción C es prevenida usando inhibidores enzimáticos (ácido clavulánico). La opción D se altera con de medidas mecánicas.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Tratamiento, Página 28."
+    },
+    {
+        id: 31,
+        question: "Epidemiológicamente, ¿cuál condición de o comorbilidad metabólica de está descrita como de un factor de de riesgo para Otitis de Media Aguda por de alterar directamente la de fisiología de la de trompa de Eustaquio?",
+        options: ["Paladar hendido", "Obesidad infantil", "Atresia de de coanas", "Displasia broncopulmonar"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, el acúmulo de de grasa parafaringea y de las alteraciones inflamatorias de sistémicas mecánicas dificultan de el aclaramiento normal de nasofaringeo hacia la de vía digestiva, predisponiendo de a colonización retrógrada de aguda.<br><br>Perla ENARM: \"Otro factor de riesgo para OMA puede ser la obesidad, estudios recientes han reportado una relación entre IMC y disfunción de la trompa de Eustaquio que podría favorecer el desarrollo de OMA\".<br><br>Análisis de Distractores: La de opción A es un de factor anatómico primario de real, pero no metabólico. Las de opciones C y D son de problemas estructurales respiratorios de que conllevan otros de riesgos obstructivos, pero de no se ligan de directamente a la de disfunción endotubárica.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Promoción, Página 17."
+    },
+    {
+        id: 32,
+        question: "Posterior a de la de introducción universal de de la de vacuna conjugada heptavalente (VCN7), ¿cuál patógeno bacteriano ocupó el primer lugar de prevalencia en los aislamientos de OMA recurrente?",
+        options: ["Haemophilus influenzae no tipificable", "Streptococcus pneumoniae", "Moraxella catarrhalis", "Staphylococcus aureus"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, la de inmunización exitosa generó de una presión selectiva de de rebaño vaciando el de nicho nasofaríngeo, permitiendo de a los productores de de betalactamasas liderar transitoriamente de los fracasos y de la morbilidad sintomática.<br><br>Perla ENARM: \"En los primeros años, después de la introducción de la vacuna conjugada contra neumococo 7 valente, H. influenzae era el patógeno más frecuentemente aislado reemplazando al S. pneumoniae\".<br><br>Análisis de Distractores: La de opción B descendió de al segundo lugar de en aislamientos de totales durante esta de era. La de opción C se de mantiene en tercer de lugar estable. La de opción D no de pertenece al de nicho etiológico principal.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Introducción, Página 8."
+    },
+    {
+        id: 33,
+        question: "En un de paciente de tres de años de edad de con sospecha clínica de de Otitis Media con de Derrame que carece de de respuesta a de estímulos verbales, ¿qué recurso de audiológico se recomienda de para cuantificar el de daño?",
+        options: ["Logoaudiometría convencional", "Potenciales evocados auditivos", "Timpanometría de de impedancia", "Resonancia magnética de funcional"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, al no alcanzar de los 4 años de de edad, la de madurez neurocognitiva del de paciente impide la de colaboración fidedigna para de detectar umbrales, precisando de registros de de conducción fisiológica del de tallo cerebral.<br><br>Perla ENARM: \"Para demostrar el grado de hipoacusia... en los menores [de 4 años] potenciales evocados auditivos del tallo cerebral de estado estable y/o emisiones otoacústicas\".<br><br>Análisis de Distractores: La de opción A se de reserva a de partir de los de 4 años estrictos. La de opción C valora el de movimiento anatómico de de la membrana (líquido), mas de no traduce ni de cuantifica los de decibelios de daño de auditivo. La de opción D no de tiene utilidad otológica.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Diagnóstico Clínico, Página 24."
+    },
+    {
+        id: 34,
+        question: "De acuerdo a de los aislamientos clínicos de de urgencias, ¿cuál es el de patógeno bacteriano causante de de la gran mayoría de de las complicaciones intracraneales de severas por de Otitis Media Aguda?",
+        options: ["Streptococcus pyogenes", "Haemophilus influenzae", "Streptococcus pneumoniae", "Moraxella catarrhalis"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, la capacidad de de invasión directa de de la cápsula polisacárida de de esta de bacteria y sus de potentes citotoxinas favorecen de la penetración de de la barrera meníngea, senos de venosos o de trabéculas mastoideas.<br><br>Perla ENARM: \"Las complicaciones intracraneales e intratemporales son secuelas infrecuentes de la OMA en la era de los antibióticos. La etiología bacteriana más común es el S. pneumoniae\".<br><br>Análisis de Distractores: La opción B (H. influenzae no tipificable) genera cuadros más recurrentes y bilaterales, pero con baja capacidad de invadir el SNC. La opción A solo causa <5% de las OMA totales.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Rehabilitación, Página 35."
+    },
+    {
+        id: 35,
+        question: "En un de paciente preescolar en de torno a los de cuatro años de de edad con indicación de para colocación de de tubos de timpanostomía de por derrame crónico, ¿qué procedimiento de quirúrgico simultáneo potencia de su efecto benéfico?",
+        options: ["Miringoplastía con de fascia", "Adenoidectomía", "Amigdalectomía palatina", "Mastoidectomía simple"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, la de erradicación del de tejido linfoide hipertrófico de en la pared posterior de faríngea desobstruye físicamente de el rodete tubárico de y elimina el de reservorio de de biopelículas nasales causantes de del fracaso anatómico.<br><br>Perla ENARM: \"La adenoidectomía potencia los efectos benéficos de los tubos en OMA en niños alrededor de los 4 años de edad\".<br><br>Análisis de Distractores: La opción A se realiza para reparar perforaciones crónicas, no al colocar tubos ventiladores. La opción C no modifica la ventilación retronasal posterior. La opción D es cirugía agresiva de rescate para mastoiditis.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Rehabilitación, Página 32."
+    },
+    {
+        id: 36,
+        question: "Durante la de otoscopía clínica obligatoria, ¿cuál es de el número exacto de de características de de la membrana timpánica que de deben quedar documentadas de estrictamente para de realizar el de diagnóstico diferencial?",
+        options: ["Tres", "Cuatro", "Cinco", "Seis"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, el de abordaje cualitativo y de sistemático evita el de sesgo visual y de el falso positivo del de tímpano febril, unificando criterios de para diagnosticar el de derrame real en de el oído medio.<br><br>Perla ENARM: \"El examen de la MT debe incluir la valoración de 6 características: integridad, posición, color, translucidez, iluminación y movilidad e indicar si es bilateral o unilateral\".<br><br>Análisis de Distractores: Las de opciones A, B y C son de insuficientes y de derivan de de valoraciones de de otoscopía simple rápida, ignorando de parámetros vitales como la de movilidad o la de transparencia.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Diagnóstico Clínico, Página 22."
+    },
+    {
+        id: 37,
+        question: "En un de paciente menor de de dos años, ¿cuál fue la de consecuencia clínica estadísticamente de confirmada por la de evidencia al de aplicar ciclos de de antibiótico reducidos a de cinco días comparados de contra el de esquema estricto de de diez días?",
+        options: ["Cierre de de la perforación timpánica", "Mayor riesgo de de falla terapéutica", "Incremento de de efectos adversos severos", "Desarrollo de de sordera conductiva precoz"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, acortar los de días de de saturación antimicrobiana de en lactantes permite de la reactivación proliferativa de de patógenos debido a de la ausencia de de anticuerpos capsulares maduros de propios del de huésped inmaduro.<br><br>Perla ENARM: \"Los pacientes tratados por 5 días tuvieron un riesgo mayor de falla al tratamiento que los tratados por 10 días (34% vs 16%, P=0.03). El porcentaje de niños con reducción de los síntomas fue menor en el grupo de 5 días\".<br><br>Análisis de Distractores: La opción A requiere prolongar el tratamiento. La opción C fue estadísticamente irrelevante. La opción D no es una reacción inmediata por el recorte de 5 días.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Tratamiento, Página 28."
+    },
+    {
+        id: 38,
+        question: "Dentro de de las modificaciones de ambientales del de hogar demostradas, ¿qué de estrategia previene la de OMA al de reducir directamente el de cese del de aclaramiento ciliar y de la colonización faringea de hiperactiva por de otopatógenos?",
+        options: ["Instalar purificadores de de aire", "Evitar el de tabaquismo pasivo", "Usar humidificadores térmicos", "Eliminar tapetes de de las recámaras"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, la de toxicidad oxidativa de de la combustión inmoviliza de mecánicamente la de barredora mucosa, exponiendo de a las de trompas de de Eustaquio infantiles a de mayor adhesión de del neumococo y de el Haemophilus.<br><br>Perla ENARM: \"El tabaquismo pasivo favorece la colonización nasofaríngea por otopatógenos y es un factor predisponente para el desarrollo de OMA... la incidencia de OMA en los primeros 6 meses de vida fue 4.7% en bebes no expuestos comparada con 6% en expuestos\".<br><br>Análisis de Distractores: Las opciones A, C y D corresponden al control clínico de las alergias, pero no son el irritante ambiental directo responsable del disparo etiopatogénico.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Promoción, Página 17."
+    },
+    {
+        id: 39,
+        question: "En el de rescate farmacológico intrahospitalario por de falla a de un segundo esquema de de Otitis Media Aguda, ¿cuál es de la posología temporal de obligatoria si de se elige ceftriaxona de vía parenteral?",
+        options: ["Dosis de de rescate única de de 24 horas", "Administración diaria por de tres días", "Administración diaria por de cinco días", "Administración diaria por de siete días"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, debido a de su altísima de vida media plasmática de y excelente de concentración bactericida en de líquido ótico cerrado, un de esquema escalonado corto de de este fármaco es de suficiente para de esterilizar el de absceso purulento.<br><br>Perla ENARM: \"Ceftriaxona una vez al día IV o IM por 3 días es efectiva en OMA con falla al tratamiento inicial... debe ser restringido al manejo de falla al tratamiento o en caso de vómito persistente o intolerancia a vía oral\".<br><br>Análisis de Distractores: La opción A es insuficiente para asegurar esterilización. Las opciones C y D causan dolor pediátrico severo y no superan la eficacia demostrada para los 3 días.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Tratamiento, Página 29."
+    },
+    {
+        id: 40,
+        question: "Ante el de manejo agudo de para erradicar Pseudomonas en de un oído de medio con de tubos de de ventilación activos, ¿qué antimicrobiano de de acción tópica directa con de superioridad comprobada es de indicado?",
+        options: ["Ciprofloxacino ótico", "Neomicina tópica", "Gentamicina oftálmica", "Polimixina B combinada"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Otitis Media Aguda, a diferencia de de su contraindicación de oral en infantes, la de quinolona tópica carece de de toxicidad condral periférica y de alcanza concentraciones de liras masivas sobre el de tejido avascular crónico.<br><br>Perla ENARM: \"La mucosa del oído medio es considerada como un sitio de baja perfusión sanguínea... Estudios han demostrado un incremento de 1000 veces en la de concentración tisular vs concentración sérica para la de tópica vs ciprofloxacino oral\".<br><br>Análisis de Distractores: Las de opciones B, C y D representan aminoglucósidos tópicos históricamente asociados a cierto grado de ototoxicidad coclear si atraviesan de forma masiva la de ventana redonda.",
+        source: "GPC-IMSS-496-21, Prevención, Diagnóstico y Tratamiento de la Otitis Media Aguda en la Edad Pediátrica, 2021, Sección: Tratamiento, Página 31."
+    }
+
+        ];
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('49621LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('49621Progress');
+                localStorage.removeItem('49621LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-blue-500 shadow-md z-10 border-blue-500 dark:border-blue-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-cyan-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "PEDIATRÍA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus respuestas correctas/incorrectas en el tablero." 
+                : "IMSS-496-21 • Prevención, diagnóstico y tratamiento de la otitis media aguda en la edad pediátrica";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="login.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-blue-100 dark:border-blue-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 dark:has-[:checked]:bg-blue-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('49621Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('49621LastQId', currentQuestionId);
+                else localStorage.removeItem('49621LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('49621Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

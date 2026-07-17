@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-cyan-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+
+    {
+        id: 1,
+        question: "En la fisiopatología de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, ¿cuál es el antígeno de superficie con mayor capacidad inmunogénica?",
+        options: ["Antígeno C", "Antígeno D", "Antígeno Kell", "Antígeno E"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, el sistema Rh consta de múltiples antígenos, pero la variante D tiene el mayor poder para estimular al sistema inmunológico materno y desencadenar la producción de anticuerpos IgG que cruzarán la placenta.<br><br>Perla ENARM: \"El Sistema Rh de la sangre consta de varios antígenos conocidos como D, C, c, E, e), el antígeno D es el más inmunogénico, por lo tanto, el que con más frecuencia se encuentra implicado en la isoinmunización a Rh.\"<br><br>Análisis de Distractores: Las opciones A y D pertenecen al sistema Rh pero causan cuadros de menor gravedad y frecuencia. La opción C genera isoinmunización severa pero suprime la eritropoyesis fetal, siendo atípica comparada con el antígeno D.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Introducción, Página 13."
+    },
+    {
+        id: 2,
+        question: "¿Cuál es el porcentaje estimado de presentación del factor Rh negativo en la población indígena mexicana con riesgo de Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido?",
+        options: ["1 %", "3 %", "10 %", "15 %"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, la prevalencia poblacional del antígeno D negativo dicta el riesgo epidemiológico nacional, siendo significativamente menor en grupos originarios en comparación con la población caucásica.<br><br>Perla ENARM: \"Se estima que aproximadamente 1% de la población indígena y cerca del 3% de la población mestiza tienen factor Rh D negativo.\"<br><br>Análisis de Distractores: La opción B corresponde a la prevalencia en la población mestiza mexicana. Las opciones C y D son cifras que se acercan a la prevalencia en poblaciones caucásicas (hasta 15%), no aplicables a la demografía indígena nacional.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Justificación, Página 15."
+    },
+    {
+        id: 3,
+        question: "Para el tamizaje poblacional de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, ¿qué prueba debe solicitarse a toda gestante en su primera cita de control prenatal?",
+        options: ["Prueba de Coombs directo", "Búsqueda de anticuerpos IgM", "Prueba de Coombs indirecto", "Cuantificación de hemoglobina"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, es imperativo detectar anticuerpos libres circulantes en el suero materno de forma universal para identificar a pacientes en riesgo o ya sensibilizadas previo a cualquier intervención.<br><br>Perla ENARM: \"Se recomienda que en la primera cita de control prenatal se les realice a todas las mujeres embarazadas (no solo a las mujeres que se conocen Rh negativo) determinación de: Grupo sanguíneo, Rh, Coombs indirecto (búsqueda de anticuerpos).\"<br><br>Análisis de Distractores: La opción A se realiza en el neonato al nacer para detectar anticuerpos unidos al eritrocito. La opción B evalúa anticuerpos agudos que no cruzan la placenta. La opción D valora anemia pero no diagnostica el riesgo aloinmune materno.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Prevención, Página 29."
+    },
+    {
+        id: 4,
+        question: "¿Cuál es la dosis indicada de inmunoglobulina humana anti-D para profilaxis primaria de la Enfermedad Hemolítica por Isoinmunización a Rh en una gestante Rh negativa sin inmunidad?",
+        options: ["50 µg", "100 µg", "300 µg", "500 µg"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, la supresión de la respuesta inmune materna temprana previene la formación de células de memoria y protege gestaciones subsecuentes.<br><br>Perla ENARM: \"Se debe administrar a la embarazada Rh negativa que no tiene inmunidad anti D la profilaxis con inmunoglobulina humana anti-D durante el primer trimestre de embarazo Dosis: 100 µg (500 UI), en el primer embarazo.\"<br><br>Análisis de Distractores: La opción C es el estándar internacional posparto o en tercer trimestre, pero la GPC mexicana puntualiza 100 µg para la profilaxis del primer trimestre. Las opciones A y D representan dosis infraterapéuticas o cálculos para tratamiento de rescate inmunológico endovenoso.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Prevención, Página 32."
+    },
+    {
+        id: 5,
+        question: "¿En qué etapa gestacional debe administrarse la profilaxis universal con inmunoglobulina anti-D para prevenir la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido?",
+        options: ["Primer trimestre", "Segundo trimestre", "Tercer trimestre", "Posparto inmediato"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, el bloqueo temprano pre-exposición a hemorragias fetomaternas subclínicas evita el inicio de la cascada inmunológica mediada por IgG.<br><br>Perla ENARM: \"Se debe administrar a la embarazada Rh negativa que no tiene inmunidad anti D la profilaxis con inmunoglobulina humana anti-D durante el primer trimestre de embarazo.\"<br><br>Análisis de Distractores: Las opciones B, C y D corresponden a intervenciones suplementarias tras eventos obstétricos específicos o guías extranjeras, pero la indicación preventiva primaria marcada en México para el primer embarazo se instala en las primeras semanas de gestación.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Prevención, Página 32."
+    },
+    {
+        id: 6,
+        question: "Al nacimiento de un paciente con sospecha de Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, ¿cuál es el estudio confirmatorio de elección en sangre de cordón umbilical?",
+        options: ["Prueba de Coombs directo", "Prueba de Coombs indirecto", "Frotis de sangre periférica", "Conteo absoluto de reticulocitos"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, la confirmación etiológica requiere evidenciar los anticuerpos maternos ya adheridos estructuralmente a la membrana del eritrocito fetal.<br><br>Perla ENARM: \"Coombs directo positivo confirma el diagnóstico de anticuerpos inducidos por la anemia hemolítica, lo que sugiere la presencia de incompatibilidad ABO o Rh.\"<br><br>Análisis de Distractores: La opción B evalúa anticuerpos libres maternos. Las opciones C y D evalúan la severidad de la hemólisis y la regeneración medular compensatoria, pero no diferencian una causa aloinmune de un defecto intrínseco del eritrocito.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Auxiliares Diagnósticos, Página 39."
+    },
+    {
+        id: 7,
+        question: "En el paciente con Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, ¿cuál es la alteración metabólica secundaria esperada por la hiperplasia de islotes pancreáticos?",
+        options: ["Hipocalcemia", "Hipomagnesemia", "Hipoglucemia", "Hiponatremia"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, la respuesta adaptativa al estado inflamatorio y anémico intrauterino genera un hiperinsulinismo funcional que descontrola los niveles de glucosa tras la ligadura del cordón umbilical.<br><br>Perla ENARM: \"Hipoglucemia secundaría hiperinsulinismo e hipertrofia de los islotes pancreáticos.\"<br><br>Análisis de Distractores: La opción A es una complicación yatrogénica de la exanguinotransfusión, no de la historia natural de la enfermedad. Las opciones B y D ocurren en pacientes graves pero no derivan directamente de la hiperplasia pancreática fetal inducida por aloinmunización.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Signos y Síntomas, Página 37."
+    },
+    {
+        id: 8,
+        question: "En la forma clínica más severa de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, ¿en cuáles compartimentos se acumula volumen excesivo de líquido?",
+        options: ["Piel, pleura y pericardio", "Cerebro, pleura y peritoneo", "Piel, miocardio y pulmón", "Hígado, bazo y peritoneo"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, la insuficiencia cardíaca terminal secundaria a anemia profunda desencadena fuga masiva de líquidos (hídrops fetalis), definiendo el estadio más catastrófico in útero.<br><br>Perla ENARM: \"La forma grave de la isoinmunización a factor Rh se conoce como hídrops fetalis... se puede encontrar como consecuencia de volumen excesivo de líquido en dos o más de los siguientes compartimentos fetales: Piel, Pleura, Pericardio, Peritoneo.\"<br><br>Análisis de Distractores: Las opciones B, C y D incluyen órganos macizos o compartimentos (cerebro, miocardio) donde el edema no forma parte de la definición estricta e internacional de los espacios serosos afectados en el hídrops.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Signos y Síntomas, Página 37."
+    },
+    {
+        id: 9,
+        question: "En un paciente con Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, ¿qué hallazgo clínico dicta la realización inmediata de exanguinotransfusión?",
+        options: ["Ictericia de rápida progresión", "Hepatoesplenomegalia masiva", "Hipoglucemia refractaria a manejo", "Presencia de opistótonos y rigidez"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, la manifestación clínica de daño a ganglios basales (encefalopatía aguda) representa un riesgo absoluto de kernicterus inminente, sobrepasando cualquier protocolo laboratorial o de fototerapia.<br><br>Perla ENARM: \"Se recomienda realizar exanguinotransfusión ante la presencia de signos clínicos de encefalopatía aguda como opistotonos y rigidez, aunque el nivel de bilirrubina se encuentre en rangos de fototerapia.\"<br><br>Análisis de Distractores: Las opciones A y B son criterios de gravedad que requieren fototerapia múltiple y evaluación estricta en nomogramas. La opción C es una alteración metabólica que se maneja médicamente, no requiere remoción de volumen hemático extracorpóreo como rescate neurológico.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Exanguinotransfusión, Página 63."
+    },
+    {
+        id: 10,
+        question: "¿Cuál es el compuesto hidrosoluble final producto de la acción de la fototerapia en la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido?",
+        options: ["Biliverdina", "Lumirubina", "Urobilinógeno", "Estercobilina"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, la fotoisomerización modifica la estructura tridimensional de la bilirrubina lipofílica hacia una molécula polar irreversible que evita el paso por el citocromo hepático.<br><br>Perla ENARM: \"La fototerapia convierte la bilirrubina en un compuesto soluble en agua llamado lumirubina, que se excreta en la orina o la bilis sin necesidad de conjugación en el hígado.\"<br><br>Análisis de Distractores: La opción A es el precursor inicial en el metabolismo del grupo hemo. Las opciones C y D son productos de la degradación entérica normal de la bilirrubina conjugada por la flora bacteriana.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Fototerapia, Página 43."
+    },
+    {
+        id: 11,
+        question: "¿Cuál es la longitud de onda lumínica con mayor eficacia demostrada para el tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido?",
+        options: ["Luz blanca fría", "Luz fluorescente azul", "Luz ultravioleta directa", "Luz de tungsteno-halógeno"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, el pico de absorción espectral del pigmento ictérico de la bilirrubina coincide exactamente con el rango nanométrico (460-490 nm) que emiten estos bulbos, optimizando la degradación dérmica.<br><br>Perla ENARM: \"La luz fluorescente y en especial la luz azul es la más eficaz y debe ser utilizada cuando se requiere fototerapia intensiva, la luz ultravioleta no se usa.\"<br><br>Análisis de Distractores: Las opciones A y D son modalidades válidas pero de menor eficacia biofísica. La opción C está contraindicada por riesgo de daño celular térmico y cutáneo.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Fototerapia, Página 44."
+    },
+    {
+        id: 12,
+        question: "Previo a graficar el nomograma terapéutico para Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, ¿qué ajuste se debe realizar al valor de bilirrubina total sérica?",
+        options: ["Restar la bilirrubina directa", "Multiplicar por el hematocrito", "No restar la bilirrubina directa", "Promediar con la bilirrubina indirecta"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, modificar las cifras laboratoriales absolutas condiciona un cálculo falso del riesgo neurológico real, exponiendo al paciente a daño irreversible por retraso en el tratamiento.<br><br>Perla ENARM: \"Al valor de la bilirrubina total sérica no se le debe restar el valor de la bilirrubina directa para iniciar fototerapia.\"<br><br>Análisis de Distractores: La opción A refleja un abordaje clínico obsoleto rechazado formalmente por los consensos actuales. Las opciones B y D carecen de sentido fisiológico y no están protocolizadas en ninguna escala de severidad pediátrica.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Fototerapia, Página 45."
+    },
+    {
+        id: 13,
+        question: "¿A partir de qué velocidad de ascenso de bilirrubina se indica la fototerapia múltiple continua en la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido?",
+        options: ["≥ 0.1 mg/dl por hora", "≥ 0.3 mg/dl por hora", "≥ 0.5 mg/dl por hora", "≥ 0.8 mg/dl por hora"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, una destrucción hemática acelerada que sobrepasa el clearance sistémico requiere saturación fotónica total sobre la piel para evitar el paso a terapia quirúrgica extracorpórea.<br><br>Perla ENARM: \"Iniciar fototerapia múltiple continua si se presenta: Nivel de bilirrubinas séricas elevándose rápidamente [más de 8.5 µmol/litro por hora (0.5 mg/dl por hora)].\"<br><br>Análisis de Distractores: Las opciones A y B reflejan ritmos de isoinmunización leves o asimilación de bilirrubina fisiológica. La opción D es un valor ficticio tardío; retrasar el escalamiento lumínico hasta 0.8 mg/dl/h incrementa el riesgo de kernicterus.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Cuadro 3, Página 87."
+    },
+    {
+        id: 14,
+        question: "¿A qué distancia del umbral de exanguinotransfusión debe iniciar la fototerapia múltiple en la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido?",
+        options: ["1.50 mg/dl por debajo", "2.94 mg/dl por debajo", "5.85 mg/dl por debajo", "8.50 mg/dl por debajo"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, el inicio preventivo e intensivo de luz minimiza el avance hacia líneas de gravedad donde se requiere invadir al paciente. Esta medida establece una barrera de seguridad metabólica.<br><br>Perla ENARM: \"Iniciar fototerapia múltiple continua si el nivel de bilirrubina sérico está 50 µmol/litro (2.94 mg/dl) por debajo del umbral para inicio de exanguinotransfusión.\"<br><br>Análisis de Distractores: La opción C (5.85 mg/dl) o 100 micromoles, es un valor umbral basal absoluto para la hora cero en nomogramas. Las opciones A y D son distractores numéricos sin impacto decisivo en las guías normativas para esta patología.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Cuadro 3, Página 87."
+    },
+    {
+        id: 15,
+        question: "¿Cuál es la meta laboratorial exacta requerida para retirar la fototerapia múltiple en la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido?",
+        options: ["Caída de 1.0 mg/dl bajo umbral", "Caída de 2.94 mg/dl bajo umbral", "Caída de 5.0 mg/dl bajo umbral", "Normalización menor a 1 mg/dl"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, descender los equipos de radiación demanda un colchón profiláctico que asegure que el paciente puede manejar la hemólisis residual sin presentar neurotoxicidad aguda por rebote rápido.<br><br>Perla ENARM: \"Si el nivel de bilirrubina sérica total cae durante la fototerapia múltiple continua a un nivel 50 micromoles / litro (2.94 mg/dl) por debajo del umbral para el cual se indica la exanguinotransfusión se deberá retirar la fototerapia múltiple y continuar con fototerapia simple.\"<br><br>Análisis de Distractores: La opción D es un objetivo ficticio a corto plazo. La opción A es muy riesgosa en enfermedad autoinmune activa. La opción C es una meta ideal a largo plazo pero no el punto de inflexión oficial para el desescalamiento terapéutico agudo.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Obra citada, Página 48."
+    },
+    {
+        id: 16,
+        question: "Tras suspender la fototerapia en la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, ¿en qué intervalo de tiempo debe medirse la bilirrubina para evaluar el rebote?",
+        options: ["2 a 6 horas", "6 a 12 horas", "12 a 18 horas", "24 a 48 horas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, el aclaramiento hepático deficiente junto a los anticuerpos circulantes genera elevaciones secundarias predecibles. Esta ventana temporal asegura diagnosticar fallas de adaptación sistémica pos-radiación.<br><br>Perla ENARM: \"Compruebe si hay rebote significativo de la bilirrubina sérica total entre las 12-18 horas después de haber suspendido la fototerapia.\"<br><br>Análisis de Distractores: La opción A marca el pico de acción inicial tras encender la luz. La opción B indica vigilancia clínica regular intra-hospitalaria. La opción D asume un egreso muy prolongado, escapando del marco de seguridad vital para detectar toxicidad de nuevo inicio.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Fototerapia, Página 50."
+    },
+    {
+        id: 17,
+        question: "Para disminuir el riesgo de muerte súbita durante la fototerapia en la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, ¿cuál es la posición corporal indicada?",
+        options: ["Decúbito prono", "Decúbito lateral izquierdo", "Posición semi-Fowler", "Decúbito supino"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, la aplicación de terapia radiante en un neonato que requiere antifaces oculares obliga a garantizar la seguridad de la vía aérea en un entorno hospitalario sin obstrucciones exógenas.<br><br>Perla ENARM: \"Para disminuir el riesgo de muerte súbita, los recién nacidos deben ser colocados en posición decúbito supino, a menos que otras condiciones clínicas lo impidan.\"<br><br>Análisis de Distractores: La opción A triplica estadísticamente el riesgo de sofocación y muerte de cuna al combinar antifaces deslizados y compresión facial. Las opciones B y C no ofrecen ventajas comprobadas de exposición dérmica comparadas con el estándar universal seguro.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Fototerapia, Página 51."
+    },
+    {
+        id: 18,
+        question: "En el tratamiento invasivo de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, ¿cuál es la técnica de recambio sanguíneo considerada como mejor práctica clínica?",
+        options: ["Recambio de volumen simple", "Recambio de doble volumen", "Recambio parcial fraccionado", "Recambio isovolumétrico triple"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, sustituir la volemia del neonato dos veces consecutivas logra un lavado de toxinas exponencial superior, retirando el 85% de los eritrocitos sensibilizados maternos.<br><br>Perla ENARM: \"Realizar la exanguinotransfusión con doble volumen de recambio hasta el momento se considera como mejor práctica clínica para disminuir la posibilidad de una segunda exanguinotransfusión.\"<br><br>Análisis de Distractores: La opción A reduce notablemente la tasa de depuración in vivo. Las opciones C y D no tienen validación consensuada para la indicación hematológica de urgencia frente al recambio a dos volemias estándar.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Exanguinotransfusión, Página 64."
+    },
+    {
+        id: 19,
+        question: "Al finalizar la exanguinotransfusión en la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, ¿qué alteración electrolítica secundaria al citrato debe vigilarse y tratarse?",
+        options: ["Hiperkalemia", "Hiponatremia", "Hipocalcemia", "Hipermagnesemia"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, el anticoagulante presente en los hemoderivados masivos funciona como quelante sistémico de cationes divalentes, impactando directamente la contractilidad cardíaca posoperatoria del paciente.<br><br>Perla ENARM: \"Se recomienda que posterior al término de la exanguinotransfusión se mida el calcio sérico, en caso de hipocalcemia indicar tratamiento sustitutivo.\"<br><br>Análisis de Distractores: Las opciones A, B y D son trastornos metabólicos inherentes a pacientes críticamente enfermos, pero el citrato utilizado de forma específica en los bancos de sangre produce clásicamente secuestro exclusivo y rápido del calcio libre.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Exanguinotransfusión, Página 65."
+    },
+    {
+        id: 20,
+        question: "¿Cuál es el tratamiento farmacológico indicado si la hemólisis por Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido no responde a fototerapia múltiple tras 6 horas?",
+        options: ["Inmunoglobulina humana intravenosa", "Dosis de fenobarbital intravenoso", "Infusión continua de albúmina", "Administración de metaloporfirinas"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, si persiste la degradación con aumentos de bilirrubina severos, bloquear farmacológicamente la fagocitosis macrófagica disminuye la destrucción celular en espera del claro biliar, siendo adyuvante preventivo previo a cirugía.<br><br>Perla ENARM: \"La sobreexposición del donante... exigen que el tratamiento con IgIV se reserve para casos con hemólisis significativa evidenciada por bilirrubina sérica que aumenta más de 8.5 micromol / litro por hora a pesar de estar expuesto a fototerapia múltiple.\"<br><br>Análisis de Distractores: Las opciones B, C y D carecen de soporte estadístico poblacional. La norma explícitamente rechaza el uso de inductores enzimáticos y resinas de eliminación biliar o cutánea en lugar de inmunomodulación.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Inmunoglobulina Intravenosa, Página 55."
+    },
+    {
+        id: 21,
+        question: "¿En qué ventana de tiempo se documenta clínicamente la respuesta máxima de aclaramiento tras el inicio de la fototerapia en la Enfermedad Hemolítica por Isoinmunización a Rh?",
+        options: ["12 a 24 horas", "24 a 48 horas", "2 a 6 horas", "6 a 12 horas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, la fotoisomerización de la bilirrubina alcanza su pico cinético de conversión a lumirubina rápidamente tras la saturación del tejido dérmico expuesto a la luz.<br><br>Perla ENARM: \"La respuesta máxima a la fototerapia se presenta por lo general entre las primeras 2 a 6 horas después de su inicio.\"<br><br>Análisis de Distractores: Las opciones A, B y D representan ventanas temporales tardías donde el efecto lumínico ya alcanzó una meseta terapéutica o donde se valora el descenso de mantenimiento, no el pico máximo de acción inicial.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Fototerapia, Página 48."
+    },
+    {
+        id: 22,
+        question: "Tras finalizar exitosamente una exanguinotransfusión en la Enfermedad Hemolítica por Isoinmunización a Rh, ¿en qué momento exacto es obligatorio tomar laboratorios de control para valorar un segundo recambio?",
+        options: ["6 horas posteriores", "12 horas posteriores", "24 horas posteriores", "2 horas posteriores"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, el equilibrio de los compartimentos extravasculares hacia el plasma ocurre velozmente pos-procedimiento, generando un incremento de bilirrubina que dictamina la necesidad clínica de reintervenir.<br><br>Perla ENARM: \"Después de una exanguinotransfusión, se considera mejor práctica determinar los niveles de bilirrubina dos horas después de haberse realizado la exanguinotransfusión para evaluar la necesidad en su caso de otro recambio.\"<br><br>Análisis de Distractores: Las opciones A, B y C retrasan peligrosamente la reevaluación hemodinámica y metabólica de un paciente críticamente enfermo sometido a recambio extracorpóreo masivo, arriesgando daño neurológico silente.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Exanguinotransfusión, Página 63."
+    },
+    {
+        id: 23,
+        question: "En la fisiopatología de la Enfermedad Hemolítica por Isoinmunización a Rh, ¿cuál es el isotipo de anticuerpo materno responsable de atravesar la barrera placentaria y causar hemólisis fetal?",
+        options: ["Inmunoglobulina G", "Inmunoglobulina M", "Inmunoglobulina A", "Inmunoglobulina E"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, el bajo peso molecular y los receptores placentarios específicos permiten exclusivamente el transporte activo de este subtipo inmunológico generador de memoria.<br><br>Perla ENARM: \"Una vez producidos los anticuerpos por la madre Rh tipo inmunoglobulina G (IgG) pueden cruzar libremente de la placenta a la circulación fetal, donde se forman complejos antígeno-anticuerpo con los eritrocitos Rh positivos.\"<br><br>Análisis de Distractores: La opción B (IgM) se produce en la fase aguda pero su gran tamaño macromolecular le impide cruzar la placenta. Las opciones C y D están involucradas en mucosas y alergias, no en hemólisis aloinmune fetal.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Introducción, Página 13."
+    },
+    {
+        id: 24,
+        question: "Al indicar Inmunoglobulina Intravenosa como rescate en la Enfermedad Hemolítica por Isoinmunización a Rh, ¿cuál es la dosis farmacológica avalada por la normativa nacional?",
+        options: ["100 mg/kg en 4 horas", "1000 mg/kg en 2 horas", "500 mg/kg en 4 horas", "300 mg/kg en 6 horas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, saturar eficazmente el sistema reticuloendotelial neonatal para inhibir la lisis celular requiere una concentración en infusión lenta que evite la sobrecarga circulatoria.<br><br>Perla ENARM: \"La dosis de IgIV que se ha usado es 500 mg/kg en infusión durante 4 horas. Siempre junto con la fototerapia.\"<br><br>Análisis de Distractores: Las opciones A y D son dosis infraterapéuticas que no lograrán el bloqueo inmunológico adecuado. La opción B excede la recomendación normada y acorta el tiempo de infusión, elevando el riesgo de efectos adversos hemodinámicos.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Inmunoglobulina Intravenosa, Página 56."
+    },
+    {
+        id: 25,
+        question: "Al instaurar fototerapia intensiva en un recién nacido con Enfermedad Hemolítica por Isoinmunización a Rh, ¿cuál es la tasa de descenso esperada durante las primeras 4 a 8 horas?",
+        options: ["1.5 mg/dl por hora", "0.5 mg/dl por hora", "2.0 mg/dl por hora", "0.1 mg/dl por hora"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, monitorizar la eficacia del tratamiento radiante exige confirmar la degradación enzimática constante. Si el aclaramiento no cumple este parámetro, la hemólisis supera la terapia.<br><br>Perla ENARM: \"Cuando se utiliza fototerapia intensiva, se puede esperar una disminución de 0.5 mg/dl (8.6 mol/l) por hora en las primeras 4 a 8 horas.\"<br><br>Análisis de Distractores: Las opciones A y C son tasas de caída sobreestimadas que no ocurren biológicamente con luz. La opción D refleja una respuesta pobre que indicaría ineficacia del equipo o hemólisis masiva refractaria.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Fototerapia, Página 45."
+    },
+    {
+        id: 26,
+        question: "En la exploración física de la Enfermedad Hemolítica por Isoinmunización a Rh severa, ¿cuál es la causa fisiopatológica directa de la hepatoesplenomegalia?",
+        options: ["Falla miocárdica derecha secundaria", "Hiperplasia de tejido eritropoyético", "Infiltración por macrófagos alveolares", "Depósito masivo de hemosiderina"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, la anemia profunda intrauterina obliga al hígado y bazo a reactivar su función hematopoyética embrionaria para suplir la destrucción masiva de eritrocitos, aumentando su volumen drásticamente.<br><br>Perla ENARM: \"Anemia grave: Hiperplasia compensatoria de tejido eritropoyético, Hepatomegalia y esplenomegalia.\"<br><br>Análisis de Distractores: La opción A causa hepatomegalia congestiva pero no justifica la esplenomegalia hematológica principal. Las opciones C y D describen hallazgos histológicos de enfermedades de depósito crónicas, no la urgencia hematopoyética aguda fetal.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Signos y Síntomas, Página 36."
+    },
+    {
+        id: 27,
+        question: "Al iniciar el manejo con luz en la Enfermedad Hemolítica por Isoinmunización a Rh, ¿con qué frecuencia temporal se debe vigilar laboratorialmente la bilirrubina sérica en fase crítica inicial?",
+        options: ["Cada 12 a 24 horas", "Cada 1 a 2 horas", "Cada 4 a 6 horas", "Cada 24 a 48 horas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, la alta volatilidad del cuadro inmunológico obliga a trazar el nomograma de forma dinámica para ajustar intervenciones antes de alcanzar líneas quirúrgicas.<br><br>Perla ENARM: \"Durante la fototerapia: Repetir la medición de bilirrubina sérica total cada 4-6 horas después de iniciar la fototerapia.\"<br><br>Análisis de Distractores: La opción A y D son monitorizaciones de bajo riesgo, aplicables solo en ictericias fisiológicas. La opción B implica extracciones sanguíneas excesivas que causan anemia iatrogénica sin permitir tiempo de respuesta a la luz.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Fototerapia, Página 50."
+    },
+    {
+        id: 28,
+        question: "Una vez que el paciente con Enfermedad Hemolítica por Isoinmunización a Rh alcanza una tendencia decreciente o estable bajo fototerapia, ¿cómo se ajusta la frecuencia de monitorización laboratorial?",
+        options: ["Medición cada 6 a 12 horas", "Medición cada 2 a 4 horas", "Medición cada 24 horas", "Medición cada 48 horas"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, espaciar gradualmente los controles sanguíneos previene la morbilidad por punciones repetidas una vez que la crisis de lisis aguda ha sido médicamente controlada.<br><br>Perla ENARM: \"Repetir la medición de la bilirrubina sérica total cada 6-12 horas, cuando el nivel de bilirrubina sérica es estable o decreciente.\"<br><br>Análisis de Distractores: La opción B mantiene un régimen de gravedad innecesario. Las opciones C y D son esquemas muy laxos que pueden enmascarar un rebote inmunológico repentino.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Fototerapia, Página 50."
+    },
+    {
+        id: 29,
+        question: "En la epidemiología de la Enfermedad Hemolítica por Isoinmunización a Rh, ¿qué factor preexistente confiere una protección parcial natural a la madre contra la sensibilización primaria?",
+        options: ["Deficiencia de glucosa 6 fosfato", "Incompatibilidad del sistema ABO", "Uso materno de corticoesteroides", "Presencia de anticuerpos anti-Kell"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, si el feto tiene un grupo sanguíneo incompatible con la madre, las IgM maternas anti-A o anti-B destruyen los eritrocitos fetales infiltrados de forma inmediata, evitando que el sistema inmune procese el antígeno Rh D.<br><br>Perla ENARM: \"Cuando la madre y el feto son incompatibles respecto al grupo A y B, la madre está parcialmente protegida contra la inmunización debido al rápido retiro de las células Rh positivas de su circulación.\"<br><br>Análisis de Distractores: Las opciones A, C y D no influyen en el aclaramiento materno fisiológico precoz del volumen globular transplacentario responsable de la presentación antigénica.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Justificación, Página 15."
+    },
+    {
+        id: 30,
+        question: "Aunque infrecuente, ¿cuál es un efecto secundario documentado a largo plazo por el uso de fototerapia en la Enfermedad Hemolítica por Isoinmunización a Rh?",
+        options: ["Sordera neurosensorial", "Hipotiroidismo central", "Cáncer de piel", "Retinopatía del prematuro"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, la exposición a altas dosis de radiación lumínica en una epidermis inmadura aumenta estadísticamente el riesgo de alteraciones melanocíticas durante el crecimiento del paciente.<br><br>Perla ENARM: \"Efectos secundarios de la fototerapia Largo plazo: Nevo melanocítico, Cáncer de piel, Enfermedades alérgicas, Persistencia de conducto arterioso.\"<br><br>Análisis de Distractores: La opción A es complicación del kernicterus, no de la luz. La opción D es inducida por toxicidad por oxígeno. La opción B no guarda correlación metabólica o radiológica con las lámparas fluorescentes.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Fototerapia, Página 46."
+    },
+    {
+        id: 31,
+        question: "De las alternativas históricas para reducir bilirrubina en Enfermedad Hemolítica por Isoinmunización a Rh, ¿cuál de los siguientes fármacos está expresamente rechazado por la GPC mexicana?",
+        options: ["Inmunoglobulina intravenosa", "Barbitúricos de rutina", "Gluconato de calcio", "Inmunoglobulina anti-D"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, el uso de inductores enzimáticos como el fenobarbital posee un inicio de acción muy lento (días) y causa letargo significativo, entorpeciendo la valoración neurológica aguda.<br><br>Perla ENARM: \"No se recomienda para el tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el recién nacido nada de lo que se enuncia a continuación: Agar, Albúmina, Barbitúricos, Carbón, Colestiramina.\"<br><br>Análisis de Distractores: Las opciones A y D son piedras angulares del abordaje avalado. La opción C está justificada exclusivamente tras el barrido por recambio sanguíneo masivo.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Otros Tratamientos, Página 67."
+    },
+    {
+        id: 32,
+        question: "Al aplicar el nomograma en un paciente con Enfermedad Hemolítica por Isoinmunización a Rh, ¿qué conducta procede si el cruce de variables cae exactamente en la zona \"considerar fototerapia\"?",
+        options: ["Iniciar fototerapia múltiple", "Repetir medición en 6 horas", "Realizar exanguinotransfusión", "Egresar con cita abierta"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, no todos los pacientes en esta zona limítrofe desarrollarán hiperbilirrubinemia severa. La conducta dictada es expectante a corto plazo, reevaluando la cinética de degradación.<br><br>Perla ENARM: \"En los recién nacidos mayores de 38 semanas de edad gestacional, en quienes su cifra de bilirrubinas... se encuentra en considerar fototerapia, repetir la medición de bilirrubinas en 6 horas, independientemente de si está o no en fototerapia.\"<br><br>Análisis de Distractores: Las opciones A y C sobretratan al paciente fuera de los lineamientos. La opción D abandona al paciente sin monitorización, elevando el riesgo de daño si el descenso biliar falla en el domicilio.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Fototerapia, Página 49."
+    },
+    {
+        id: 33,
+        question: "Durante el tratamiento lumínico de la Enfermedad Hemolítica por Isoinmunización a Rh, ¿qué comportamiento de los niveles de bilirrubina sugiere fuertemente que existe hemólisis severa en curso?",
+        options: ["Caída sostenida de 2 mg/dl", "Bilirrubina se mantiene estable", "Normalización en 12 horas", "Aumento de bilirrubina directa"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, si la terapia máxima de fotoisomerización no logra negativizar el balance (el nivel no cae), significa fisiopatológicamente que los macrófagos continúan rompiendo eritrocitos al mismo ritmo que la luz depura.<br><br>Perla ENARM: \"Cuando la concentración de bilirrubina sérica total no disminuye o aumenta durante la fototerapia, es probable que se encuentre en curso la hemólisis.\"<br><br>Análisis de Distractores: Las opciones A y C reflejan éxito terapéutico. La opción D habla de un síndrome colestásico o lesión hepática, no de la lisis autoinmune periférica descontrolada de eritrocitos por IgG.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Fototerapia, Página 45."
+    },
+    {
+        id: 34,
+        question: "Para respaldar la relación riesgo/beneficio de administrar Inmunoglobulina Intravenosa, ¿cuál es el número necesario a tratar (NNT) reportado para evitar una exanguinotransfusión por isoinmunización Rh?",
+        options: ["NNT igual a 10", "NNT igual a 20", "NNT igual a 2", "NNT igual a 5"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, la eficacia estadística de este fármaco es extraordinariamente alta para la enfermedad por Rh, justificando su alto costo económico al salvar a 1 de cada 2 pacientes intervenidos de entrar a quirófano.<br><br>Perla ENARM: \"El número necesario de pacientes a tratar para reducir el uso de exanguinotransfusión es mejor en la incompatibilidad por Rh (NNT=2) que en la producida por ABO (NNT=5).\"<br><br>Análisis de Distractores: La opción D (NNT=5) aplica exclusivamente a la enfermedad por incompatibilidad de grupo ABO, la cual es clínicamente menos agresiva. Las opciones A y B representan terapias de baja eficacia poblacional.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Inmunoglobulina Intravenosa, Página 54."
+    },
+    {
+        id: 35,
+        question: "¿Cuál es el isotipo de anticuerpo que domina la fase de sensibilización primaria (primer embarazo) y que explica por qué rara vez hay daño fetal inicial en la Enfermedad Hemolítica por Isoinmunización a Rh?",
+        options: ["Inmunoglobulina E", "Inmunoglobulina A", "Inmunoglobulina M", "Inmunoglobulina G"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, la reacción primaria del sistema inmunológico ante el antígeno D conforma grandes pentámeros de anticuerpos, cuyo peso molecular impide la permeabilidad vascular transplacentaria hacia el feto.<br><br>Perla ENARM: \"La sensibilización primaria se presenta generalmente durante la primera gestación, se caracteriza por la producción de una escasa cantidad de anticuerpos tipo IgM, que no atraviesan la barrera placentaria.\"<br><br>Análisis de Distractores: La opción D (IgG) aparece en los embarazos subsecuentes tras la respuesta anamnésica y sí causa hemólisis. Las opciones A y B tienen nulo papel fisiopatológico destructivo en las series de glóbulos rojos aloinmunes.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Prevención, Página 27."
+    },
+    {
+        id: 36,
+        question: "Derivado de la toxicidad e isquemia intestinal que confiere el recambio masivo, ¿cuál es una complicación gastrointestinal grave estrechamente ligada a la exanguinotransfusión en isoinmunización a Rh?",
+        options: ["Atresia biliar extrahepática", "Hipertrofia pilórica infantil", "Enterocolitis necrosante", "Hernia umbilical estrangulada"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, la manipulación de catéteres umbilicales y los severos cambios hemodinámicos provocan fluctuaciones de perfusión en el lecho mesentérico neonatal, predisponiendo a isquemia y necrosis transmural de la mucosa intestinal.<br><br>Perla ENARM: \"Las complicaciones secundarias a una exanguinotransfusión que se han presentado con mayor frecuencia son: Infección, Trombosis venosa, Trombocitopenia, Enterocolitis necrosante.\"<br><br>Análisis de Distractores: Las opciones A, B y D son patologías congénitas o mecánicas del desarrollo anatómico que no guardan relación fisiopatológica con la terapia invasiva vascular de sustitución de hemoderivados.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Exanguinotransfusión, Página 60."
+    },
+    {
+        id: 37,
+        question: "En el protocolo médico de soporte durante la exanguinotransfusión por Enfermedad Hemolítica por Isoinmunización a Rh, ¿cuál es la indicación normativa respecto al uso de albúmina?",
+        options: ["Infusión continua obligatoria", "Administración dosis única", "Aplicación pre-procedimiento", "No administrar forma rutinaria"],
+        answer: 3,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, la expansión de volumen con proteínas plasmáticas buscando fijar la bilirrubina circulante pre-cirugía no ha demostrado beneficios estadísticos en supervivencia, encareciendo y complicando el abordaje.<br><br>Perla ENARM: \"Ante la ausencia de evidencia que apoye la administración de albumina y calcio durante la exanguinotransfusión no se deberán administrar de forma rutinaria.\"<br><br>Análisis de Distractores: Las opciones A, B y C son prácticas institucionales empíricas desactualizadas, explícitamente proscritas por las guías basadas en evidencia debido a su nulo impacto para prevenir secuelas.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Exanguinotransfusión, Página 65."
+    },
+    {
+        id: 38,
+        question: "Debido al riesgo de daño ocular directo inducido por la longitud de onda luminosa, ¿cuál es una medida de protección universal inquebrantable durante la fototerapia en la isoinmunización Rh?",
+        options: ["Únicamente prematuros extremos", "Retirar durante el sueño", "Protección ocular siempre", "Solo fototerapia múltiple"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, las capas delgadas del párpado neonatal son insuficientes para frenar el daño en la retina provocado por la radiación de espectro azul de alta intensidad, obligando al aislamiento visual.<br><br>Perla ENARM: \"Se recomienda usar protección ocular en los recién nacidos que son expuestos a fototerapia convencional.\"<br><br>Análisis de Distractores: Las opciones A y D restringen falsamente una norma de bioseguridad. La opción B está totalmente contraindicada y expone al niño en el periodo de mayor inmovilidad y absorción lumínica.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Fototerapia, Página 52."
+    },
+    {
+        id: 39,
+        question: "Por el riesgo de hipertermia e incremento de las pérdidas insensibles durante la fototerapia en Enfermedad Hemolítica por Isoinmunización a Rh, ¿cuál es la intervención de soporte básica requerida?",
+        options: ["Restringir líquidos totales", "Vigilar estado de hidratación", "Suspender lactancia materna", "Infusión albúmina obligatoria"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, la evaporación dérmica inducida por las lámparas y la excreción osmótica biliar obligan a ajustar estrictamente el balance hídrico sin interrumpir la nutrición enteral que favorece el aclaramiento intestinal.<br><br>Perla ENARM: \"En el recién nacido que se encuentra bajo fototerapia vigilar en todo momento que su estado de hidratación sea adecuado. La necesidad de líquidos adicionales... debe ser considerada.\"<br><br>Análisis de Distractores: La opción A empeora el riesgo de falla renal. La opción C interrumpe la eliminación entérica de lumirubina, exacerbando la ictericia. La opción D no tiene justificación como volumen de primera línea.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Fototerapia, Página 52."
+    },
+    {
+        id: 40,
+        question: "En el recién nacido a término (≥37 semanas) que desarrolla hiperbilirrubinemia por Enfermedad Hemolítica por Isoinmunización a Rh, ¿cuál modalidad de fototerapia NO debe indicarse como primera línea?",
+        options: ["Fototerapia fibra óptica", "Fototerapia luz azul", "Fototerapia múltiple continua", "Fototerapia convencional simple"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Isoinmunización a Rh Neonatal, los mantos o colchones de luz poseen una cobertura de superficie corporal muy inferior comparada con focos superiores en pacientes de término, resultando insuficientes ante un recambio celular autoinmune acelerado.<br><br>Perla ENARM: \"No utilice fototerapia de fibra óptica como primera línea de tratamiento para la hiperbilirrubinemia en los recién nacidos con edad gestacional de 37 semanas o más.\"<br><br>Análisis de Distractores: Las opciones B, C y D (luz fluorescente amplia en sus variables) abarcan la mayor porción de centímetros cuadrados de dermis necesaria para asegurar la degradación del pigmento ictérico de manera urgente.",
+        source: "GPC-IMSS-373-18, Diagnóstico y Tratamiento de la Enfermedad Hemolítica por Isoinmunización a Rh en el Recién Nacido, 2018, Sección: Cuadro 3, Página 85."
+    }
+
+        ];
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('37318LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('37318Progress');
+                localStorage.removeItem('37318LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-blue-500 shadow-md z-10 border-blue-500 dark:border-blue-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-cyan-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "PEDIATRÍA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus respuestas correctas/incorrectas en el tablero." 
+                : "IMSS-373-18 • Diagnóstico y tratamiento de la enfermedad hemolítica por isoinmunización a Rh en el recién nacido";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="login.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-blue-100 dark:border-blue-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 dark:has-[:checked]:bg-blue-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('37318Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('37318LastQId', currentQuestionId);
+                else localStorage.removeItem('37318LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('37318Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>
