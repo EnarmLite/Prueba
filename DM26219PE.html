@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-cyan-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+    {
+        id: 1,
+        question: "En la prevención de la Ictericia Neonatal, ¿cuál es el factor nutricional con evidencia consistente que incrementa significativamente el riesgo de hiperbilirrubinemia?",
+        options: ["Alimentación complementaria temprana", "Alimentación exclusiva con leche materna", "Alimentación con fórmula de inicio", "Ayuno durante las primeras 12 horas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, la ingesta exclusiva de seno materno en los primeros días se asocia con un tránsito intestinal lento, prolongando la circulación enterohepática del pigmento.<br><br>Perla ENARM: \"Hay evidencia consistente procedente de estudios de buena calidad que demuestran que son cuatro los factores asociados con un incremento en el riesgo de hiperbilirrubinemia: Edad gestacional menor de 38 semanas, Presencia de ictericia dentro de las primeras 24 horas de vida, Historia familiar de ictericia que requirió fototerapia, Alimentación exclusiva con leche materna\".<br><br>Análisis de Distractores: La fórmula láctea (C) y la alimentación temprana (A) aceleran el tránsito intestinal, disminuyendo la reabsorción. El ayuno (D) es un factor patológico de riesgo general pero la guía enfatiza epidemiológicamente la lactancia exclusiva como el principal factor nutricional de alto riesgo para requerir tratamiento.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Factores de riesgo, Página 14."
+    },
+    {
+        id: 2,
+        question: "En el tamizaje de Ictericia Neonatal con bilirrubinómetro transcutáneo, ¿a partir de qué nivel de corte se pierde la confiabilidad y se debe verificar obligatoriamente con prueba sérica?",
+        options: [">5.8 mg/dl", ">8.8 mg/dl", ">11.7 mg/dl", ">14.7 mg/dl"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, los aparatos cutáneos dejan de ser clínicamente equivalentes en concentraciones altas de riesgo.<br><br>Perla ENARM: \"Si, una medición con el bilirrubinómetro transcutáneo indica un nivel de bilirrubina mayor de 14.7 mg/dl (250 μmol/l) se deberá verificar el resultado midiendo las bilirrubinas séricas\".<br><br>Análisis de Distractores: Las opciones 5.8 (A), 8.8 (B) y 11.7 (C) correlacionan con las zonas anatómicas de Kramer 1, 2 y 3, pero en este rango el dispositivo transcutáneo mantiene precisión operativa para tamizaje inicial.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Auxiliares diagnósticos, Página 19."
+    },
+    {
+        id: 3,
+        question: "En el escrutinio diagnóstico de la Ictericia Neonatal, ¿cuál es el estudio considerado como estándar de oro para conocer el grado exacto del trastorno?",
+        options: ["Bilirrubinometría transcutánea frontal", "Prueba de antiglobulina directa", "Medición de bilirrubinas séricas", "Cuantificación de reticulocitos"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, toda decisión basada en nomogramas requiere el nivel absoluto en suero por su exactitud irrefutable ante la clínica limitante.<br><br>Perla ENARM: \"La determinación de bilirrubinas séricas es el 'estándar de oro' para conocer el grado de hiperbilirrubinemia\".<br><br>Análisis de Distractores: El método transcutáneo (A) es sólo escrutinio inicial. La prueba de Coombs (B) y reticulocitos (D) son vitales para identificar la etiología subyacente (isoinmunización), pero no para cuantificar la magnitud de la hiperbilirrubinemia per se.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Auxiliares diagnósticos, Página 18."
+    },
+    {
+        id: 4,
+        question: "Al interpretar el perfil bioquímico en un paciente con Ictericia Neonatal, ¿qué práctica matemática está strictly contraindicada al tomar decisiones terapéuticas?",
+        options: ["Restar la bilirrubina conjugada de la total", "Graficar niveles según edad gestacional", "Utilizar la bilirrubina total en nomogramas", "Calcular en miligramos en lugar de micromoles"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, los umbrales gráficos de neurotoxicidad que deciden inicio de lámpara o recambio se diseñaron considerando exclusivamente el peso total del pigmento sin descuentos.<br><br>Perla ENARM: \"No reste la bilirrubina conjugada de la bilirrubina sérica total cuando tome decisiones sobre el manejo de la hiperbilirrubinemia\".<br><br>Análisis de Distractores: Graficar por edad gestacional (B) y usar la bilirrubina total absoluta (C) son mandatos obligatorios. Las conversiones matemáticas de unidades (D) son irrelevantes mientras se use el nomograma correspondiente.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Tratamiento, Página 24."
+    },
+    {
+        id: 5,
+        question: "En la valoración clínica inicial de Ictericia Neonatal, ¿cuál es la utilidad normativa permitida para el uso de la escala de progresión de Kramer?",
+        options: ["Indicar terapia lumínica múltiple", "Decidir suspensión de manejo", "Predecir neurotoxicidad cerebral", "Determinar presencia de ictericia"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, la apreciación cefalocaudal tiene variaciones masivas por tono de piel o inexperiencia, descalificándola como predictor analítico.<br><br>Perla ENARM: \"Se recomienda usar la escala de Kramer solo para determinar la ausencia o presencia de ictericia (sobre todo en primer nivel de atención)\".<br><br>Análisis de Distractores: Utilizar la simple visión para decidir lámparas (A), retirar tratamiento (B) o predecir toxicidad (C) es negligencia médica; estos pasos exigen niveles séricos exactos referenciados en gráficas por horas de vida.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Cuadros o figuras, Página 17."
+    },
+    {
+        id: 6,
+        question: "Si la exploración visual detecta Ictericia Neonatal evidente dentro de las primeras 24 horas de vida, ¿cuál es el tiempo máximo de urgencia para registrar los niveles en sangre?",
+        options: ["Menos de 2 horas", "Menos de 6 horas", "Menos de 12 horas", "Menos de 24 horas"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, la pigmentación en el primer día es patológica obligatoria y advierte una hemólisis galopante inminente al kernicterus.<br><br>Perla ENARM: \"Mida y registre el nivel de bilirrubina sérica dentro de las siguientes dos horas\".<br><br>Análisis de Distractores: Medir a las 6 horas (B) es el seguimiento para un paciente ya en fototerapia. Demorar 12 o 24 horas (C, D) en el primer día de vida expone al neonato a falla terapéutica por retraso y daño cerebral irreversible.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Auxiliares diagnósticos, Página 19."
+    },
+    {
+        id: 7,
+        question: "En el manejo de la Ictericia Neonatal, ¿cuál es la longitud de onda y el tipo lumínico que posee mayor eficacia física comprobada para alterar la molécula?",
+        options: ["Luz verde de 520 nm", "Luz blanca de 600 nm", "Luz azul de 460 nm", "Luz ultravioleta de 350 nm"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, el pico de máxima absorción fotónica del pigmento cutáneo recae en el espectro azulado, isometrizando la molécula eficientemente.<br><br>Perla ENARM: \"La luz fluorescente y en especial la 'luz azul' es la más eficaz y debe ser utilizada cuando se requiere fototerapia intensiva... con longitud de onda de 460 nm absorbe la mayoría del pigmento\".<br><br>Análisis de Distractores: La luz verde (A) penetra pero causa fatiga extrema al personal de salud. La luz blanca (B) es útil pero menos eficaz que el espectro azul concentrado. La luz ultravioleta (D) está explícitamente contraindicada por riesgo letal de quemadura epidérmica.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Fototerapia, Página 25."
+    },
+    {
+        id: 8,
+        question: "En la Ictericia Neonatal con riesgo de daño encefalopático, al indicar exanguinotransfusión en un prematuro, ¿cuál es la constante empleada para el recambio de doble volumen?",
+        options: ["70 ml/kg por 2", "80 ml/kg por 2", "90 ml/kg por 2", "100 ml/kg por 2"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, el volumen circulante ajustado difiere en la prematurez, exigiendo una cuota más alta para garantizar el barrido de 2 volemias completas.<br><br>Perla ENARM: \"El doble volumen para la exanguinotransfusión se calcula de la siguiente forma: Recién nacido pretermino (90ml/kg) x 2\".<br><br>Análisis de Distractores: 80 ml/kg (B) es la constante estricta para recién nacidos a término. Las constantes de 70 y 100 ml/kg (A, D) no figuran normativamente en el algoritmo de cálculo hemodinámico para esta enfermedad.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Exanguinotransfusión, Página 36."
+    },
+    {
+        id: 9,
+        question: "Para prevenir la inestabilidad hemodinámica letal durante una exanguinotransfusión por Ictericia Neonatal severa, ¿cuál es el ritmo de infusión normado?",
+        options: ["1 a 2 ml/kg/min", "2 a 3 ml/kg/min", "4 a 5 ml/kg/min", "6 a 8 ml/kg/min"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, oscilaciones en la volemia comprometen el gasto cardíaco y la presión venosa central.<br><br>Perla ENARM: \"Estas oscilaciones se reducen si el recambio sanguíneo se realiza a una velocidad de 2-3 ml/kg/min\".<br><br>Análisis de Distractores: Una velocidad inferior (A) prologan innecesariamente el acto invasivo. Las tasas superiores a 3 ml/kg/min (C, D) inducen falla de bomba aguda por cambios súbitos de precarga en la aurícula derecha.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Exanguinotransfusión, Página 35."
+    },
+    {
+        id: 10,
+        question: "En la monitorización seriada por Ictericia Neonatal, ¿qué disminución sérica obligatoria dictamina el retiro absoluto de las lámparas de luz?",
+        options: ["Caer debajo del umbral inicial", "Caída del cincuenta por ciento", "Menos de 2.92 mg/dl del umbral", "Reducción a percentil cincuenta"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, la fisiología advierte un rebote inherente tras cesar el estímulo, por lo que apagar la lámpara al primer contacto con el límite expone a retorno rápido a la toxicidad.<br><br>Perla ENARM: \"Detenga la fototerapia una vez que la bilirrubina sérica haya descendido a un nivel al menos 2.92 mg/dl (50 μmol/l) por debajo del umbral para inicio de fototerapia\".<br><br>Análisis de Distractores: Detener apenas tocando el umbral (A) carece de margen de seguridad. Las cifras porcentuales absolutas o rangos poblacionales (B, D) ignoran el peso relativo a las horas de vida del paciente particular.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Auxiliares diagnósticos, Página 21."
+    },
+    {
+        id: 11,
+        question: "En el espectro crónico grave de la Ictericia Neonatal (Kernicterus), ¿cuál es el sitio anatómico focal de depósito de pigmento documentado anatomopatológicamente?",
+        options: ["Globo pálido", "Médula espinal", "Cerebelo anterior", "Lóbulo prefrontal"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, la toxicidad indirecta predilecta la invasión directa y destructiva en los ganglios basales motores, generando atetosis permanente.<br><br>Perla ENARM: \"La bilirrubina se deposita principalmente, que en una parte del cerebro conocida como globo pálido. En el examen anatomopatológico del cerebro se reconoce por la tinción amarilla que produce\".<br><br>Análisis de Distractores: La médula, cerebelo o regiones prefrontales (B, C, D) se ven afectadas en intoxicaciones difusas, pero la lesión patognomónica central descrita y priorizada por la evidencia recae strictly en el globo pálido.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Daño neurológico por hiperbilirrubinemia, Página 41."
+    },
+    {
+        id: 12,
+        question: "Según los criterios cinéticos de la Ictericia Neonatal, ¿qué incremento sérico exige iniciar fototerapia múltiple continua de inmediato?",
+        options: ["Mayor a 0.1 mg/dl/hora", "Mayor a 0.2 mg/dl/hora", "Mayor a 0.5 mg/dl/hora", "Mayor a 0.9 mg/dl/hora"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, una velocidad superior marca una hemólisis severa incontrolable, por lo que la lámpara sencilla fracasará inevitablemente.<br><br>Perla ENARM: \"Se recomienda iniciar fototerapia múltiple en todos los recién nacidos con alguna de las siguientes condiciones: Bilirrubinas séricas aumentando rápidamente, más de 0.5 mg/dl/hora\".<br><br>Análisis de Distractores: Incrementos leves como 0.1 o 0.2 (A, B) son esperados fisiológicamente y responden a esquema simple. Valores casi de un miligramo entero (D) son letales y ya justifican el pase directo a recambio masivo (exanguinotransfusión).",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Fototerapia, Página 31."
+    },
+    {
+        id: 13,
+        question: "En un neonato con Ictericia Neonatal y niveles límite, ¿qué manifestación clínica indica exanguinotransfusión urgente independientemente de los nomogramas?",
+        options: ["Rechazo al alimento", "Escala Kramer zona cinco", "Opistótonos y rigidez", "Hipotonía aislada"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, la invasión neurológica aguda descarta terapias conservadoras, el daño motor cardinal es la alarma que ordena el barrido tóxico invasivo.<br><br>Perla ENARM: \"Se recomienda realizar exanguinotransfusión ante la presencia de signos clínicos de encefalopatía aguda como opistótonos y rigidez, aunque el nivel de bilirrubina se encuentre en rangos de fototerapia\".<br><br>Análisis de Distractores: El rechazo y la hipotonía (A, D) son inespecíficos iniciales. La coloración palmo-plantar (B) indica bilirrubina altísima clínica, pero la normatividad dicta guiarse por laboratorios, a menos que exista rigidez franca (encefalopatía mayor).",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Exanguinotransfusión, Página 35."
+    },
+    {
+        id: 14,
+        question: "En el paciente bajo terapia intensiva (fototerapia múltiple continua) por Ictericia Neonatal, ¿qué indicación sobre nutrición enteral se debe prescribir estrictamente?",
+        options: ["Pausar tratamiento treinta minutos", "Suspender vía enteral por riesgo", "No interrumpir fototerapia para alimentación", "Administrar cargas de agua libre"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, el nivel de choque amerita irradiación total sostenida; retirar al paciente al seno materno anularía el rescate.<br><br>Perla ENARM: \"Se recomienda que la alimentación durante la fototerapia múltiple se realice de la siguiente forma: No interrumpir la fototerapia para la alimentación. La alimentación se administrará por vía parenteral o enteral, preferentemente, con leche extraída\".<br><br>Análisis de Distractores: Pausar 30 minutos (A) es beneficio exclusivo de la fototerapia simple en bajo riesgo. Usar infusiones de agua libre (D) carece de soporte clínico. Suspender la ingesta (B) corta el estímulo gastrointestinal vital para defecar bilirrubinas.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Cuidados del recién nacido durante la fototerapia, Página 33."
+    },
+    {
+        id: 15,
+        question: "Al alcanzar el umbral de suspensión de lámparas en Ictericia Neonatal, ¿en qué intervalo de tiempo se evalúa normativamente el efecto de rebote en suero?",
+        options: ["A las 4 a 6 horas", "A las 6 a 12 horas", "A las 12 a 18 horas", "A las 24 a 48 horas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, la lisis de hematíes remanentes genera un segundo pico tóxico predecible que la evaluación temprana omitiría.<br><br>Perla ENARM: \"Después de retirar la fototerapia se medirán las bilirrubinas a las 12–18 horas, por la posibilidad de presentar rebote, para esta medición no es necesario que los recién nacidos permanezcan hospitalizados\".<br><br>Análisis de Distractores: Medir de 4 a 12 horas (A, B) corresponde a los controles del paciente activamente cursando fototerapia. El margen de 24 a 48 horas (D) es un lapso tardío que expone al niño a daño en domicilio por un rebote subdiagnosticado.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Auxiliares diagnósticos, Página 21."
+    },
+    {
+        id: 16,
+        question: "Durante el abordaje de un paciente con Ictericia Neonatal prolongada, ¿qué valor de la fracción conjugada obliga a sospechar enfermedad hepática grave?",
+        options: ["Mayor a 0.50 mg/dl", "Mayor a 1.00 mg/dl", "Mayor a 1.47 mg/dl", "Mayor a 2.50 mg/dl"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, la patología clásica del neonato asume hemólisis indirecta. La elevación colestásica obedece a trastornos obstructivos estructurales o atresias que el sistema de salud debe captar antes de daño hepático letal.<br><br>Perla ENARM: \"Los recién nacidos con bilirrubina conjugada mayor de 1.47 mg/dl (25 μmol/l) deben ser vigilados y estudiados porque esto puede indicar enfermedad hepática grave\".<br><br>Análisis de Distractores: Valores menores al miligramo (A, B) pueden ser un residuo transitorio sin significado terminal orgánico. Exigir 2.50 mg/dl (D) retrasaría dramáticamente la sospecha y envío de atresias de vía biliar.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Auxiliares diagnósticos, Página 21."
+    },
+    {
+        id: 17,
+        question: "En centros primarios o rurales ante un recién nacido con datos evidentes de Ictericia Neonatal asintomática, ¿cuál es el criterio absoluto de referencia inmediata a segundo nivel?",
+        options: ["Falta de servicio de laboratorio", "Zona uno en Kramer inicial", "Ausencia de fototerapia LED", "Deseo de lactancia exclusiva"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, la estimación ocular y transcutánea no autorizan al médico a retener al paciente, pues no es legalmente justificable emitir o negar tratamiento sin el estándar de oro en sangre en este escenario.<br><br>Perla ENARM: \"En clínicas y hospitales donde no se cuente con servicio de laboratorio considerar envío a segundo o tercer nivel de atención\".<br><br>Análisis de Distractores: Zona 1 aislada o lactancia exclusiva (B, D) requieren solo vigilancia si hay reactivos. Las lámparas LED (C) son ideales pero tubos de luz fluorescente azul convencionales son viables, siendo la falta de medición central la verdadera limitante letal.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Evaluación de la ictericia, Página 17."
+    },
+    {
+        id: 18,
+        question: "Para que el tamizaje con bilirrubinómetro transcutáneo sea normativamente válido en Ictericia Neonatal, ¿qué límite estricto de edad debe cumplir el paciente?",
+        options: ["≥30 semanas y >12 horas", "≥32 semanas y >18 horas", "≥35 semanas y >24 horas", "≥37 semanas y >48 horas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, las condiciones epidérmicas inmaduras o patológicas agudas falsifican el escáner del lente del aparato, prohibiendo su uso en prematuros extremos o escenarios iniciales.<br><br>Perla ENARM: \"Usar un bilirrubinómetro transcutáneo en recién nacidos con edad gestacional de ≥35 semanas y edad postnatal mayor de 24 horas\".<br><br>Análisis de Distractores: Edades menores a 35 o en el primer día (A, B) tienen indicación absoluta directa para sangrado venoso. Restringirlo hasta el término o dos días (D) omite el beneficio empírico de no invasión en las áreas tardías.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Auxiliares diagnósticos, Página 18."
+    },
+    {
+        id: 19,
+        question: "En el mecanismo de acción primario de la luz terapéutica sobre la Ictericia Neonatal, ¿en qué isómero específico soluble se convierte el pigmento cutáneo?",
+        options: ["Urobilina directa", "Estercobilina", "Lumirubina", "Biliverdina"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, la acción no depende de un proceso de conjugación en citocromos hepáticos, sino de alterar la arquitectura misma por fotones penetrantes en la dermis superficial.<br><br>Perla ENARM: \"La fototerapia convierte la bilirrubina en un compuesto soluble en agua llamado lumirubina, que se excreta en la orina o la bilis sin necesidad de conjugación en el hígado\".<br><br>Análisis de Distractores: La biliverdina (D) es un precursor pre-enzimático fisiológico. La urobilina y estercobilina (A, B) son los metabolitos excretados finales de la vía normal biliar bacteriana post-conjugación, no el subproducto artificial curativo de las lámparas.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Fototerapia, Página 25."
+    },
+    {
+        id: 20,
+        question: "Al preparar un rescate vascular por Ictericia Neonatal severa secundaria a incompatibilidad ABO, ¿cómo debe ser seleccionado el concentrado eritrocitario cruzado?",
+        options: ["Grupo O con Rh del recién nacido", "Grupo del recién nacido con Rh negativo", "Grupo materno con Rh del recién nacido", "Sangre total idéntica al binomio"],
+        answer: 0,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, el principio inmunológico dicta que para frenar el choque antígeno-anticuerpo materno circulante, el paquete rojo no debe portar los antígenos reactivos A o B, pero sí preservar el sistema Rhesus compatible para evitar nueva aloinmunización.<br><br>Perla ENARM: \"En recién nacidos con incompatibilidad al grupo A, B o O el concentrado de hematíes será grupo O, con factor Rh igual al del recién nacido y plasma del grupo del recién nacido\".<br><br>Análisis de Distractores: Usar grupo directo del neonato (B) expondría a lisis inmediata por los anticuerpos que circulan. Requerir Rh cruzado materno y sangre total (C, D) son violaciones a la norma de la exanguinotransfusión desglosada y reconstituida.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Exanguinotransfusión, Página 36."
+    },
+    {
+        id: 21,
+        question: "En la fisiopatología de la Ictericia Neonatal, ¿cuál es la vida media documentada de los eritrocitos fetales que contribuye a la mayor carga de bilirrubina en la primera semana?",
+        options: ["60 días", "90 días", "120 días", "150 días"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, el neonato experimenta una carga acelerada de pigmento indirecto debido a la rápida lisis fisiológica celular propia de su transición.<br><br>Perla ENARM: \"La ictericia fisiológica... se ha relacionado con las siguientes condiciones: Mayor carga de bilirrubinas... Menor vida media de los eritrocitos fetales (90 días)\".<br><br>Análisis de Distractores: La vida media del adulto es de 120 días (C), no del neonato. Los valores de 60 (A) y 150 días (D) son irreales en este contexto y no corresponden a la destrucción fisiológica del eritrocito fetal.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Clasificación de la Ictericia, Página 22."
+    },
+    {
+        id: 22,
+        question: "En la variante de Ictericia Neonatal asociada a la leche materna por tránsito intestinal lento, ¿en qué día de vida extrauterina inicia típicamente su presentación clínica?",
+        options: ["Primer día", "Tercer día", "Quinto día", "Décimo día"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, esta entidad se asocia a la dinámica de ingesta y circulación enterohepática, difiriendo de la ictericia por hemólisis que es inmediata.<br><br>Perla ENARM: \"La ictericia asociada a leche materna... inicia alrededor del quinto día de vida y puede persistir hasta nueve semanas\".<br><br>Análisis de Distractores: El primer día (A) siempre sugiere causa patológica (hemólisis/isoinmunización). El tercer día (B) es el pico clásico de la ictericia fisiológica común. El décimo día (D) representa una etapa de resolución o cronicidad, no el inicio clásico de este cuadro.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Clasificación de la Ictericia, Página 22."
+    },
+    {
+        id: 23,
+        question: "En la interpretación de laboratorios para normar el manejo de la Ictericia Neonatal, ¿qué proporción matemática está estrictamente no recomendada para la toma de decisiones?",
+        options: ["Reticulocitos a Hemoglobina", "Albúmina a Bilirrubina", "Bilirrubina directa a Total", "Calcio a Fósforo"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, aunque la fracción libre no unida a proteínas es la neurotóxica, el uso de índices cruzados ha demostrado fallar en los algoritmos prácticos de urgencia.<br><br>Perla ENARM: \"No use la proporción de albúmina/bilirrubina cuando tome decisiones sobre el tratamiento de la hiperbilirrubinemia\".<br><br>Análisis de Distractores: La hemoglobina y reticulocitos (A) son vitales para corroborar hemólisis, no están contraindicados. La GPC prohíbe *restar* la directa a la total, pero evaluar su proporción (C) ayuda a diagnosticar colestasis. La relación calcio/fósforo (D) es irrelevante para decidir umbrales de lámpara.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Tratamiento, Página 24."
+    },
+    {
+        id: 24,
+        question: "Durante el tratamiento invasivo por Ictericia Neonatal grave, ¿cuál es la complicación gastrointestinal severa descrita secundariamente a la exanguinotransfusión?",
+        options: ["Íleo meconial", "Enterocolitis necrosante", "Atresia biliar", "Trombosis mesentérica"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, los cambios drásticos en la volemia y hemodinámica mesentérica durante el recambio sanguíneo predisponen a la isquemia intestinal.<br><br>Perla ENARM: \"Las complicaciones secundarias a una exanguinotransfusión que se presentan con mayor frecuencia son: Infección, Trombosis venosa... Enterocolitis necrosante\".<br><br>Análisis de Distractores: El íleo meconial (A) es secundario a fibrosis quística. La atresia biliar (C) es una malformación congénita, no iatrogénica vascular. La trombosis se asocia al sitio de acceso (vena umbilical/central), no sistémicamente como trombo mesentérico aislado primario (D).",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Exanguinotransfusión, Página 34."
+    },
+    {
+        id: 25,
+        question: "En un paciente recibiendo tratamiento lumínico por Ictericia Neonatal, ¿cuál es la posición corporal indicada para prevenir el riesgo de muerte súbita?",
+        options: ["Decúbito prono", "Decúbito lateral", "Decúbito supino", "Posición de Fowler"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, además de requerir máxima exposición cutánea a la luz, el paciente en unidades térmicas debe mantener la vía aérea permeable siguiendo las guías internacionales.<br><br>Perla ENARM: \"Para disminuir el riesgo de muerte súbita, los recién nacidos deben ser colocados en posición decúbito supino\".<br><br>Análisis de Distractores: El decúbito prono (A) es el principal factor de riesgo mecánico para muerte súbita del lactante. El decúbito lateral (B) disminuye la superficie de exposición a la luz zenital. Fowler (D) es inaplicable e inseguro en un recién nacido desnudo bajo lámpara.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Cuidados del recién nacido durante la fototerapia, Página 32."
+    },
+    {
+        id: 26,
+        question: "Durante el descenso sérico exitoso bajo fototerapia múltiple en Ictericia Neonatal, ¿qué valor exacto por debajo del umbral de exanguinotransfusión indica cambiar a fototerapia simple?",
+        options: ["1.50 mg/dl", "2.94 mg/dl", "4.50 mg/dl", "5.00 mg/dl"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, al alejar al paciente de la línea de neurotoxicidad inminente, el tratamiento agresivo continuo se desescala a uno convencional para permitir cuidados maternos.<br><br>Perla ENARM: \"Si el nivel de bilirrubina sérica total cae durante la fototerapia múltiple continua a un nivel 2.94 mg/dl (50 μmol/l) por debajo del umbral para el cual se indica la exanguinotransfusión se deberá retirar la fototerapia múltiple y continuar con fototerapia simple\".<br><br>Análisis de Distractores: Los valores de 1.50, 4.50 y 5.00 mg/dl (A, C, D) son inventados o absolutos inexactos operativamente. La normatividad específica es estricta con la constante de conversión de 50 micromoles/l (2.94 mg/dl).",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Tratamiento, Página 29."
+    },
+    {
+        id: 27,
+        question: "En el abordaje farmacológico avanzado de la Ictericia Neonatal, ¿en qué etiología específica está indicado el uso coadyuvante de inmunoglobulina intravenosa?",
+        options: ["Atresia de vías biliares", "Deficiencia de G6PD", "Isoinmunización a Rh", "Sepsis neonatal temprana"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, este anticuerpo monoclonal reduce la destrucción eritrocitaria al bloquear los receptores Fc, reservándose para la hemólisis aloinmune más agresiva.<br><br>Perla ENARM: \"Recomienda el uso de inmunoglobulina intravenosa junto con fototerapia en recién nacidos con enfermedad hemolítica por isoinmunización a Rh\".<br><br>Análisis de Distractores: En las patologías obstructivas (A), metabólicas/enzimáticas (B) y sepsis (D), la lisis no es mediada primariamente por complejos inmunes materno-fetales, por lo que la inmunoglobulina carece de sitio de acción y efectividad.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Inmunoglobulina Intravenosa, Página 38."
+    },
+    {
+        id: 28,
+        question: "Cuando se indica el uso de Inmunoglobulina Intravenosa por hemólisis severa refractaria en Ictericia Neonatal, ¿cuál es la dosis y ritmo de infusión normados?",
+        options: ["250 mg/kg en dos horas", "500 mg/kg en cuatro horas", "1000 mg/kg en seis horas", "200 mg/kg en una hora"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, este hemoderivado de alto peso molecular exige una administración controlada y estricta para evitar sobrecarga o reacción anafilactoide, basándose en la dosificación efectiva de bloqueo.<br><br>Perla ENARM: \"NICE recomienda que la dosis de la IgIV sea 500 mg/kg en infusión continua durante 4 horas. Siempre junto con la fototerapia\".<br><br>Análisis de Distractores: Las dosis subóptimas de 200 o 250 mg/kg (A, D) no alcanzan el umbral de bloqueo de receptores macrofágicos. Dosis de 1000 mg/kg (C) se utilizan en otras patologías autoinmunes neurológicas, pero no es el esquema estandarizado en hemólisis neonatal.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Inmunoglobulina Intravenosa, Página 39."
+    },
+    {
+        id: 29,
+        question: "Al evaluar los riesgos tardíos de la terapia lumínica para la Ictericia Neonatal, ¿cuál es un efecto adverso a largo plazo comprobado tras la exposición a estas lámparas?",
+        options: ["Alopecia areata", "Nevo melanocítico", "Psoriasis pediátrica", "Lupus eritematoso"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, el bombardeo fotónico temprano en una epidermis inmadura altera las células pigmentarias, incrementando el riesgo de proliferación celular cutánea a futuro.<br><br>Perla ENARM: \"Efectos a largo plazo: Nevo melanocítico, Cáncer de piel, Enfermedades alérgicas\".<br><br>Análisis de Distractores: Condiciones reumatológicas/autoinmunes como Alopecia (A), Psoriasis (C) o Lupus (D) no tienen ninguna relación fisiopatológica demostrada con la isometrización lumínica neonatal.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Fototerapia, Página 28."
+    },
+    {
+        id: 30,
+        question: "Dentro de las prácticas clínicas obsoletas para la Ictericia Neonatal, ¿cuál medicamento está categóricamente contraindicado para utilizarse empíricamente con fines de reducción metabólica?",
+        options: ["Sulfato de magnesio", "Ácido ursodesoxicólico", "Uso de barbitúricos", "Suplementación de zinc"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, fármacos como el fenobarbital que inducen enzimas hepáticas no superan la velocidad de acción de la fototerapia pero sí añaden letargo extremo que simula kernicterus.<br><br>Perla ENARM: \"No se recomienda para disminuir el nivel de bilirrubinas en el recién nacido ninguno de los tratamientos... Agar, Albúmina, Barbitúricos...\".<br><br>Análisis de Distractores: El sulfato de magnesio (A), ácido ursodesoxicólico (B) y zinc (D) tienen sus propias indicaciones neonatales o hepáticas (colestasis), pero históricamente los barbitúricos fueron el error farmacológico principal buscado activamente en exámenes para evitar su uso actual en hiperbilirrubinemia indirecta.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Otros tratamientos, Página 40."
+    },
+    {
+        id: 31,
+        question: "Tras finalizar un recambio sanguíneo exitoso por Ictericia Neonatal grave, ¿cuál es el electrolito sérico que debe medirse normativamente en busca de hipocalcemia inducida?",
+        options: ["Magnesio sérico", "Fósforo sérico", "Potasio sérico", "Calcio sérico"],
+        answer: 3,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, los paquetes globulares conservados en citrato secuestran iones circulantes, exigiendo medición y rescate, aunque no se autoriza administrarlo profilácticamente a ciegas durante el evento.<br><br>Perla ENARM: \"Se recomienda que al término de la exanguinotransfusión se mida el calcio sérico. En caso de hipocalcemia indicar tratamiento sustitutivo\".<br><br>Análisis de Distractores: Magnesio, fósforo y potasio (A, B, C) pueden alterarse en el paciente crítico, pero el efecto quelante directo e inmediato de las alícuotas donadas es sobre la fracción ionizada del calcio.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Exanguinotransfusión, Página 37."
+    },
+    {
+        id: 32,
+        question: "Al preparar la sangre para recambio en un neonato con Ictericia Neonatal por isoinmunización anti-D (Rh), ¿cuál es la selección correcta del concentrado de hematíes?",
+        options: ["Grupo materno y Rh positivo", "Grupo O y Rh positivo", "Grupo del neonato Rh negativo", "Sangre total grupo universal"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, al no existir incompatibilidad de tipo ABO, se respeta el grupo de origen, pero se retira el antígeno Rhesus (haciéndolo negativo) para que los anticuerpos circulantes no sigan destruyendo los hematíes recién transfundidos.<br><br>Perla ENARM: \"En recién nacidos con isoinmunización anti-D el concentrado de hematíes será del grupo del recién nacido y el factor Rh negativo con plasma del grupo del recién nacido\".<br><br>Análisis de Distractores: Utilizar sangre Rh positivo (A, B) perpetúa la hemólisis masiva y la falla del tratamiento. La sangre total no fraccionada (D) aporta anticuerpos plasmáticos del donador, lo que está proscrito en técnicas modernas de reconstitución.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Exanguinotransfusión, Página 36."
+    },
+    {
+        id: 33,
+        question: "Durante el seguimiento de un paciente sano, ¿en qué día la ausencia clínica de Ictericia Neonatal tiene un alto valor predictivo negativo para descartar hiperbilirrubinemia futura?",
+        options: ["Primer día de vida", "Segundo o tercer día", "Quinto día de vida", "Séptimo día de vida"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, el pico fisiológico de lisis eritrocitaria ocurre en este margen; si el neonato está blanco y sin clínica visual a estas horas, la probabilidad estadística de una curva tóxica posterior es casi nula.<br><br>Perla ENARM: \"Los resultados de tres estudios muestran que si el examen clínico se realiza en el segundo o tercer día de vida e indica ausencia de ictericia, tiene un alto Valor predictivo negativo para descartar la presencia de hiperbilirrubinemia\".<br><br>Análisis de Distractores: En el primer día (A) la hiperbilirrubinemia está en fase latente, no es predictivo. Para el quinto o séptimo día (C, D) el paciente ya rebasó su punto máximo de riesgo para la variedad grave aguda.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Evaluación de la ictericia, Página 16."
+    },
+    {
+        id: 34,
+        question: "Tras retirar la sangre por exanguinotransfusión en Ictericia Neonatal grave, ¿qué porcentaje de rebote del valor inicial puede alcanzar la bilirrubina por el arrastre de depósitos hísticos?",
+        options: ["10 por ciento", "30 por ciento", "60 por ciento", "90 por ciento"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, el recambio limpia estrictamente el componente vascular intravascular, desencadenando posteriormente un vaciamiento del tejido extravascular (bazo, médula) hacia la sangre limpia.<br><br>Perla ENARM: \"El rebote posterior a la exanguinotransfusión del nivel de bilirrubinas puede llegar a ser hasta del 60% del nivel de bilirrubinas previo al procedimiento\".<br><br>Análisis de Distractores: Porcentajes de 10% y 30% (A, B) subestiman el efecto real de secuestro extravascular, requiriendo menos precaución de la recomendada normativamente. Un 90% de rebote (D) significaría el fracaso casi total de la remoción o una hemólisis continua ininterrumpida.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Exanguinotransfusión, Página 35."
+    },
+    {
+        id: 35,
+        question: "En un recién nacido bajo tratamiento activo inicial con fototerapia lumínica por Ictericia Neonatal, ¿con qué frecuencia temporal normada se deben extraer muestras para control sérico?",
+        options: ["Cada una a dos horas", "Cada cuatro a seis horas", "Cada doce a veinticuatro horas", "Cada cuarenta y ocho horas"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, el tiempo inicial permite evaluar el cese o continuación de la lisis frente al aclaramiento renal/biliar de lumirrubina sin exponer al infante a sangrados iatrogénicos o pérdida de volemia extrema cada hora.<br><br>Perla ENARM: \"Durante la fototerapia: Repetir la medición de bilirrubina sérica total cada 4-6 horas después de iniciar la fototerapia\".<br><br>Análisis de Distractores: Sangrar cada 1-2 horas (A) causa anemia por extracción y daño vascular. Esperar de 12 a 48 horas (C, D) en fase activa o aguda expone al neonato a encefalopatía por falla en detección de hemólisis resistente a lámparas.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Tratamiento, Página 29."
+    },
+    {
+        id: 36,
+        question: "Durante la terapia lumínica agresiva para la Ictericia Neonatal, ¿cuál es la indicación estandarizada respecto a la administración de líquidos intravenosos profilácticos?",
+        options: ["Aumentar un veinte por ciento", "Cargas masivas de dextrosa", "No suplementar rutinariamente líquidos", "Infusión rápida de albúmina"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, aunque las luces aumentan las pérdidas insensibles, el enfoque base es fomentar la succión oral o enteral, prohibiendo protocolos automáticos parenterales que alteran el inicio del tránsito lácteo vital.<br><br>Perla ENARM: \"Los recién nacidos alimentados con seno materno no deben ser suplementados rutinariamente con sucedáneos de la leche, agua o dextrosa, durante el tratamiento de la ictericia\".<br><br>Análisis de Distractores: Aumentos porcentuales forzados (A), expansores de volumen glicémicos (B) y coloides (D) bloquean el instinto de lactancia e invaden al paciente sin aportar mejoría demostrada en la eliminación de la molécula indirecta.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Cuidados del recién nacido durante la fototerapia, Página 32."
+    },
+    {
+        id: 37,
+        question: "Al evaluar la efectividad clínica de una exanguinotransfusión en la Ictericia Neonatal grave, ¿qué porcentaje de descenso de bilirrubina circulante se logra inmediatamente?",
+        options: ["Veinticinco por ciento", "Cuarenta y cinco por ciento", "Setenta y cinco por ciento", "Noventa y cinco por ciento"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, a pesar de barrer dos veces la volemia, el intercambio constante con espacios tisulares dictamina que la tasa real neta al terminar es subtotal, dejando al paciente en rangos funcionales pero sin llegar a cero.<br><br>Perla ENARM: \"El nivel de bilirrubinas séricas disminuye aproximadamente el 45% del nivel que tiene al inicio del procedimiento\".<br><br>Análisis de Distractores: Valores de 75% o 95% (C, D) son inalcanzables debido a que la albúmina extravascular repleta al torrente sanguíneo durante el mismo proceso. Un 25% (A) representaría ineficiencia o hemólisis masiva superando el lavado.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Exanguinotransfusión, Página 35."
+    },
+    {
+        id: 38,
+        question: "Si un recién nacido asintomático es dado de alta temprana de forma legal antes de las 24 horas de vida, ¿en qué momento estricto está normada su revaloración para descartar Ictericia Neonatal?",
+        options: ["A las cuarenta y ocho horas", "A las setenta y dos horas", "A las noventa y seis horas", "Al séptimo día"],
+        answer: 1,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, egresar de forma precoz oculta el pico fisiológico esperado del tercer día; asegurar la cita a las 72 horas es una red de seguridad ineludible en el sistema.<br><br>Perla ENARM: \"Alta hospitalaria del recién nacido: Antes de las 24 horas de vida. Revaloración: A las 72 horas de vida\".<br><br>Análisis de Distractores: Las revaloraciones a las 48 hrs, 96 hrs o al 7o día (A, C, D) no empatan con el protocolo de egreso primario de 24 horas, ya que pueden ser muy precoces para detectar rebote silente o muy tardías evadiendo neurotoxicidad.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Seguimiento del recién nacido, Página 43."
+    },
+    {
+        id: 39,
+        question: "En el seguimiento longitudinal de un lactante dado de alta que cursó con Ictericia Neonatal prolongada, ¿qué complicación hemato-oncológica o silente se debe buscar intencionadamente entre las cuatro y seis semanas?",
+        options: ["Cifra de plaquetas baja", "Descenso de vitamina K", "Presencia de anemia", "Leucopenia de aparición tardía"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, el freno temporal de las bilirrubinas (por lámparas) no detiene el ciclo de vida corto eritrocitario ni secuelas de lisis remanente, resultando en un colapso posterior de hemoglobina.<br><br>Perla ENARM: \"En todos los recién nacidos que presentaron ictericia se debe dar seguimiento a... Presencia de anemia en las siguientes 4 a 6 semanas\".<br><br>Análisis de Distractores: Trombocitopenia (A) o leucopenia (D) se rastrean en infecciones congénitas TORCH o sepsis, no son secuelas per se de la hiperbilirrubinemia. Los parámetros vitamínicos no son la prioridad de vigilancia tras hemólisis subyacente.",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Seguimiento del recién nacido, Página 43."
+    },
+    {
+        id: 40,
+        question: "Al prescribir regímenes terapéuticos para la Ictericia Neonatal, ¿qué efectividad clínica posee la modalidad de fototerapia intermitente de un esquema cíclico programado?",
+        options: ["Acelera conjugación hepática", "Previene el riesgo de Kernicterus", "No es eficaz para el tratamiento", "Acorta la estancia hospitalaria"],
+        answer: 2,
+        justification: "Justificación: De acuerdo a la GPC de Ictericia Neonatal, la aplicación de luz programada en ciclos de 1x3, 4x4 o 12x12 fue evaluada pero probó ser inútil frente al constante reabastecimiento metabólico del pigmento por el organismo neonatal.<br><br>Perla ENARM: \"La fototerapia que se realiza de forma intermitente variando la duración en periodos de encendida o apagada (1 hora x 3 horas, 4 horas x 4 horas y 12 horas x 12 horas) no es eficaz para el tratamiento de hiperbilirrubinemia\".<br><br>Análisis de Distractores: No acelera procesos hepáticos enzimáticos (A) ni acorta tiempos (D), por el contrario, los infantes sometidos a esta práctica mostraron niveles séricos peligrosamente más altos, impidiendo asegurar protección contra Kernicterus (B).",
+        source: "GPC-IMSS-262-19, Diagnóstico y Tratamiento de la Ictericia Neonatal, 2019, Sección: Fototerapia, Página 27."
+    }
+
+        ];
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('26219LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('26219Progress');
+                localStorage.removeItem('26219LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-blue-500 shadow-md z-10 border-blue-500 dark:border-blue-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-cyan-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "PEDIATRÍA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus respuestas correctas/incorrectas en el tablero." 
+                : "IMSS-262-19 • Diagnóstico y tratamiento de la ictericia neonatal";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="login.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-blue-100 dark:border-blue-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 dark:has-[:checked]:bg-blue-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('26219Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('26219LastQId', currentQuestionId);
+                else localStorage.removeItem('26219LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('26219Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+
+</body>
+</html>
