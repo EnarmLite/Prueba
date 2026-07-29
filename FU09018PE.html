@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-cyan-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+    {
+        id: 1, 
+        question: "En un paciente pediátrico con quemaduras, ¿cuál es el instrumento clínico estandarizado de primera elección para calcular con precisión la superficie corporal afectada?", 
+        options: ["Fórmula de Parkland", "Regla de los nueves", "Diagrama de Lund y Browder", "Índice de severidad"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, los cambios en la proporción corporal que ocurren durante el crecimiento (como el predominio cefálico en lactantes) inutilizan las reglas anatómicas estáticas diseñadas para adultos. El uso de diagramas dinámicos previene errores masivos en la reanimación hídrica.<br><br>Perla ENARM: \"Se recomienda utilizar escalas de evaluación clínica para valorar la extensión y profundidad de la quemadura (Lund y Browder)\".<br><br>Análisis de Distractores: La regla de los nueves (B) es inexacta en menores de 15 años por la desproporción anatómica. La fórmula de Parkland (A) es un cálculo de volumen de líquidos, no una escala de medición topográfica. El índice de severidad (D) no es el estándar inicial validado para medir extensión corporal.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Diagnóstico, Página 21." 
+    },
+    {
+        id: 2, 
+        question: "En la epidemiología de las quemaduras térmicas en pediatría, ¿en qué grupo poblacional es estadísticamente más frecuente la lesión profunda por fuego directo?", 
+        options: ["Mujeres adolescentes", "Preescolares masculinos", "Lactantes femeninas", "Varones escolares"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, la incidencia etiológica está fragmentada por género y roles sociodemográficos; mientras que la electricidad afecta predominantemente a los varones y la escaldadura a los preescolares, el fuego directo incide con mayor prevalencia y letalidad en el género femenino a partir de la pubertad.<br><br>Perla ENARM: \"Se ha visto que en hombres es más frecuente la lesión por electricidad y en mujeres por fuego sobretodo en adolescentes\".<br><br>Análisis de Distractores: Los preescolares masculinos (B) y lactantes (C) sufren mayoritariamente quemaduras por escaldadura (líquidos calientes en la cocina). Los varones escolares (D) tienen picos de incidencia relacionados a trauma eléctrico por exposición a exteriores o cohetes, no predominantemente por fuego directo en comparación con el género femenino.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Justificación, Página 13." 
+    },
+    {
+        id: 3, 
+        question: "En un paciente con quemaduras térmicas extensas, ¿cuál es la indicación clínica absoluta para iniciar monitoreo hemodinámico invasivo en lugar del control no invasivo de uresis?", 
+        options: ["Superficie quemada >20%", "Extremos anatómicos afectados", "Quemadura por lesión eléctrica", "Escaldadura de tercer grado"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, la evaluación del estado de choque habitualmente se guía con la uresis horaria. Sin embargo, en escenarios donde el daño vascular sistémico, la mioglobinuria masiva o la falla multiorgánica alteran las presiones de llenado, se requiere invasión directa (ej. catéter venoso central o línea arterial).<br><br>Perla ENARM: \"Se recomienda considerar el monitoreo invasivo en niños y adolescentes quemados que presenten quemadura por inhalación, eléctricas o con comorbilidades o en condición crítica\".<br><br>Análisis de Distractores: Una superficie quemada >20% (A) o las escaldaduras severas (D) justifican la reanimación con cristaloides guiada por uresis, pero no obligan por sí solas al monitoreo invasivo de inicio. La afectación de extremos anatómicos (B) dicta la referencia a tercer nivel, no la colocación de un catéter intracardíaco o arterial.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 23." 
+    },
+    {
+        id: 4, 
+        question: "Durante la fase aguda de reanimación hídrica por quemaduras mayores, ¿cuál es el escenario específico que justifica añadir albúmina intravenosa a los cristaloides?", 
+        options: ["Sospecha de traslocación bacteriana", "Falla de respuesta a cristaloides", "Prevención de nefrotoxicidad", "Quemaduras de primer grado"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, el uso rutinario inicial de coloides incrementa complicaciones pulmonares (fuga capilar de proteínas). Su uso se reserva estrictamente como estrategia de rescate (fluid creep) cuando el volumen masivo de cristaloides no logra perfundir adecuadamente el lecho esplácnico y renal.<br><br>Perla ENARM: \"Se sugiere la utilización de soluciones cristaloides con albúmina en niños y adolescentes que no responden a la restitución hídrica solo con cristaloides medida por la uresis/kg/hora\".<br><br>Análisis de Distractores: La traslocación bacteriana (A) se previene con nutrición enteral temprana, no con albúmina. La nefrotoxicidad (C) se previene manteniendo una uresis meta y evitando fármacos nefrotóxicos. Las quemaduras de primer grado (D) ni siquiera ameritan restitución intravenosa agresiva con fórmulas estandarizadas.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 26." 
+    },
+    {
+        id: 5, 
+        question: "En el tratamiento farmacológico inicial de quemaduras superficiales, ¿cuál es el analgésico de primera línea recomendado para controlar un puntaje de dolor leve?", 
+        options: ["Ketorolaco intravenoso", "Tramadol en gotas", "Paracetamol sistémico", "Ibuprofeno oral"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, el manejo del dolor debe ser escalonado según las escalas pediátricas, asegurando un control basal sin precipitar falla renal o daño gástrico en un paciente fisiológicamente estresado y con hipovolemia relativa.<br><br>Perla ENARM: \"Se recomienda utilizar para dolor leve paracetamol\".<br><br>Análisis de Distractores: El tramadol (B) es un opioide débil reservado para escalones de dolor moderado a severo. El ketorolaco (A) y el ibuprofeno (D) pertenecen a la familia de los AINEs, los cuales están estrictamente contraindicados como primera línea en pacientes con quemaduras por su toxicidad.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 27." 
+    },
+    {
+        id: 6, 
+        question: "En el abordaje quirúrgico de quemaduras de espesor total masivas, ¿a partir de qué porcentaje de superficie corporal afectada se indica emplear injertos con técnica de Meek?", 
+        options: [">20%", ">40%", ">60%", ">80%"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, la técnica de Meek permite una expansión exponencial del escaso tejido autólogo disponible, logrando mallas de microinjertos con tasas de crecimiento de 1:9, reservándose para los grandes quemados sin suficientes zonas donadoras intactas.<br><br>Perla ENARM: \"Se sugiere utilizar injertos con expansión tisular con técnica de Meek en niños y adolescentes con extensiones de quemaduras de espesor total mayor al 60% de superficie corporal\".<br><br>Análisis de Distractores: El punto de corte del >20% (A) rige el inicio de reanimación hídrica. El corte >40% (B) justifica el uso de piel de cadáver como cobertura biológica temporal. Esperar a un >80% (D) es un límite inventado que excluye a pacientes con el 65% o 70% que se benefician vitalmente de este procedimiento.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 40." 
+    },
+    {
+        id: 7, 
+        question: "Durante la escisión quirúrgica tangencial de quemaduras en la edad pediátrica, ¿qué agente farmacológico se sugiere utilizar activamente para el control del sangrado transoperatorio?", 
+        options: ["Trombina en spray", "Ácido tranexámico sistémico", "Sulfato de protamina", "Infusión de crioprecipitados"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, la remoción mecánica de la escara genera una hemorragia capilar y venosa difusa severa. El control hemostático tópico maximiza la visualización del lecho viable y previene el choque hemorrágico sin alterar sistémicamente la cascada de coagulación.<br><br>Perla ENARM: \"Se sugiere utilizar los diversos métodos para control del sangrado transoperatorio, tales como hidrodisección selectiva, trombina en spray\".<br><br>Análisis de Distractores: El ácido tranexámico (B), los crioprecipitados (D) y el sulfato de protamina (C) son medidas sistémicas hemostáticas o reversores de heparina, sin indicación normativa para la aplicación tópica local durante el desbridamiento de quemaduras.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 44." 
+    },
+    {
+        id: 8, 
+        question: "En el manejo integral del paciente pediátrico con quemaduras, ¿en qué etapa de la evolución clínica se debe instaurar el programa de rehabilitación física?", 
+        options: ["Posterior al alta hospitalaria", "En la fase aguda temprana", "Hasta lograr epitelización total", "Después del injerto definitivo"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, el riesgo de contracturas articulares limitantes inicia desde el primer día por el edema intersticial y el dolor posicional. Posponer la fisioterapia condena al paciente a secuelas funcionales irreversibles.<br><br>Perla ENARM: \"Se recomienda iniciar rehabilitación física temprana e individualizada en los pacientes quemados\".<br><br>Análisis de Distractores: Esperar al alta (A), a la epitelización (C) o después del injerto (D) retrasa semanas la movilización articular, promoviendo rigidez severa, anquilosis y cicatrización retráctil que posteriormente requerirán liberaciones quirúrgicas complejas.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 47." 
+    },
+    {
+        id: 9, 
+        question: "En el postoperatorio de un paciente con quemaduras severas tratadas con microinjertos autólogos, ¿en qué intervalo de tiempo debe realizarse obligatoriamente la primera revisión del lecho?", 
+        options: ["A las 24 horas", "Entre los 3 y 4 días", "Entre los 5 y 7 días", "Posterior a los 10 días"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, destapar precozmente un injerto rompe mecánicamente la red inicial de fibrina y neovascularización que lo ancla al lecho, provocando su pérdida total; mientras que abandonarlo sin vigilancia predispone a lisis infecciosa.<br><br>Perla ENARM: \"Se sugiere revisión de los microinjertos en forma inicial a los 5 a 7 días de acuerdo a condiciones clínicas del paciente y posteriormente cada 72 horas\".<br><br>Análisis de Distractores: Intervenir a las 24 horas (A) o los 3-4 días (B) moviliza el injerto inmaduro provocando desprendimiento traumático. Retrasar la revisión a los 10 días (D) oculta complicaciones como hematomas subyacentes o infección purulenta, perdiendo la ventana de rescate.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 40." 
+    },
+    {
+        id: 10, 
+        question: "En el manejo local de quemaduras profundas que no son candidatas a injerto cutáneo de forma inmediata, ¿qué insumo se recomienda utilizar para preparar temporalmente el lecho cruento?", 
+        options: ["Apósitos biológicos", "Gasas secas estériles", "Pomada de nitrofurazona", "Vendajes elásticos compresivos"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, la exposición prolongada del tejido celular subcutáneo genera desecación, muerte celular y proliferación de biopelículas bacterianas. Colocar una barrera biológica promueve la angiogénesis para optimizar el terreno antes del autoinjerto definitivo.<br><br>Perla ENARM: \"Se recomienda considerar que en las quemaduras profundas o de tercer grado los apósitos son de utilidad para preparar el lecho de la herida, o temporal cuando no se cuente con una cobertura definitiva\".<br><br>Análisis de Distractores: Las gasas secas (B) son altamente citotóxicas, adhiriéndose al lecho y arrancando el tejido de granulación en cada curación. La nitrofurazona (C) no confiere barrera biológica ni cobertura funcional. Los vendajes compresivos (D) son útiles para presoterapia tardía, no como preparación de una úlcera cruenta profunda.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 34." 
+    },
+    {
+        id: 11, 
+        question: "Para abatir la elevada morbimortalidad por quemaduras en la población pediátrica, ¿en qué área de atención primaria se debe sistematizar permanentemente la evaluación de factores de riesgo?", 
+        options: ["Módulos de vacunación universal", "Triage de urgencias pediátricas", "Consulta médica de niño sano", "Trabajo social intrahospitalario"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, la prevención primaria requiere un escrutinio longitudinal y transversal de los hábitos intrafamiliares. Intervenir rutinariamente en el control del crecimiento impacta el riesgo real del entorno doméstico.<br><br>Perla ENARM: \"En la prevención de quemaduras, el seguimiento en la consulta de niño sano debe establecer un programa individualizado de disminución de factores de riesgo\".<br><br>Análisis de Distractores: El triage de urgencias (B) y trabajo social (D) actúan cuando el paciente ya sufrió el trauma térmico, es decir, fracasó la prevención primaria. Los módulos de vacunación (A) son puntos de contacto fugaces que no permiten el abordaje preventivo completo del binomio madre-hijo delineado en el flujograma de la guía.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Anexos: Algoritmos, Página 51." 
+    },
+    {
+        id: 12, 
+        question: "En el tratamiento especializado de quemaduras de espesor parcial, ¿cuál es el beneficio fisiológico central que justifica la aplicación de queratinocitos cultivados en el tejido afectado?", 
+        options: ["Disminuir el requerimiento hídrico", "Epitelizar en menos de dos semanas", "Sustituir totalmente el autoinjerto", "Bloquear la traslocación bacteriana"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, aportar directamente una carga biológica de queratinocitos acelera dramáticamente el recambio epidérmico de una quemadura profunda que aún conserva anexos vitales, previniendo cicatrización hipertrófica.<br><br>Perla ENARM: \"Se sugiere utilizar queratinocitos cultivados en quemaduras de espesor parcial con probabilidad de epitelizar en menos de dos semanas y en áreas donadoras, cuando se cuente con el recurso\".<br><br>Análisis de Distractores: Los queratinocitos no sustituyen mecánicamente a un autoinjerto de espesor total (C), ni tienen impacto hemodinámico agudo en los requerimientos hídricos (A) o en la integridad primaria del intestino (D); su fin es estrictamente facilitar la reepitelización local acelerada.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 37." 
+    },
+    {
+        id: 13, 
+        question: "En el abordaje analgésico de rescate para el paciente pediátrico quemado grave mediante opioides, ¿qué complicación sistémica se debe vigilar de forma prioritaria?", 
+        options: ["Eventos adversos respiratorios", "Insuficiencia hepática", "Sangrado de tubo digestivo", "Falla renal oligúrica"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, aunque el fentanilo o morfina son el estándar de oro para el dolor intenso en quemados, su efecto secundario más deletéreo sobre los receptores Mu centrales es la depresión del centro respiratorio, precipitando apnea secundaria.<br><br>Perla ENARM: \"Se recomienda vigilar los eventos adversos por el uso de opioides relacionado con eventos respiratorios\".<br><br>Análisis de Distractores: El sangrado digestivo (C) y la falla renal (D) son los efectos adversos cardinales atribuibles al uso de AINEs en la fase de choque por quemadura, motivo por el cual están contraindicados. La insuficiencia hepática (B) se relaciona con sobredosis de paracetamol, no primariamente con los opioides de elección.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 26." 
+    },
+    {
+        id: 14, 
+        question: "Basado en los criterios dictados por la normatividad especializada, ¿qué localización anatómica de una quemadura parcial dicta el traslado inmediato a un tercer nivel?", 
+        options: ["Abdomen y pelvis anterior", "Flancos y región lumbar", "Genitales y perineo", "Extremidad inferior distal"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, existen \"áreas especiales\" que, independientemente de su porcentaje de extensión, generan una morbilidad anatómica y funcional catastrófica. La zona perineal tiene un altísimo riesgo de contaminación biológica agresiva y requiere derivación fecal y manejo plástico precoz.<br><br>Perla ENARM: \"Criterios de referencia a un centro de quemados de la Sociedad Americana de Quemados: Quemaduras que afectan la cara, las manos, los pies, los genitales, el perineo o las articulaciones mayores\".<br><br>Análisis de Distractores: Las quemaduras aisladas en abdomen (A), flancos (B) o extremidad inferior que no abarquen el pie o articulaciones mayores (D), pueden manejarse de forma inicial en hospitales de segundo nivel, siempre que no superen el 10% de extensión.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Anexos: Cuadros o figuras, Página 141." 
+    },
+    {
+        id: 15, 
+        question: "En el soporte metabólico integral del gran quemado, ¿qué morbilidades se incrementan drásticamente si se posterga el inicio de la vía enteral más allá de las primeras 24 horas?", 
+        options: ["Perforación intestinal isquémica", "Infecciones severas e hipermetabolismo", "Íleo meconial obstructivo", "Síndrome de intestino corto"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, mantener en ayuno prolongado a un gran quemado induce atrofia acelerada de las vellosidades intestinales. Esta falla de barrera precipita la traslocación masiva de bacterias entéricas a la circulación, exacerbando un síndrome hipermetabólico que desencadena sepsis y muerte.<br><br>Perla ENARM: \"Se recomienda considerar que el ayuno prolongado en pacientes con quemaduras puede asociarse a importantes complicaciones (sepsis, mal manejo de la temperatura corporal, hipermetabolismo e incluso muerte)\".<br><br>Análisis de Distractores: El ayuno no es causa directa de perforación mecánica (A) ni de amputación fisiológica como el intestino corto (D). El íleo meconial (C) es una entidad exclusiva del periodo neonatal y fibrosis quística.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 29." 
+    },
+    {
+        id: 16, 
+        question: "Previo a la colocación quirúrgica de un injerto autólogo en un paciente con quemaduras, ¿qué protocolo internacional se debe aplicar forzosamente para acondicionar el tejido receptor?", 
+        options: ["Fórmula de Parkland", "Protocolo TIME", "Escala de Lund", "Diagrama de Browder"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, el prendimiento del injerto está condicionado a la perfusión y ausencia de detritus. El acrónimo TIME (Tejido inviable, Infección/Inflamación, Manejo de la humedad y Evaluación de los bordes) sistematiza la preparación del nicho celular.<br><br>Perla ENARM: \"Se sugiere seguir protocolo “TIME” (tejido, infección, humedad y bordes de la herida) en niños y adolescentes con quemaduras que requerirán injertos\".<br><br>Análisis de Distractores: La fórmula de Parkland (A) calcula el volumen de líquidos intravenosos. Las escalas de Lund y Browder (C y D) se utilizan exclusivamente en el triaje inicial para calcular los porcentajes topográficos afectados por la lesión térmica, no para evaluar el lecho de granulación.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 41." 
+    },
+    {
+        id: 17, 
+        question: "En el servicio de urgencias, si un paciente con quemaduras requiere tratamiento tópico y no se cuenta con apósitos de plata disponibles, ¿cuál es el fármaco de segunda línea indicado?", 
+        options: ["Sulfadiazina de plata en crema", "Ungüento de mupirocina", "Nitrofurazona en pomada", "Clorhexidina en solución"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, aunque los apósitos de plata son superiores para evitar los constantes recambios dolorosos, la formulación clásica en crema mantiene su espectro antimicrobiano contra gramnegativos (Pseudomonas) si el recurso hospitalario es limitado.<br><br>Perla ENARM: \"Se sugiere la utilización de sulfadiazina de plata cuando no se cuente con apósitos con plata\".<br><br>Análisis de Distractores: La clorhexidina (D) se usa como antiséptico de aseo inicial en solución, no como barrera de permanencia tópica. La mupirocina (B) y nitrofurazona (C) no son recomendadas rutinariamente por la norma como alternativas a la plata en pacientes quemados.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 32." 
+    },
+    {
+        id: 18, 
+        question: "En el análisis de factores sociodemográficos de riesgo, ¿qué entorno ambiental duplica estadísticamente la incidencia de sufrir lesiones mortales por fuego directo y electricidad?", 
+        options: ["Zonas urbanas industrializadas", "Estancias infantiles subrogadas", "Población de medio rural", "Escuelas primarias públicas"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, el rezago socioeconómico, el hacinamiento y la alta exposición a riesgos ambientales (fogones, anafres, aceleradores, instalaciones eléctricas informales o maquinaria pesada sin protección) elevan drásticamente la tasa de morbimortalidad en estas comunidades.<br><br>Perla ENARM: \"El medio rural es otro factor de riesgo con una elevada incidencia de lesiones por fuego y electricidad\".<br><br>Análisis de Distractores: Las zonas urbanas industrializadas (A) exhiben alta tasa de seguridad laboral estandarizada en comparación. Las estancias infantiles (B) y primarias públicas (D) asocian más eventos de escaldadura menor, no los traumatismos catastróficos térmicos de alta energía o eléctricos del medio rural.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Justificación, Página 13." 
+    },
+    {
+        id: 19, 
+        question: "En un paciente pediátrico con quemaduras circunferenciales en extremidades, ¿cuál es el hallazgo clínico cardinal que demanda una escarotomía descompresiva de urgencia?", 
+        options: ["Llenado capilar de 2 segundos", "Ausencia de pulsos distales", "Eritema perilesional persistente", "Presencia de flictenas intactas"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, el tejido quemado inelástico impide la expansión del edema subyacente inducido por la reanimación hídrica. Cuando la presión intracompartimental excede la tensión arterial sistólica distal, desaparece el flujo arterial (pérdida de pulso), exigiendo el corte mecánico del anillo constrictivo.<br><br>Perla ENARM: \"El problema se manifiesta por datos de síndrome compartimental (dolor, palidez, pulsos disminuidos, parestesias, parálisis y ausencia de pulsos)... En estos casos se deberá proceder de forma inmediata a la realización de fasciotomía/escarotomía\".<br><br>Análisis de Distractores: El eritema (C) y las flictenas (D) son hallazgos puramente topográficos de espesor parcial que no comprometen la macrocirculación. Un llenado capilar de 2 segundos (A) es un parámetro de normoperfusión que descarta choque circulatorio local.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 42." 
+    },
+    {
+        id: 20, 
+        question: "En la prescripción de esquemas analgésicos para quemaduras graves, ¿por qué motivo fisiopatológico se prohíbe el uso inicial de antiinflamatorios no esteroideos?", 
+        options: ["Precipitan depresión respiratoria", "Riesgo de sangrado digestivo y falla renal", "Disminuyen el umbral convulsivo", "Incrementan el hipermetabolismo sistémico"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, el paciente gran quemado cursa con hipovolemia, liberación masiva de catecolaminas y vasoconstricción periférica/renal. Suprimir la producción de prostaglandinas protectoras gástricas y vasodilatadoras renales mediante bloqueo COX precipita úlceras agudas de estrés (Curling) e insuficiencia renal aguda anúrica.<br><br>Perla ENARM: \"Se recomienda evitar la utilización de analgésicos antinflamatorios no esteroides como tratamiento de primera línea para el control del dolor en pacientes quemados, por el riesgo de sangrado de tubo digestivo y falla renal\".<br><br>Análisis de Distractores: La depresión respiratoria (A) es el efecto adverso limitante de los opioides, no de los AINEs. Las alteraciones en el umbral convulsivo (C) y el hipermetabolismo sistémico (D) son desencadenados por el trauma intrínseco, infecciones o anestésicos disociativos (ketamina), sin relación causal farmacocinética con el ibuprofeno o ketorolaco.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 27." 
+    },
+    {
+        id: 21, 
+        question: "¿Cuáles son los agentes infecciosos que se aíslan con mayor frecuencia como patógenos predominantes causantes de infección invasiva en las heridas por quemadura?", 
+        options: ["Candida albicans y Acinetobacter baumannii", "Staphylococcus epidermidis y Klebsiella pneumoniae", "Staphylococcus aureus y Pseudomona aeruginosa", "Streptococcus pyogenes y Escherichia coli"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención de quemaduras pediátricas, el tejido necrótico avascular y la pérdida de la barrera cutánea promueven una rápida colonización por la flora normal que posteriormente evoluciona a invasión tisular. Los microorganismos intrahospitalarios de alta virulencia son los responsables del deterioro sistémico y la pérdida de injertos.<br><br>Perla ENARM: \"Hoy en día, las bacterias gram positivas como Staphylococcus aureus y las bacterias gramnegativas como Pseudomona aeruginosa son los patógenos predominantes\".<br><br>Análisis de Distractores: E. coli (D), C. albicans y A. baumannii (A), así como S. epidermidis (B) pueden colonizar quemaduras (especialmente en pacientes con largas estancias o uso de catéteres), pero la norma subraya estadísticamente a S. aureus y P. aeruginosa como los patógenos de mayor prevalencia y destructividad local en el gran quemado.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Aspectos Generales, Página 12." 
+    },
+    {
+        id: 22, 
+        question: "¿Cuál es el periodo temporal máximo descrito por la GPC en el que pueden persistir los síntomas del estado hipermetabólico sistémico posterior a una quemadura grave?", 
+        options: ["1 a 2 meses", "1 a 2 años", "3 a 6 meses", "5 a 10 años"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención de quemaduras pediátricas, la respuesta inflamatoria masiva no se detiene al momento del cierre cutáneo. La circulación hiperdinámica, el catabolismo proteico severo, el desgaste óseo y la resistencia a la insulina mantienen un estado de desgaste metabólico crónico que requiere soporte nutricional y de rehabilitación a muy largo plazo.<br><br>Perla ENARM: \"Esta respuesta hipermetabólica... Estos síntomas pueden durar de uno a dos años después de la lesión por quemadura\".<br><br>Análisis de Distractores: Limitar el periodo de hipermetabolismo a la estancia hospitalaria inicial o a unos pocos meses (A y C) subestima el riesgo de desnutrición crónica y falla de medro en el paciente pediátrico. El periodo de 5 a 10 años (D) es una exageración fuera de los parámetros descritos en la bibliografía.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Aspectos Generales, Página 11." 
+    },
+    {
+        id: 23, 
+        question: "En la actualidad, una vez superada la fase aguda de reanimación hídrica, ¿qué entidad patológica representa la causa directa de hasta el 75% de las muertes en las víctimas de quemaduras?", 
+        options: ["Falla renal aguda anúrica", "Choque hipovolémico refractario", "Síndrome compartamental abdominal", "Infección sistémica invasiva"], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención de quemaduras pediátricas, la modernización de los algoritmos de reanimación hídrica ha logrado que muy pocos pacientes fallezcan por choque hipovolémico inicial. El verdadero reto actual radica en la inmunosupresión y el estado catabólico, los cuales abren un portal masivo para la sepsis originada desde la herida o por traslocación intestinal.<br><br>Perla ENARM: \"Hoy en día, después de la reanimación inicial de las víctimas de quemaduras, hasta el 75% de todas las muertes son consecuencia de una infección\".<br><br>Análisis de Distractores: El choque hipovolémico (B) era la principal causa de muerte histórica, pero actualmente se previene con protocolos hídricos. La falla renal (A) y el síndrome compartamental (C) son complicaciones severas y letales si no se tratan, pero epidemiológicamente la sepsis invasiva es, por un margen abrumador, el verdugo principal en las unidades de cuidados intensivos de quemados.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Aspectos Generales, Página 12." 
+    },
+    {
+        id: 24, 
+        question: "A la exploración física del lecho afectado, ¿cuál es el signo clínico que permite diferenciar una quemadura de espesor parcial profundo de una superficial?", 
+        options: ["Formación de múltiples flictenas", "Base de la herida color eritematoso", "Recarga capilar lenta o ausente", "Dolor extremo al tacto ligero"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención de quemaduras pediátricas, el nivel de daño del plexo vascular dérmico determina la recarga capilar. Una lesión superficial (dermis papilar) mantiene intacto el plexo y sangra profusamente, mientras que la lesión profunda (dermis reticular) trombosa capilares, resultando en palidez, ausencia de ampollas y un llenado capilar comprometido.<br><br>Perla ENARM: \"En las quemaduras profundas de espesor parcial... la recarga capilar puede estar ausente o ser lenta cuando se libera la presión. Las ampollas suelen estar ausentes\".<br><br>Análisis de Distractores: El dolor extremo (D), el eritema (B) y la formación de flictenas o ampollas (A) son los datos patognomónicos cardinales de una quemadura de espesor parcial SUPERFICIAL, debido a la preservación íntegra de las terminaciones nerviosas y la masiva extravasación de líquido hacia la epidermis.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Aspectos Generales, Página 10." 
+    },
+    {
+        id: 25, 
+        question: "¿Qué capa histológica afecta exclusivamente la quemadura de primer grado y cuál es su tiempo de curación natural estimado?", 
+        options: ["Dermis papilar con curación en 14 días", "Epidermis con curación rápida espontánea", "Dermis reticular requiriendo injerto", "Estrato basal requiriendo apósitos"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención de quemaduras pediátricas, las quemaduras de primer grado (como la quemadura solar típica) no rompen la integridad de la unión dermoepidérmica. Solo causan eritema y dolor superficial sin formación de vesículas, resolviéndose mediante descamación simple sin dejar cicatriz tisular.<br><br>Perla ENARM: \"Las quemaduras de primer grado o superficiales se limitan exclusivamente a la epidermis o la superficie externa de la piel, y generalmente no son lesiones significativas, ya que se curan rápida y espontáneamente\".<br><br>Análisis de Distractores: La dermis papilar (A) corresponde a las quemaduras de segundo grado superficial. La dermis reticular (C) corresponde a las de segundo grado profundo. El uso de apósitos o injertos sistémicos no está normado para el estrato superficial que cicatriza por sí solo.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Aspectos Generales, Página 10." 
+    },
+    {
+        id: 26, 
+        question: "Posterior al cálculo empírico inicial de líquidos intravenosos en un paciente gran quemado, ¿cuál es la conducta clínica dictada para el mantenimiento hídrico en las siguientes horas?", 
+        options: ["Reducir el volumen al 50%", "Mantener volumen fijo por 24 horas", "Reajustar tomando como base la uresis", "Modificar según presión venosa central"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención de quemaduras pediátricas, las fórmulas de reanimación (Parkland, Brooke) no son recetas fijas, sino puntos de partida fisiológicos. La hipovolemia o la sobrecarga iatrogénica se previenen titulando de manera dinámica la infusión hora tras hora según la perfusión de los órganos diana (riñón).<br><br>Perla ENARM: \"Se sugiere reajustar la cantidad de líquidos administrada tomando como base la uresis horaria del paciente\".<br><br>Análisis de Distractores: Mantener volúmenes fijos (B) o reducirlos ciegamente al 50% a las 8 horas (A) sin observar la respuesta clínica provoca hipoperfusión o edema pulmonar agudo. La presión venosa central (D) es un método invasivo que solo se reserva como rescate ante fallas complejas, nunca como el método de reajuste inicial estándar.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 24." 
+    },
+    {
+        id: 27, 
+        question: "En pacientes con quemaduras extensas con falla a la reanimación con cristaloides, ¿qué parámetro laboratorial se recomienda evaluar como indicador determinante para iniciar el aporte de coloides (albúmina)?", 
+        options: ["Lactato sérico mayor a 4 mmol/L", "Déficit de base mayor a -6", "Niveles de albúmina sérica bajos", "Hematocrito elevado mayor a 55%"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención de quemaduras pediátricas, el síndrome de fuga capilar masiva extrae las proteínas plasmáticas hacia el tercer espacio, provocando hipoalbuminemia severa y anulando la presión oncótica intravenosa, lo que perpetúa el choque refractario a soluciones simples.<br><br>Perla ENARM: \"Se recomienda considerar los niveles de albúmina sérica bajos como indicador determinante para el aporte de albúmina en niños y adolescentes quemados\".<br><br>Análisis de Distractores: El lactato (A) y el déficit de base (B) son marcadores inespecíficos universales de hipoperfusión tisular, pero la guía dicta textualmente medir la concentración sérica de la propia albúmina para autorizar y justificar la terapia de reemplazo coloidal oneroso. El hematocrito elevado (D) marca hemoconcentración tratable habitualmente con más cristaloides iniciales.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 26." 
+    },
+    {
+        id: 28, 
+        question: "Ante la sospecha de sepsis sistémica en un paciente pediátrico quemado, ¿cuál es la pauta estricta que debe guiar invariablemente la instalación de la terapia antimicrobiana intravenosa?", 
+        options: ["Aplicación pf-sistémica de sulfadiazina", "Cobertura profiláctica para Pseudomonas", "Esquema empírico de amplio espectro", "Datos clínicos específicos o cultivo positivo"], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención de quemaduras pediátricas, bombardear preventivamente con antibióticos destruye la flora simbiótica, predisponiendo a colonizaciones fúngicas letales o sobreinfecciones por gérmenes panresistentes. Solo la comprobación microbiológica o signos francos e inequívocos de infección invasiva autorizan la escalada terapéutica sistémica.<br><br>Perla ENARM: \"Se recomienda instalar terapia antimicrobiana en base a datos clínicos específicos de infección o cultivo positivo\".<br><br>Análisis de Distractores: Los esquemas empíricos (C) o profilácticos (B) sin sustento de cultivo están fuertemente contraindicados (aumentan la morbimortalidad). La sulfadiazina (A) es un antiséptico tópico que jamás se administra vía intravenosa sistémica.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 50." 
+    },
+    {
+        id: 29, 
+        question: "¿Cuál es el momento y la condición ideal señalada por la GPC para realizar el aseo inicial y la curación de las lesiones por quemadura en el paciente pediátrico?", 
+        options: ["Después de 24 horas de la lesión", "Inmediatamente en el sitio del accidente", "En cuanto las condiciones clínicas lo permitan", "Estrictamente en quirófano bajo anestesia"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención de quemaduras pediátricas, el paciente gran quemado es un paciente de trauma mayor (ATLS). No debe priorizarse el manejo local estético si esto implica desestabilizar térmicamente (hipotermia por exposición a líquidos) o hemodinámicamente a un paciente en estado de choque. Primero la reanimación sistémica, luego la curación de la piel.<br><br>Perla ENARM: \"Se recomienda realizar aseo de las lesiones en cuanto las condiciones clínicas lo permitan\".<br><br>Análisis de Distractores: Hacerlo en el sitio del accidente (B) sin insumos estériles promueve contaminación e hipotermia fulminante. Retrasarlo ciegamente 24 horas (A) permite el arraigo de biopelículas bacterianas. Exigir que sea estrictamente en quirófano (D) retrasa la descontaminación de quemaduras leves o moderadas que pueden curarse de forma segura en salas de procedimientos de urgencias.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 30." 
+    },
+    {
+        id: 30, 
+        question: "Durante la valoración inicial en urgencias de todo paciente pediátrico quemado, ¿qué intervención profiláctica sistémica específica debe verificarse o aplicarse invariablemente según el algoritmo?", 
+        options: ["Gammaglobulina intravenosa inespecífica", "Profilaxis antitrombótica con heparina", "Inmunidad antitetánica", "Vacunación antineumocócica empírica"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención de quemaduras pediátricas, las quemaduras (especialmente las profundas, sucias o con necrosis) proporcionan un ambiente anaerobio ideal para la esporulación y toxigénesis de Clostridium tetani. Actualizar el esquema de vacunación y/o aplicar inmunoglobulina antitetánica salva vidas frente a esta complicación letal.<br><br>Perla ENARM: \"Valoración inicial por médico... Tratamiento local... Analgesia... Confirmar inmunidad antitetánica\".<br><br>Análisis de Distractores: La profilaxis antitrombótica (B) depende de factores de riesgo adicionales en pacientes de UCI, no es un paso universal del abordaje pediátrico inicial. La gammaglobulina inespecífica (A) y la vacuna antineumocócica (D) no forman parte del algoritmo de triage de la quemadura térmica.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Anexos, Algoritmo 2 (Página 52)." 
+    },
+    {
+        id: 31, 
+        question: "En el tratamiento tópico de las quemaduras de espesor parcial sin criterios de escisión, ¿en qué escenario clínico se indica el uso de apósitos impregnados con antibióticos sobre los biológicos?", 
+        options: ["Si existe riesgo de infección", "Cuando hay epitelización avanzada", "En lesiones localizadas en periné", "En toda quemadura limpia superficial"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención de quemaduras pediátricas, los apósitos biológicos (que carecen de compuestos citotóxicos) son formidables para epitelizar lechos limpios. Sin embargo, si la herida se contaminó de origen o evoluciona con datos pro-inflamatorios severos, el apósito requiere un vehículo antibiótico/plata para dominar la carga bacteriana incipiente sin dañar el injerto celular.<br><br>Perla ENARM: \"Se recomienda que en quemaduras de espesor parcial con riesgo de infección se utilicen apósitos impregnados con antibióticos\".<br><br>Análisis de Distractores: En una quemadura totalmente limpia (D) o con epitelización en curso (B), se prefieren los apósitos biológicos sin impregnación para no entorpecer químicamente la mitosis de los queratinocitos. Las lesiones perineales (C) obligan al traslado y manejo multidisciplinario, no recetan automáticamente apósitos impregnados si requieren escisión.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 34." 
+    },
+    {
+        id: 32, 
+        question: "En un paciente pediátrico con quemaduras circunferenciales de espesor total localizadas en el tronco, ¿qué complicación fisiológica específica justifica la realización inmediata de una escarotomía torácica?", 
+        options: ["Síndrome compartamental abdominal tardío", "Pérdida de pulsos braquiales bilaterales", "Dolor torácico desproporcionado", "Restricción respiratoria o dificultad para ventilar"], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención de quemaduras pediátricas, el tejido quemado pierde elasticidad formando una coraza inelástica. En el tórax, esta escaramuza perimetral impide mecánicamente la excursión diafragmática y costal, resultando en hipoventilación alveolar, hipercapnia e hipoxia refractaria, lo cual requiere liberar el \"corpiño\" necrótico quirúrgicamente.<br><br>Perla ENARM: \"El problema se manifiesta por... dificultad respiratoria en el caso de quemaduras en tórax... En estos casos se deberá proceder de forma inmediata a la realización de fasciotomía/escarotomía\".<br><br>Análisis de Distractores: La pérdida de pulsos (B) o el dolor (C) justifican intervenciones en las extremidades por compresión vascular. El síndrome compartamental abdominal (A) es una secuela de la sobre-reanimación hídrica esplácnica, manejado con descompresiones laparotómicas, no mediante la simple liberación cutánea torácica.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 42." 
+    },
+    {
+        id: 33, 
+        question: "Al aplicar injertos de queratinocitos cultivados en el lecho quemado de un paciente, ¿qué instrucción de cuidado local postoperatorio resulta indispensable para evitar su pérdida?", 
+        options: ["Exposición directa a terapia de luz ultravioleta", "Colocación de un apósito secundario no adherente", "Lavado mecánico a chorro cada 12 horas", "Cubrir con pomada de nitrofurazona abundante"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención de quemaduras pediátricas, los queratinocitos sembrados son una monocapa celular extremadamente frágil, desprovista de anclaje dermoepidérmico mecánico fuerte en las primeras semanas. Cualquier tracción al retirar materiales pegajosos arranca la totalidad del microinjerto.<br><br>Perla ENARM: \"Se recomienda que los queratinocitos cultivados se manejen con los cuidados de un injerto, es decir colocar un apósito secundario no adherente para su protección y mantenerlo en su sitio con grapas o suturas\".<br><br>Análisis de Distractores: El lavado mecánico a chorro (C) barrerá físicamente a las células recién cultivadas del lecho. La terapia con luz ultravioleta (A) genera estrés térmico y actínico innecesario. Embadurnar con nitrofurazona (D) macera la herida y expone la monocapa celular a excipientes citotóxicos.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 37." 
+    },
+    {
+        id: 34, 
+        question: "Respecto al abordaje profiláctico para evitar escaldaduras domésticas en la edad preescolar, ¿qué punto de buena práctica dicta la norma como la maniobra física más eficaz y rentable para los cuidadores?", 
+        options: ["Disminuir la temperatura del calentador a 40°C", "Aislar a los niños de actividades de riesgo como cocinar", "Promover el uso exclusivo del horno de microondas", "Instalar alarmas térmicas en todas las habitaciones"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención de quemaduras pediátricas, el mecanismo predominante en menores de 5 años es el volcado accidental de líquidos hirvientes o alimentos desde estufas o mesas en el momento mismo de la preparación. La barrera física de separación previene de raíz el acceso del menor a la tracción del recipiente.<br><br>Perla ENARM: \"Se sugiere aislar a los niños de actividades de riesgo como cocinar y de aproximación a líquidos calientes, fuego y electricidad\".<br><br>Análisis de Distractores: Las alarmas de humo/térmicas (D) y el ajuste de termostatos de calentadores de agua (A) previenen incendios letales y quemaduras por inmersión en bañeras, pero estadísticamente en México la cocina y las escaldaduras alimentarias son la prioridad a bloquear. El uso de microondas (C) no elimina el riesgo si el líquido hierve y el niño lo vuelca.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Prevención, Página 19." 
+    },
+    {
+        id: 35, 
+        question: "¿Qué secuela estructural e irreversible se asocia directamente a la demora o falta de realización oportuna de una fasciotomía/escarotomía ante un síndrome compartamental por quemadura de extremidad?", 
+        options: ["Transformación a quemadura eléctrica", "Contractura en flexión de articulaciones", "Desarrollo de calcificación heterotópica", "Complicaciones y secuelas permanentes anatómicas"], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención de quemaduras pediátricas, la compresión vascular sostenida provoca isquemia distal. Si los músculos y nervios sufren isquemia caliente irreversible por falta de flujo arterial y estasis venoso prolongado, la extremidad sufrirá necrosis isquémica requiriendo invariablemente amputación del segmento.<br><br>Perla ENARM: \"Se recomienda informar a pacientes y familiares que el retrasar la realización de fasciotomía/escarotomía cuando se sospecha de síndrome compartamental podría ocasionar complicaciones y secuelas permanentes\".<br><br>Análisis de Distractores: La calcificación heterotópica (C) y las contracturas (B) son complicaciones inherentes a la lesión ósea/articular o a la falla de rehabilitación temprana, no privativas del infarto isquémico agudo de los vasos mayores de la extremidad. Las quemaduras eléctricas (A) son una etiología, no una complicación de otro trauma.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 42 y 43." 
+    },
+    {
+        id: 36, 
+        question: "Previo a la aplicación temporal del estándar de referencia (piel de cadáver) en grandes quemaduras, ¿qué procedimiento técnico ineludible se debe realizar para acondicionar el lecho receptor?", 
+        options: ["Realizar escisiones tangenciales y protocolo TIME", "Cierre primario mecánico de bordes viables", "Aplicación exclusiva de antisépticos locales", "Infiltración de factores de crecimiento autólogos"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención de quemaduras pediátricas, cualquier tejido biológico de cobertura, autólogo o alogénico, es invariablemente rechazado o lisado por infección si se coloca encima de escara necrótica e infectada. Retirar quirúrgicamente lo quemado hasta tejido sangrante y sano asegura el prendimiento de la cobertura.<br><br>Perla ENARM: \"Esto permite disponer de más tiempo para realizar las escisiones tangenciales necesarias, preparar el tejido (TIME) para recepción del injerto autólogo y probablemente retrasar procesos infecciosos\".<br><br>Análisis de Distractores: Los antisépticos (C) por sí solos no disuelven la gruesa capa de tejido de tercer grado carbonizado. El cierre primario (B) es geométricamente imposible en quemaduras extensas con gran pérdida de sustancia tegumentaria. La infiltración celular o factores locales (D) será fútil si el nicho biológico (preparación) no ha sido limpiado quirúrgicamente.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 38." 
+    },
+    {
+        id: 37, 
+        question: "Para llevar a cabo un abordaje farmacológico preciso que evite tanto la subdosificación como el colapso hemodinámico o respiratorio, ¿qué intervención indica la GPC previo a recetar analgésicos en quemados?", 
+        options: ["Evaluar la intensidad del dolor en base a una escala", "Calcular la superficie corporal con Lund y Browder", "Iniciar con paracetamol a dosis máxima ponderal", "Monitorizar el índice de choque prehospitalario"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención de quemaduras pediátricas, el tratamiento del dolor no se adivina empíricamente; requiere categorización (leve, moderado, severo) usando herramientas validadas por edad, permitiendo escalar de AINEs/Paracetamol hacia opioides o ketamina, previniendo así sobredosis de narcóticos en dolores menores.<br><br>Perla ENARM: \"Se recomienda evaluar la intensidad del dolor en base a alguna escala pediátrica\".<br><br>Análisis de Distractores: Iniciar ciegamente paracetamol a dosis máxima (C) puede subtratar el dolor masivo de los grandes quemados (quienes necesitan opiáceos). Calcular la SCQ (B) o el índice de choque (D) determina el flujograma de reanimación de líquidos intravenosos, no guía el escalón analgésico inicial de la vía nociceptiva.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 27." 
+    },
+    {
+        id: 38, 
+        question: "Una vez que el paciente pediátrico quemado logra reepitelizar sus lesiones y obtiene el egreso hospitalario seguro, ¿qué acción indica la norma como vital para evitar secuelas de retracción cicatricial?", 
+        options: ["Suspender temporalmente las movilizaciones", "Limitarse a termoterapia pasiva superficial", "Sustituir ejercicios físicos con prendas elásticas", "Continuar con el programa de rehabilitación en casa"], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención de quemaduras pediátricas, la cicatrización hipertrófica y la formación de bridas constrictivas continúan remodelándose agresivamente hasta un año después de la injuria inicial. Abandonar la movilidad o la presoterapia genera limitaciones funcionales permanentes que anulan el éxito quirúrgico hospitalario.<br><br>Perla ENARM: \"Se recomienda posterior al egreso continuar con el programa de rehabilitación en casa\".<br><br>Análisis de Distractores: Suspender (A) o limitar (B) la movilidad induce acortamientos tendinosos y fijación articular permanente. Las prendas de presión (C) son adyuvantes del tratamiento fisioterapéutico activo para remodelar el colágeno y aplanar la cicatriz; no lo sustituyen por sí solas.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 48." 
+    },
+    {
+        id: 39, 
+        question: "Utilizando los lineamientos internacionales de la Sociedad Americana de Quemados estipulados en la guía, ¿qué conducta ineludible se debe tomar ante todo paciente con quemaduras por contacto químico?", 
+        options: ["Alta inmediata tras neutralización tópica", "Referencia oportuna a un centro de quemados", "Ingreso para vigilancia a sala de pediatría general", "Aplicación rutinaria de antídotos sistémicos intralesionales"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención de quemaduras pediátricas, los agentes químicos alcalinos o ácidos continúan su destrucción saponificando grasas y coagulando proteínas de forma indolente hacia planos profundos durante varios días, originando toxicidades sistémicas y perfiles quirúrgicos complejos.<br><br>Perla ENARM: \"Criterios de referencia a un centro de quemados de la Sociedad Americana de Quemados: ... Quemaduras químicas\".<br><br>Análisis de Distractores: El ingreso a salas no especializadas (C) carece del equipo plástico reconstructivo y toxicológico necesario. Las altas inmediatas (A) condenan al paciente a la reactivación profunda. Los antídotos sistémicos o intralesionales empíricos universales no existen para la mayoría de los químicos (D) (el pilar es el lavado profuso con agua).", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Anexos, Página 141." 
+    },
+    {
+        id: 40, 
+        question: "Para mitigar el intenso desgaste catabólico en la fase aguda del gran quemado sin comprometer la barrera inmunológica natural, ¿qué vía de acceso nutricional prioriza la GPC en pacientes sin contraindicación?", 
+        options: ["Vía enteral por sonda o vía oral", "Nutrición parenteral central exclusiva", "Nutrición parenteral periférica total", "Ayuno con suplementos vitamínicos parenterales"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Prevención de quemaduras pediátricas, el contacto directo de los macronutrientes en la luz gástrica y duodenal es el único estímulo efectivo para mantener el riego sanguíneo asplácnico y preservar el moco y trofismo del enterocito, frenando la cascada de traslocación bacteriana.<br><br>Perla ENARM: \"Se recomienda iniciar la alimentación enteral por vía oral en todo paciente en que sea factible. Se sugiere considerar que niños y adolescentes con quemaduras de más del 20%... requieran colocación de sonda orogástrica para el inicio de la alimentación enteral\".<br><br>Análisis de Distractores: Las líneas parenterales (B y C) atrofian mecánicamente las vellosidades intestinales al dejarlas sin trabajo digestivo (ayuno), además de elevar brutalmente la incidencia de sepsis por catéter e hiperglucemia. Mantener en ayuno (D) precipita la muerte por catabolismo acelerado.", 
+        source: "SS-090-18, Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes, 2018, Tratamiento, Página 29." 
+    }
+
+        ];
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('09018LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('09018Progress');
+                localStorage.removeItem('09018LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-blue-500 shadow-md z-10 border-blue-500 dark:border-blue-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-cyan-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "PEDIATRÍA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus respuestas correctas/incorrectas en el tablero." 
+                : "SS-090-18 • Prevención, diagnóstico y tratamiento de quemaduras en niños y adolescentes";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="login.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-blue-100 dark:border-blue-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 dark:has-[:checked]:bg-blue-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('09018Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('09018LastQId', currentQuestionId);
+                else localStorage.removeItem('09018LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('09018Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+
+</body>
+</html>
