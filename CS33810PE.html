@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-cyan-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+
+    {
+        id: 1, 
+        question: "En la Mucopolisacaridosis Tipo I, ¿cuál es el gen cuya mutación patológica causa la deficiencia enzimática multisistémica?", 
+        options: ["Gen IDUA", "Gen I2S", "Gen ARSA", "Gen GNPTA"], 
+        answer: 0, 
+        justification: "Justificación: El gen afectado en esta patología codifica para la alfa-L-iduronidasa y se localiza en el brazo corto del cromosoma 4. De acuerdo GPC de Mucopolisacaridosis Tipo I, las mutaciones nonsense en este gen inducen una ausencia total de proteína funcional, condicionando el fenotipo severo o síndrome de Hurler.<br><br>Perla ENARM: \"La Mucopolisacaridosis Tipo I es una enfermedad autosómica recesiva, causada por mutaciones en el gen que codifica la α-L-iduronidasa (IDUA) localizada en el cromosoma 4p16.3.\"<br><br>Análisis de Distractores: La opción B (gen I2S) causa la Mucopolisacaridosis Tipo II o síndrome de Hunter. La opción C (gen ARSA) codifica para la arilsulfatasa A, alterada en la leucodistrofia metacromática. La opción D (gen GNPTA) se asocia con mucolipidosis tipo II.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Estudio Genético, Página 17." 
+    },
+    {
+        id: 2, 
+        question: "En un paciente con sospecha de Mucopolisacaridosis Tipo I, ¿cuál es el rango exacto de actividad de la enzima alfa-L-iduronidasa que otorga la certeza diagnóstica según la GPC?", 
+        options: ["Menor al 10%", "Entre 5% y 8%", "Entre 1% y 2%", "Menor al 5%"], 
+        answer: 2, 
+        justification: "Justificación: Si bien una actividad enzimática inferior al 10% es altamente sugestiva, la certeza bioquímica definitiva requiere valores críticos específicos. De acuerdo GPC de Mucopolisacaridosis Tipo I, un rango enzimático residual extremadamente bajo es indispensable para confirmar el diagnóstico.<br><br>Perla ENARM: \"De acuerdo al porcentaje de actividad de la enzima α-L-iduronidasa se puede sospechar o tener la certeza que se trata de MPS I: Actividad enzimática <10% (Sugestiva), entre 1 y 2% (Certeza).\"<br><br>Análisis de Distractores: La opción A indica sospecha o criterio sugestivo. Las opciones B y D no corresponden a los puntos de corte establecidos en las tablas de gradación diagnóstica de la GPC.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Actividad Enzimática, Página 15." 
+    },
+    {
+        id: 3, 
+        question: "En la determinación de glucosaminoglucanos urinarios para Mucopolisacaridosis Tipo I, ¿cuál es el valor límite de densidad urinaria para evitar resultados falsos negativos por dilución según la GPC?", 
+        options: ["1.005 g/ml", "1.015 g/ml", "1.020 g/ml", "1.010 g/ml"], 
+        answer: 1, 
+        justification: "Justificación: La orina diluida subestima la concentración de metabolitos acumulados, por lo que se requiere una concentración urinaria basal mínima para validar la prueba. De acuerdo GPC de Mucopolisacaridosis Tipo I, densidades por debajo del valor de corte invalidan la sensibilidad diagnóstica de la prueba de glucosaminoglucanos.<br><br>Perla ENARM: \"La determinación de glucosaminoglucanos (heparán y dermatán sulfato) en orina es una prueba útil pero inespecífica para el diagnóstico de la MPS I por presentar resultados falsos negativos, especialmente si la orina está diluida (densidad urinaria < 1.015 g/ml).\"<br><br>Análisis de Distractores: Las opciones A y D son densidades urinarias bajas que propician resultados falsos negativos. La opción C representa una densidad normal-alta pero no corresponde al valor límite de seguridad de la GPC.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Determinación de Glucosaminoglucanos, Página 16." 
+    },
+    {
+        id: 4, 
+        question: "¿Cuáles son los dos glucosaminoglucanos específicos que se acumulan progresivamente en los lisosomas en pacientes con Mucopolisacaridosis Tipo I?", 
+        options: ["Queratán sulfato y condroitín sulfato", "Dermatán sulfato y heparán sulfato", "Ácido hialurónico y heparán sulfato", "Dermatán sulfato y queratán sulfato"], 
+        answer: 1, 
+        justification: "Justificación: El déficit de la hidrolasa iduronidasa bloquea la degradación específica de estos dos polímeros de carbohidratos, acumulándolos en múltiples tejidos. De acuerdo GPC de Mucopolisacaridosis Tipo I, la excreción de dermatán sulfato y heparán sulfato es el sello bioquímico del defecto lisosomal.<br><br>Perla ENARM: \"La reducción o ausencia de la actividad de α-L-iduronidasa produce acumulación de glucosaminoglucanos dermatán sulfato y heparán sulfato, en varios órganos y tejidos.\"<br><br>Análisis de Distractores: Las opciones A, C y D corresponden a glucosaminoglucanos acumulados en otros tipos de mucopolisacaridosis (como queratán sulfato en la MPS IV o condroitín sulfato).", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Actividad Enzimática, Página 15." 
+    },
+    {
+        id: 5, 
+        question: "¿Cuál es la recomendación que establece la GPC respecto al tamiz neonatal universal (escrutinio) para Mucopolisacaridosis Tipo I en recién nacidos?", 
+        options: ["No realizar de forma rutinaria", "Realizar de forma obligatoria", "Realizar únicamente en prematuros", "Realizar bajo sospecha genética"], 
+        answer: 0, 
+        justification: "Justificación: El escrutinio poblacional masivo sin factores de riesgo no tiene justificación epidemiológica debido a la baja incidencia de la enfermedad. De acuerdo GPC de Mucopolisacaridosis Tipo I, la prueba de tamiz universal para esta patología lisosomal no es recomendada de rutina.<br><br>Perla ENARM: \"No se recomienda realizar pruebas de escrutinio para MPS I en los recién nacidos, porque es una enfermedad de muy baja incidencia.\"<br><br>Análisis de Distractores: Las opciones B, C y D recomiendan la realización del tamiz de forma selectiva o universal, lo cual contradice el punto de buena práctica de la GPC.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Estudio Genético, Página 19." 
+    },
+    {
+        id: 6, 
+        question: "Para realizar el diagnóstico de portador en familiares de un paciente con Mucopolisacaridosis Tipo I, ¿cuál es el abordaje indicado según la GPC?", 
+        options: ["Determinación de actividad enzimática", "Genotipificación familiar", "Serie ósea radiológica", "Cuantificación de glucosaminoglucanos urinarios"], 
+        answer: 1, 
+        justification: "Justificación: La identificación de heterocigotos asintomáticos requiere de análisis molecular para detectar variantes patológicas específicas en el gen IDUA. De acuerdo GPC de Mucopolisacaridosis Tipo I, el estudio genético familiar define el estatus de portador.<br><br>Perla ENARM: \"Para hacer diagnóstico de portador, debe hacerse genotipificación familiar. Sin embargo, no se recomienda realizar la genotificación en forma rutinaria.\"<br><br>Análisis de Distractores: Las opciones A, C y D son útiles en pacientes sintomáticos con sospecha clínica de padecer la enfermedad, pero carecen de sensibilidad o especificidad para detectar portadores heterocigotos sanos.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Estudio Genético, Página 19." 
+    },
+    {
+        id: 7, 
+        question: "En el diagnóstico diferencial de las Mucopolisacaridosis, ¿cuál es el signo clínico característico de la Mucopolisacaridosis Tipo I que permite distinguirla del Síndrome de Hunter (Mucopolisacaridosis Tipo II)?", 
+        options: ["Presencia de disostosis múltiple", "Retraso del desarrollo motor", "Presencia de opacidades corneales", "Hernia umbilical recidivante"], 
+        answer: 2, 
+        justification: "Justificación: Aunque la MPS I y la MPS II comparten fenotipos somáticos idénticos y la misma excreción de glucosaminoglucanos, el depósito a nivel ocular es el factor diferenciador crucial en el examen clínico. De acuerdo GPC de Mucopolisacaridosis Tipo I, la afectación corneal severa orienta de inmediato al diagnóstico de tipo I.<br><br>Perla ENARM: \"MPS II o síndrome de Hunter. Presenta la misma composición de GAG en la orina. La presencia en la MPS I de opacidades corneales es un signo importante en el diagnóstico diferencial de MPS I y II\"<br><br>Análisis de Distractores: Las opciones A, B y D son manifestaciones clínicas comunes que se presentan en ambas patologías de depósito, por lo que no sirven como diagnóstico diferencial clínico.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Diagnóstico Diferencial, Página 22." 
+    },
+    {
+        id: 8, 
+        question: "¿Cuál es el principio activo de elección indicado para la Terapia de Reemplazo Enzimático en pacientes con Mucopolisacaridosis Tipo I?", 
+        options: ["Idursulfasa", "Laronidasa", "Galsulfasa", "Alglucosidasa alfa"], 
+        answer: 1, 
+        justification: "Justificación: La sustitución exógena de la hidrolasa deficiente se realiza con una enzima obtenida mediante tecnología de ADN recombinante. De acuerdo GPC de Mucopolisacaridosis Tipo I, el fármaco específico para esta patología es la laronidasa.<br><br>Perla ENARM: \"La Terapia de Reemplazo Enzimático se realiza con la administración de Laronidasa que es una variante polimórfica de la α-L-iduronidasa humana la cual se obtiene por medio de tecnología de ADN recombinante.\"<br><br>Análisis de Distractores: La opción A (Idursulfasa) es el tratamiento de la MPS II. La opción C (Galsulfasa) se utiliza en la MPS VI. La opción D (Alglucosidasa alfa) está indicada en la enfermedad de Pompe.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Terapia de Reemplazo Enzimático, Página 24." 
+    },
+    {
+        id: 9, 
+        question: "¿Cuál es la dosis semanal de Laronidasa recomendada por la GPC para la Terapia de Reemplazo Enzimático en la Mucopolisacaridosis Tipo I?", 
+        options: ["100 UI/kg", "200 UI/kg", "50 UI/kg", "300 UI/kg"], 
+        answer: 0, 
+        justification: "Justificación: El régimen de infusión semanal ha demostrado optimizar la reducción de glucosaminoglucanos tisulares y urinarios con la menor tasa de reacciones adversas secundarias. De acuerdo GPC de Mucopolisacaridosis Tipo I, la dosis estándar calculada por peso corporal es de 100 UI/kg semanales (equivalente a 0.58 mg/kg).<br><br>Perla ENARM: \"La dosis aprobada de laronidasa y que se usa actualmente es de 0.58 mg/kg/cada semana o 100 UI/kg/cada semana, Esta dosis es la que ofrece la máxima reducción de glucosaminoglicanos urinarios...\"<br><br>Análisis de Distractores: Las opciones B, C y D representan regímenes de dosificación que fueron evaluados en estudios de fase cuatro pero que mostraron mayor tasa de efectos secundarios o efectividad subóptima a largo plazo.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Dosis y Frecuencia de Administración de la TRE, Página 28." 
+    },
+    {
+        id: 10, 
+        question: "Según los estudios in vitro citados en la GPC para Mucopolisacaridosis Tipo I, ¿cuál es la vida media celular de la laronidasa que justifica su esquema de dosificación?", 
+        options: ["24 horas", "7 días", "12 horas", "5 días"], 
+        answer: 3, 
+        justification: "Justificación: El intervalo de dosificación semanal de la terapia de reemplazo se basa en la persistencia de la enzima dentro de los lisosomas celulares antes de su degradación metabólica. De acuerdo GPC de Mucopolisacaridosis Tipo I, modelos celulares estimaron que la laronidasa permanece activa por un periodo de cinco días.<br><br>Perla ENARM: \"La frecuencia de la administración de la laronidasa se determinó a partir de de estudios in vitro en cultivo de fibroblastos en modelos en los se usaron perros con Mucopolisacaridosis tipo I, a partir de los cuales se observó que la vida media celular de la laronidasa es de 5 días.\"<br><br>Análisis de Distractores: Las opciones A, B y C no corresponden con la vida media celular de la laronidasa exógena reportada en los estudios de cinética enzimática de la GPC.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Dosis y Frecuencia de Administración de la TRE, Página 28." 
+    },
+    {
+        id: 11, 
+        question: "En un paciente con Mucopolisacaridosis Tipo I con peso mayor a 20 kg, ¿en qué volumen de solución salina al 0.9% se debe diluir la dosis reconstituida de Laronidasa?", 
+        options: ["100 ml", "500 ml", "250 ml", "50 ml"], 
+        answer: 2, 
+        justification: "Justificación: La infusión de laronidasa requiere una dilución estandarizada según el peso corporal del paciente pediátrico para asegurar la estabilidad física y osmolar del medicamento. De acuerdo GPC de Mucopolisacaridosis Tipo I, los pacientes que superan el umbral de los 20 kg deben recibir su dosis en un volumen mayor.<br><br>Perla ENARM: \"...llevar la dosis reconstituida a un volumen de 100 ml sí el peso del paciente es ≤ 20 kg o 250 ml sí El peso del paciente es > 20 kg.\"<br><br>Análisis de Distractores: La opción A (100 ml) es el volumen de dilución exclusivo para pacientes con peso igual o menor a 20 kg. Las opciones B y D no son volúmenes recomendados por la GPC.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Tabla de Medicamentos, Página 70." 
+    },
+    {
+        id: 12, 
+        question: "En un paciente con Mucopolisacaridosis Tipo I fenotipo Hurler (grave) menor de dos años y sin deterioro neurológico, ¿cuál es el tratamiento definitivo de elección según la GPC?", 
+        options: ["Trasplante de células hematopoyéticas", "Terapia de reemplazo enzimático", "Cuidados paliativos exclusivos", "Cirugía descompresiva espinal"], 
+        answer: 0, 
+        justification: "Justificación: El reemplazo enzimático no cruza la barrera hematoencefálica, por lo que el trasplante celular es el único método capaz de proveer enzima al sistema nervioso central en la ventana de oportunidad temprana. De acuerdo GPC de Mucopolisacaridosis Tipo I, el trasplante hematopoyético es la indicación absoluta en fenotipos graves detectados de forma oportuna.<br><br>Perla ENARM: \"El TCH está indicado cuando se confirma el diagnóstico de MPS I fenotipo Hurler (grave) antes de los dos años de edad, que no presente deterioro neurológico.\"<br><br>Análisis de Distractores: La opción B se utiliza como terapia puente antes del trasplante o de forma exclusiva en formas atenuadas. Las opciones C y D son tratamientos sintomáticos o complementarios pero no definitivos.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Trasplante de Células Hematopoyéticas, Página 38." 
+    },
+    {
+        id: 13, 
+        question: "En la evaluación cognitiva obligatoria previa al trasplante en Mucopolisacaridosis Tipo I, ¿cuál es la escala que debe aplicarse en pacientes menores de 2 años 6 meses según la GPC?", 
+        options: ["Escala WPPSI", "Escala de desarrollo Battelle", "Escala de Denver II", "Escala Bayley III"], 
+        answer: 1, 
+        justification: "Justificación: El éxito cognitivo del trasplante exige documentar un desarrollo inicial adecuado, requiriéndose instrumentos validados y estandarizados para la población pediátrica menor. De acuerdo GPC de Mucopolisacaridosis Tipo I, la escala Battelle es el estándar para cuantificar la habilidad cognitiva por debajo de los 30 meses de edad.<br><br>Perla ENARM: \"Para evaluar la habilidad cognitiva en pacientes con MPS I deberán emplearse las siguientes escalas: Para pacientes menores de 2 años 6 meses: escala de desarrollo Battele.\"<br><br>Análisis de Distractores: La opción A (WPPSI) es la escala indicada únicamente para pacientes mayores de 2 años 6 meses. Las opciones C y D son escalas de desarrollo infantil que no están estipuladas en la GPC para esta evaluación pre-quirúrgica específica.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Neuropsicología, Página 49." 
+    },
+    {
+        id: 14, 
+        question: "¿Cuál es el porcentaje mínimo de apego al protocolo de infusiones semanales de Laronidasa requerido en la Mucopolisacaridosis Tipo I para evitar la suspensión terapéutica?", 
+        options: ["80%", "90%", "95%", "75%"], 
+        answer: 1, 
+        justification: "Justificación: El mantenimiento de la respuesta terapéutica tisular requiere de niveles séricos y de internalización enzimática constantes, por lo que la falta de adherencia al tratamiento justifica suspender el recurso farmacológico. De acuerdo GPC de Mucopolisacaridosis Tipo I, el paciente debe cumplir estrictamente con este porcentaje de asistencia.<br><br>Perla ENARM: \"Falta de apego al protocolo de infusiones, debe cumplir al menos con 90% de sus infusiones\"<br><br>Análisis de Distractores: Las opciones A, C y D no corresponden al criterio numérico de adherencia mínimo definido por el panel de expertos de la GPC para la continuidad de la terapia de reemplazo.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Criterios para Suspender la TRE, Página 32." 
+    },
+    {
+        id: 15, 
+        question: "De acuerdo a la GPC, ¿qué escala clínica debe aplicar el especialista en ortopedia de forma anual para evaluar la movilidad articular y el impacto en las actividades cotidianas en un paciente con Mucopolisacaridosis Tipo I?", 
+        options: ["Escala de Barthel", "Escala de CHAQ", "Escala de Karnofsky", "Escala de GMFCS"], 
+        answer: 1, 
+        justification: "Justificación: Las contracturas articulares limitan de forma progresiva la independencia física, por lo que se requiere una escala de evaluación de salud multidimensional específica. De acuerdo GPC de Mucopolisacaridosis Tipo I, la escala CHAQ evalúa objetivamente las actividades cotidianas del menor.<br><br>Perla ENARM: \"El ortopedista especializado en la atención de niños con MPS I realizara una evaluación al inicio de la TRE y después cada 12 meses... Aplicará la escala de CHAQ que evalua: vestirse, aseo personal, alimentarse, desplazarse, actividad física cotidiana.\"<br><br>Análisis de Distractores: La opción A mide independencia general en adultos mayores o secuelados. La opción C valora el estado funcional en oncología. La opción D clasifica la parálisis cerebral motora.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Ortopedia, Página 40." 
+    },
+    {
+        id: 16, 
+        question: "En un paciente con Mucopolisacaridosis Tipo I, ¿cuál de los siguientes hallazgos ortopédicos vertebrales representa una indicación absoluta de tratamiento quirúrgico corrector según la GPC?", 
+        options: ["Cifosis mayor de 70 grados", "Escoliosis mayor de 30 grados", "Cifosis mayor de 45 grados", "Lordosis mayor de 50 grados"], 
+        answer: 0, 
+        justification: "Justificación: El colapso vertebral severo derivado de la disostosis múltiple condiciona inestabilidad espinal y riesgo inminente de daño neurológico, exigiendo estabilización quirúrgica. De acuerdo GPC de Mucopolisacaridosis Tipo I, deformidades con esta angulación severa o que cursen con compresión medular obligan al manejo instrumental quirúrgico.<br><br>Perla ENARM: \"Existe indicación de tratamiento quirúrgico en: Las cifosis mayores de 70º, Escoliosis mayores de 50º, En presencia de compresión medular.\"<br><br>Análisis de Distractores: La opción B no cumple con el criterio de escoliosis mayor de 50 grados. Las opciones C y D representan angulaciones que pueden ser manejadas inicialmente con vigilancia conservadora o rehabilitación.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Ortopedia, Página 42." 
+    },
+    {
+        id: 17, 
+        question: "En las complicaciones ortopédicas de la Mucopolisacaridosis Tipo I, ¿cuál es el ángulo tibio-femoral mínimo que justifica la corrección quirúrgica del genu valgo en las rodillas?", 
+        options: ["Mayor de 10 grados", "Mayor de 15 grados", "Mayor de 20 grados", "Mayor de 5 grados"], 
+        answer: 1, 
+        justification: "Justificación: La alineación mecánica de las extremidades inferiores es clave para preservar la marcha y prevenir contracturas o dolor crónico severo por sobrecarga articular. De acuerdo GPC de Mucopolisacaridosis Tipo I, el genu valgo patológico que excede este ángulo es criterio de intervención quirúrgica.<br><br>Perla ENARM: \"El genu valgo de las rodillas puede requerir cirugía si el ángulo tibio-femoral es mayor de 15º.\"<br><br>Análisis de Distractores: La opción A y D representan desviaciones leves que suelen observarse de manera conservadora. La opción C es una deformidad sumamente severa, pero el corte quirúrgico de la GPC inicia desde los 15 grados.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Ortopedia, Página 42." 
+    },
+    {
+        id: 18, 
+        question: "En la Mucopolisacaridosis Tipo I, ¿cuál es el factor de riesgo genético de mayor relevancia asociado con su patrón de herencia autosómico recesivo según la GPC?", 
+        options: ["Consanguinidad", "Edad paterna avanzada", "Diabetes gestacional", "Prematurez extrema"], 
+        answer: 0, 
+        justification: "Justificación: Por tratarse de un error innato del metabolismo recesivo, la herencia de dos alelos mutados idénticos es altamente prevalente cuando existe parentesco biológico entre los progenitores. De acuerdo GPC de Mucopolisacaridosis Tipo I, este antecedente es un factor de riesgo primordial en la historia clínica familiar.<br><br>Perla ENARM: \"Se consideran factores de riesgo para la presencia de MPS I las siguientes condiciones: Antecedente de hermano con diagnóstico de certeza de MPS I, Endogamia, Consanguinidad...\"<br><br>Análisis de Distractores: Las opciones B, C y D representan condiciones clínicas o perinatales generales que no inciden sobre el riesgo de transmitir o heredar mutaciones del gen IDUA de forma recesiva.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Factores de Riesgo, Página 13." 
+    },
+    {
+        id: 19, 
+        question: "Ante la sospecha clínica de un paciente con Mucopolisacaridosis Tipo I, ¿cuál es el estudio de imagen inicial que debe solicitarse para evaluar de forma integral la afección ósea?", 
+        options: ["Ultrasonido de alta resolución", "Resonancia magnética nuclear", "Serie ósea", "Gammagrama óseo"], 
+        answer: 2, 
+        justification: "Justificación: La \"disostosis múltiple\" (deformidad en vértebras, costillas ensanchadas y huesos largos) se documenta inicialmente mediante un mapeo radiológico convencional de múltiples regiones anatómicas. De acuerdo GPC de Mucopolisacaridosis Tipo I, la serie ósea radiográfica de esqueleto completo es el recurso de imagen de primera línea.<br><br>Perla ENARM: \"Se recomienda que se le realicen por lo menos los siguientes estudios de (...) Gabinete: Radiografía de: tórax, cráneo, senos paranasales y lateral de cuello, Serie ósea...\"<br><br>Análisis de Distractores: La opción A y D no identifican los patrones clásicos de la displasia ósea generalizada. La opción B (resonancia) se reserva exclusivamente para evaluar sospechas de compresión medular o hidrocefalia.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Estudios Complementarios, Página 20." 
+    },
+    {
+        id: 20, 
+        question: "Durante el protocolo de administración de Laronidasa en pacientes con Mucopolisacaridosis Tipo I fenotipo Hurler, ¿cuál es la velocidad de infusión inicial obligatoria para disminuir el riesgo de anafilaxia?", 
+        options: ["10 UI/kg/h", "2 UI/kg/h", "43 UI/kg/h", "100 UI/kg/h"], 
+        answer: 1, 
+        justification: "Justificación: Al no producir enzima nativa, los pacientes graves (síndrome de Hurler) tienen una alta predisposición a desarrollar anticuerpos IgE que desencadenan reacciones anafilácticas severas ante la infusión exógena, requiriendo perfusiones iniciales lentas. De acuerdo GPC de Mucopolisacaridosis Tipo I, se debe arrancar la infusión con esta velocidad mínima de seguridad.<br><br>Perla ENARM: \"En las primeras 4-6 dosis de infusión, para minimizar el riesgo de reacción anafiláctica se iniciará la perfusión de la enzima a 2 UI/kg/h y se irá aumentando gradualmente cada 15 minutos...\"<br><br>Análisis de Distractores: Las opciones A y D no son las velocidades iniciales de protección estipuladas por la GPC. La opción C (43 UI/kg/h) representa la velocidad máxima de mantenimiento tolerable.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Administración de la TRE, Página 33-34." 
+    },
+
+    // BLOQUE 2: Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica (21-40)
+    {
+        id: 21, 
+        question: "En Mucopolisacaridosis Tipo I fenotipo Hurler, ¿cuál es la conducta recomendada respecto a la Terapia de Reemplazo Enzimático antes de realizar un Trasplante de Células Hematopoyéticas?", 
+        options: ["Contraindicar la terapia enzimática", "Administrar antes del trasplante", "Administrar solo post-trasplante exitoso", "Suspender un mes antes"], 
+        answer: 1, 
+        justification: "Justificación: Los pacientes graves candidatos a trasplante celular deben recibir terapia con laronidasa tan pronto se confirme el diagnóstico para estabilizar la función cardiorrespiratoria y reducir la carga de glucosaminoglucanos visceral, manteniéndola hasta constatar el injerto funcional. De acuerdo GPC de Mucopolisacaridosis Tipo I, la terapia de reemplazo optimiza las condiciones preoperatorias y reduce la mortalidad asociada al trasplante.<br><br>Perla ENARM: \"Pacientes con MPS I fenotipo Hurler que fueron evaluados por el comité de trasplantes y que van a recibir TCH deberán recibir Terapia de Reemplazo Enzimático antes del trasplante.\"<br><br>Análisis de Distractores: La opción A es incorrecta porque la GPC obliga a su uso pre-trasplante. La opción C es falsa porque la terapia no ha demostrado beneficios sustanciales si se inicia de novo de forma tardía post-trasplante. La opción D aumentaría la morbilidad quirúrgica por acumulación aguda de sustrato en órganos diana.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Terapia de Reemplazo Enzimático antes del Trasplante de Células Hematopoyéticas, Página 33." 
+    },
+    {
+        id: 22, 
+        question: "En Mucopolisacaridosis Tipo I, ¿con qué frecuencia anual se debe realizar la evaluación por cardiología pediátrica para vigilar el desarrollo de valvulopatías?", 
+        options: ["Cada 3 meses", "Cada 6 meses", "Cada 12 meses", "Cada 24 meses"], 
+        answer: 2, 
+        justification: "Justificación: El depósito progresivo de dermatán sulfato infiltra el tejido de conducción, el miocardio y las válvulas cardíacas (mitral y aórtica), requiriendo un monitoreo electrocardiográfico y ecocardiográfico continuo de forma anual. De acuerdo GPC de Mucopolisacaridosis Tipo I, se debe realizar un seguimiento estrecho para buscar intencionadamente daño orgánico o isquemia silente.<br><br>Perla ENARM: \"El cardiólogo realizara evaluación al momento del diagnóstico de MPS I y después cada 12 meses, para buscar intencionadamente: Cardiomiopatía hipertrófica...\"<br><br>Análisis de Distractores: Las opciones A y B representan periodos demasiado cortos reservados para pacientes descompensados o en el post-quirúrgico inmediato. La opción D es un intervalo excesivamente prolongado que eleva el riesgo de insuficiencia cardíaca aguda o arritmia no detectada.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Cardiología, Página 39." 
+    },
+    {
+        id: 23, 
+        question: "En Mucopolisacaridosis Tipo I, ¿cuál es la expectativa de vida mínima por debajo de la cual está indicado no iniciar la Terapia de Reemplazo Enzimático?", 
+        options: ["Menor de 12 meses", "Menor de 3 meses", "Menor de 24 meses", "Menor de 6 meses"], 
+        answer: 3, 
+        justification: "Justificación: En pacientes con pronóstico vital extremadamente sombrío a muy corto plazo debido a comorbilidades graves o enfermedad terminal, el uso de la terapia exógena carece de beneficio clínico éticamente justificable. De acuerdo GPC de Mucopolisacaridosis Tipo I, esta expectativa temporal condiciona la pertinencia o no de prescribir el medicamento.<br><br>Perla ENARM: \"Los grupos de expertos a nivel internacional consideran que con las siguientes condiciones no se debe iniciar Terapia de Reemplazo Enzimático: (...) Expectativa de vida menor de 6 meses independientemente de la causa\"<br><br>Análisis de Distractores: Las opciones A, B y C son parámetros temporales empíricos que no corresponden con el punto de corte bioético de supervivencia definido por el consenso internacional en las guías de práctica clínica.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Criterios para No iniciar Terapia de Reemplazo Enzimático, Página 31." 
+    },
+    {
+        id: 24, 
+        question: "En el seguimiento del paciente con Mucopolisacaridosis Tipo I, ¿cuál es el estudio de elección indicado de forma anual por otorrinolaringología para documentar la apnea obstructiva del sueño?", 
+        options: ["Polisomnografía", "Rinofaringolaringoscopia con fibra óptica", "Potenciales evocados auditivos", "Timpanograma dinámico"], 
+        answer: 0, 
+        justification: "Justificación: El depósito de glucosaminoglucanos en la vía aérea superior genera obstrucción severa y colapso faríngeo. De acuerdo GPC de Mucopolisacaridosis Tipo I, la polisomnografía es el estándar clínico anual obligatorio para evaluar de forma cuantitativa las desaturaciones, requiriendo su realización precoz independientemente de la sintomatología percibida.<br><br>Perla ENARM: \"Se recomienda realizar evaluaciones audiológicas y polisomnografía cada 12 meses.\"<br><br>Análisis de Distractores: La opción B evalúa la anatomía macroscópica de la vía aérea mas no cuantifica funcionalmente la gravedad de la apnea. Las opciones C y D evalúan la conducción auditiva y afección tubárica, no el componente respiratorio obstructivo.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Otorrinolaringología, Página 46." 
+    },
+    {
+        id: 25, 
+        question: "En Mucopolisacaridosis Tipo I, ¿cuál es la escala psicométrica indicada por la GPC para evaluar la capacidad cognitiva en pacientes mayores de 2 años 6 meses?", 
+        options: ["Escala de desarrollo Battelle", "Escala Wechsler de inteligencia (WPPSI)", "Escala de Denver II", "Escala Bayley III"], 
+        answer: 1, 
+        justification: "Justificación: La progresión neurodegenerativa del fenotipo severo (Hurler) requiere herramientas de medición validadas por rango etario para guiar las decisiones del trasplante hematopoyético. De acuerdo GPC de Mucopolisacaridosis Tipo I, el instrumento WPPSI es el indicado a partir de los 30 meses de edad para clasificar la habilidad cognitiva.<br><br>Perla ENARM: \"Para evaluar la habilidad cognitiva en pacientes con MPS I deberán emplearse las siguientes escalas: (...) Para pacientes mayores de 2 años 6 meses: WPPSI (escala Wechsler de inteligencia para los niveles preescolar y primaria)\"<br><br>Análisis de Distractores: La opción A es exclusiva para pacientes menores de 2 años 6 meses. Las opciones C y D son escalas de desarrollo general que carecen de la sensibilidad necesaria para la monitorización cognitiva específica en esta patología.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Neuropsicología, Página 49." 
+    },
+    {
+        id: 26, 
+        question: "En Mucopolisacaridosis Tipo I, ¿cuál es la contraindicación de edad absoluta para la realización de un Trasplante de Células Hematopoyéticas en pacientes con fenotipo Hurler?", 
+        options: ["Menor de 12 meses", "Mayor de 2 años", "Menor de 6 meses", "Mayor de 5 años"], 
+        answer: 1, 
+        justification: "Justificación: Realizar el trasplante después de los dos años de edad incrementa exponencialmente el riesgo de muerte perioperatoria y reacciones de de rechazo sin ofrecer ventajas en detener el daño neurológico, el cual ya es clínicamente irreversible. De acuerdo GPC de Mucopolisacaridosis Tipo I, el límite temporal biológico dictamina la inviabilidad quirúrgica.<br><br>Perla ENARM: \"El TCH se descarta en mayores de dos años porque no ofrece mayores ventajas que la laronidasa y se incrementa el riesgo reacciones desfavorables propias del trasplante, incluso la muerte.\"<br><br>Análisis de Distractores: Las opciones A y C representan las edades de máximo beneficio de la terapia celular. La opción D es incorrecta porque el límite absoluto y normado para descartar el trasplante son los dos años de edad.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Trasplante de Células Hematopoyéticas, Página 94." 
+    },
+    {
+        id: 27, 
+        question: "¿Cuál es la prevalencia estimada de Mucopolisacaridosis Tipo I reportada por la GPC por cada 100,000 nacidos vivos?", 
+        options: ["0.69 a 3.8", "1.5 a 5.2", "0.1 a 1.2", "4.5 a 8.0"], 
+        answer: 0, 
+        justification: "Justificación: Esta patología metabólica se clasifica dentro del grupo de las enfermedades raras debido a su muy baja tasa de incidencia demográfica. De acuerdo GPC de Mucopolisacaridosis Tipo I, esta baja prevalencia justifica que no se recomiende su escrutinio de forma universal en el periodo neonatal.<br><br>Perla ENARM: \"La Mucopolisacaridosis tipo I (MPS I) forma parte de las enfermedades de depósito lisosomal, se encuentra en el grupo de las enfermedades raras dado que su prevalencia se estima entre 0.69 y 3.8 /100000 nacidos vivos.\"<br><br>Análisis de Distractores: Las opciones B, C y D representan rangos de prevalencia incorrectos que no corresponden con las de carácter oficial e internacional reportadas en la literatura médica de la GPC.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Justificación, Página 8." 
+    },
+    {
+        id: 28, 
+        question: "En el Registro Internacional de Mucopolisacaridosis Tipo I, ¿qué porcentaje de todos los casos corresponde al fenotipo grave o Síndrome de Hurler?", 
+        options: ["20%", "23%", "57%", "80%"], 
+        answer: 2, 
+        justification: "Justificación: La variante grave con afección importante y progresiva del sistema nervioso central es la manifestación clínica más prevalente a nivel internacional. De acuerdo GPC de Mucopolisacaridosis Tipo I, la distribución fenotípica está marcadamente inclinada a la severidad clínica.<br><br>Perla ENARM: \"El Síndrome de Hurler se presenta en el 57% de los casos, el Síndrome de Hurler-Scheie en el 23% y el Síndrome de Scheie el 20%\"<br><br>Análisis de Distractores: La opción A corresponde al porcentaje de casos con fenotipo Scheie (atenuado). La opción B representa el porcentaje del fenotipo Hurler-Scheie (intermedio). La opción D es un valor sobredimensionado y erróneo.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Justificación, Página 8." 
+    },
+    {
+        id: 29, 
+        question: "¿En qué año se llevó a cabo el primer trasplante de células hematopoyéticas registrado para un paciente con Mucopolisacaridosis Tipo I Hurler?", 
+        options: ["1980", "1995", "2003", "2006"], 
+        answer: 0, 
+        justification: "Justificación: La historia de la terapia celular como método curativo para la detención del deparar del daño neurológico en la variante grave tiene su origen formal a inicios de la década de los ochenta. De acuerdo GPC de Mucopolisacaridosis Tipo I, la experiencia acumulada con este procedimiento reporta resultados funcionales alentadores a largo plazo.<br><br>Perla ENARM: \"El primer tratamiento de MPS I Hurler con trasplante de células hematopoyéticas (TCH) se realizó en 1980.\"<br><br>Análisis de Distractores: La opción B representa una fecha intermedia sin hito clínico reportado. Las opciones C y D corresponden a los años de aprobación de la laronidasa por la FDA y por COFEPRIS en México, respectivamente.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Trasplante de Células Hematopoyéticas, Página 35." 
+    },
+    {
+        id: 30, 
+        question: "¿Cuál es el volumen mínimo de orina matutina requerido para realizar el análisis cuantitativo de glucosaminoglucanos en la Mucopolisacaridosis Tipo I?", 
+        options: ["50 ml", "20 ml", "10 ml", "5 ml"], 
+        answer: 2, 
+        justification: "Justificación: Para asegurar una muestra óptima libre de variaciones técnicas o diluciones marcadas, se debe estandarizar el volumen de la primera micción de la mañana enviada para análisis cromatográfico. De acuerdo GPC de Mucopolisacaridosis Tipo I, este volumen de orina matutina permite un correcto deparado y procesamiento bioquímico por espectrofotometría.<br><br>Perla ENARM: \"Determinación de glucosaminoglucanos por medio de espectrofotometría/cromatografía en capa fina, en 10 ml de orina matutina\"<br><br>Análisis de Distractores: Las opciones A y B son volúmenes innecesarios para el rendimiento de las pruebas actuales. La opción D es un volumen demasiado escaso que eleva el riesgo de error técnico o falsos negativos.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Cuadros o figuras, Página 60." 
+    },
+    {
+        id: 31, 
+        question: "En Mucopolisacaridosis Tipo I, ¿cuál es el porcentaje de pacientes bajo Terapia de Reemplazo Enzimático que desarrollan anticuerpos IgG contra Laronidasa?", 
+        options: ["50%", "75%", "93%", "10%"], 
+        answer: 2, 
+        justification: "Justificación: Debido a la falta de síntesis de la enzima nativa, el sistema inmunitario del receptor reconoce a la laronidasa recombinante exógena como un antígeno extraño altamente inmunogénico. De acuerdo GPC de Mucopolisacaridosis Tipo I, la mayoría de los pacientes generará estos anticuerpos en los primeros meses, cursando posteriormente con un fenómeno de tolerancia a largo plazo.<br><br>Perla ENARM: \"El 93% de los pacientes desarrolló anticuerpos IgG contra laronidasa, que guardaban una correlación inversa con los niveles de GAG en orina.\"<br><br>Análisis de Distractores: Las opciones A, B y D subestiman marcadamente la tasa de inmunogenicidad de deparar anticuerpos reportada en el estudio de extensión clínica de fase tres del medicamento exógeno.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Efectos Secundarios de la Terapia de Reemplazo Enzimático, Página 34." 
+    },
+    {
+        id: 32, 
+        question: "En Mucopolisacaridosis Tipo I, ¿cuál es la velocidad de infusión máxima recomendada para el mantenimiento de la Terapia de Reemplazo Enzimático con Laronidasa?", 
+        options: ["2 UI/kg/h", "10 UI/kg/h", "43 UI/kg/h", "100 UI/kg/h"], 
+        answer: 2, 
+        justification: "Justificación: Tras iniciar la infusión de laronidasa de forma lenta para vigilar efectos adversos tempranos, si el paciente presenta una adecuada tolerancia clínica, la velocidad puede escalarse paulatinamente cada 15 minutos hasta alcanzar el rango de mantenimiento por hora. De acuerdo GPC de Mucopolisacaridosis Tipo I, este es el límite de velocidad recomendado de seguridad.<br><br>Perla ENARM: \"...aumentar gradualmente cada 15 minutos, si se tolera, hasta un máximo de 0.2494 mg (43 U)/kg de peso corporal/hora.\"<br><br>Análisis de Distractores: La opción A es la velocidad inicial recomendada en las primeras dosis para evitar anafilaxia. Las opciones B y D representan valores de titulación no estipulados por el protocolo de infusión de la GPC.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Tabla de Medicamentos, Página 70." 
+    },
+    {
+        id: 33, 
+        question: "En Mucopolisacaridosis Tipo I, ¿cuál es el porcentaje de fracción de acortamiento cardíaco (shortening) por debajo del cual se justifica iniciar la Terapia de Reemplazo Enzimático?", 
+        options: ["Menor del 25%", "Menor del 40%", "Menor del 15%", "Menor del 50%"], 
+        answer: 0, 
+        justification: "Justificación: El depósito visceral de glucosaminoglucanos induce disfunción cardíaca de tipo progresivo y valvulopatías. De acuerdo GPC de Mucopolisacaridosis Tipo I, la demostración de un compromiso en la fuerza contráctil ventricular expresada en este valor de corte ecocardiográfico constituye un criterio para la indicación prioritaria.<br><br>Perla ENARM: \"Reducción de la fracción shortening < 25% (rango normal 25-46%)\"<br><br>Análisis de Distractores: Las opciones B, C y D representan otros grados de afectación que no se corresponden con el punto de corte ecocardiográfico validado por el consenso internacional para justificar el inicio.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Indicaciones de la Terapia de Reemplazo Enzimático, Página 30." 
+    },
+    {
+        id: 34, 
+        question: "Para autorizar el inicio de la Terapia de Reemplazo Enzimático en Mucopolisacaridosis Tipo I, ¿cuál es el porcentaje de Capacidad Vital Forzada (CVF) en espirometría que confirma enfermedad pulmonar de tipo restrictiva?", 
+        options: ["Menor del 95%", "Menor del 80%", "Menor del 60%", "Menor del 50%"], 
+        answer: 1, 
+        justification: "Justificación: Las alteraciones en la caja torácica secundarias a la disostosis múltiple restringen el volumen de aire de aclaramiento movilizado por los pulmones. De acuerdo GPC de Mucopolisacaridosis Tipo I, una caída de la capacidad vital forzada por debajo de este rango estandarizado para la talla valida la afectación respiratoria.<br><br>Perla ENARM: \"Enfermedad respiratoria restrictiva - Confirmada por una CVF menor del 80% del valor predicho para la talla\"<br><br>Análisis de Distractores: Las opciones A, C y D son límites de capacidad vital que no corresponden con la definición espirométrica de daño restrictivo establecida como indicación de inicio para el tratamiento de reemplazo enzimático.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Indicaciones de la Terapia de Reemplazo Enzimático, Página 30." 
+    },
+    {
+        id: 35, 
+        question: "¿Cuántos grados de restricción del rango de movilidad en articulaciones periféricas justifican el inicio de la Terapia de Reemplazo Enzimático en Mucopolisacaridosis Tipo I?", 
+        options: ["Mayor de 5 grados", "Mayor de 10 grados", "Mayor de 15 grados", "Mayor de 25 grados"], 
+        answer: 2, 
+        justification: "Justificación: El depósito lisosomal en el tejido conectivo periarticular condiciona rigidez progresiva y contracturas severas. De acuerdo GPC de Mucopolisacaridosis Tipo I, una restricción en la movilidad de hombros, codos o rodillas que supere este ángulo de movimiento representa un daño motor severo que justifica iniciar el reemplazo de laronidasa de por vida.<br><br>Perla ENARM: \"Grid de daño osteoarticular - Restricción del rango de movilidad mayor de 15 grados de lo normal en hombros, cuello, cadera, rodillas codos o manos\"<br><br>Análisis de Distractores: Las opciones A y B representan variaciones de tipo leve que no cumplen el criterio de rigidez articular mayor exigido para el inicio inmediato de la TRE. La opción D representa contracturas estructurales avanzadas.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Indicaciones de la Terapia de Reemplazo Enzimático, Página 30." 
+    },
+    {
+        id: 36, 
+        question: "En Mucopolisacaridosis Tipo I, ¿con qué tiempo de anticipación se recomienda administrar la premedicación con antipiréticos antes de iniciar la infusión de Laronidasa?", 
+        options: ["15 minutos", "30 minutos", "60 minutos", "120 minutos"], 
+        answer: 2, 
+        justification: "Justificación: Para deparar y bloquear la degranulación de mastocitos e inhibir la síntesis de prostaglandinas pirógenas antes de la infusión, los fármacos antihistamínicos y antipiréticos deben alcanzar sus picos de concentración plasmática máxima. De acuerdo GPC de Mucopolisacaridosis Tipo I, esta premedicación es mandatoria una hora antes de iniciar la perfusión.<br><br>Perla ENARM: \"Se recomienda el uso de antipiréticos y/o antihistamínicos 60 minutos antes de la infusión\"<br><br>Análisis de Distractores: Las opciones A y B representan intervalos de tiempo muy cortos que no otorgan una ventana farmacocinética suficiente para que la premedicación prevenga la reacción. La opción D es un tiempo de deparar demasiado prolongado que disminuye la efectividad terapéutica.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Administración de la Terapia de Reemplazo Enzimático, Página 33." 
+    },
+    {
+        id: 37, 
+        question: "En Mucopolisacaridosis Tipo I, ¿por debajo de qué porcentaje de fracción de eyección del ventrículo izquierdo se indica el inicio de la Terapia de Reemplazo Enzimático?", 
+        options: ["Menor del 65%", "Menor del 56%", "Menor del 45%", "Menor del 70%"], 
+        answer: 1, 
+        justification: "Justificación: La infiltración miocárdica progresiva por heparán y dermatán sulfato condiciona cardiomiopatía obstructiva y pérdida de la contractilidad sistólica general. De acuerdo GPC de Mucopolisacaridosis Tipo I, la caída de la fracción de eyección por debajo del rango de normalidad pediátrica es una indicación absoluta para iniciar el reemplazo con laronidasa.<br><br>Perla ENARM: \"Disfunción miocárdica - Fracción de eyección menor del 56%; (rango normal 56-78%)\"<br><br>Análisis de Distractores: Las opciones A y D entran en el rango de fracción de eyección de tipo normal para la población pediátrica, por lo que no representan disfunción. La opción C representa una insuficiencia cardíaca descompensada muy avanzada.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Indicaciones de la Terapia de Reemplazo Enzimático, Página 30." 
+    },
+    {
+        id: 38, 
+        question: "En Mucopolisacaridosis Tipo I, ¿cuál es el porcentaje de posibilidad de heredar la enfermedad que tiene una pareja en cada embarazo posterior si ya cuentan con el antecedente de un hijo afectado?", 
+        options: ["50%", "100%", "25%", "10%"], 
+        answer: 2, 
+        justification: "Justificación: Por tratarse de una patología metabólica hereditaria regida por un patrón autosómico recesivo clásico, ambos padres se consideran portadores obligados de una mutación heterocigota asintomática. De acuerdo GPC de Mucopolisacaridosis Tipo I, la segregación mendeliana determina un riesgo recurrente específico en cada nueva gestación.<br><br>Perla ENARM: \"Por ser una enfermedad genética recesiva, la pareja con antecedente de un hijo con MPS I, en cada embarazo posterior tiene el 25% de posibilidad de tener otro hijo afectado.\"<br><br>Análisis de Distractores: La opción A representa el riesgo de transmisión de deparar caracteres característico de una patología con herencia de tipo dominante. Las opciones B y D no corresponden con la probabilidad de heredar dos alelos mutados a partir de portadores.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Asesoría Genética, Página 52." 
+    },
+    {
+        id: 39, 
+        question: "En pacientes con Mucopolisacaridosis Tipo I que desarrollan neumopatía de carácter restrictivo, ¿cuál es el patrón radiológico de tórax predominantemente reportado en la GPC?", 
+        options: ["Patrón alveolar", "Patrón mixto", "Patrón intersticial", "Patrón de consolidación lobar"], 
+        answer: 2, 
+        justification: "Justificación: La acumulación lisosomal crónica de metabolitos a nivel del parénquima pulmonar altera la elasticidad alveolar y engrosa el tejido conectivo pulmonar. De acuerdo GPC de Mucopolisacaridosis Tipo I, el patrón intersticial se presenta en la gran mayoría de las radiografías de tórax de los niños afectados, condicionando la neumopatía de tipo restrictivo.<br><br>Perla ENARM: \"En la radiografía de tórax los patrones radiológicos predominantemente son: Intersticiales (75%)\"<br><br>Análisis de Distractores: La opción A (patrón alveolar) ocurre únicamente en un 8% de los pacientes pediátricos. La opción B (patrón mixto) se observa en el 13%. La opción D representa consolidaciones agudas lobares, características de neumonías de origen bacteriano.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Neumología, Página 48." 
+    },
+    {
+        id: 40, 
+        question: "En el protocolo de rehabilitación física para un paciente con Mucopolisacaridosis Tipo I, ¿qué modalidad terapéutica está estrictamente contraindicada por el riesgo de inducir mielopatía?", 
+        options: ["Hidroterapia articular pasiva", "Movilización agresiva de la columna vertebral", "Terapia ocupacional de motricidad fina", "Ejercicio de resistencia muscular leve"], 
+        answer: 1, 
+        justification: "Justificación: Debido a las deformidades óseas vertebrales, la inestabilidad de la columna cervical y la hipoplasia del odontoides secundarias a la disostosis múltiple, la aplicación de fuerzas intensas sobre la columna puede deparar y ocasionar una subluxación o compresión medular aguda. De acuerdo GPC de Mucopolisacaridosis Tipo I, se debe prohibir esta forma de movilización.<br><br>Perla ENARM: \"Debe evitarse la terapia agresiva de movilización de la columna vertebral por el riesgo de mielopatía.\"<br><br>Análisis de Distractores: Las opciones A, C y D representan medidas de apoyo fisioterapéutico recomendadas para mejorar la movilidad articular periférica, preservar el deparar del rango de movimiento de extremidades y la motricidad fina sin someter a esfuerzo o riesgo de infarto al cordón medular.", 
+        source: "IMSS-338-10, Diagnóstico y Tratamiento de la Mucopolisacaridosis Tipo I en Edad Pediátrica, 2017, Sección: Rehabilitación, Página 43." 
+    }
+
+        ];
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('33810LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('33810Progress');
+                localStorage.removeItem('33810LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-blue-500 shadow-md z-10 border-blue-500 dark:border-blue-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-cyan-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "PEDIATRÍA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus respuestas correctas/incorrectas en el tablero." 
+                : "IMSS-338-10 • Diagnóstico y tratamiento de la mucopolisacaridosis tipo I en la edad pediátrica";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="DS36218PE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-blue-100 dark:border-blue-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 dark:has-[:checked]:bg-blue-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('33810Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('33810LastQId', currentQuestionId);
+                else localStorage.removeItem('33810LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('33810Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-cyan-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+
+    {
+        id: 1, 
+        question: "De acuerdo a los criterios epidemiológicos de definición de caso de la GPC, ¿cuál es el signo patognomónico inicial que confirma clínicamente el diagnóstico de tétanos neonatal?", 
+        options: ["Parálisis flácida simétrica", "Incapacidad para succionar (trismo)", "Cianosis central intermitente", "Fontanela anterior abombada"], 
+        answer: 1, 
+        justification: "Justificación: El trismo maseterino bloquea la capacidad del recién nacido para abrir la boca y alimentarse, presentándose clásicamente a partir del tercer día de vida en un neonato previamente sano de forma súbita. De acuerdo GPC de Prevención de Tétanos Neonatal, el diagnóstico de esta entidad es eminentemente clínico y se confirma mediante la triada establecida por la OMS.<br><br>Perla ENARM: \"Definición de caso confirmado de tétanos neonatal. Es todo recién nacido que presenta las tres características siguientes: Alimentación y llanto normales durante los dos primeros días de vida. Comienzo de la enfermedad entre el tercero y el vigésimo octavo día de vida e Incapacidad para succionar (trismo) seguida de rigidez (muscular generalizada) o convulsiones (espasmos musculares).\"<br><br>Análisis de Distractores: Las opciones A, C y D representan manifestaciones clínicas de botulismo neonatal, cardiopatías congénitas cianógenas o meningitis neonatal, respectivamente; ninguna se asocia a la parálisis espástica y trismo causados por la tetanoespasmina.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Glosario, Página 52." 
+    },
+    {
+        id: 2, 
+        question: "En la epidemiología del tétanos neonatal en México, ¿cuál es el factor de riesgo específico que se reporta con la mayor frecuencia?", 
+        options: ["Multiparidad materna severa", "Ausencia de vacunación en el adolescente", "Parto domiciliario por vía vaginal", "Corte de cordón con objeto no estéril"], 
+        answer: 3, 
+        justification: "Justificación: La inoculación directa de las esporas de Clostridium tetani ocurre principalmente por el uso de materiales improvisados y no estériles para seccionar el cordón umbilical. De acuerdo GPC de Prevención de Tétanos Neonatal, aunque existen múltiples factores de riesgo sociodemográficos, las prácticas obstétricas inseguras relacionadas al corte del cordón son el pilar de mayor peso epidemiológico.<br><br>Perla ENARM: \"El factor de riesgo más frecuente fue el corte de cordón umbilical con objeto no estéril siendo un 75.6%.\"<br><br>Análisis de Distractores: Las opciones A, B y C son factores descritos en la GPC como determinantes de riesgo y vulnerabilidad, pero no representan la causa mecánica específica con el mayor porcentaje reportado de ocurrencia en nuestro país.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Evidencias y Recomendaciones, Página 15." 
+    },
+    {
+        id: 3, 
+        question: "Para la vigilancia epidemiológica del tétanos neonatal, ¿cómo se define operacionalmente una zona de alto riesgo?", 
+        options: ["Incidencia anual > 1 caso por 1000 nacidos vivos", "Incidencia anual > 5 casos por 1000 nacidos vivos", "Incidencia anual > 10 casos por 10,000 nacidos vivos", "Presencia de al menos 1 caso confirmado anual"], 
+        answer: 0, 
+        justification: "Justificación: El establecimiento de este umbral permite focalizar recursos e intervenciones comunitarias intensivas, así como priorizar campañas de barrido vacunal. De acuerdo GPC de Prevención de Tétanos Neonatal, la identificación de estas zonas con bajo nivel de desarrollo humano es crítica para mejorar la vigilancia y control epidemiológico de la enfermedad.<br><br>Perla ENARM: \"Las medidas de vigilancia deben centrarse en las zonas de alto riesgo específicamente para Tétanos neonatal, es decir las áreas del país que tienen una incidencia anual de tétanos neonatal superior a 1 caso por cada 1000 nacidos vivos con vigilancia de nivel bajo de desarrollo de los municipios.\"<br><br>Análisis de Distractores: Las opciones B y C representan valores numéricos incorrectos y no respaldados por la definición operacional de la GPC. La opción D面cribe un criterio de sospecha y notificación obligatoria, pero no el criterio de zona de alto riesgo.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Evidencias y Recomendaciones, Página 14." 
+    },
+    {
+        id: 4, 
+        question: "Para disminuir de forma óptima el riesgo de tétanos neonatal, ¿cuál es el número mínimo de consultas prenatales que la Organización Mundial de la Salud recomienda que asistan las mujeres embarazadas?", 
+        options: ["3 consultas prenatales", "4 consultas prenatales", "5 consultas prenatales", "8 consultas prenatales"], 
+        answer: 2, 
+        justification: "Justificación: El control prenatal regular garantiza que el personal médico verifique el estado de inmunización, administre los refuerzos vacunales correspondientes y eduque sobre prácticas higiénicas del parto. De acuerdo GPC de Prevención de Tétanos Neonatal, la asistencia prenatal adecuada es un indicador indispensable de equidad en la salud.<br><br>Perla ENARM: \"La OMS recomienda que las mujeres embarazadas asistan como mínimo a 5 consultas de atención prenatal.\"<br><br>Análisis de Distractores: Las opciones A y B representan coberturas de atención prenatal deficientes que la GPC asocia con mayor riesgo de tétanos materno y neonatal. La opción D es la directriz general más reciente de la OMS, pero no el mínimo estricto señalado de forma de forma literal por la evidencia de esta GPC para la erradicación del riesgo.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Evidencias y Recomendaciones, Página 21." 
+    },
+    {
+        id: 5, 
+        question: "En partos ocurridos fuera del ámbito hospitalario, ¿cuál es el antiséptico recomendado para aplicar en el cordón umbilical del recién nacido para prevenir el tétanos neonatal?", 
+        options: ["Solución de clorhexidina", "Alcohol etílico al 70%", "Violeta de genciana", "Tintura de yodo"], 
+        answer: 0, 
+        justification: "Justificación: La clorhexidina ejerce un efecto bactericida residual de amplio espectro sobre la piel y el muñón umbilical, evitando de forma efectiva la colonización por gérmenes patógenos en ambientes de escasos recursos. De acuerdo GPC de Prevención de Tétanos Neonatal, su uso está sustentado por la OMS en el parto domiciliario o fortuito.<br><br>Perla ENARM: \"La OMS recomienda el uso de clorhexidina en el cordón umbilical por su alta efectividad sobre el uso de otros antisépticos en ámbitos no hospitalarios, a pesar de no existir ninguna diferencia entre el uso o no uso de antisépticos umbilicales en el muñón en el recién nacido que tiene atención hospitalaria.\"<br><br>Análisis de Distractores: Las opciones B, C y D representan compuestos antisépticos tradicionales utilizados de manera histórica; sin embargo, carecen de la recomendación de alta efectividad de la OMS comparada con la clorhexidina en medios extrahospitalarios.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Evidencias y Recomendaciones, Página 22." 
+    },
+    {
+        id: 6, 
+        question: "En una mujer en edad fértil sin inmunización previa contra el tétanos, ¿de cuántas dosis consta la serie primaria recomendada por la GPC para garantizar protección duradera?", 
+        options: ["Una serie de 2 dosis", "Una serie de 3 dosis", "Una serie de 5 dosis", "Una serie de 6 dosis"], 
+        answer: 2, 
+        justification: "Justificación: Se requiere un esquema completo de 5 dosis espaciadas a intervalos de tiempo correctos para lograr una memoria inmunológica de tipo persistente que brinde protección del 100% durante su vida reproductiva. De acuerdo GPC de Prevención de Tétanos Neonatal, iniciar esta pauta en la mujer en edad fértil es la estrategia de mayor impacto en zonas endémicas.<br><br>Perla ENARM: \"La mujer en edad fértil que no haya sido vacunada previamente, deben iniciar con una serie de 5 dosis de acuerdo a: 2 dosis de toxoide tetánico aplicadas con un intervalo no < de 4 semanas, una 3er dosis entre 6 y 12 meses después, una 4ta dosis al año de la 3er, una 5ta dosis al año de la última aplicación.\"<br><br>Análisis de Distractores: Las opciones A y B son esquemas incompletos que ofrecen una protección temporal e insuficiente de mediano plazo si no hay antecedentes. La opción D describe una dosis en el adulto joven que confiere protección duradera pero no forma parte de la serie básica inicial.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Evidencias y Recomendaciones, Página 24." 
+    },
+    {
+        id: 7, 
+        question: "Al iniciar la vacunación antitetánica en una mujer en edad fértil sin antecedentes de inmunización, ¿cuál es el intervalo mínimo requerido entre la primera y la segunda dosis?", 
+        options: ["Dos semanas", "Cuatro semanas", "Seis meses", "Un año"], 
+        answer: 1, 
+        justification: "Justificación: Este periodo permite una adecuada maduración de la respuesta inmune primaria de anticuerpos y es el intervalo fisiológico estándar para la posterior dosis de refuerzo. De acuerdo GPC de Prevención de Tétanos Neonatal, asegurar este intervalo es indispensable para alcanzar una respuesta de anticuerpos de tipo protector eficaz.<br><br>Perla ENARM: \"La mujer en edad fértil que no haya sido vacunada previamente, deben iniciar con una serie de 5 dosis de acuerdo a: 2 dosis de toxoide tetánico aplicadas con un intervalo no < de 4 semanas...\"<br><br>Análisis de Distractores: La opción A es un periodo muy corto que interfiere con la cinética de producción de linfocitos de memoria, reduciendo la efectividad final. Las opciones C y D son los intervalos correctos requeridos para la tercera, cuarta y quinta dosis, respectivamente.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Evidencias y Recomendaciones, Página 24." 
+    },
+    {
+        id: 8, 
+        question: "En la transferencia pasiva de inmunidad para prevenir el tétanos neonatal, ¿cuál es el único isotipo de inmunoglobulina materna capaz de atravesar la barrera placentaria hacia el feto?", 
+        options: ["Inmunoglobulina M", "Inmunoglobulina A", "Inmunoglobulina E", "Inmunoglobulina G"], 
+        answer: 3, 
+        justification: "Justificación: El transporte activo de anticuerpos maternos a través de receptores placentarios específicos se restringe únicamente al isotipo monomérico IgG, incrementándose constantemente a partir del cuarto mes de gestación para brindar protección pasiva transitoria al neonato. De acuerdo GPC de Prevención de Tétanos Neonatal, este paso de anticuerpos es fundamental para proteger al recién nacido durante sus primeros meses de vida.<br><br>Perla ENARM: \"En una madre inmunizada los anticuerpos contra el tétanos se trasmiten vía transparentaría al feto, esta trasferencia se limita únicamente a las inmunoglobulinas IgG.\"<br><br>Análisis de Distractores: Las opciones A y B corresponden a inmunoglobulinas pentaméricas o diméricas que no pueden cruzar la barrera placentaria por su elevado peso molecular. La opción C no participa en la inmunidad humoral pasiva neonatal contra toxinas bacterianas.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Evidencias y Recomendaciones, Página 23." 
+    },
+    {
+        id: 9, 
+        question: "Durante la gestación, ¿cuál es el periodo ideal en semanas de gestación para administrar la vacuna con componente pertussis acelular (Tdap) para optimizar la protección del recién nacido?", 
+        options: ["Entre las semanas 12 y 20", "Entre las semanas 27 y 36", "Entre las semanas 37 y 40", "En el periodo posparto inmediato"], 
+        answer: 1, 
+        justification: "Justificación: La vacunación materna en este periodo gestacional específico maximiza la concentración sérica de anticuerpos IgG maternos y permite un transporte placentario activo sumamente eficiente hacia el feto. De acuerdo GPC de Prevención de Tétanos Neonatal, esta inmunización previene la tosferina y el tétanos antes de que el lactante inicie su propia vacunación.<br><br>Perla ENARM: \"El momento ideal para la vacunación Tdap durante el embarazo es entre las semanas 27-36 de gestación (de preferencia antes de la semana 34), esto con el objetivo de aumentar la probabilidad de protección óptima para la embarazada y su recién nacido durante los primeros meses de vida.\"<br><br>Análisis de Distractores: La opción A no logra una transferencia óptima debido a que el transporte activo placentario es muy inmaduro. Las opciones C y D representan momentos tardíos o posparto en los que la transferencia transplacentaria ya es ineficaz o nula, dejando desprotegido al recién nacido las primeras semanas.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Evidencias y Recomendaciones, Página 27." 
+    },
+    {
+        id: 10, 
+        question: "De acuerdo con las especificaciones de seguridad de la vacuna Tdap detalladas en la GPC, ¿cuál es una contraindicación absoluta para su administración?", 
+        options: ["Reacción anafiláctica a la neomicina", "Diabetes mellitus materna descompensada", "Fiebre leve menor a 38°C", "Lactancia materna activa exclusiva"], 
+        answer: 0, 
+        justification: "Justificación: Los componentes traza o antibióticos residuales utilizados en el cultivo y producción del biológico representan un riesgo directo de hipersensibilidad sistémica letal o anafilaxia en pacientes previamente sensibilizados. De acuerdo GPC de Prevención de Tétanos Neonatal, la identificación de estas de tipo alérgico es prioritaria en la evaluación prenatal.<br><br>Perla ENARM: \"Antecedente de una reacción anafiláctica confirmada a neomicina, estreptomicina y polimixina b son contraindicaciones.\"<br><br>Análisis de Distractores: Las opciones B, C y D representan condiciones clínicas que no impiden la inmunización; de hecho, la enfermedad aguda leve con o sin fiebre no es una contraindicación absoluta para la aplicación de la vacuna.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Evidencias y Recomendaciones, Página 34." 
+    },
+    {
+        id: 11, 
+        question: "En la monitorización de reacciones secundarias graves a vacunas antitetánicas, ¿qué cuadro neurológico ocurrido dentro de los siete días posteriores a la dosis previa contraindica absolutamente su aplicación?", 
+        options: ["Neuropatía motora periférica distal", "Neuralgia del trigémino unilateral", "Encefalopatía no atribuible a otra causa", "Parálisis facial periférica de Bell"], 
+        answer: 2, 
+        justification: "Justificación: La presencia de alteración grave del estado de alerta, coma o crisis convulsivas prolongadas en la ventana de una semana post-vacunación contraindica la revacunación con cualquier biológico que contenga componente pertussis o toxoide diftérico/tetánico. De acuerdo GPC de Prevención de Tétanos Neonatal, este evento secundario de tipo grave obliga a suspender la aplicación de dosis subsecuentes.<br><br>Perla ENARM: \"Contraindicaciones absolutas de la vacuna Tdap and Td: ... Antecedente de estado de coma, disminución del nivel de conciencia o convulsiones prolongadas no atribuibles a otra causa dentro de los 7 días de la administración de una dosis previa de la vacuna.\"<br><br>Análisis de Distractores: Las opciones A, B y D son trastornos neurológicos localizados que no se asocian a una disfunción de tipo sistémico del sistema nervioso central secundaria a la vacuna, por lo que no representan contraindicaciones absolutas.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Evidencias y Recomendaciones, Página 34." 
+    },
+    {
+        id: 12, 
+        question: "Si una paciente presenta antecedentes de reacciones de hipersensibilidad tipo Arthus posterior a una dosis previa de vacuna con toxoide tetánico, ¿cuál es la conducta recomendada por la GPC?", 
+        options: ["Reiniciar esquema con dosis media", "Aplicar la vacuna vía intradérmica", "Cambiar a esquema de inmunoglobulina", "Aplazar vacunación por 10 años"], 
+        answer: 3, 
+        justification: "Justificación: Las reacciones de hipersensibilidad de tipo III (Arthus) indican la presencia de títulos sumamente elevados de anticuerpos antitoxina circulantes; la administración de una nueva dosis puede desencadenar una vasculitis localizada de carácter grave. De acuerdo GPC de Prevención de Tétanos Neonatal, en estos casos se asume una inmunidad de tipo protector persistente.<br><br>Perla ENARM: \"Si existen antecedentes de reacciones de hipersensibilidad de tipo Arthus posterior a una dosis previa de tétanos o vacuna con toxoide diftérico, aplazar la vacunación hasta por lo menos 10 años a la última vacuna que contenga toxoide tetánico.\"<br><br>Análisis de Distractores: Las opciones A, B y C representan conductas de tipo erróneo; la alteración de la dosis, de la vía de administración o la sustitución por inmunoglobulinas no previene la reacción de complejos y carecen de sustento en la GPC.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Evidencias y Recomendaciones, Página 34." 
+    },
+    {
+        id: 13, 
+        question: "Durante emergencias o desastres naturales, ¿cuál es el manejo quirúrgico esencial obligado para heridas abiertas potencialmente contaminadas con Clostridium tetani?", 
+        options: ["Desbridamiento y mantener la herida abierta", "Cierre primario quirúrgico inmediato", "Lavado exclusivo con agua estéril", "Antibioticoterapia tópica exclusiva profiláctica"], 
+        answer: 0, 
+        justification: "Justificación: Clostridium tetani es un anaerobio de tipo obligado; el desbridamiento elimina el tejido necrótico, coagulado y desvitalizado que actúa como un nicho ideal de baja tensión de oxígeno para la germinación de las esporas. De acuerdo GPC de Prevención de Tétanos Neonatal, las heridas contaminadas no deben suturarse primariamente.<br><br>Perla ENARM: \"Primordialmente en las situaciones de emergencias humanitarias, como los desastres naturales, la atención médica y quirúrgica adecuada de las heridas abiertas contaminadas toma relevancia. Toda herida abierta debe considerarse contaminada y por lo tanto no debe ser cerrada, es esensial el desbridamiento y la extirpación de tejido muerto y detritos.\"<br><br>Análisis de Distractores: La opción B crea un ambiente cerrado libre de oxígeno que favorece de manera directa la multiplicación bacteriana. Las opciones C y D son de carácter insuficiente, ya que el desbridamiento mecánico es el único estándar quirúrgico.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Evidencias y Recomendaciones, Página 34." 
+    },
+    {
+        id: 14, 
+        question: "En la fisiopatología del tétanos, ¿cuál es la velocidad de transporte retrógrado axonal descrita por la GPC para la tetanoespasmina hacia el sistema nervioso central?", 
+        options: ["Velocidad de 1.25 mm/hora", "Velocidad de 3.35 mm/hora", "Velocidad de 5.50 mm/hora", "Velocidad de 10.0 mm/hora"], 
+        answer: 1, 
+        justification: "Justificación: Tras su absorción en la herida, la tetanoespasmina viaja por vía retrógrada a través de los axones de las motoneuronas hasta el espacio sináptico del sistema nervioso central en un periodo de de 2 a 14 días. De acuerdo GPC de Prevención de Tétanos Neonatal, este transporte axoplasmático condiciona que el periodo de incubación sea proporcional a la longitud recorrida.<br><br>Perla ENARM: \"La tetanoespasmina desinhibe los sistemas motor, simpático y parasimpático, está recorre por los axones desde el sitio de entrada hasta llegar al SNC en 2-14 días, con una velocidad de 3.35 mm/ hora.\"<br><br>Análisis de Distractores: Las opciones A, C y D representan valores de velocidad incorrectos y no sustentados por los estudios fisiológicos integrados en el documento de la GPC.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Aspectos Generales, Página 6." 
+    },
+    {
+        id: 15, 
+        question: "¿Cuál es la dosis letal media (DL50) estimada de tetanoespasmina para el ser humano reportada en la GPC?", 
+        options: ["Menos de 2 a 5 pg/Kg", "Menos de 2 a 5 mcg/Kg", "Menos de 2 a 5 ng/Kg", "Menos de 2 a 5 mg/Kg"], 
+        answer: 2, 
+        justification: "Justificación: La tetanoespasmina es una de las neurotoxinas biológicas más de tipo destructivo conocidas, requiriendo cantidades infinitesimales en escala de nanogramos por kilogramo de peso para deparar parálisis y muerte. De acuerdo GPC de Prevención de Tétanos Neonatal, esta letalidad extrema justifica la necesidad de mantener prevención activa.<br><br>Perla ENARM: \"La toxina del tétanos, la tetanoespasmima, es una de las más potentes, con una dosis letal media para el humano de menos de 2 a 5ng / Kg...\"<br><br>Análisis de Distractores: Las opciones A (picogramos), B (microgramos) y D (miligramos) representan unidades de medida que no corresponden a la magnitud de potencia biológica descrita de la toxina.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Aspectos Generales, Página 6." 
+    },
+    {
+        id: 16, 
+        question: "De acuerdo a la GPC, ¿qué porcentaje de protección y duración mínima se alcanza tras la aplicación estricta de la segunda dosis de toxoide tetánico?", 
+        options: ["Protección del 50% por 1 año", "Protección del 80% por 3 años", "Protección del 95% por 5 años", "Protección del 99% por 10 años"], 
+        answer: 1, 
+        justification: "Justificación: La segunda dosis de toxoide tetánico genera una respuesta inmune humoral primaria robusta que confiere títulos protectores de anticuerpos por encima del umbral de seguridad, protegiendo al binomio durante la ventana gestacional. De acuerdo GPC de Prevención de Tétanos Neonatal, la administración de al menos dos dosis es indispensable para iniciar el control de la morbimortalidad.<br><br>Perla ENARM: \"Posterior a la 2da dosis se logra una eficacia de 80-90% durante 3 años como mínimo.\"<br><br>Análisis de Distractores: La opción A es un porcentaje de protección de carácter incorrecto. Las opciones C y D describen la respuesta protectora y duración de inmunidad esperadas tras completar la tercera y cuarta dosis del esquema primario.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Evidencias y Recomendaciones, Página 23." 
+    },
+    {
+        id: 17, 
+        question: "Tras la administración de la tercera dosis de toxoide tetánico a intervalos correctos, ¿qué porcentaje de individuos alcanza títulos superiores al mínimo protector (0.01 UI/ml) y por cuántos años?", 
+        options: ["El 80% de los individuos por 3 años", "El 90% de los individuos por 3 años", "El 95% de los individuos por 5 años", "Prácticamente el 100% de los de forma duradera"], 
+        answer: 2, 
+        justification: "Justificación: La tercera dosis de toxoide consolidará una sólida respuesta secundaria de memoria por parte de las células plasmáticas, asegurando títulos protectores elevados por un periodo extendido de un lustro. De acuerdo GPC de Prevención de Tétanos Neonatal, el nivel de tres dosis es el esquema recomendado de deparación activa.<br><br>Perla ENARM: \"En 95 % de las personas que reciben 3 dosis de toxoide tetánico a intervalos correctos se produce una concentración de anticuerpos antitoxina muy superior al mínimo necesario para conferir protección (0.01 UI/ml) durante por lo menos 5 años.\"<br><br>Análisis de Distractores: Las opciones A y B corresponden a la efectividad inmunitaria que se alcanza tras completar únicamente dos dosis del esquema primario. La opción D describe los alcances logrados tras recibir una serie completa de cinco dosis de la vacuna.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Evidencias y Recomendaciones, Página 23." 
+    },
+    {
+        id: 18, 
+        question: "¿Cuál es la conducta recomendada por la GPC si se interrumpe un esquema de vacunación contra el tétanos por un periodo prolongado?", 
+        options: ["Continuar el esquema y completar dosis restantes", "Reiniciar todo el esquema de cero", "Administrar doble dosis en la siguiente cita", "Se suspende permanentemente por riesgo de Arthus"], 
+        answer: 0, 
+        justification: "Justificación: La memoria de los linfocitos T colaboradores persiste a largo plazo a pesar del retraso de las aplicaciones; retrasar la dosis de deparación antigénica no anula la respuesta celular previa, por lo que no es necesario reiniciar la serie de sensibilización. De acuerdo GPC de Prevención de Tétanos Neonatal, se debe continuar donde se interrumpió.<br><br>Perla ENARM: \"Cuando se interrumpe un esquema de vacunación por algún motivo, y no se sigue el intervalo indicado, no es necesario reiniciarla, sino continuar, donde se quedó interrumpida, administrando las dosis restantes hasta completarla.\"<br><br>Análisis de Distractores: La opción B es una mala práctica que somete al paciente a una sobreexposición innecesaria. Las opciones C y D carecen de fundamento inmunológico o clínico, exponiendo a sobredosis de antígenos o dejando desprotegido al binomio.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Evidencias y Recomendaciones, Página 29." 
+    },
+    {
+        id: 19, 
+        question: "Si por error de enfermería o programático se adelanta la administración de una dosis de toxoide antitetánico sin respetar el intervalo mínimo recomendado, ¿qué conducta se debe de tomar con respecto a esa dosis?", 
+        options: ["Contarla como doble dosis de refuerzo", "Aplicar gammaglobulina para neutralizarla", "Cancelar el resto de las citas del esquema", "No debe ser contada en el esquema"], 
+        answer: 3, 
+        justification: "Justificación: Una dosis aplicada de forma prematura interfiere con los mecanismos normales de diferenciación y selección de afinidad de los linfocitos B de memoria en los centros germinales, por lo que no genera un estímulo adecuado y debe ser de tipo invalidada de forma administrativa. De acuerdo GPC de Prevención de Tétanos Neonatal, debe repetirse.<br><br>Perla ENARM: \"La excepción es, el en caso de que no se respete el intervalo mínimo recomendado entre 2 dosis y se adelante la administración de la vacuna no debe ser contada esta última dosis.\"<br><br>Análisis de Distractores: Las opciones A, B y C son de carácter erróneo y no tienen justificación o base científica en las normatividades de deparación de coberturas nacionales e internacionales de vacunación para el binomio.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Evidencias y Recomendaciones, Página 29." 
+    },
+    {
+        id: 20, 
+        question: "En salud pública, ¿cómo se denomina la estrategia que protege a lactantes menores de dos meses (no aptos para vacunarse) mediante la inmunización de su madre y contactos cercanos contra la tosferina?", 
+        options: ["Inmunidad activa de barrera regional", "Inmunización en cascada clínica", "Inmunidad activa artificial activa", "Estrategia capullo o de rebaño"], 
+        answer: 3, 
+        justification: "Justificación: La vacunación materna con Tdap durante el tercer trimestre disminuye la probabilidad de infección en los contactos primarios, rodeando al neonato de individuos inmunes que impiden la introducción del patógeno. De acuerdo GPC de Prevención de Tétanos Neonatal, este efecto indirecto es la mejor alternativa de deparación clínica.<br><br>Perla ENARM: \"...disminuir la probabilidad de infección de tosferina del adolescentey adulto, y su consiguiente transmisión al lactante que no haya completado su esquema primario de inmunizaciones, esto conocido como 'estrategia capullo o de rebaño'.\"<br><br>Análisis de Distractores: Las opciones A y B son términos de deparar variables de tipo inventado no contemplados en la literatura de salud pública. La opción C es una descripción redundante e incorrecta del principio de inmunidad activa.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Evidencias y Recomendaciones, Página 24." 
+    },
+
+    // BLOQUE 2: Prevención Primaria del Tétanos Neonatal (21-40)
+    {
+        id: 21, 
+        question: "En el primer nivel de atención, ¿cuál es el rango de temperatura permanente indicado para almacenar las vacunas combinadas contra difteria y tétanos?", 
+        options: ["-2°C a 2°C", "2°C a 8°C", "8°C a 12°C", "-15°C a -25°C"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo GPC de Prevención de Tétanos Neonatal, asegurar la cadena de frío es vital para mantener la estabilidad estructural de los toxoides, evitando que pierdan su capacidad inmunogénica. La congelación está estrictamente proscrita debido a que daña de forma irreversible los componentes del biológico.<br><br>Perla ENARM: \"El toxoide tetánico es sumamente estable, incluso a 18°C, no debe congelarse porque se deteriorara en forma irremediable, las vacunas DPT, DT, Td y toxoide tetánico se almacenan a una temperatura permanente de 2°C a 8°C. Si bien la vacuna es termoestable, se debe refrigerarse.\"<br><br>Análisis de Distractores: El rango en A es incorrecto y expone a congelación parcial. Las opciones C y D representan temperaturas inadecuadas de deparar red de frío (calor excesivo o congelación profunda) que desnaturalizan de forma inmediata las proteínas del toxoide.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Prevención Primaria, Página 61." 
+    },
+    {
+        id: 22, 
+        question: "Con respecto al panorama epidemiológico en México, ¿cuál es la tasa de letalidad promedio reportada para los casos confirmados de tétanos neonatal?", 
+        options: ["32%", "50%", "68%", "76%"], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo GPC de Prevención de Tétanos Neonatal, la letalidad de esta enfermedad de tipo infeccioso en el recién nacido en territorio nacional es sumamente elevada, lo que resalta la gravedad del cuadro clínico y la necesidad de mantener coberturas de vacunación.<br><br>Perla ENARM: \"El total de casos confirmados de tétanos neonatal reportado durante el periodo 2000-2009 fue de 41 casos, de los cuales 35 correspondieron a defunciones con una tasa de letalidad del 76%.\"<br><br>Análisis de Distractores: Las opciones A y C representan tasas bajas e incorrectas de deparar desenlaces que no concuerdan con los reportes de vigilancia. La opción B (50%) es el porcentaje aproximado de mortalidad en recién nacidos que reciben atención intrahospitalaria de terapia intensiva avanzada.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Aspectos Generales, Página 18." 
+    },
+    {
+        id: 23, 
+        question: "En un recién nacido con diagnóstico clínico confirmado de tétanos neonatal, ¿cuál es el porcentaje aproximado de mortalidad esperable en ausencia de atención médica hospitalaria?", 
+        options: ["Mayor al 50%", "Cercano al 100%", "Aproximadamente 76%", "Menor al 30%"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo GPC de Prevención de Tétanos Neonatal, la ausencia de soporte respiratorio inmediato condena al neonato a la asfixia y al colapso autónomo por acción de la tetanoespasmina, deparando la mortalidad de forma extrema.<br><br>Perla ENARM: \"Sin atención médica la mortalidad por tétanos neonatal es cercana al 100%, incluso en los casos que reciben atención hospitalaria, a menudo sobrepasa el 50%.\"<br><br>Análisis de Distractores: La opción A (mayor al 50%) corresponde a la mortalidad neonatal que persiste de deparar variables aun recibiendo cuidados intensivos avanzados. La opción C (76%) representa la tasa de letalidad histórica global documentada en México para los casos reportados. La opción D subestima severamente el riesgo biológico.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Aspectos Generales, Página 14." 
+    },
+    {
+        id: 24, 
+        question: "Según los reportes epidemiológicos nacionales analizados, ¿cuáles son los tres estados de la República Mexicana que concentraron históricamente los casos de tétanos neonatal?", 
+        options: ["Michoacán, Jalisco y Nayarit", "Chiapas, Guerrero y Veracruz", "Oaxaca, Puebla e Hidalgo", "Estado de México, Hidalgo y Puebla"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo GPC de Prevención de Tétanos Neonatal, la prevalencia de prácticas tradicionales nocivas en el cuidado del cordón y las limitaciones en el acceso a servicios de control prenatal en estas entidades geográficas conllevan una mayor vulnerabilidad.<br><br>Perla ENARM: \"Los estados en donde se presentaron los casos de tétanos neonatal fueron Chiapas, Guerrero y Veracruz.\"<br><br>Análisis de Distractores: Las combinaciones en A, C y D incluyen estados que registran de forma ordinaria una baja tasa de morbilidad por errores de deparar técnicas de cordón umbilical o que cuentan con coberturas vacunales superiores de toxoide tetánico en el medio rural.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Prevención y promoción a la salud, Página 41." 
+    },
+    {
+        id: 25, 
+        question: "En la patología de tétanos neonatal, ¿cuál es el periodo de incubación promedio comúnmente observado posterior al nacimiento?", 
+        options: ["1 a 2 días", "5 a 7 días", "14 a 21 días", "28 a 30 días"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo GPC de Prevención de Tétanos Neonatal, el periodo de incubación representa el trayecto de la tetanoespasmina hacia las neuronas motoras. Se manifiesta típicamente después de las primeras 48 horas de vida con rechazo al alimento.<br><br>Perla ENARM: \"El período de incubación promedio es de 5-7 días (aproximadamente entre 3 a 24 días), posterior al nacimiento.\"<br><br>Análisis de Distractores: La opción A es un periodo demasiado corto incompatible con la velocidad del transporte axoplasmático retrógrado. La opción C (14 a 21 días) representa el límite superior de incubación tardía. La opción D excede el rango típico definitorio del periodo neonatal.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Aspectos Generales, Página 14." 
+    },
+    {
+        id: 26, 
+        question: "En el cuadro clínico del recién nacido con tétanos neonatal, ¿cuál es el síntoma pivote que se presenta en el 80% de los casos?", 
+        options: ["Fiebre", "Espasmo muscular facial", "Opistótonos", "Trismo"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo GPC de Prevención de Tétanos Neonatal, la fiebre es la alteración autonómica de origen central más frecuente en el neonato afectado, sirviendo como un indicador de deparar alarma clínica.<br><br>Perla ENARM: \"El cuadro clínico destaca la presencia de fiebre como síntoma pivote en el 80% de los casos, seguido de espasmos musculares en un 78%.\"<br><br>Análisis de Distractores: La opción B (espasmos faciales), la opción C (opistótonos) y la opción D (trismo) son manifestaciones físicas de deparar disfunción muscular de tipo espástico, pero presentan porcentajes de frecuencia relativa diferentes en la descripción estadística de la guía.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Aspectos Generales, Página 14." 
+    },
+    {
+        id: 27, 
+        question: "Entre los factores descritos que ensombrecen severamente el pronóstico de supervivencia en tétanos neonatal, ¿cuál es el peso de corte considerado de peor pronóstico?", 
+        options: ["Menor de 3.5 kg", "Menor de 3.0 kg", "Menor de 2.5 kg", "Menor de 1.5 kg"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo GPC de Prevención de Tétanos Neonatal, los recién nacidos con bajo peso al nacer tienen una reserva funcional cardiorrespiratoria reducida para tolerar los espasmos exhaustivos y la rigidez generalizada inducidos por la neurotoxina.<br><br>Perla ENARM: \"...recién nacido de bajo peso (<2.5kg) con fiebre, rigidez generalizada y risa sardónica se asocian a un peor pronóstico.\"<br><br>Análisis de Distractores: Las opciones A y B representan pesos dentro de rangos normales de desarrollo ponderal que no ensombrecen el pronóstico por sí mismos. La opción D (<1.5 kg) es el límite para prematurez de muy bajo peso, pero el corte antropométrico de riesgo de mortalidad citado en la guía inicia desde los 2.5 kg.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Prevención y promoción a la salud, Página 40." 
+    },
+    {
+        id: 28, 
+        question: "Según las definiciones operacionales de la vigilancia epidemiológica, ¿cómo se define a un caso probable de tétanos neonatal?", 
+        options: ["Lactante con trismo desde el primer día", "Neonato con llanto débil los primeros tres días", "Lactante con síntomas de tétanos en el primer mes que succionó normal las primeras 48 horas", "Neonato con antecedente de madre no vacunada al momento del nacimiento"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo GPC de Prevención de Tétanos Neonatal, el diagnóstico inicial es clínico. Exige que el neonato haya tenido un comportamiento alimentario normal antes de desatar los espasmos característicos.<br><br>Perla ENARM: \"Definición de caso probable de tétanos neonatal. Se considera como casos probables los siguientes casos: todo lactante que haya tenido una enfermedad con las características del tétanos en el primer mes de vida, con el antecedente se haya alimentado normalmente durante los primeros dos días de vida. Toda muerte de un neonato que succionaba y lloraba normalmente durante las primeras 48 horas de vida. El diagnóstico es clínico y no está sujeto a confirmación biológica.\"<br><br>Análisis de Distractores: Las opciones A, B y D combinan criterios temporales incorrectos o de carácter de antecedente indirecto de deparar vacunas que no corresponden con la definición operacional de caso probable descrita en el glosario.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Glosario, Página 153." 
+    },
+    {
+        id: 29, 
+        question: "¿Cuál es la recomendación de vacunación contra el tétanos en una embarazada con diagnóstico de Virus de la Inmunodeficiencia Humana o infección activa por malaria?", 
+        options: ["Contraindicar la aplicación de toxoide", "Reducir la dosis a la mitad", "Aplicar esquema de vacunación indicado", "Aplazar la inmunización al puerperio"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo GPC de Prevención de Tétanos Neonatal, aunque las pacientes inmunocomprometidas puedan generar niveles de anticuerpos séricos inferiores, el riesgo de contraer una infección letal por tétanos obliga a proveer protección de deparar anticuerpos activos.<br><br>Perla ENARM: \"El médico tratante de la embarazada con VIH y/o malaria evaluará el momento óptimo para la inmunización vs. el tétanos. Por lo que se recomienda aplicar esquema de vacunación, independientemente a las dosis previas.\"<br><br>Análisis de Distractores: Contraindicar la vacuna (A) o aplazarla al posparto (D) dejaría al binomio desprotegido ante un patógeno letal de esporas telúricas. Modificar o reducir el gramaje de la dosis (B) induciría una total falla inmunogénica desaconsejada por las normatividades de salud pública.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Prevención Primaria Específica, Página 99." 
+    },
+    {
+        id: 30, 
+        question: "En el plan de inmunización de rescate o contactos infantiles, ¿cuál es la edad mínima establecida para administrar la vacuna combinada contra tétanos, difteria y tosferina acelular en lactantes?", 
+        options: ["2 semanas de edad", "6 semanas de edad", "12 semanas de edad", "6 meses de edad"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo GPC de Prevención de Tétanos Neonatal, antes de este límite de edad el sistema inmunitario del lactante carece de la madurez celular necesaria para procesar los antígenos contenidos en la vacuna, lo que impediría una respuesta útil.<br><br>Perla ENARM: \"En lactantes la edad mínima para la administración de Tdap es a las 6 semanas de edad, los intervalos de aplicación del esquema intensivo son: 1a dosis (día cero), 2da dosis a las 4 semanas, 3era dosis a las 6 semanas de la 2da dosis, 4ta dosis a las 6 semanas de la 3ra dosis.\"<br><br>Análisis de Distractores: Las opciones A, C y D representan semanas gestacionales o edades cronológicas incorrectas que contradicen la pauta de inicio acelerado establecida en el algoritmo inmunológico de deparar dosis de la guía.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Prevención Primaria Específica, Página 90." 
+    },
+    {
+        id: 31, 
+        question: "En niños con indicación de terapia inmunosupresora, ¿con qué intervalo previo al inicio del tratamiento se considera que la respuesta inmunológica a la vacuna antitetánica es adecuada?", 
+        options: ["Al menos 24 horas antes", "Al menos 1 semana antes", "Al menos 2 semanas antes", "Al menos 1 mes antes"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo GPC de Prevención de Tétanos Neonatal, se requiere este tiempo para que los linfocitos B se diferencien y logren producir títulos protectores de IgG antes de que el fármaco deprima la respuesta celular de la médula ósea.<br><br>Perla ENARM: \"En los niños con enfermedades o tratamiento inmunosupresor, se requiere la evaluación multidisciplinaria de los médicos tratantes para que evalúen el momento adecuado para reducir o suspender transitoriamente la terapia inmunosupresora para poder completar el esquema de inmunizaciones, empleando incluso el esquema de vacunación acelerado.\"<br><br>Análisis de Distractores: Los plazos de 24 horas (A) y 1 semana (B) son periodos sumamente cortos que mantienen activa la ventana de falla inmunogénica celular por el inicio del inmunosupresor. La opción D prolonga demasiado el intervalo de forma innecesaria.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Prevención Primaria Específica, Página 98." 
+    },
+    {
+        id: 32, 
+        question: "Posterior a la aplicación intramuscular de la vacuna con toxoide tetánico, ¿cuál es la reacción adversa local considerada como esperada y de resolución espontánea?", 
+        options: ["Absceso piógeno purulento", "Necrosis dérmica tipo Arthus", "Linfadenitis axilar ipsilateral", "Dolor, edema y eritema"], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo GPC de Prevención de Tétanos Neonatal, estos síntomas corresponden a una respuesta de tipo inflamatorio local benigna secundaria a la estimulación inmunogénica del adyuvante en el sitio de inyección.<br><br>Perla ENARM: \"Las reacciones que se pueden presentar con la aplicación de la vacuna, no son frecuentes y habitualmente se auto limitan, considerar: común que en el sitio de la aplicación exista dolor, edema, eritema, lo cual se puede repetir en las dosis subsecuentes. pequeño nódulo indoloro en el sitio de la aplicación.\"<br><br>Análisis de Distractores: La opción A representa una complicación infecciosa por falla en la técnica de asepsia. La opción B (Arthus) es una vasculitis severa por exceso de anticuerpos previos. La opción C es de carácter inespecífico para este tipo de biológicos de depósito.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Reacciones y contraindicaciones de la inmunización antitetánica, Página 101." 
+    },
+    {
+        id: 33, 
+        question: "¿Cuál es el periodo de tiempo posterior a la dosis de toxoide tetánico que define como contraindicación absoluta el antecedente de Síndrome de Guillain-Barré?", 
+        options: ["Primeras 2 semanas", "Primeras 4 semanas", "Primeras 6 semanas", "Primeras 12 semanas"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo GPC de Prevención de Tétanos Neonatal, la desmielinización inflamatoria aguda post-vacunal es un evento grave que prohíbe la readministración de toxoide tetánico si ocurrió dentro de esta ventana de deparación de susceptibilidad.<br><br>Perla ENARM: \"Contraindicaciones absolutas de la vacuna Tdap y Td: ... Síndrome de Guillan Barré dentro de las 6 semanas posterior a la administración de una dosis de toxoide tetánico.\"<br><br>Análisis de Distractores: Las opciones A, B y D representan marcos de deparación temporal de tipo arbitrario que no corresponden con la ventana de seguridad clínica de seis semanas estipulada en los cuadros de contraindicaciones.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Reacciones y contraindicaciones de la inmunización antitetánica, Página 105." 
+    },
+    {
+        id: 34, 
+        question: "Según las pautas de prevención de tétanos en heridas, ¿a partir de cuántas horas de retraso en la intervención quirúrgica se considera una herida o quemadura como potencialmente contaminada?", 
+        options: ["Más de 2 horas", "Más de 4 horas", "Más de 6 horas", "Más de 12 horas"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo GPC de Prevención de Tétanos Neonatal, el retraso en el aseo quirúrgico de deparación mecánica de detritos favorece la proliferación de bacterias aerobias asociadas que consumen el oxígeno local, facilitando un entorno anaeróbico estricto.<br><br>Perla ENARM: \"Las lesiones que potencialmente contaminadas son: 1) heridas o quemaduras que requieran intervención quirúrgica que se retrasa más de 6 horas...\"<br><br>Análisis de Distractores: Las opciones de dos (A) o cuatro horas (B) son periodos seguros de deparación inicial. Retrasar la atención más de doce horas (D) representa una negligencia establecida prolongada que sobrepasa el punto de corte definitorio inicial.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Reacciones y contraindicaciones de la inmunización antitetánica, Página 106." 
+    },
+    {
+        id: 35, 
+        question: "En caso de que una mujer embarazada sufra una herida cutánea con sospecha de contaminación, ¿cuál es el biológico de elección recomendado para el refuerzo tetánico?", 
+        options: ["Vacuna acelular con fracción pertussis (Tdap)", "Toxoide tetánico exclusivo (TT)", "Inmunoglobulina tetánica únicamente", "Toxoide tetánico y diftérico (Td) doble dosis"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo GPC de Prevención de Tétanos Neonatal, ante una herida contaminada en la embarazada, se aprovecha la indicación de refuerzo tetánico para administrar la formulación combinada con pertussis, logrando simultáneamente la protección materna contra tétanos y la transferencia pasiva de anticuerpos.<br><br>Perla ENARM: \"Si durante el embarazo se produce una herida susceptible de recibir una dosis de vacuna antitetánica, se administrará de preferencia la vacuna Tdpa, así como la gammaglobulina antitetánica si estuviera indicada.\"<br><br>Análisis de Distractores: El uso de toxoide tetánico exclusivo (B) o de Td estándar (D) pierde la oportunidad clínica de deparar protección de inmunidad cruzada contra Bordetella pertussis. Ofrecer solo inmunoglobulina (C) es de carácter transitorio e insuficiente.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Prevención Primaria Específica, Página 96." 
+    },
+    {
+        id: 36, 
+        question: "Según la descripción de los recursos biológicos, ¿a partir de qué fuente se prepara la solución inyectable de inmunoglobulina humana antitetánica?", 
+        options: ["Cultivo purificado de enterocitos", "Plasma de donantes con anticuerpos específicos", "Toxoide destoxificado con formaldehído", "Suero equino hiperinmunizado filtrado"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo GPC de Prevención de Tétanos Neonatal, este preparado biológico proporciona inmunidad pasiva inmediata al neutralizar la toxina tetánica circulante no unida a receptores, obteniéndose de donadores sanos hiperinmunizados.<br><br>Perla ENARM: \"Inmunoglobulina Humana Antitetánica: es una solución inyectable... Se prepara a partir de una mezcla de plasma de donantes que contiene anticuerpos específicos frente a la toxina de Clostridium tetani.\"<br><br>Análisis de Distractores: La opción A describe un tejido celular ajeno a la inmunología humoral de deparación de anticuerpos. La opción C es el mecanismo de producción del toxoide activo vacunal. La opción D corresponde a la antitoxina heteróloga de origen equino asociada a enfermedad del suero.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Glosario, Página 154." 
+    },
+    {
+        id: 37, 
+        question: "Si un niño de ocho años con esquema incompleto de vacunación recibe de manera inadvertida una dosis de vacuna contra difteria, tétanos y tosferina acelular en lugar de la formulación para adolescentes, ¿cuál es la conducta recomendada con respecto a dicha dosis?", 
+        options: ["Invalidarla y reiniciar esquema", "Considerarla como la dosis de Tdap del adolescente", "Indicar gammaglobulina de rescate", "Duplicar la dosis de Td en 6 meses"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo GPC de Prevención de Tétanos Neonatal, la administración de la formulación pediátrica (alta carga de antígenos) en este grupo de edad es segura y aporta inmunogenicidad suficiente, por lo que es innecesario repetir el biológico o invalidar la dosis.<br><br>Perla ENARM: \"Niños entre 7 y 10 años que reciban dosis inadvertidas de DTap, esta contará como parte de la serie y como la dosis de Tdap del adolescente o podrá recibirla posteriormente entre los 11 y 12 años de edad.\"<br><br>Análisis de Distractores: Invalidar la dosis (A) o agregar esquemas pasivos de deparar gammaglobulinas (C) son conductas inapropiadas que contradicen las de carácter de rescate de esquemas sectoriales. Duplicar la dosis de Td (D) expone al menor a alta reactogenicidad local.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Algoritmos, Página 119." 
+    },
+    {
+        id: 38, 
+        question: "Para lograr la eliminación global del tétanos materno y neonatal, ¿cuántas líneas de acción estratégicas recomendó formalmente la Organización Panamericana de la Salud y la Organización Mundial de la Salud a los países?", 
+        options: ["2 líneas de acción", "3 líneas de acción", "4 líneas de acción", "5 líneas de acción"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo GPC de Prevención de Tétanos Neonatal, el plan coordinado internacional para eliminar esta patología se apoya en un abordaje multinivel que incluye la inmunización sistemática, campañas suplementarias, vigilancia de coberturas y el control de higiene.<br><br>Perla ENARM: \"Para contribuir a la disminución del tétanos neonatal se incluye garantizar que las parteras tradicionales participen en: actividades como las campañas de vacunación con toxoide tetánico, empleo de técnicas adecuadas y sencillas de higiene para la atención del parto, vigilancia y reporte ante la presencia de sospecha de casos de tétanos.\"<br><br>Análisis de Distractores: Las opciones A, B y D son números incorrectos de pilares que no corresponden a la estructura analítica intersectorial dictaminada de forma conjunta por los organismos internacionales (OPS/OMS) citados en la guía.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Prevención Primaria, Página 53." 
+    },
+    {
+        id: 19, 
+        question: "En los programas de salud locales enfocados a la prevención primaria, ¿cuál es el porcentaje meta mínimo recomendado para la inmunización de mujeres embarazadas contra el tétanos?", 
+        options: ["Al menos 50%", "Al menos 75%", "Al menos 80%", "Al menos 95%"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo GPC de Prevención de Tétanos Neonatal, asegurar una cobertura de inmunización por encima de este umbral genera una barrera epidemiológica sólida en comunidades de escasos recursos, disminuyendo drásticamente la tasa de incidencia de tétanos neonatal.<br><br>Perla ENARM: \"De acuerdo a la OMS se recomienda dentro de los programas locales de salud: 1. Asegurarse de que la mayoría de las mujeres embarazadas, al menos > 80%, sean inmunizadas contra el tétanos.\"<br><br>Análisis de Distractores: Los valores numéricos en A y B son de carácter subóptimo que mantendrían focos de susceptibles en la población. La opción D (95%) es una meta ideal a largo plazo pero el límite de corte epidemiológico mínimo recomendado por la OMS es del 80%.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Prevención y promoción a la salud, Página 58." 
+    },
+    {
+        id: 40, 
+        question: "En la fisiopatología de la rigidez y espasmos musculares característicos del tétanos, ¿cuál es el mecanismo neuroquímico directo por el cual actúa la tetanoespasmina?", 
+        options: ["Bloqueo de receptores nicotínicos postsinápticos", "Inhibición de la liberación de neurotransmisores inhibitorios", "Depleción masiva de calcio intracelular en miocitos", "Estimulación de la acetilcolinesterasa en hendidura sináptica"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo GPC de Prevención de Tétanos Neonatal, la toxina bloquea la exocitosis de neurotransmisores inhibitorios (glicina y GABA) al clivar proteínas de fusión sináptica. Esto deja a las motoneuronas alfa en un estado de desinhibición constante.<br><br>Perla ENARM: \"La tetanoespasmina desinhibe los sistemas motor, simpático y parasimpático, está recorre por los axones desde el sitio de entrada hasta llegar al SNC en 2-14 días, con una velocidad de 3.35 mm/ hora.\"<br><br>Análisis de Distractores: La opción A describe el mecanismo de acción de bloqueadores neuromusculares curárquicos. La opción C es una alteración de la contracción muscular miocítica ajena a la toxina. La opción D causaría parálisis flácida de tipo colinérgica por degradación enzimática.", 
+        source: "GPC-IMSS-829-18, Detección de Factores de Riesgo y Prevención Primaria del Tétanos Neonatal en el Primer Nivel de Atención Médica, 2018, Sección: Aspectos Generales, Página 13." 
+    }
+
+        ];
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('82918LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('82918Progress');
+                localStorage.removeItem('82918LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-blue-500 shadow-md z-10 border-blue-500 dark:border-blue-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-cyan-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "PEDIATRÍA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus respuestas correctas/incorrectas en el tablero." 
+                : "IMSS-829-18 • Detección de factores de riesgo y prevención primaria del tétanos neonatal en el primer nivel de atención médica";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="GS13618PE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-blue-100 dark:border-blue-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 dark:has-[:checked]:bg-blue-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('82918Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('82918LastQId', currentQuestionId);
+                else localStorage.removeItem('82918LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('82918Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

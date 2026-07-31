@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-cyan-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+
+    // BLOQUE 1: Manifestaciones Clínicas para la Sospecha del Abuso Físico en Niñas, Niños y Adolescentes (1-20)
+    {
+        id: 1, 
+        question: "Respecto a la cronología de las contusiones en sospecha de abuso físico infantil, ¿cuál es la recomendación de la GPC para determinar su antigüedad clínica a simple vista?", 
+        options: ["No es posible evaluarla.", "Usar escala cromática visual.", "Medir el diámetro mayor.", "Evaluar la consistencia local."], 
+        answer: 0, 
+        justification: "Justificación: La variabilidad de la piel, la profundidad del tejido afectado y la fuerza del impacto inicial impiden establecer con certeza el tiempo de evolución de un hematoma mediante la inspección visual simple. De acuerdo GPC de Abuso Físico Infantil, no es clínicamente viable realizar dicha estimación debido a la subjetividad del examinador.<br><br>Perla ENARM: \"Se determinó que no es posible evaluar con precisión la edad de las contusiones en niños a simple vista, ya sea en vivo o por fotografía ya que la apariencia de un hematoma varía de acuerdo a la fuerza que lo causó, la parte del cuerpo afectada (tejidos blandos o salientes óseas), el color de la piel y las diferencias en la percepción del color a medida que envejecemos\".<br><br>Análisis de Distractores: Las opciones B, C y D representan métodos empíricos o intuitivos que la práctica médica descarta por carecer de validez y precisión científica, pudiendo inducir a graves errores en el peritaje médico-legal.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 15." 
+    },
+    {
+        id: 2, 
+        question: "En la exploración dermatológica pediátrica, ¿cuál es la localización característica de los hematomas de origen netamente accidental?", 
+        options: ["Cuello y cara externa.", "Prominencias óseas anteriores.", "Región glútea bilateral.", "Conducto auditivo externo."], 
+        answer: 1, 
+        justification: "Justificación: Las caídas accidentales y el juego propio de la etapa del desarrollo motor exponen de forma constante las superficies óseas anteriores, a diferencia de las zonas blandas o profundas. De acuerdo GPC de Abuso Físico Infantil, estas lesiones se limitan fisiopatológicamente a la cara anterior del menor.<br><br>Perla ENARM: \"los hematomas accidentales ocurren con mayor frecuencia en la parte frontal del cuerpo y sobre prominencias óseas (rodillas, espinillas y frente)\".<br><br>Análisis de Distractores: Las opciones A, C y D representan topografías de alta sospecha para abuso físico intencional debido a que corresponden a áreas corporales protegidas o blandas que no se lesionan por mecanismos de trauma de bajo impacto cotidianos.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 15." 
+    },
+    {
+        id: 3, 
+        question: "Durante la evaluación física de un menor de edad, ¿cuáles son consideradas zonas de localización defensiva para hematomas por sospecha de abuso físico?", 
+        options: ["Abdomen y región lumbar.", "Espalda y glúteos bilaterales.", "Rodillas y plantas pedias.", "Brazos superiores y muslos externos."], 
+        answer: 3, 
+        justification: "Justificación: Las lesiones defensivas ocurren cuando el menor intenta proteger de forma refleja su línea media y órganos vitales, interponiendo sus extremidades ante el agresor. De acuerdo GPC de Abuso Físico Infantil, encontrar contusiones en estas regiones indica resistencia física pasiva o activa.<br><br>Perla ENARM: \"Otra característica notable en niños maltratados fue la presencia de hematomas en sitios defensivos (intento de defenderse) localizadas en parte superior de los brazos y parte externa de los muslos\".<br><br>Análisis de Distractores: Las opciones A, B y C son zonas comunes de agresión directa o trauma accidental (rodillas), pero no corresponden a la definición biomecánica ni al patrón clínico-topográfico catalogado de forma estricta como defensivo.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 15." 
+    },
+    {
+        id: 4, 
+        question: "De acuerdo con la regla topográfica TEN, ¿en qué grupo de edad la presencia de un hematoma en cualquier región corporal debe despertar sospecha inmediata de abuso físico infantil?", 
+        options: ["Menores de 4 meses.", "Menores de 12 meses.", "Menores de 2 años.", "Menores de 4 años."], 
+        answer: 0, 
+        justification: "Justificación: En lactantes muy pequeños que no tienen movilidad independiente, cualquier hematoma es fisiopatológicamente anómalo y obliga a sospechar trauma no accidental. De acuerdo GPC de Abuso Físico Infantil, un bebé de esta edad no genera la energía mecánica para autolesionarse de esta manera.<br><br>Perla ENARM: \"Se debe considerar la presencia de maltrato infantil cuando encontramos hematomas... Utilizar la regla TEN, cuyos hematomas se localizan en torso, oreja y cuello para niños hasta 4 años y en cualquier región para menores de 4 meses\".<br><br>Análisis de Distractores: Las opciones B, C y D corresponden a límites de edad donde los niños ya tienen mayor movilidad o deambulación, por lo que la regla TEN restringe la sospecha en \"cualquier región\" para enfocarse solo en zonas específicas (torso, oreja, cuello).", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 16." 
+    },
+    {
+        id: 5, 
+        question: "Al aplicar la regla TEN para la sospecha de maltrato físico en pacientes de hasta 4 años de edad, ¿cuáles son los tres sitios anatómicos específicos donde la localización de hematomas es patológica?", 
+        options: ["Muslos, glúteos y frente.", "Torso, oreja y cuello.", "Espalda, mejilla y nalgas.", "Palmas, plantas y abdomen."], 
+        answer: 1, 
+        justification: "Justificación: Los hematomas en áreas protegidas o blandas de la cabeza y tronco tienen un alto valor predictivo positivo para traumatismo intencional. De acuerdo GPC de Abuso Físico Infantil, estas regiones representan la mnemotecnia exacta de cribado.<br><br>Perla ENARM: \"Utilizar la regla TEN, cuyos hematomas se localizan en torso, oreja y cuello para niños hasta 4 años y en cualquier región para menores de 4 meses\".<br><br>Análisis de Distractores: Las opciones A, C y D son áreas de lesiones frecuentes en maltrato pero no pertenecen a los componentes mnemotécnicos de la regla de tamizaje TEN (Torso, Ear, Neck) de la guía.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 16." 
+    },
+    {
+        id: 6, 
+        question: "Según los datos descritos en la GPC, ¿cuál es el rango de edad máximo donde los hematomas accidentales secundarios a resbalones y tropiezos ocurren predominantemente en forma de \"T\" en el rostro?", 
+        options: ["Cero a seis meses.", "Seis a doce meses.", "Uno a dos años.", "Tres a cinco años."], 
+        answer: 2, 
+        justification: "Justificación: En este periodo de transición del neurodesarrollo motor, la marcha inestable y la desproporción cefálica incrementan el riesgo de caídas frontales directas contra el suelo. De acuerdo GPC de Abuso Físico Infantil, este patrón es un hallazgo mecánico regular en esta etapa.<br><br>Perla ENARM: \"la edad máxima para sufrir hematomas por resbalones y tropiezos es de uno a dos años y ocurre predominantemente en forma de T, en la frente, la nariz o labio superior\".<br><br>Análisis de Distractores: Las opciones A y B no tienen deambulación autónoma (baja probabilidad de caídas por tropiezo facial en \"T\"). La opción D posee un mejor de desarrollo de reflejos de protección del tren superior, disminuyendo este patrón específico.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 16." 
+    },
+    {
+        id: 7, 
+        question: "En la evaluación cutánea ante sospecha de abuso físico infantil, ¿cuál es el significado clínico de documentar petequias en íntima asociación con un hematoma?", 
+        options: ["Descarta por completo el abuso.", "Señala vasculitis sistémica benigna.", "Es un fuerte indicador de abuso.", "Diagnóstica hemofilia de forma definitiva."], 
+        answer: 2, 
+        justification: "Justificación: La coexistencia de ambos hallazgos refleja una fuerza de cizallamiento mecánica excesiva, típica de agresiones intencionadas. De acuerdo GPC de Abuso Físico Infantil, su asociación se correlaciona con la aplicación de trauma forzado.<br><br>Perla ENARM: \"La presencia de petequias en asociación con hematomas, es un fuerte indicador de abuso, sin embargo, su ausencia no puede excluir maltrato\".<br><br>Análisis de Distractores: La opción A es falsa ya que incrementa la sospecha. Las opciones B y D son diagnósticos diferenciales que requieren pruebas complementarias, pero de forma aislada ante un trauma no descartan la etiología abusiva.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 16." 
+    },
+    {
+        id: 8, 
+        question: "De acuerdo con las cifras epidemiológicas de la UNICEF reportadas en la GPC para México, ¿cuántos niños y niñas reciben alguna forma de castigo físico grave como método de disciplina?", 
+        options: ["Uno de cada cinco.", "Uno de cada diez.", "Uno de cada quince.", "Uno de cada cincuenta."], 
+        answer: 2, 
+        justification: "Justificación: Las estadísticas nacionales exponen una de las mayores tasas de prevalencia de métodos de disciplina violentos normalizados en el núcleo familiar. De acuerdo GPC de Abuso Físico Infantil, este indicador señala la magnitud del maltrato grave en el país.<br><br>Perla ENARM: \"La UNICEF en su informe anual 2017, reporta que, uno de cada quince niños y niñas ha recibido alguna forma de castigo físico grave (jalones de orejas, bofetadas, manotazos o golpes fuertes), como método de disciplina\".<br><br>Análisis de Distractores: Las opciones A, B y D son proporciones incorrectas que no corresponden a las estadísticas exactas aportadas por la UNICEF dentro de la directriz clínica de la guía.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Introducción, Página 8." 
+    },
+    {
+        id: 9, 
+        question: "Al comparar el perfil de los pacientes con sospecha de maltrato, ¿qué característica demográfica distingue a los niños con quemaduras no producidas por escaldadura?", 
+        options: ["Edad media significativamente mayor.", "Predominio neto del sexo femenino.", "Ausencia total de comorbilidades asociadas.", "Presentación exclusiva en menores lactantes."], 
+        answer: 0, 
+        justification: "Justificación: Las quemaduras por contacto intencional suelen infligirse en niños en etapas preescolares o escolares tardías, deparando de las escaldaduras accidentales comunes en lactantes. De acuerdo GPC de Abuso Físico Infantil, el grupo etario afectado refleja un mecanismo distinto de influjo de daño.<br><br>Perla ENARM: \"la edad media fue significativamente mayor que la de los niños con otras formas de abuso físico y mayor que la de los niños con escaldaduras intencionales (1.9 +_1.3 SD)\".<br><br>Análisis de Distractores: La opción B es incorrecta ya que hay predominio del sexo masculino (73%). La opción C es falsa pues asocian otras lesiones de abuso. La opción D es incorrecta dado que la mayoría son mayores de 3 años (67.5%).", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 16-17." 
+    },
+    {
+        id: 10, 
+        question: "En sospecha de abuso físico infantil, ¿cuáles son las características morfológicas típicas de una quemadura intencional por contacto con cigarrillo?", 
+        options: ["Forma serpiginosa y superficial.", "Cráteres profundos circulares de 0.5-1 cm.", "Ampollas bilaterales de bordes difusos.", "Lesión asimétrica mayor a 5 cm."], 
+        answer: 1, 
+        justification: "Justificación: El contacto directo con la colilla encendida destruye la dermis de forma simétrica y bien delimitada, dejando una cicatriz típica. De acuerdo GPC de Abuso Físico Infantil, este patrón es altamente específico de maltrato físico.<br><br>Perla ENARM: \"Las quemaduras por cigarrillos son circulares, generalmente de tercer grado, claramente definidas, redondeada, de 0.5-1 cm que forma una cicatriz con un centro hipopigmentado y un borde pigmentado, pueden mostrar diferentes etapas de evolución\".<br><br>Análisis de Distractores: Las opciones A, C y D no corresponden al tamaño ni al patrón histopatológico de cráter profundo que describe la colilla de cigarrillo en la guía.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 17." 
+    },
+    {
+        id: 11, 
+        question: "¿Cuál es el patrón morfológico característico que se observa en la piel de un paciente pediátrico víctima de quemadura intencional por un secador de pelo?", 
+        options: ["Lesión con forma de herradura.", "Quemadura en forma de rejilla.", "Ampolla circular de centro necrótico.", "Descamación húmeda de bordes irregulares."], 
+        answer: 1, 
+        justification: "Justificación: La exposición directa al flujo de calor a través de la rejilla metálica o de plástico protectora del secador de pelo transfiere su diseño geométrico exacto al tejido cutáneo. De acuerdo GPC de Abuso Físico Infantil, este patrón confirma el agente causante.<br><br>Perla ENARM: \"En quemaduras por secador de pelo, el patrón de la rejilla es claramente visible, el tamaño es variable, localizadas con mayor frecuencia en nalgas, plantas, abdomen, cara y espalda\".<br><br>Análisis de Distractores: La opción A es característica de mordeduras o cables doblados. Las opciones C y D son lesiones inespecíficas por líquidos calientes o escaldaduras sin patrón instrumental geométrico definido.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 17." 
+    },
+    {
+        id: 12, 
+        question: "En casos de sospecha de maltrato infantil por quemadura de origen químico (ácido), ¿cuáles son los dos sitios anatómicos de localización más común?", 
+        options: ["Palmas de manos y pies.", "Glúteos y región perianal.", "Cabeza y oídos del niño.", "Tórax anterior y abdomen."], 
+        answer: 2, 
+        justification: "Justificación: La agresión química intencional con sustancias corrosivas se dirige de manera selectiva a la región cefálica por ser la zona de mayor exposición física y vulnerabilidad. De acuerdo GPC de Abuso Físico Infantil, este tipo de agente se asocia a lesiones graves en estas zonas.<br><br>Perla ENARM: \"En relación a las quemaduras por químicos, pueden ser ocasionadas por la aplicación de ácido en el cuerpo de los niños (localizadas en cabeza y oídos)\".<br><br>Análisis de Distractores: Las opciones A, B y D son localizaciones típicas de quemaduras de contacto por inmersión o por planchas domésticas, pero no son las áreas prioritarias descritas específicamente para quemaduras por ácidos.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 18." 
+    },
+    {
+        id: 13, 
+        question: "Para fundamentar clínicamente la sospecha de Trauma Craneal Abusivo en un menor de 3 años, ¿cuál es el número mínimo de variables positivas de predicción clínica que elevan la probabilidad de este diagnóstico a más del 81.5%?", 
+        options: ["Una variable predictiva.", "Dos variables predictivas.", "Tres o más variables.", "Todas las variables descritas."], 
+        answer: 2, 
+        justification: "Justificación: La combinación de múltiples marcadores físicos y neurológicos optimiza la sensibilidad del cribado clínico urgente. De acuerdo GPC de Abuso Físico Infantil, alcanzar este número de variables optimiza la sospecha de trauma craneal abusivo.<br><br>Perla ENARM: \"la probabilidad de AHT fue mayor del 81.5% si había tres o más de las variables predictivas (hematomas de cabeza/cuello, convulsiones, apnea, fracturas de costillas, fracturas de huesos largos o hemorragias de retina)\".<br><br>Análisis de Distractores: Las opciones A y B no alcanzan la robustez diagnóstica ni el umbral probabilístico descrito en los metaanálisis de validación. La opción D es incorrecta ya que no se requiere la totalidad de las variables para elevar la sospecha clínica a dicho nivel.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 19." 
+    },
+    {
+        id: 14, 
+        question: "Dentro de las variables de predicción para sospechar Trauma Craneal Abusivo, ¿cuál es la morfología de fractura craneal que representa la ÚNICA excepción por sugerir un mecanismo accidental?", 
+        options: ["Fractura occipital bilateral diastásica.", "Fractura parietal lineal unilateral aislada.", "Fractura de base de cráneo con fístula.", "Fractura temporal hundida y múltiple."], 
+        answer: 1, 
+        justification: "Justificación: Las caídas accidentales de baja altura en lactantes suelen provocar un impacto simple en el hueso parietal que no compromete suturas ni se asocia a fuerzas de cizallamiento masivas. De acuerdo GPC de Abuso Físico Infantil, esta lesión se excluye de la sospecha inmediata de abuso.<br><br>Perla ENARM: \"compromiso respiratorio, hematomas... hemorragias subdurales... fracturas craneales (excepto fracturas de cráneo aisladas, unilaterales, no diástáticas, lineales y parietales)\".<br><br>Análisis de Distractores: Las opciones A, C y D representan patrones de fractura complejos, diastásicos o que involucran otros huesos, indicando fuerzas de gran magnitud compatibles con traumatismos intencionales severos.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 19." 
+    },
+    {
+        id: 15, 
+        question: "Según los criterios de la Escala de Pittsburgh (PIBIS) para la detección de Trauma Craneal Abusivo en lactantes, ¿cuál es el punto de corte de temperatura para aplicar este instrumento?", 
+        options: ["Menor a 37.0 °C.", "Menor a 37.5 °C.", "Menor a 38.3 °C.", "Mayor a 38.5 °C."], 
+        answer: 2, 
+        justification: "Justificación: La PIBIS se aplica en niños con síntomas neurológicos atípicos que no tienen fever alta, descartando así un cuadro infeccioso agudo sistémico como causa primaria de sus síntomas. De acuerdo GPC de Abuso Físico Infantil, este es el límite térmico de cribado.<br><br>Perla ENARM: \"En niños con edades entre los 30 y 364 días de edad, con una temperatura <38,3° C, sin antecedentes de traumatismos y al menos un síntoma asociado con un alto riesgo de AHT\".<br><br>Análisis de Distractores: Las opciones A, B y D no corresponden al punto de corte térmico establecido en la calibración diagnóstica de la escala PIBIS para descartar etiología infecciosa.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 20." 
+    },
+    {
+        id: 16, 
+        question: "Al emplear la puntuación diagnóstica PIBIS en lactantes para sospechar Trauma Craneal Abusivo, ¿cuál es el puntaje mínimo que obliga a realizar una neuroimagen adicional?", 
+        options: ["Un punto.", "Dos puntos.", "Tres puntos.", "Cuatro puntos."], 
+        answer: 1, 
+        justification: "Justificación: Alcanzar el umbral crítico sumando variables dermatológicas, de laboratorio o antropométricas denota una probabilidad de daño intracraneal. De acuerdo GPC de Abuso Físico Infantil, un puntaje menor no justifica la exposición a radiación de forma inmediata.<br><br>Perla ENARM: \"se deberá aplicar este instrumento, que al menos deberá tener 2 puntos para sospechar AHT... Si los niños recibieron una puntuación de 2 puntos o más... se debe realizar una neuroimagen adicional\".<br><br>Análisis de Distractores: La opción A no tiene la sensibilidad diagnóstica suficiente para deparar y justificar la realización de una neuroimagen. Las opciones C y D superan el punto de corte mínimo operativo establecido.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 20." 
+    },
+    {
+        id: 17, 
+        question: "Basado en el mecanismo biomecánico de compresión torácica durante la agresión física infantil, ¿cuál es la localización anatómica más común de las fracturas costales abusivas?", 
+        options: ["Unión condroesternal anterior.", "Cuerpo medio esternal anterior.", "Región posterior y posterolateral.", "Arcos costales flotantes inferiores."], 
+        answer: 2, 
+        justification: "Justificación: Cuando el tórax del niño es comprimido anteroposteriormente por las manos del agresor, las costillas se doblan en su punto de mayor curvatura posterior sobre las apófisis transversas de las vértebras. De acuerdo GPC de Abuso Físico Infantil, estas fracturas tienen una alta probabilidad de abuso.<br><br>Perla ENARM: \"Las fracturas de costillas en la región posterior fueron evaluadas en 7 estudios y se concluyó que éstas eran las más predominantes en abuso\".<br><br>Análisis de Distractores: Las opciones A y B son localizaciones más frecuentes tras maniobras de reanimación cardiopulmonar (RCP). La opción D representa un sitio de fractura muy inusual debido a la elasticidad anatómica de los arcos costales flotantes.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 29." 
+    },
+    {
+        id: 18, 
+        question: "En la evaluación ósea de un menor con fractura de fémur en espiral, ¿cuál es el límite de edad máxima para que este hallazgo radiológico represente un fuerte indicador de abuso físico infantil?", 
+        options: ["Menores de 6 meses.", "Menores de 15 meses.", "Menores de 3 años.", "Menores de 5 años."], 
+        answer: 1, 
+        justification: "Justificación: La fractura de fémur en espiral requiere un mecanismo de rotación violenta sobre el eje del hueso, lo cual no ocurre de forma accidental antes de que la deambulación esté plenamente establecida. De acuerdo GPC de Abuso Físico Infantil, en este grupo de edad la especificidad del hallazgo es máxima.<br><br>Perla ENARM: \"descubrió que una fractura en espiral femoral por abuso era la más común en menores de 15 meses y no existía una diferencia significativa entre la distribución de fracturas espirales relacionadas y no relacionadas con abuso en mayores de 15 meses\".<br><br>Análisis de Distractores: La opción A es un límite demasiado restrictivo. Las opciones C y D son edades donde la incidencia de deparar fracturas accidentales es mayor por caídas de altura o traumas deportivos.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 31." 
+    },
+    {
+        id: 19, 
+        question: "Ante un paciente pediátrico con traumatismo de extremidades superiores, ¿cuál es el tipo de fractura humeral que muestra la MENOR probabilidad de haber sido infligida por abuso físico?", 
+        options: ["Fractura en espiral diafisiaria.", "Fractura oblicua media.", "Fractura de cabeza humeral.", "Fractura supracondílea."], 
+        answer: 3, 
+        justification: "Justificación: Las fracturas supracondíleas se producen de forma clásica por caídas accidentales con la mano en extensión, siendo el traumatismo de codo más común de la infancia. De acuerdo GPC de Abuso Físico Infantil, estas lesiones tienen una menor deparación con maltrato intencional.<br><br>Perla ENARM: \"Seis estudios transversales analizaron fracturas de húmero relacionadas con abuso... Por otro lado, las fracturas supracondíleas tuvieron menor probabilidad de ser infligidas\".<br><br>Análisis de Distractores: Las opciones A, B y C son fracturas que involucran fuerzas de tipo torsional o de tracción directa sobre el brazo, mecanismos altamente sugestivos de maltrato físico infantil.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 31." 
+    },
+    {
+        id: 20, 
+        question: "Durante el examen clínico, ¿cuál de los siguientes comportamientos del menor hacia sus cuidadores principales es considerado un indicador psicológico altamente sugestivo de abuso físico infantil?", 
+        options: ["Ansiedad de separación intensa.", "Aversión o falta de cooperación.", "Demanda excesiva de contacto físico.", "Llanto inconsolable ante extraños."], 
+        answer: 1, 
+        justification: "Justificación: El menor maltratado asocia el contacto con sus cuidadores al peligro o la agresión, manifestando conductas de tipo evasivo o de hostilidad refleja durante la evaluación médica. De acuerdo GPC de Abuso Físico Infantil, esta conducta es un indicador clínico clave.<br><br>Perla ENARM: \"Debe considerarse abuso físico si el comportamiento de un niño hacia sus padres o cuidador muestra las siguientes conductas: Aversión o falta de cooperación Falta de interés o baja capacidad de respuesta altos niveles de enojo o molestia parece pasivo o retraído\".<br><br>Análisis de Distractores: Las opciones A, C y D representan respuestas conductuales fisiológicas o adaptativas del desarrollo infantil (ansiedad ante extraños), que no sugieren maltrato físico.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 22." 
+    },
+
+    // BLOQUE 2: Manifestaciones Clínicas para la Sospecha del Abuso Físico en Niñas, Niños y Adolescentes (21-40)
+    {
+        id: 21, 
+        question: "En el contexto de la sospecha de abuso físico infantil, ¿qué proporción de la población adulta reporta haber padecido maltrato físico durante su propia infancia?", 
+        options: ["Una décima parte.", "La mitad.", "Un de tercio.", "Una cuarta parte."], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo GPC de Abuso Físico Infantil, la carga del maltrato trasciende la niñez y deja huellas longitudinales en la salud de la población de manera generalizada.<br><br>Perla ENARM: \"Una cuarta parte de los adultos, reporta haber padecido algún tipo de maltrato físico durante la infancia.\"<br><br>Análisis de Distractores: Las opciones A, B y C representan proporciones de carácter inexacto que no corresponden con la estimación de tipo global que reporta la Organización Mundial de la Salud en la guía.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Introducción, Página 7." 
+    },
+    {
+        id: 22, 
+        question: "Al evaluar epidemiológicamente la sospecha de abuso físico infantil, ¿qué grupo etario pediátrico presenta estadísticamente la mayor tasa de victimización reportada en los servicios de protección?", 
+        options: ["Menores de un año.", "Preescolares de tres años.", "Escolares de seis años.", "Adolescentes de quince años."], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo GPC de Abuso Físico Infantil, la vulnerabilidad física extrema y la dependencia total de cuidados sitúan a los lactantes en el periodo de mayor susceptibilidad para deparar lesiones graves no accidentales.<br><br>Perla ENARM: \"Los niños más pequeños fueron los más vulnerables; los niños en su primer año de vida tuvieron la mayor tasa de victimización en 23.1/1000.\"<br><br>Análisis de Distractores: Las opciones B, C y D son grupos de edad donde, aunque existe maltrato físico, las tasas de victimización crítica son menores que las reportadas durante el primer año de vida.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Introducción, Página 7." 
+    },
+    {
+        id: 23, 
+        question: "De la totalidad de los casos investigados y confirmados por maltrato infantil, ¿qué porcentaje corresponde específicamente a la variante de abuso físico?", 
+        options: ["8%", "38%", "18%", "58%"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo GPC de Abuso Físico Infantil, aunque la negligencia y la omisión de cuidados suelen ser más frecuentes, el abuso físico directo constituye una proporción considerable y de alto riesgo para la vida del menor.<br><br>Perla ENARM: \"Del total de las víctimas de abuso, el 18% correspode a maltrato físico, siendo golpeados, sacudidos, arrojados, envenenados, quemados, escaldados, ahogados o sofocados.\"<br><br>Análisis de Distractores: Las opciones A, B y D representan porcentajes inexactos que no concuerdan con la distribución estadística del maltrato de deparar lesiones en la guía.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Introducción, Página 8." 
+    },
+    {
+        id: 24, 
+        question: "Según los datos de cohesión social de México presentados en la Guía de Práctica Clínica, ¿cuál es el porcentaje de niñas, niños y adolescentes de 1 a 14 años de edad que ha experimentado castigo físico o psicológico en su hogar?", 
+        options: ["13%", "33%", "63%", "93%"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo GPC de Abuso Físico Infantil, las prácticas disciplinarias violentas de tipo intrafamiliar continúan fuertemente arraigadas y normalizadas como método de crianza familiar en nuestro país.<br><br>Perla ENARM: \"De acuerdo con información disponible, se observa que 63% de niñas, niños y adolescentes - de 1 a 14 años de edad - han experimentado al menos una forma de castigo psicológico o físico por miembros de su hogar.\"<br><br>Análisis de Distractores: Las opciones A, B y D son porcentajes que no reflejan la realidad estadística oficial reportada por el INEGI y la UNICEF para la prevalencia del castigo corporal.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Introducción, Página 8." 
+    },
+    {
+        id: 25, 
+        question: "Para el grupo de adolescentes de 10 a 17 años de edad, ¿cuáles son los dos entornos donde suceden ocho de cada diez agresiones físicas según los reportes citados por la Guía de Práctica Clínica?", 
+        options: ["Hogar y estancias infantiles.", "Centros deportivos y parques.", "Redes sociales y hogar.", "Escuela y vía pública."], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo GPC de Abuso Físico Infantil, conforme el menor expande su entorno social hacia la escolarización y la deambulación comunitaria autónoma, los focos de violencia de tipo físico se desplazan fuera del ámbito doméstico.<br><br>Perla ENARM: \"La escuela y la vía pública son dos entornos donde suceden ochode cada diezagresiones contra niñas, niños y adolescentes entre 10 y 17 años de edad; mientras que el hogar es el tercer lugar en donde los niños están expuestos a la violencia.\"<br><br>Análisis de Distractores: El hogar (A y C) es el tercer lugar de exposición y representa un porcentaje menor en este grupo de edad. Las opciones B y C no corresponden con la de tipo estadístico descrita.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Introducción, Página 9." 
+    },
+    {
+        id: 26, 
+        question: "Al evaluar físicamente a un paciente pediátrico con discapacidad y sospecha de abuso físico infantil, ¿cuál es el sitio anatómico adicional donde se debe buscar intencionadamente la presencia de hematomas?", 
+        options: ["Axilas.", "Cuello.", "Rodillas.", "Pabellón auricular."], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo GPC de Abuso Físico Infantil, los niños con discapacidad presentan patrones de lesión de tipo atípico y mayor vulnerabilidad al maltrato, requiriendo un examen minucioso en zonas que habitualmente podrían confundirse.<br><br>Perla ENARM: \"La localización de hematomas en niños con discapacidad, además de los pies, manos, muslos, brazos y abdomen, fue en rodillas.\"<br><br>Análisis de Distractores: Aunque el cuello (B) y el pabellón auricular (D) son zonas evaluadas por la regla TEN en la población pediátrica general, las rodillas representan el sitio de escrutinio de deparar lesiones adicional especificado. Las axilas (A) no están especificadas.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 16." 
+    },
+    {
+        id: 27, 
+        question: "En la evaluación epidemiológica de las quemaduras no producidas por escaldadura en sospecha de abuso físico infantil, ¿cuál es el sexo en el que se reporta una mayor prevalencia de estas lesiones?", 
+        options: ["Femenino.", "Masculino.", "Distribución equitativa.", "Predominio neonatal indistinto."], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo GPC de Abuso Físico Infantil, los estudios de deparar trauma de tipo descriptivo sobre daño térmico intencional demuestran una mayor frecuencia de agresiones físicas graves dirigidas a pacientes masculinos.<br><br>Perla ENARM: \"la mayoría de los niños eran mayores de tres años (67.5%), más común en hombres (73%)\".<br><br>Análisis de Distractores: El sexo femenino (A) o la distribución de carácter idéntico (C y D) no corresponden con la proporción epidemiológica de 73% de hombres descrita en el meta-análisis de la guía.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 16-17." 
+    },
+    {
+        id: 28, 
+        question: "Ante la sospecha de abuso físico infantil por quemadura de contacto con instrumentos de hierro doméstico, como planchas, ¿cuál es el rasgo morfológico característico que se documenta en la piel del paciente?", 
+        options: ["Contorno del instrumento utilizado.", "Bordes difusos y salpicaduras.", "Cráteres satélites hiperémicos.", "Descamación en guante de ganso."], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo GPC de Abuso Físico Infantil, la aplicación de un objeto sólido caliente a alta temperatura transfiere de forma de manera directa la geometría del agente agresor al tejido dermoepidérmico.<br><br>Perla ENARM: \"Respecto a las quemaduras por instrumentos de hierro domésticos, generalmente se observa el contorno del instrumento utilizado, localizadas en extremidades o tronco.\"<br><br>Análisis de Distractores: Las salpicaduras o bordes difusos (B) son típicos de deparar quemaduras accidentales por líquidos calientes. Las opciones C y D representan lesiones de origen infeccioso que no copian la morfología.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 17." 
+    },
+    {
+        id: 29, 
+        question: "En el estudio histopatológico por biopsia cutánea de una lesión sospechosa de abuso físico infantil, ¿cuál es el hallazgo que define a una quemadura por radiación de microondas?", 
+        options: ["Carbonización y puentes nucleares.", "Preservación relativa de grasa subcutánea.", "Necrosis muscular con licuefacción.", "Destrucción epidérmica con vacuolas lipídicas."], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo GPC de Abuso Físico Infantil, la termogénesis por microondas calienta tejidos con alto contenido de agua (piel y músculo) pero respeta los de tipo hidrofóbico (adipocitos), lo que diferencia histológicamente este maltrato.<br><br>Perla ENARM: \"Las quemaduras por microondas son ocasionadas por radiación, en biopsia se encuentra la piel y el músculo quemados y la grasa subcutánea relativamente preservada, sin características de quemadura eléctrica (transmisión nuclear o carbonización).\"<br><br>Análisis de Distractores: La carbonización y puentes nucleares (A) son típicos de quemaduras de tipo eléctrico de alto voltaje. Las opciones C y D no describen el patrón de afectación selectiva tisular característico.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 18." 
+    },
+    {
+        id: 30, 
+        question: "En lactantes víctimas de Trauma Craneal Abusivo o Síndrome del Bebé Sacudido, ¿cuál es el porcentaje estimado de mortalidad reportado en los estudios de seguimiento citados por la Guía de Práctica Clínica?", 
+        options: ["6%", "56%", "86%", "26%"], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo GPC de Abuso Físico Infantil, la lesión por cizallamiento y la encefalopatía hipóxico-isquémica subsiguiente conllevan un pronóstico de carácter sombrío, requiriendo un alto índice de sospecha.<br><br>Perla ENARM: \"Una tasa estimada de mortalidad del 26% y discapacidad a largo plazo que oscila entre el 44% y el 92% entre los supervivientes.\"<br><br>Análisis de Distractores: Las opciones A, B y C representan tasas de deparar mortalidad de tipo incorrecto que subestiman o sobreestiman de forma exagerada la letalidad de esta variante de maltrato.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 19." 
+    },
+    {
+        id: 31, 
+        question: "Durante el proceso de validación diagnóstica de las Reglas de Predicción Clínica para la detección de Trauma Craneal Abusivo, ¿cuál es la especificidad lograda utilizando una probabilidad de corte del 50%?", 
+        options: ["0.52", "0.62", "0.72", "0.86"], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo GPC de Abuso Físico Infantil, las reglas de deparar predicción clínica balancean el cribado de lactantes críticamente enfermos para evitar falsos positivos que fragmenten la dinámica de de la familia.<br><br>Perla ENARM: \"En el estudio de validación, el CPredR realizó una sensibilidad de 0.72 y una especificidad de 0.86 en la detección de AHT utilizando una probabilidad de corte de AHT del 50%.\"<br><br>Análisis de Distractores: La opción C (0.72) corresponde a la sensibilidad reportada para dicho umbral. Las opciones A y B son valores inferiores que no corresponden al desempeño estadístico validado de la herramienta.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 19." 
+    },
+    {
+        id: 32, 
+        question: "De acuerdo con las recomendaciones de la Guía de Práctica Clínica, ¿en qué población de pacientes críticamente enfermos ingresados en cuidados intensivos se debe mantener un especial interés para la sospecha de Trauma Craneal Abusivo?", 
+        options: ["Menores de 3 años.", "Escolares de 6 a 12 años.", "Adolescentes accidentados.", "Recién nacidos post-término."], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo GPC de Abuso Físico Infantil, la inmadurez de la musculatura cervical y la desproporción craneal exponen de forma selectiva a este grupo etario a lesiones intracraneales por sacudidas.<br><br>Perla ENARM: \"Se deberá poner especial interés para la sospecha de AHT en la población de menores 3 años de edad ingresados en la Unidad de Cuidados Intensivos Pediátricos (PICU).\"<br><br>Análisis de Distractores: Los grupos descritos en las opciones B, C y D tienen una madurez de deparar desarrollo musculoesquelético diferente, lo que reduce la sospecha específica de origen de tipo abusivo.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 19." 
+    },
+    {
+        id: 33, 
+        question: "Al evaluar clínicamente el Síndrome del Bebé Sacudido, ¿cuáles son los componentes de la tríada patológica descritos originalmente por el neurocirujano Norman Guthkelch en 1971?", 
+        options: ["Fractura costal, apnea e hipotonía.", "Hematoma subdural, hemorragia retiniana y encefalopatía.", "Hemorragia subaracnoidea, convulsiones y letargo.", "Fractura metafisiaria, equimosis y coma."], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo GPC de Abuso Físico Infantil, la combinación de estas lesiones neurológicas es consecuencia directa del estiramiento de de las venas puente debido al movimiento de deparar vaivén mecánico.<br><br>Perla ENARM: \"introdujo la hipótesis de que sacudir a un bebé hacia atrás y hacia adelante de una manera similar a un latigazo cervical podría causar hematoma subdural y, finalmente, otros signos y síntomas a saber: hemorragias retiniana y encefalopatía, lo que constituye la tríada.\"<br><br>Análisis de Distractores: Las opciones A, C y D incluyen signos clínicos inespecíficos o de deparar fracturas que forman parte de la evaluación general, pero no integran formalmente la tríada clásica de Guthkelch.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 21." 
+    },
+    {
+        id: 34, 
+        question: "En el estudio de precisión diagnóstica de la tríada clásica aplicada para identificar sacudidas traumáticas en lactantes (Síndrome de Bebé Sacudido), ¿cuál es el valor de especificidad y valor predictivo positivo reportado por la Guía de Práctica Clínica?", 
+        options: ["0.24", "0.53", "0.86", "1.0"], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo GPC de Abuso Físico Infantil, cuando se presenta la tríada completa sin otra causa médica explicable, la probabilidad de deparar un mecanismo de tipo intencional es máxima, aunque su sensibilidad sea baja.<br><br>Perla ENARM: \"para la tríada aplicada, los autores informaron de una sensibilidad de 0.244, una especificidad y un valor predictivo positivo de 1.0 y un valor predictivo negativo de 0.534.\"<br><br>Análisis de Distractores: El valor 0.24 (A) representa la sensibilidad de la tríada. El valor 0.53 (B) corresponde al de tipo predictivo negativo. El valor 0.86 (C) es de carácter inespecífico de este análisis.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 21-22." 
+    },
+    {
+        id: 35, 
+        question: "Durante el examen mental y conductual de un menor con sospecha de abuso físico infantil, ¿cómo define la Guía de Práctica Clínica al síntoma de hipervigilancia?", 
+        options: ["Ansiedad de tipo extrema ante la separación materna.", "Demandas de carácter constante de atención médica.", "Conducta exagerada en la detección de amenazas.", "Respuestas de tipo motor estereotipadas repetitivas."], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo GPC de Abuso Físico Infantil, el menor expuesto a un entorno hostil desarrolla un estado de deparar alerta constante, interpretando estímulos neutros como peligros inminentes de tipo físico.<br><br>Perla ENARM: \"Se sugiere explorar si los niños, niñas y adolescentes padecen de hipervigilancia (Conducta exagerada en la detección de amenazas, se manifiesta como un nivel aumentado de la atención y de la alerta).\"<br><br>Análisis de Distractores: Las opciones A, B y D representan otras alteraciones de de la conducta del desarrollo, pero no corresponden a la definición semiológica precisa de la hipervigilancia de la GPC.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 22-23." 
+    },
+    {
+        id: 36, 
+        question: "De acuerdo con la evidencia científica sobre efectos transgeneracionales del maltrato en los cuidadores principales, ¿que porcentaje de padres con antecedentes de maltrato infantil ejercen abuso físico contra sus propios hijos en los primeros 13 meses de vida?", 
+        options: ["6.7%", "1.2%", "15.6%", "34.7%"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo GPC de Abuso Físico Infantil, la historia personal de deparar trauma desregula las habilidades de crianza y la tolerancia al estrés, perpetuando el ciclo de violencia transgeneracional.<br><br>Perla ENARM: \"Las experiencias traumáticas como el maltrato infantil pueden tener efectos transgeneracionales. En una muestra de 135 padres con antecedente de MI, 6.7% maltrató a sus hijos durante los primeros 13 meses de vida.\"<br><br>Análisis de Distractores: La opción C (15.6%) representa la proporción de niños que perciben maltrato en el estudio de Cuba de la guía. La opción D (34.7%) corresponde a la violencia entre padres. La opción B es incorrecta.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 24." 
+    },
+    {
+        id: 37, 
+        question: "Al emplear el modelo ecológico de Bronfenbrenner para el análisis del abuso físico infantil, ¿cuáles son las tres variables de riesgo que configuran específicamente al ontosistema del cuidador?", 
+        options: ["Violencia de pareja, desempleo y aislamiento.", "Vecindario inseguro, pobreza y marginación social.", "Depresión, historia de abuso y creencias disciplinarias.", "Estructura familiar, adicciones y desempleo crónico."], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo GPC de Abuso Físico Infantil, el ontosistema representa la dimensión interna de deparar caracteres del individuo, englobando su salud mental y creencias morales de tipo disciplinario.<br><br>Perla ENARM: \"El ontosistema de riesgo estuvo conformado por los promedios de las variables “depresión”, “historia de abuso” y “creencias disciplinarias con respecto al castigo”.\"<br><br>Análisis de Distractores: La violencia de pareja (A) pertenece al microsistema de la familia. El vecindario inseguro (B) pertenece al exosistema del entorno social. La opción D mezcla factores de deparar riesgo de distintos niveles.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 27." 
+    },
+    {
+        id: 38, 
+        question: "En el abordaje del trauma esquelético ante la ausencia de una causa manifiesta en menores de 18 meses, ¿qué proporción de las fracturas documentadas clínicamente se debe a un abuso físico confirmado?", 
+        options: ["Una de cada tres.", "Una de cada de veinte.", "Una de cada nueve.", "Una de cada cincuenta."], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo GPC de Abuso Físico Infantil, la incidencia de deparar fracturas por maltrato es elevada en lactantes pequeños que carecen de deambulación autónoma activa en el hogar.<br><br>Perla ENARM: \"en niños < 18 meses, 1/9 fracturas se debió a abuso confirmado, en comparación con 1/205 para niños entre 19-60 meses y ninguna en >5 años.\"<br><br>Análisis de Distractores: La opción B (1/205) representa la probabilidad en el grupo de deparar preescolares mayores. Las opciones A y D son estimaciones de tipo falso que no corresponden a la evidencia de la guía.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 28." 
+    },
+    {
+        id: 39, 
+        question: "En lactantes menores de un año de edad con sospecha de maltrato físico, ¿cuál es el porcentaje de todas las fracturas presentadas que se asocian de forma documentada a abuso físico?", 
+        options: ["5% a 10%", "25% a 56%", "75% a 90%", "Prácticamente el 100%"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo GPC de Abuso Físico Infantil, en este periodo del desarrollo, la fragilidad esquelética del deparar lactante hace que más de la mitad de estos eventos tengan una etiología traumático-abusiva.<br><br>Perla ENARM: \"Los estudios incluidos afirman que en niños menores de un año, 25-56% de todas las fracturas fueron relacionadas a abuso.\"<br><br>Análisis de Distractores: Las opciones A, C y D representan porcentajes de carácter inexacto que desestiman la gravedad o sobreestiman el diagnóstico, ignorando causas de deparar origen accidental.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Detección, Página 28." 
+    },
+    {
+        id: 40, 
+        question: "Durante el abordaje radiológico de deparar diagnóstico diferencial por sospecha de abuso físico esquelético infantil, ¿cuál de los siguientes hallazgos se considera una variante ósea normal que NO sugiere maltrato?", 
+        options: ["Fracturas costales por reanimación.", "Presencia de menos de 10 huesos de wormian.", "Evidencia de raquitismo metabólico.", "Fracturas de tipo metafisiarias en esquina."], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo GPC de Abuso Físico Infantil, los huesos de wormian son variantes de deparar desarrollo anatómico común del cráneo cuando su número es reducido de forma cuantitativa.<br><br>Perla ENARM: \"Variantes óseas normales: - Huesos de wormian (- 10) - Centros de osificación esternal\".<br><br>Análisis de Distractores: Las opciones A y C representan condiciones patológicas que deben diferenciarse (trauma por maniobras o enfermedad metabólica). Las fracturas de deparar tipo metafisiarias en esquina (D) son específicas de maltrato.", 
+        source: "GPC-DIF-400-21, Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años de edad para los tres niveles de atención de salud, 2021, Sección: Anexos, Cuadro 1, Página 35." 
+    }
+        ];
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('40021LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('40021Progress');
+                localStorage.removeItem('40021LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-blue-500 shadow-md z-10 border-blue-500 dark:border-blue-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-cyan-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "PEDIATRÍA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus respuestas correctas/incorrectas en el tablero." 
+                : "DIF-400-21 • Manifestaciones clínicas para la sospecha del abuso físico en niñas, niños y adolescentes desde el nacimiento hasta los 18 años";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="CS33810PE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-blue-100 dark:border-blue-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 dark:has-[:checked]:bg-blue-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('40021Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('40021LastQId', currentQuestionId);
+                else localStorage.removeItem('40021LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('40021Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>
