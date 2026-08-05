@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-cyan-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+    // BLOQUE 1: Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes (1-20)
+    {
+        id: 1, 
+        question: "En un paciente pediátrico con sospecha de Primera Crisis Convulsiva no provocada, ¿cuál es el estudio funcional de elección recomendado para establecer un diagnóstico temprano?", 
+        options: ["Tomografía computarizada", "Electroencefalograma estándar", "Resonancia magnética cerebral", "Punción lumbar diagnóstica"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, el estudio funcional permite detectar paroxismos epileptiformes interictales para estimar el riesgo de recurrencia y dar un diagnóstico temprano oportuno.<br><br>Perla ENARM: \"Se recomienda realizar un EEG en quienes han presentado una CC de primera vez no provocada, para establecer un diagnóstico temprano.\"<br><br>Análisis de Distractores: La tomografía computarizada y la resonancia magnética cerebral son estudios anatómicos que no se solicitan de forma rutinaria tras un primer evento. La punción lumbar se reserva únicamente para sospecha de infección del sistema nervioso central.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Sección Exámenes de Gabinete, Página 20." 
+    },
+    {
+        id: 2, 
+        question: "En el tratamiento en fase ictal de una Primera Crisis Convulsiva que persiste activa por más de 5 minutos, ¿cuál es la conducta recomendada si no se cuenta con lorazepam o diazepam por vía intravenosa?", 
+        options: ["Aplicar carga con fenobarbital intravenoso", "Iniciar infusión de tiopental sódico", "Prescribir diazepam rectal o midazolam intramuscular", "Administrar bolo de fenitoína intravenosa"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, si no se tiene acceso intravenoso inmediato durante una crisis prolongada, se debe recurrir a vías alternativas de rápida absorción para detener la descarga eléctrica.<br><br>Perla ENARM: \"En caso de no contar con lorazepam o diazepam por vía intravenosa, se recomienda administrar diazepam rectal o midazolam por vía intramuscular o intranasal.\"<br><br>Análisis de Distractores: La fenitoína y el fenobarbital son agentes de segunda línea que requieren infusión intravenosa lenta. El tiopental sódico es un anestésico de tercera línea reservado para la fase terciaria de estatus refractario en terapia intensiva.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Sección Tratamiento, Página 23." 
+    },
+    {
+        id: 3, 
+        question: "En un paciente pediátrico totalmente recuperado de una Primera Crisis Convulsiva, ¿cuál es la recomendación para la solicitud de citometría hemática, calcio y magnesio?", 
+        options: ["Evitar su realización rutinaria", "Solicitar de forma obligatoria", "Realizarlos únicamente en lactantes", "Solicitarlos de forma seriada"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, la toma indiscriminada de laboratorios en niños neurológicamente íntegros y asintomáticos no modifica la conducta médica y genera molestias innecesarias.<br><br>Perla ENARM: \"Se recomienda evitar la realización rutinaria de citometría hemática, calcio y magnesio en la persona que se encuentra, totalmente, recuperado de la primera CC.\"<br><br>Análisis de Distractores: Las opciones B, C y D proponen la toma rutinaria u obligatoria de laboratorios, lo cual va en contra de la medicina basada en evidencias para pacientes asintomáticos y totalmente recuperados.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Sección Pruebas Diagnósticas, Página 19." 
+    },
+    {
+        id: 4, 
+        question: "En la prevención de recurrencias tras una Primera Crisis Convulsiva, ¿cuál es la medida de higiene neurológica no farmacológica más importante?", 
+        options: ["Restricción de ejercicio aeróbico", "Dieta restrictiva baja en carbohidratos", "Aislamiento de dispositivos electrónicos", "Evitar la privación de sueño"], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, la falta de sueño disminuye drásticamente el umbral epileptogénico de la corteza cerebral, actuando como un potente desencadenante de paroxismos de forma generalizada.<br><br>Perla ENARM: \"Se recomienda que en pacientes con epilepsia o sospecha de epilepsia, evitar la privación del sueño.\"<br><br>Análisis de Distractores: Restringir el ejercicio aeróbico o proponer dietas estrictas de rutina no está indicado tras una crisis inicial. El aislamiento electrónico de pantallas solo se justificaría tras confirmar una epilepsia fotosensible específica, no de manera empírica universal.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Sección Detección, Página 14." 
+    },
+    {
+        id: 5, 
+        question: "Para la detección de trastornos estructurales en un paciente pediátrico que amerita neuroimagen posterior a una Primera Crisis Convulsiva, ¿cuál es el estudio de elección?", 
+        options: ["Resonancia magnética cerebral", "Tomografía computarizada simple", "Ultrasonografía transfontanelar craneal", "Radiografía lateral de cráneo"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, la resonancia magnética posee un contraste tisular sumamente superior, lo que la hace el estándar de oro para encontrar displasias corticales, tumores o lesiones vasculares finas.<br><br>Perla ENARM: \"La RM constituye la modalidad de elección, entre los estudios de imagen para detectar trastornos estructurales y tiene mejor sensibilidad y especificidad que la TC.\"<br><br>Análisis de Distractores: La tomografía computarizada se prefiere únicamente en el contexto de urgencia o traumatismo. La ultrasonografía requiere fontanela permeable y no tiene resolución para evaluar lesiones finas. La radiografía no evalúa parénquima cerebral.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Sección Exámenes de Gabinete, Página 21." 
+    },
+    {
+        id: 6, 
+        question: "En un paciente pediátrico asintomático con una Primera Crisis Convulsiva de etiología no provocada, ¿cuál es la conducta recomendada respecto a los estudios de imagen cerebral de rutina?", 
+        options: ["Solicitar tomografía de urgencia", "Realizar resonancia de inmediato", "Programar ultrasonido Doppler transcraneal", "Evitar su realización rutinaria"], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, los estudios de neuroimagen no muestran anormalidades clínicas significativas en pacientes con crisis convulsiva no provocadas generalizadas y exploración neurológica normal, por lo que no se justifican de manera sistemática.<br><br>Perla ENARM: \"Se recomienda evitar la realización rutinaria de estudios de imágen en las personas que presentaron una CC no provocada de primera vez.\"<br><br>Análisis de Distractores: Las opciones A y B proponen el uso rutinario o inmediato de TAC o RM, lo cual genera costos y riesgos innecesarios. El ultrasonido Doppler transcraneal no es un estudio diagnóstico primario para lesiones estructurales parenquimatosas.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Sección Exámenes de Gabinete, Página 21." 
+    },
+    {
+        id: 7, 
+        question: "Al evaluar a un paciente pediátrico en el servicio de urgencias por una Primera Crisis Convulsiva, ¿en qué situación clínica se justifica optar por una tomografía computarizada?", 
+        options: ["Paciente asintomático recuperado totalmente", "Presentación de crisis clónicas autolimitadas", "No recuperación del estado postictal después de una hora", "Historia familiar de crisis febriles"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, el retraso en la recuperación del estado de alerta puede deberse a edema cerebral severo, sangrado activo o hipertensión intracraneal, convirtiendo la TAC en una necesidad urgente por su rapidez y accesibilidad.<br><br>Perla ENARM: \"Optar por la TC en pacientes con las siguientes situaciones: [...] Persona que no se recupera del estado postictal, después de una hora de la CC.\"<br><br>Análisis de Distractores: En pacientes recuperados o con crisis típicas breves autolimitadas no se indica TAC. La historia familiar de crisis febriles no condiciona la toma urgente de imagen cerebral.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Sección Exámenes de Gabinete, Página 22." 
+    },
+    {
+        id: 8, 
+        question: "Posterior al egreso de un paciente pediátrico que presentó una Primera Crisis Convulsiva no provocada aislada, ¿cuál es la indicación de inicio de fármacos antiepilépticos profilácticos?", 
+        options: ["Evitar el uso de antiepilépticos", "Iniciar valproato de magnesio", "Prescribir levetiracetam de mantenimiento", "Iniciar fenitoína a dosis bajas"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, el riesgo de recurrencia tras un primer evento es menor al 50% y los fármacos no modifican el pronóstico de remisión a largo plazo, pero sí inducen toxicidad y efectos cognitivos indeseables.<br><br>Perla ENARM: \"Se recomienda evitar el uso de antiepilépticos después de una primera CC.\"<br><br>Análisis de Distractores: Iniciar valproato, levetiracetam o fenitoína tras una crisis única no provocada es una conducta errónea y sobretratamiento, a menos que existan factores de riesgo muy específicos para epilepsia.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Sección Tratamiento, Página 26." 
+    },
+    {
+        id: 9, 
+        question: "En el tratamiento de mantenimiento de síndromes epilépticos infantiles, ¿cuál es el riesgo asociado al uso de carbamazepina u oxcarbazepina en crisis de ausencias y mioclonías?", 
+        options: ["Inducir insuficiencia renal aguda", "Provocar pancreatitis hemorrágica grave", "Desarrollar hiperplasia gingival severa", "Exacerbar la frecuencia de las crisis"], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, los bloqueadores de canales de sodio pueden alterar negativamente la sincronía tálamo-cortical, desencadenando un empeoramiento clínico severo y paradójico de estas patologías.<br><br>Perla ENARM: \"Durante el tratamiento antiepiléptico, se recomienda considerar los siguientes riesgos: [...] Carbamacepina y oxcarbacepina exacerba las ausencias, mioclonias, crisis tónicas y atónicas\"<br><br>Análisis de Distractores: La insuficiencia renal aguda, la pancreatitis y la hiperplasia gingival son efectos adversos graves de otros fármacos, pero no corresponden al mecanismo fisiopatológico de exacerbación paradójica de las crisis por bloqueadores de canales de sodio.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Sección Tratamiento, Página 27." 
+    },
+    {
+        id: 10, 
+        question: "Dentro del manejo farmacológico a largo plazo, ¿cuál es el efecto adverso específico que contraindica el uso de fenitoína en pacientes con crisis de ausencias?", 
+        options: ["Causa hepatotoxicidad fulminante precoz", "Agrava las crisis de ausencias", "Genera pancitopenia aplásica irreversible", "Desarrolla síndrome de Stevens-Johnson"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, la fenitoína interfiere con corrientes iónicas específicas y puede empeorar de forma selectiva y paradójica las crisis generalizadas de ausencia, por lo que está proscrita en estos síndromes.<br><br>Perla ENARM: \"Durante el tratamiento antiepiléptico, se recomienda considerar los siguientes riesgos: Fenitoína agrava las crisis de ausencias...\"<br><br>Análisis de Distractores: La hepatotoxicidad precoz es típica del valproato. La pancitopenia aplásica se asocia a la carbamazepina o felbamato, y el Stevens-Johnson a la lamotrigina. Aunque son efectos adversos posibles, ninguno describe el empeoramiento funcional específico de las ausencias.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Sección Tratamiento, Página 27." 
+    },
+    {
+        id: 11, 
+        question: "En un paciente pediátrico que acude a urgencias tras una Primera Crisis Convulsiva, ¿cuál es el parámetro de duración del estado postictal que define un criterio de hospitalización?", 
+        options: ["Mayor a 10 minutos", "Mayor a 20 minutos", "Mayor a 30 minutos", "Mayor a 45 minutos"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, la persistencia de estupor o falta de respuesta más allá de media hora eleva la sospecha de daño neurológico en curso, estatus epiléptico no convulsivo o intoxicaciones graves, ameritando internamiento para monitorización.<br><br>Perla ENARM: \"Aplicar los criterios de hospitalización en personas que presentaron una CC, en las siguientes condiciones: [...] Estado postictal 30 minutos, posterior al evento convulsivo.\"<br><br>Análisis de Distractores: Aunque 10, 20 o 45 minutos denotan recuperación postictal lenta, el umbral estricto y normado por la GPC para obligar al ingreso a segundo nivel es de 30 minutos.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Sección Criterios de Referencia y Contrarreferencia, Página 28." 
+    },
+    {
+        id: 12, 
+        question: "En el triage del servicio de urgencias pediátricas, ¿cuál de los siguientes subgrupos de edad con Primera Crisis Convulsiva afebril requiere hospitalización inmediata de forma obligatoria?", 
+        options: ["Menor de un año", "Menor de tres años", "Menor de seis años", "Menor de doce años"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, los lactantes pequeños poseen una barrera hematoencefálica inmadura y una alta tasa de causas secundarias graves (infecciones, metabolopatías, maltrato) que exigen un abordaje diagnóstico intrahospitalario rápido.<br><br>Perla ENARM: \"Aplicar los criterios de hospitalización en personas que presentaron una CC, en las siguientes condiciones: Edad menor de un año: CC afebril\"<br><br>Análisis de Distractores: Los pacientes preescolares, escolares o adolescentes con crisis única afebril y exploración neurológica normal pueden ser evaluados de forma ambulatoria de forma segura, sin requerir hospitalización obligatoria de urgencia.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Sección Criterios de Referencia y Contrarreferencia, Página 28." 
+    },
+    {
+        id: 13, 
+        question: "¿Cuál de las siguientes condiciones obtenidas en el electroencefalograma de un paciente con Primera Crisis Convulsiva justifica su envío directo al tercer nivel de atención médica?", 
+        options: ["Ritmo de fondo lentificado simétrico", "Presencia de husos del sueño", "Ausencia de paroxismos focalizados", "EEG estándar con trastornos epileptiformes"], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, la presencia de puntas, ondas agudas o complejos punta-onda lenta confirma la existencia de un foco epileptógeno activo y un riesgo de recurrencia superior al 66%, requiriendo valoración especializada por Neuropediatría de tercer nivel.<br><br>Perla ENARM: \"Se recomienda referir a tercer nivel con experto en epilepsia en los siguientes casos: [...] Persona que cuente con EEG estándar con trastornos epileptiforme.\"<br><br>Análisis de Distractores: El ritmo lentificado simétrico suele ser postictal transitorio. Los husos de sueño son hallazgos fisiológicos normales del sueño NREM. La ausencia de paroxismos sugiere bajo riesgo de recurrencia y se vigila en primer o segundo nivel.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Sección Criterios de Referencia y Contrarreferencia, Página 28." 
+    },
+    {
+        id: 14, 
+        question: "En la referencia de pacientes pediátricos, ¿cuál de las siguientes formas de presentación de una Primera Crisis Convulsiva obliga a enviar al paciente con el especialista de tercer nivel?", 
+        options: ["Crisis febril simple típica", "Primera crisis como estado epiléptico", "Crisis clónica de un minuto", "Crisis atónica autolimitada aislada"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, debutar con una crisis prolongada refractaria es una manifestación de alta gravedad y sugiere una etiología estructural o metabólica compleja que sobrepasa el manejo convencional de segundo nivel.<br><br>Perla ENARM: \"Se recomienda referir a tercer nivel con experto en epilepsia en los siguientes casos: Persona que presente su primera CC como estado epiléptico\"<br><br>Análisis de Distractores: Las crisis febriles simples, las crisis breves de un minuto o las crisis atónicas aisladas autolimitadas sin otros factores de alarma pueden ser manejadas y estudiadas inicialmente en el segundo nivel de atención.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Sección Criterios de Referencia y Contrarreferencia, Página 28." 
+    },
+    {
+        id: 15, 
+        question: "En un paciente pediátrico evaluado por una Primera Crisis Convulsiva, ¿en cuál de los siguientes escenarios clínicos se recomienda realizar de forma obligatoria una punción lumbar?", 
+        options: ["Crisis prolongada mayor a 10 minutos", "Presencia de diarrea y deshidratación", "Sospecha de infección del sistema nervioso central", "Presentación de crisis tónicas generalizadas"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, la sospecha de meningitis o encefalitis (fiebre, meningismo, fontanela abombada, alteración de conciencia) exige el análisis citoguímico de líquido cefalorraquídeo, estando contraindicada de forma rutinaria.<br><br>Perla ENARM: \"En pacientes con una primera CC se recomienda realizar punción lumbar, exclusivamente, en el caso de sospecha de infección del Sistema Nervioso Central.\"<br><br>Análisis de Distractores: El tiempo de duración de la crisis, la deshidratación o el tipo semiológico de la crisis (tónica) no justifican por sí mismos la punción lumbar, la cual es un procedimiento invasivo con riesgos específicos.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Sección Pruebas Diagnósticas, Página 19." 
+    },
+    {
+        id: 16, 
+        question: "Desde el punto de vista operativo de la GPC de la Primera Crisis Convulsiva, ¿cuál es el tiempo de duración que define la instauración de un estado epiléptico en pediatría?", 
+        options: ["Mayor a 2 minutos", "Mayor a 5 minutos", "Mayor a 15 minutos", "Mayor a 30 minutos"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, a los 5 minutos las crisis pierden la capacidad biológica de autolimitarse, por lo que es el umbral para iniciar manejo farmacológico agresivo de rescate para evitar secuelas a largo plazo.<br><br>Perla ENARM: \"Se ha propuesto que una CC con una duración mayor de 5 minutos puede definirse como estado epiléptico.\"<br><br>Análisis de Distractores: Dos minutos suele ser la duración de una crisis autolimitada. Quince y treinta minutos corresponden a clasificaciones antiguas del estatus epiléptico (daño neurológico irreversible), hoy descartadas como punto de inicio terapéutico.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Sección Tratamiento, Página 23." 
+    },
+    {
+        id: 17, 
+        question: "En el abordaje diagnóstico de la Primera Crisis Convulsiva, ¿cuál es el esquema analítico de laboratorio que se debe realizar si el paciente asocia vómito, diarrea o afectación progresiva del estado de alerta?", 
+        options: ["Citometría hemática, glucosa y sodio", "Calcio, magnesio, fósforo sérico", "Perfil toxicológico amplio en orina", "Pruebas de funcionamiento hepático completas"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, las crisis secundarias a trastornos metabólicos u osmolares severos se asocian a pérdidas digestivas o alteraciones de conciencia progresivas, justificando medir glucemia y natremia.<br><br>Perla ENARM: \"Se recomienda realizar citometría hemática, determinación sérica de glucosa y sodio en personas con CC de primera vez cuando en forma concomitante a la convulsión existe: Vómito, Diarrea, Deshidratación o Afectación progresiva o persistente del estado de conciencia\"<br><br>Análisis de Distractores: El calcio, magnesio, perfil toxicológico o las pruebas hepáticas son estudios específicos que no forman parte del abordaje de primera línea ante pérdidas gastrointestinales comunes descritas por la GPC.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Sección Pruebas Diagnósticas, Página 19." 
+    },
+    {
+        id: 18, 
+        question: "En un paciente pediátrico que presentó una Primera Crisis Convulsiva no provocada y se recuperó completamente en urgencias, ¿cuál es la conducta recomendada respecto a la terapia de impregnación con antiepilépticos?", 
+        options: ["Impregnar con valproato intravenoso", "Aplicar bolo de fenitoína sódica", "Impregnar con levetiracetam intravenoso", "No prescribir tratamiento de impregnación"], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, la impregnación de mantenimiento con fármacos anticonvulsivantes en salas de urgencias en un paciente ya asintomático es una práctica innecesera que eleva severamente la toxicidad sistémica.<br><br>Perla ENARM: \"No se recomienda prescribir tratamiento de impregnación con fenitoína, ni tampoco con otro antiepiléptico en la persona que presentó un primer evento convulsivo y se recuperó, completamente.\"<br><br>Análisis de Distractores: Las opciones A, B y C representan conductas de sobretratamiento y iatrogenia potencial en un paciente que se encuentra totalmente recuperado y asintomático en el servicio de urgencias.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Sección Tratamiento, Página 27." 
+    },
+    {
+        id: 19, 
+        question: "Tras la ocurrencia de una Primera Crisis Convulsiva de tipo no provocada en edad pediátrica, ¿cuál es la probabilidad aproximada de presentar una segunda crisis convulsiva según la evidencia reportada?", 
+        options: ["Alrededor de 10%", "Cerca de 25%", "Alrededor de 45%", "Cerca de 85%"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, la tasa de recurrencia en niños es moderada, lo que fundamenta la decisión clínica de no medicar tras un primer evento y optar únicamente por el seguimiento estrecho.<br><br>Perla ENARM: \"El riesgo de presentar una CC no provocada es alrededor de 10% en la población general, y una segunda crisis no provocada cerca de 45% en edad pediátrica.\"<br><br>Análisis de Distractores: El 10% corresponde al riesgo de tener una crisis única a lo largo de la vida en la población general. El 25% y 85% son cifras incorrectas que subestiman o sobreestiman significativamente el riesgo real de recurrencia.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Sección Tratamiento, Página 26." 
+    },
+    {
+        id: 20, 
+        question: "Durante la fase de estabilización aguda de una Primera Crisis Convulsiva activa (primeros 5 minutos), ¿cuál es una de las medidas físicas iniciales recomendadas?", 
+        options: ["Sujetar las extremidades con fuerza para frenarlas", "Colocar al paciente en decúbito lateral", "Colocar abatelenguas envuelto en gasa en la boca", "Introducir una cánula de Guedel a la fuerza"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, colocar al paciente de costado protege la vía aérea ante el riesgo inminente de broncoaspiración por sialorrea o vómito, además de evitar traumatismos craneales o corporales.<br><br>Perla ENARM: \"Durante los primeros 5 minutos de la fase ictal se recomienda los siguientes cuidados: mantener la calma, colocar al paciente en decúbito lateral, procurando que haya suficiente espacio alrededor de la persona...\"<br><br>Análisis de Distractores: No se deben introducir objetos en la boca (como abatelenguas o cánulas forzadas) ni sujetar rígidamente las extremidades, ya que estas prácticas aumentan significativamente el riesgo de fracturas, luxaciones o asfixia.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Sección Tratamiento, Página 23." 
+    },
+
+    // BLOQUE 2: Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes (21-40)
+    {
+        id: 21, 
+        question: "En la evaluación clínica de un paciente con una Primera Crisis Convulsiva, ¿qué localización cerebral sugiere específicamente la presencia de disfasia durante el período postictal?", 
+        options: ["Hemisferio cerebral dominante", "Hemisferio cerebral no dominante", "Lóbulo occipital ipsilateral", "Tronco encefálico posterior"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, la aparición de disfasia transitoria refleja el agotamiento metabólico temporal de las áreas corticales encargadas de la producción o comprensión del lenguaje, situadas típicamente en el hemisferio izquierdo en pacientes diestros.<br><br>Perla ENARM: \"La disfasia postictal sugiere que la crisis se originó en el hemisferio dominante.\"<br><br>Análisis de Distractores: El hemisferio no dominante se asocia con fenómenos de negligencia o fallas visoespaciales. La afectación del lóbulo occipital produce síntomas visuales (ceguera transitoria, escotomas). Las lesiones de tronco encefálico alteran el estado de alerta general o causan paresias de pares craneales, pero no disfasia cortical aislada.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Diagnóstico Clínico, Página 12." 
+    },
+    {
+        id: 22, 
+        question: "En la semiología neurológica posterior a una Primera Crisis Convulsiva de inicio focal, ¿cómo se denomina al déficit motor localizado de carácter transitorio que ocurre durante el período postictal?", 
+        options: ["Parálisis facial central", "Paresia de Todd", "Plejía de Bell", "Monoparesia espástica"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, la paresia o parálisis de Todd es una debilidad motora localizada que puede afectar un hemicuerpo o extremidad después de una descarga epiléptica focal vigorosa, secundaria a una inhibición cortical protectora activa.<br><br>Perla ENARM: \"La paresia postictal de Todd es un déficit motor transitorio que se presenta posterior a una crisis convulsiva de inicio focal.\"<br><br>Análisis de Distractores: La parálisis facial central se refiere a la debilidad del cuadrante inferior de la cara por lesión de motoneurona superior. La plejía de Bell es una debilidad periférica idiopática del nervio facial de origen inflamatorio. La monoparesia espástica es un signo de daño motor permanente crónico, no transitorio.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Diagnóstico Clínico, Página 13." 
+    },
+    {
+        id: 23, 
+        question: "En el diagnóstico diferencial de una Primera Crisis Convulsiva en urgencias, ¿cuál es el síntoma prodrómico autonómico característico del síncope neurogénico que ayuda a distinguirlo de un evento epiléptico?", 
+        options: ["Sensación de mareo y diaforesis", "Aura visual estructurada", "Cefalea pulsátil ipsilateral", "Alucinación auditiva compleja"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, el síncope de origen neurogénico cursa con una fase prodrómica de hipoperfusión cerebral generalizada lenta que se manifiesta clínicamente mediante sudoración fría, palidez cutánea progresiva y mareo franco antes de la pérdida de la postura.<br><br>Perla ENARM: \"El síncope neurogénico se caracteriza por presentar pródromos como mareo, náuseas, diaforesis, palidez o visión borrosa antes de la pérdida de la conciencia.\"<br><br>Análisis de Distractores: Las auras visuales y las alucinaciones auditivas complejas representan el inicio focal cortical de una descarga convulsiva (epiléptica). La cefalea pulsátil aislada es el síntoma cardinal de la migraña, no un pródromo sincopal clásico.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Diagnóstico Diferencial, Página 15." 
+    },
+    {
+        id: 24, 
+        question: "En lactantes pequeños, ¿cuál es el factor desencadenante clásico del espasmo del sollozo que permite diferenciarlo clínicamente de una Primera Crisis Convulsiva no provocada?", 
+        options: ["Fiebre elevada súbita", "Frustración, llanto o dolor", "Privación prolongada de sueño", "Estímulos luminosos intermitentes"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, el espasmo del sollozo es un trastorno paroxístico no epiléptico muy común en lactantes, caracterizado por una respuesta autonómica refleja exagerada iniciada directamente tras un estímulo emocional displacentero o un golpe físico leve.<br><br>Perla ENARM: \"El espasmo del sollozo es un evento paroxístico no epiléptico desencadenado por frustración, enojo, llanto o dolor físico.\"<br><br>Análisis de Distractores: La fiebre elevada es el desencadenante de las crisis febriles. La privación de sueño y los estímulos luminosos intermitentes (fotosensibilidad) son activadores fisiológicos específicos de descargas epilépticas verdaderas, no de espasmos del sollozo.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Diagnóstico Diferencial, Página 16." 
+    },
+    {
+        id: 25, 
+        question: "Con la finalidad de optimizar la sensibilidad en el diagnóstico temprano tras una Primera Crisis Convulsiva, ¿cuál es la duración mínima recomendada del registro del electroencefalograma estándar?", 
+        options: ["Diez a quince minutos", "Veinticinco a treinta y cinco minutos", "Sesenta a noventa minutos", "Doce a veinticuatro horas"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, la duración del trazado electroencefalográfico estándar debe ser suficiente para registrar ciclos cortos de transición de alerta a sueño, facilitando la emergencia de paroxismos interictales silentes.<br><br>Perla ENARM: \"Se recomienda que el registro del EEG estándar tenga una duración mínima de 25 a 35 minutos de trazado.\"<br><br>Análisis de Distractores: Un registro de diez a quince minutos es demasiado corto y tiene bajas tasas de detección de anomalías eléctricas corticales. Los esquemas de sesenta a noventa minutos o de doce a veinticuatro horas pertenecen a estudios de monitoreo continuo especializados (video-EEG), no al EEG estándar inicial.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Exámenes de Gabinete, Página 20." 
+    },
+    {
+        id: 26, 
+        question: "En la evaluación de un lactante con su primera convulsión asociada a fiebre, ¿cuál es el parámetro de duración del evento que define la clasificación de crisis febril compleja u obliga a su hospitalización?", 
+        options: ["Mayor a cinco minutos", "Mayor a quince minutos", "Mayor a treinta minutos", "Mayor a sesenta minutos"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, las crisis febriles complejas o atípicas se diferencian de las simples por durar más de 15 minutos, presentar características focales o repetirse en un lapso de 24 horas, requiriendo monitorización hospitalaria por riesgo de estatus o daño estructural.<br><br>Perla ENARM: \"Aplicar los criterios de hospitalización en personas que presentaron una CC en las siguientes condiciones: [...] Crisis convulsiva febril compleja (duración mayor a 15 minutos, focal o recurrente).\"<br><br>Análisis de Distractores: Cinco minutos es el tiempo operativo de inicio de tratamiento farmacológico de urgencia. Treinta y sesenta minutos corresponden a estatus prolongados que generan daño biológico irreversible, pero no son el punto de corte definitorio de la complejidad de la crisis febril estándar.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Criterios de Referencia y Contrarreferencia, Página 28." 
+    },
+    {
+        id: 27, 
+        question: "En caso de requerirse tratamiento antiepiléptico de mantenimiento tras documentar recurrencia de crisis de inicio generalizado, ¿cuál es el fármaco de primera elección de amplio espectro recomendado?", 
+        options: ["Carbamazepina", "Fenitoína sódica", "Valproato de magnesio", "Etosuximida"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, el valproato es el fármaco de elección para crisis de inicio generalizado debida a su mecanismo de acción múltiple (bloqueo de canales de sodio, calcio tipo T y potenciación GABAérgica) que cubre de forma efectiva crisis tónicas, clónicas, ausencias y mioclonías.<br><br>Perla ENARM: \"Se recomienda prescribir valproato de magnesio como fármaco de primera elección para el tratamiento de mantenimiento de crisis convulsivas de inicio generalizado.\"<br><br>Análisis de Distractores: La carbamazepina exacerba mioclonías y ausencias. La fenitoína agrava las ausencias y tiene espectro estrecho. La etosuximida es un fármaco excelente, pero selectivo únicamente para ausencias puras, no para crisis generalizadas motoras asociadas.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Tratamiento, Página 24." 
+    },
+    {
+        id: 28, 
+        question: "En un paciente pediátrico en quien se ha indicado tratamiento antiepiléptico de mantenimiento por crisis recurrentes de inicio focal, ¿cuál es el fármaco de primera elección recomendado?", 
+        options: ["Carbamazepina", "Etosuximida", "Vigabatrina", "Fenobarbital"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, la carbamazepina ejerce su acción estabilizando membranas neuronales mediante el bloqueo selectivo de canales de sodio activados por voltaje, siendo el agente estándar de oro para el control sostenido de focos epilépticos circunscritos.<br><br>Perla ENARM: \"Se recomienda prescribir carbamacepina como fármaco de primera elección para el tratamiento de mantenimiento de crisis convulsivas de inicio focal.\"<br><br>Análisis de Distractores: La etosuximida actúa inhibiendo canales de calcio tipo T y es ineficaz contra crisis de inicio focal. La vigabatrina se restringe al manejo de espasmos infantiles (síndrome de West). El fenobarbital es un fármaco de segunda línea debido a sus efectos adversos marcados sobre la cognición y comportamiento infantil.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Tratamiento, Página 24." 
+    },
+    {
+        id: 29, 
+        question: "Según la definición fisiopatológica de la GPC de Primera Crisis Convulsiva, ¿cuál es el mecanismo directo subyacente que genera el evento convulsivo?", 
+        options: ["Isquemia transitoria de la corteza cerebral", "Descarga anormal, excesiva e hipersincrónica neuronal", "Edema citotóxico difuso del astrocito cortical", "Despolarización paroxística aislada de motoneuronas inferiores"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, una crisis convulsiva es un evento transitorio que resulta de un cortocircuito funcional en el sistema nervioso central, caracterizado por una sincronización anómala y descargas rítmicas de poblaciones neuronales.<br><br>Perla ENARM: \"La crisis convulsiva se define como la manifestación clínica de una descarga anormal, excesiva e hipersincrónica de un grupo de neuronas cerebrales.\"<br><br>Análisis de Distractores: La isquemia transitoria causa déficits focales o síncopes, no descargas eléctricas hiperactivas primarias. El edema astrocitario es una consecuencia de insultos graves agudos, no el mecanismo definitorio de una convulsión. La motoneurona inferior no origina descargas sincrónicas corticales epilépticas.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Introducción y Glosario, Página 6." 
+    },
+    {
+        id: 30, 
+        question: "Dentro de la clasificación etiológica de la Primera Crisis Convulsiva, ¿cómo se denomina al evento paroxístico no provocado que ocurre de forma diferida tras un insulto cerebral previo ya curado y estático?", 
+        options: ["Crisis sintomática aguda", "Crisis sintomática remota", "Crisis idiopática benigna", "Crisis febril atípica"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, las crisis sintomáticas remotas se originan debido a un foco de gliosis, cicatriz o malformación estructural preexistente (secuelas de trauma, infarto o infección antigua) que altera permanentemente la excitabilidad cortical local.<br><br>Perla ENARM: \"La crisis sintomática remota es aquella crisis no provocada en un paciente con una lesión cerebral estática preexistente (como secuela de parálisis cerebral o trauma).\"<br><br>Análisis de Distractores: Las crisis sintomáticas agudas ocurren dentro de los primeros 7 días de un daño encefálico activo (provocadas). Las crisis idiopáticas no tienen una causa estructural subyacente demostrable y son de origen presumiblemente genético. Las crisis febriles atípicas están directamente asociadas al estímulo térmico.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Clasificación, Página 7." 
+    },
+    {
+        id: 31, 
+        question: "En pacientes pediátricos que han presentado una Primera Crisis Convulsiva, ¿cuál es el porcentaje aproximado de riesgo de recurrencia que se asocia a una etiología clasificada como sintomática remota?", 
+        options: ["Menor al diez por ciento", "Cerca del veinticinco por ciento", "Aproximadamente cincuenta por ciento", "Superior al sesenta por ciento"], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, la presencia de una lesión estructural establecida y cicatrizal actúa como un fuerte sustrato epileptogénico crónico, incrementando exponencialmente el riesgo de nuevos eventos respecto a un cerebro indemne.<br><br>Perla ENARM: \"El riesgo de recurrencia de crisis convulsivas en pacientes con etiología sintomática remota es elevado, reportándose superior al 60%.\"<br><br>Análisis de Distractores: Un riesgo menor al 10% corresponde a la población general sin eventos previos. El 25% y 50% subestiman la probabilidad real de recurrencia que confiere una lesión estructural establecida y crónica como la parálisis cerebral o malformaciones vasculares.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Tratamiento, Página 26." 
+    },
+    {
+        id: 32, 
+        question: "Al recabar la semiología de una Primera Crisis Convulsiva, ¿cómo se define clínicamente al síntoma subjetivo focal inicial que experimenta el paciente antes del compromiso del estado de alerta?", 
+        options: ["Estado postictal motor", "Aura epiléptica", "Pródromo autonómico", "Automatismo generalizado"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, el aura representa la manifestación clínica directa de una descarga eléctrica epiléptica que se mantiene inicialmente confinada a una zona anatómica cerebral muy específica, antes de propagarse.<br><br>Perla ENARM: \"El aura se define como la sensación subjetiva, motora, sensitiva o psíquica que precede a la crisis y que representa el inicio de una descarga focal.\"<br><br>Análisis de Distractores: El estado postictal describe el periodo de recuperación neurológica tardía. El pródromo es un síntoma inespecífico sistémico previo al evento, no originado por una descarga cortical focalizada. Los automatismos son movimientos involuntarios y repetitivos que se presentan durante la alteración de la conciencia, no antes de ella.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Diagnóstico Clínico, Página 12." 
+    },
+    {
+        id: 33, 
+        question: "Con base en los criterios epidemiológicos de la GPC de Primera Crisis Convulsiva, ¿cuál es el rango de edad establecido para definir la presentación de las crisis febriles en la infancia?", 
+        options: ["De uno a doce meses", "De seis a sesenta meses", "De tres a ocho años", "De cinco a quince años"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, las crisis febriles son eventos dependientes de una susceptibilidad del cerebro en desarrollo ante aumentos rápidos de temperatura, acotándose de manera clásica a la etapa de lactantes mayores y preescolares.<br><br>Perla ENARM: \"Las crisis febriles típicas se presentan clásicamente en la edad pediátrica en el rango de los 6 a los 60 meses de edad.\"<br><br>Análisis de Distractores: Los rangos propuestos en las opciones A, C y D quedan fuera de la ventana biológica típica donde la fiebre induce crisis sin la presencia de una neuroinfección subyacente o una predisposición epiléptica genética latente.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Detección, Página 11." 
+    },
+    {
+        id: 34, 
+        question: "En las instrucciones de primeros auxilios dirigidas a familiares ante una recurrencia de crisis convulsiva, ¿en qué posición corporal se debe colocar al paciente durante el evento activo?", 
+        options: ["Decúbito prono con cabeza elevada", "Decúbito supino con cuello hiperextendido", "Decúbito lateral izquierdo o derecho", "Posición de sedestación forzada"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, la seguridad durante la crisis activa se centra en proteger mecánicamente la vía aérea, facilitando el libre drenaje de saliva, secreciones o material alimenticio regurgitado y previniendo la broncoaspiración.<br><br>Perla ENARM: \"Se recomienda instruir a los padres y cuidadores a mantener la calma y colocar al paciente en decúbito lateral durante una crisis convulsiva.\"<br><br>Análisis de Distractores: Las posiciones prono, supino o sedestación aumentan sustancialmente el riesgo de asfixia mecánica, obstrucción laringotraqueal o trauma físico por la falta de tono postural y los movimientos involuntarios bruscos del paciente.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Tratamiento, Página 23." 
+    },
+    {
+        id: 35, 
+        question: "Durante la valoración en urgencias de un paciente pediátrico con su Primera Crisis Convulsiva, ¿cuál de los siguientes hallazgos clínicos constituye una indicación absoluta de hospitalización en el segundo nivel?", 
+        options: ["Temperatura corporal de treinta y siete grados", "Presencia de signos de irritación meníngea", "Puntuación de Glasgow de quince puntos", "Recuperación neurológica postictal en diez minutos"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, el meningismo (rigidez de nuca, signos de Kernig o Brudzinski) es indicativo de un proceso inflamatorio/infeccioso agudo del espacio subaracnoideo, exigiendo el ingreso inmediato para estudio de líquido cefalorraquídeo e inicio de fármacos intravenosos de forma urgente.<br><br>Perla ENARM: \"Aplicar los criterios de hospitalización en personas que presentaron una CC en las siguientes condiciones: [...] Presencia de signos de irritación meníngea.\"<br><br>Análisis de Distractores: Una temperatura de 37°C es normal. El Glasgow de 15 denota integridad de la conciencia. La recuperación en diez minutos se considera normal y esperada, apoyando un egreso seguro a domicilio con seguimiento ambulatorio si no hay otros datos de alarma.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Criterios de Referencia y Contrarreferencia, Página 28." 
+    },
+    {
+        id: 36, 
+        question: "¿Cómo se define clínicamente al evento paroxístico que ocurre en estrecha relación temporal con un desequilibrio sistémico, metabólico, tóxico o un insulto cerebral agudo?", 
+        options: ["Crisis no provocada", "Crisis sintomática aguda", "Crisis idiopática genética", "Crisis sintomática remota"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, las crisis sintomáticas agudas o provocadas representan una respuesta del cerebro sano ante una agresión metabólica o física directa e inmediata. Su corrección suele detener por completo los eventos y su riesgo de epilepsia crónica residual es bajo.<br><br>Perla ENARM: \"La crisis sintomática aguda o provocada es aquella que ocurre en asociación temporal estrecha con un insulto sistémico o cerebral agudo.\"<br><br>Análisis de Distractores: La crisis no provocada no cuenta con un factor desencadenante agudo identificable. La idiopática se asocia a causas genéticas. La sintomática remota es diferida y secundaria a una lesión antigua y cicatrizada.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Clasificación, Página 7." 
+    },
+    {
+        id: 37, 
+        question: "En el algoritmo oficial de flujo de atención, ¿cuál es el destino de envío normado para todo paciente pediátrico evaluado en urgencias con una Primera Crisis Convulsiva no febril?", 
+        options: ["Alta definitiva sin consulta externa", "Segundo nivel de atención médica", "Tercer nivel de forma prioritaria", "Servicio de terapia intensiva pediátrica"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, todos los pacientes con eventos no febriles de primera vez requieren ser evaluados por Pediatría o Neuropediatría para la realización oportuna de estudios funcionales (electroencefalograma) y estratificación detallada de riesgos de recurrencia.<br><br>Perla ENARM: \"Toda persona con primera crisis convulsiva no febril debe ser enviada a segundo nivel de atención médica para su valoración.\"<br><br>Análisis de Distractores: El alta definitiva sin seguimiento es imprudente y se considera negligencia. El envío a tercer nivel solo se justifica si el EEG estándar es patológico o hay estado epiléptico. El ingreso a terapia intensiva se reserva para estatus epiléptico activo refractario, no para pacientes estables recuperados.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Criterios de Referencia, Página 28." 
+    },
+    {
+        id: 38, 
+        question: "Dentro del diagnóstico diferencial de eventos paroxísticos no epilépticos, ¿cuál es el hallazgo clave en las mioclonías benignas de la infancia que permite descartar una epilepsia sintomática?", 
+        options: ["Presentarse exclusivamente en presencia de fiebre", "Asociarse con un retraso psicomotor severo", "Registrar un electroencefalograma interictal normal", "Responder de manera favorable al uso de valproato"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, las mioclonías benignas de la infancia (síndrome de Fejerman) consisten en sacudidas musculares rítmicas involuntarias que simulan crisis; sin embargo, no poseen correlato eléctrico cortical anormal y se resuelven de forma espontánea sin repercusión psicomotora.<br><br>Perla ENARM: \"Las mioclonías benignas de la infancia se caracterizan por presentar un desarrollo psicomotor normal y un electroencefalograma normal.\"<br><br>Análisis de Distractores: Ocurren en pacientes afebriles. El retraso psicomotor severo y la necesidad de fármacos como el valproato apuntan a encefalopatías epilépticas graves (como síndrome de West o Lennox-Gastaut), no a mioclonías de carácter benigno.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Diagnóstico Diferencial, Página 16." 
+    },
+    {
+        id: 39, 
+        question: "Al considerar el uso de fármacos antiepilépticos de mantenimiento, ¿cuál es la principal contraindicación o precaución biológica que proscribe el uso de ácido valproico en menores de dos años?", 
+        options: ["Riesgo elevado de hepatotoxicidad grave", "Inducción paradójica del síndrome de West", "Cierre prematuro de suturas craneales", "Pérdida auditiva neurosensorial progresiva"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, la inmadurez de las vías metabólicas mitocondriales en lactantes menores de dos años incrementa significativamente la síntesis de metabolitos hepatotóxicos derivados del valproato, pudiendo desencadenar una necrosis hepática fulminante fatal.<br><br>Perla ENARM: \"Se recomienda tener precaución al prescribir ácido valproico en menores de dos años debido al riesgo incrementado de hepatotoxicidad mortal.\"<br><br>Análisis de Distractores: El ácido valproico no induce el síndrome de West, ni genera craneosinostosis, ni causa toxicidad coclear (sordera), los cuales no corresponden al perfil toxicológico clásico de este compuesto.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Tratamiento, Página 25." 
+    },
+    {
+        id: 40, 
+        question: "Al egresar a un paciente del servicio de urgencias tras recuperarse de su Primera Crisis Convulsiva, ¿cuál es la indicación de educación para la salud de carácter obligatorio?", 
+        options: ["Prescribir de forma profiláctica benzodiacepinas de mantenimiento", "Proporcionar información verbal y escrita sobre primeros auxilios", "Indicar reposo absoluto en cama de manera indefinida", "Suspender la asistencia a actividades escolares normales"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Primera Crisis Convulsiva, la educación familiar estructurada es fundamental para mitigar la ansiedad y capacitar a los cuidadores en la identificación de recurrencias y aplicación correcta de primeros auxilios en el hogar.<br><br>Perla ENARM: \"Se recomienda proporcionar a los padres o cuidadores información verbal y escrita sobre el manejo de primeros auxilios en caso de una nueva crisis.\"<br><br>Análisis de Distractores: Las benzodiacepinas no se usan como tratamiento profiláctico de mantenimiento crónico. El reposo en cama o la exclusión escolar no tienen justificación médica y deterioran severamente el desarrollo psicosocial y la calidad de vida del menor.", 
+        source: "IMSS-244-09, Diagnóstico y Tratamiento de la Primera Crisis Convulsiva en Niñas, Niños y Adolescentes, 2017, Educación para la Salud, Página 29." 
+    }
+
+        ];
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('24409LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('24409Progress');
+                localStorage.removeItem('24409LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-blue-500 shadow-md z-10 border-blue-500 dark:border-blue-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-cyan-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "PEDIATRÍA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus respuestas correctas/incorrectas en el tablero." 
+                : "IMSS-244-09 • Diagnóstico y tratamiento de la primera crisis convulsiva en niñas, niños y adolescentes primer y segundo nivel de atención";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="login.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-blue-100 dark:border-blue-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 dark:has-[:checked]:bg-blue-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('24409Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('24409LastQId', currentQuestionId);
+                else localStorage.removeItem('24409LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('24409Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>
