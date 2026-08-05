@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-cyan-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+
+    // BLOQUE 1: Prevención y Diagnóstico de Sobrepeso y Obesidad en Niños y Adolescentes (1-20)
+    {
+        id: 1, 
+        question: "En el abordaje del sobrepeso y la obesidad en niños y adolescentes, ¿a partir de qué edad se recomienda utilizar la medición del Índice de Masa Corporal como criterio diagnóstico?", 
+        options: ["Desde el nacimiento", "A partir de los 2 años", "Mayor de 5 años", "Mayor de 12 meses"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Obesidad en Niños y Adolescentes, la evaluación antropométrica debe adecuarse a las fases de crecimiento fisiológico. En menores de 2 años, las proporciones corporales varían rápidamente, por lo que el Índice de Masa Corporal no es del todo fiable y se prefiere el peso para la talla; a partir de los 2 años se estandariza el Índice de Masa Corporal para definir sobrepeso y obesidad.<br><br>Perla ENARM: \"Se recomienda la medición del IMC en niños a partir de los 2 años de edad y adolescentes como criterio diagnóstico para sobrepeso y obesidad.\"<br><br>Análisis de Distractores: Las opciones A, C y D son incorrectas porque no representan la edad de corte validada científicamente en la GPC para iniciar la evaluación diagnóstica mediante el Índice de Masa Corporal.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 18." 
+    },
+    {
+        id: 2, 
+        question: "En la evaluación del estado de nutrición de niños menores de 2 años de edad, ¿cuál es el parámetro antropométrico recomendado para el diagnóstico?", 
+        options: ["Peso para la talla", "Relación cintura cadera", "Índice de Masa Corporal", "Circunferencia de cintura abdominal"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Obesidad en Niños y Adolescentes, la evaluación del lactante menor requiere un análisis de proporcionalidad lineal para evitar el sobrediagnóstico de grasa corporal. Se prefiere comparar el peso obtenido con la longitud del paciente utilizando las curvas específicas.<br><br>Perla ENARM: \"Se recomienda la valoración del peso para la talla y la edad de acuerdo a tablas poblacionales de referencia para la evaluación del estado de nutrición en niños menores de 2 años de edad.\"<br><br>Análisis de Distractores: La opción C es incorrecta ya que el Índice de Masa Corporal se usa a partir de los 2 años de edad. Las opciones B y D no están validadas como herramientas primarias de tamizaje nutricional en lactantes menores de 2 años.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 18." 
+    },
+    {
+        id: 3, 
+        question: "En un paciente pediátrico con Índice de Masa Corporal normal pero con sospecha clínica de adiposidad excesiva, ¿cuál es el estudio de composición corporal recomendado para confirmar el diagnóstico de obesidad?", 
+        options: ["Tomografía axial computarizada", "Absorciometría de rayos X", "Análisis por bioimpedancia", "Pliegues cutáneos múltiples"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Obesidad en Niños y Adolescentes, existen pacientes con Índice de Masa Corporal normal que albergan un porcentaje de masa grasa patológico (obesidad de peso normal). La bioimpedancia permite cuantificar de manera segura la masa magra y la grasa corporal total sin exponer al menor a radiación.<br><br>Perla ENARM: \"Se recomienda utilizar la bioimpedancia para el diagnóstico de obesidad en niños y adolescentes que presenten un IMC normal y factores de riesgo o sospecha clínica de adiposidad.\"<br><br>Análisis de Distractores: Las opciones A y B implican radiación innecesaria y alto costo, por lo que no son de primera línea. La opción D carece de la precisión requerida en pacientes con Índice de Masa Corporal normal debido a la alta variabilidad técnica interobservador.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 18." 
+    },
+    {
+        id: 4, 
+        question: "En un paciente pediátrico que presenta Síndrome de Down, ¿cuál es la conducta recomendada para realizar la evaluación somatométrica y el diagnóstico de sobrepeso y obesidad?", 
+        options: ["Suspender la clasificación por percentiles", "Medir únicamente circunferencia abdominal", "Utilizar tablas de la OMS", "Emplear tablas específicas de comorbilidad"], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo a la GPC de Obesidad en Niños y Adolescentes, los pacientes con alteraciones genéticas como el Síndrome de Down poseen patrones de crecimiento y composición muscular distintos. Evaluarlos con curvas estándar genera diagnósticos erróneos de desnutrición u obesidad.<br><br>Perla ENARM: \"Se recomienda que el profesional de la salud considere el uso de tablas específicas para niños y adolescentes que presenten alguna comorbilidad (prematuros, síndrome de Down, síndrome de Turner u otras cromosomopatías y casos especiales).\"<br><br>Análisis de Distractores: La opción B no evalúa integralmente el crecimiento. La opción A es incorrecta porque sí deben usarse percentiles, pero adaptados a su condición genética. La opción C clasificaría incorrectamente al menor.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 18." 
+    },
+    {
+        id: 5, 
+        question: "En el primer nivel de atención, ¿con qué frecuencia se debe evaluar el estado de nutrición y el Índice de Masa Corporal en la población pediátrica?", 
+        options: ["Cada 2 años", "En cada visita médica", "Cada 6 meses", "Anualmente de rutina"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Obesidad en Niños y Adolescentes, las ventanas de oportunidad para detectar desviaciones en el crecimiento pediátrico son estrechas. Aprovechar cualquier contacto con el sistema de salud permite realizar intervenciones de estilo de vida antes de que la ganancia de peso sea irreversible.<br><br>Perla ENARM: \"Se recomienda la evaluación del estado de nutrición y del IMC en niños y adolescente en cada visita médica, independientemente del motivo de consulta.\"<br><br>Análisis de Distractores: Las opciones A, C y D retrasan el diagnóstico oportuno y no aprovechan la consulta médica por causas agudas (ej. infecciones respiratorias) para realizar un tamizaje nutricional básico.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 19." 
+    },
+    {
+        id: 6, 
+        question: "Para estimar clínicamente el riesgo de adiposidad central y sus implicaciones cardiovasculares en niños y adolescentes, ¿qué parámetro antropométrico complementario sugiere realizar la GPC?", 
+        options: ["Circunferencia de cintura", "Relación cintura estatura", "Circunferencia media de brazo", "Diámetro biacromial"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Obesidad en Niños y Adolescentes, la distribución de la grasa visceral abdominal es un predictor independiente y temprano de resistencia a la insulina, dislipidemia e hipertensión arterial, complementando la información aportada por el Índice de Masa Corporal.<br><br>Perla ENARM: \"Se sugiere medir la circunferencia de cintura en niños y adolescentes con o sin factores de riesgo para correlacionarlo con el riesgo de adiposidad.\"<br><br>Análisis de Distractores: Las opciones B, C y D no están indicadas en la GPC evaluada como mediciones rutinarias o de primer orden para estimar el riesgo de adiposidad visceral o riesgo cardiovascular.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 18." 
+    },
+    {
+        id: 7, 
+        question: "Ante la sospecha clínica de obesidad endógena en un paciente pediátrico, ¿cuál es la conducta inicial sugerida para normar el abordaje metabólico?", 
+        options: ["Referir de inmediato a Psicología", "Solicitar cariotipo genético completo", "Realizar una evaluación bioquímica", "Prescribir restricción calórica severa"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Obesidad en Niños y Adolescentes, la obesidad de causa endógena (asociada a endocrinopatías o síndromes genéticos) requiere descartar de forma inicial alteraciones hormonales o disfunciones metabólicas sistémicas que condicionen la ganancia de peso.<br><br>Perla ENARM: \"Se sugiere que el personal de salud considere realizar una evaluación bioquímica en los pacientes con sospecha de obesidad endógena.\"<br><br>Análisis de Distractores: La opción A no aborda la causa orgánica subyacente. La opción B es un estudio avanzado de tercer nivel que no constituye el paso bioquímico inicial. La opción D es una restricción dietética agresiva no sustentada como paso diagnóstico.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 18." 
+    },
+    {
+        id: 8, 
+        question: "Entre los antecedentes maternos durante el periodo gestacional, ¿cuál es un factor de riesgo clave para el desarrollo de sobrepeso y obesidad en el menor?", 
+        options: ["Incremento excesivo de peso", "Consumo de ácido fólico", "Parto pretérmino programado", "Lactancia materna prolongada"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Obesidad en Niños y Adolescentes, la sobrealimentación intrauterina desencadena adaptaciones epigenéticas que programan al feto hacia un fenotipo ahorrador de energía, incrementando el riesgo de adiposidad en la infancia.<br><br>Perla ENARM: \"Se recomienda que el profesional de la salud identifique los siguientes factores de riesgo: [...] aumento de peso de la madre durante el embarazo...\"<br><br>Análisis de Distractores: Las opciones B y D son factores protectores o preventivos. La opción C (prematuridad) requiere vigilancia especial pero no es el factor de riesgo de ganancia ponderal directa listado en esta recomendación específica.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 16." 
+    },
+    {
+        id: 9, 
+        question: "¿Cuál es la recomendación de actividad física o ejercicio aeróbico semanal sugerida para ser identificada como un factor protector en niños y adolescentes?", 
+        options: ["5 horas semanales", "2 a 3 horas", "1 hora quincenal", "Menos de 30 minutos"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Obesidad en Niños y Adolescentes, el balance energético positivo derivado del sedentarismo se contrarresta eficazmente con una carga mínima acumulada de actividad física regular para mantener la salud cardiovascular.<br><br>Perla ENARM: \"Se recomienda que el profesional de la salud identifique factores protectores para sobrepeso y obesidad, tales como: transporte activo, realizar ejercicio aeróbico o actividad física de 2 a 3 horas por semana...\"<br><br>Análisis de Distractores: La opción A excede el mínimo indispensable catalogado como factor protector inicial. Las opciones C y D son insuficientes para ejercer un efecto protector metabólico real de acuerdo con la evidencia científica.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 16." 
+    },
+    {
+        id: 10, 
+        question: "En la consulta pediátrica para la prevención de sobrepeso y obesidad, ¿cuál es la primera intervención sugerida para detectar factores conductuales asociados a la ganancia de peso?", 
+        options: ["Realizar calorimetría indirecta basal", "Prescribir un diario de pesaje", "Suspender carbohidratos de inmediato", "Evaluar hábitos de la dieta"], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo a la GPC de Obesidad en Niños y Adolescentes, antes de modificar radicalmente la alimentación se deben identificar patrones patológicos como la frecuencia de consumo de ultraprocesados, el tamaño de las porciones o la ausencia de horarios estructurados para comer.<br><br>Perla ENARM: \"Se sugiere que el personal de salud evalúe los hábitos y características de la dieta para detectar factores que pudieran estar asociados a la presencia de sobrepeso u obesidad en niños y adolescentes...\"<br><br>Análisis de Distractores: La opción A es un estudio de tercer nivel inaccesible en consulta general. La opción B fomenta ansiedad alimentaria y no está recomendado. La opción C es una restricción dietética agresiva no sustentada como paso diagnóstico.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 17." 
+    },
+    {
+        id: 11, 
+        question: "Ante la sospecha de riesgo de obesidad en un niño que presenta dificultades graves en la dinámica familiar, ¿cuál es la conducta terapéutica sugerida?", 
+        options: ["Referir a un servicio de psicología", "Iniciar terapia farmacológica ansiolítica", "Indicar aislamiento del menor", "Prescribir hospitalización de corta estancia"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Obesidad en Niños y Adolescentes, la obesidad infantil es multifactorial y los conflictos familiares suelen perpetuar el consumo emocional de alimentos o boicotear los cambios de hábitos. Se requiere intervención multidisciplinaria.<br><br>Perla ENARM: \"Se sugiere referir a familias con riesgo de obesidad en niños y adolescentes y dificultades en la dinámica familiar a un servicio de psicología o con personal capacitado.\"<br><br>Análisis de Distractores: La opción B no resuelve el conflicto relacional familiar y tiene efectos adversos. Las opciones C y D son medidas punitivas e innecesarias que agravan la salud mental del paciente pediátrico.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 17." 
+    },
+    {
+        id: 12, 
+        question: "¿Cuál es el límite máximo de tiempo diario sugerido frente a pantallas para prevenir el desarrollo de sobrepeso y obesidad en niños y adolescentes?", 
+        options: ["Máximo 1 hora al día", "Hasta 4 horas diarias", "Máximo 2 horas al día", "Sin restricción en fines de semana"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Obesidad en Niños y Adolescentes, pasar más de 2 horas en actividades pasivas frente a dispositivos digitales desplaza la actividad física necesaria y se asocia a una mayor exposición a publicidad de alimentos ultraprocesados.<br><br>Perla ENARM: \"Se sugiere limitar el tiempo que niños y adolescentes pasan frente a pantalla (televisión, videojuegos, tableta, celular, computadora, etc.) a máximo 2 horas al día.\"<br><br>Análisis de Distractores: La opción A es una meta deseable pero no es el límite normativo establecido en esta recomendación específica de la GPC. Las opciones B y D exponen al paciente a un riesgo metabólico y conductual elevado.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 23." 
+    },
+    {
+        id: 13, 
+        question: "¿Cuántas horas mínimas de sueño al día se sugieren en niños y adolescentes como factor protector contra el sobrepeso y la obesidad?", 
+        options: ["Mínimo de 6 horas", "Mínimo de 8 horas", "Al menos 10 horas", "Un total de 12 horas"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Obesidad en Niños y Adolescentes, el sueño insuficiente interrumpe la secreción normal de melatonina y altera la relación leptina/grelina, promoviendo el apetito por carbohidratos refinados durante las horas de vigilia forzada.<br><br>Perla ENARM: \"Se sugiere que niños y adolescentes duermen un mínimo de 8 horas al día.\"<br><br>Análisis de Distractores: La opción A es insuficiente y altera el ciclo circadiano, favoreciendo la obesidad. Las opciones C y D son metas que dependen del grupo de edad específico y no representan la recomendación general mínima estandarizada en la GPC.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 23." 
+    },
+    {
+        id: 14, 
+        question: "Para prevenir o controlar el sobrepeso y la obesidad infantil, en caso de consumir bebidas azucaradas industrializadas, ¿cuál es el volumen máximo diario al que se debe limitar su consumo?", 
+        options: ["Menos de 120 mililitros", "Máximo 355 mililitros", "Menos de 500 mililitros", "Menos de 240 mililitros"], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo a la GPC de Obesidad en Niños y Adolescentes, los azúcares líquidos proveen calorías vacías y se absorben rápidamente, provocando picos de insulina que favorecen la lipogénesis y evitan la saciedad. Se debe restringir drásticamente su volumen si no se pueden eliminar por completo.<br><br>Perla ENARM: \"Se recomienda evitar el consumo de bebidas azucaradas industrializadas, limitar su consumo a menos de 240 ml...\"<br><br>Análisis de Distractores: La opción A no es el límite numérico de la recomendación de la GPC. Las opciones B (una lata promedio) y C (medio litro) superan con creces el aporte calórico seguro recomendado.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 21." 
+    },
+    {
+        id: 15, 
+        question: "En el plan de intervención física para niños y adolescentes con sobrepeso u obesidad, ¿cuál es la dosis y frecuencia específica recomendada de ejercicio aeróbico?", 
+        options: ["30 a 90 minutos trisemanal", "30 minutos una vez semanal", "150 minutos diarios continuos", "10 a 20 minutos diarios"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Obesidad en Niños y Adolescentes, el ejercicio debe tener una duración e intensidad suficiente para inducir la oxidación de ácidos grasos y mejorar la sensibilidad a la insulina sin generar fatiga extrema que induzca el abandono del tratamiento.<br><br>Perla ENARM: \"Se recomienda que niños y adolescentes realicen al menos alguna de las siguientes actividades: [...] Ejercicio aeróbico 3 veces por semana 30 a 90 minutos...\"<br><br>Análisis de Distractores: Las opciones B y D son insuficientes para generar adaptaciones metabólicas a largo plazo. La opción C es una meta de intensidad exagerada e inadecuada para la población pediátrica sedentaria.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 21." 
+    },
+    {
+        id: 16, 
+        question: "¿Cuáles hábitos específicos en el entorno del hogar se recomienda fomentar activamente para prevenir el sobrepeso y la obesidad en niños y adolescentes?", 
+        options: ["Dieta cetogénica y ayuno", "Comisión de ayuno intermitente", "Comidas familiares y desayuno en casa", "Consumo exclusivo de suplementos vitamínicos"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Obesidad en Niños y Adolescentes, los hábitos adquiridos mediante la imitación de conductas parentales saludables durante las comidas familiares protegen contra el desarrollo de trastornos de la conducta alimentaria y disminuyen el consumo inconsciente de porciones excesivas.<br><br>Perla ENARM: \"Se recomienda fomentar las comidas familiares y promover el desayuno en casa.\"<br><br>Análisis de Distractores: Las opciones A y B no están recomendadas por su riesgo metabólico en el crecimiento. La opción D carece de fundamento preventivo primario.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 21." 
+    },
+    {
+        id: 17, 
+        question: "Como estrategia de control dietético en niños y adolescentes, ¿cuál es la sugerencia del profesional de la salud respecto a la sustitución de bebidas azucaradas?", 
+        options: ["Reemplazar por jugos de fruta naturales", "Sustituir por bebidas energéticas deportivas", "Reemplazar por agua o de bajas calorías", "Reemplazar por leche entera saborizada"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Obesidad en Niños y Adolescentes, reducir la carga de azúcares simples mediante la sustitución por agua disminuye de inmediato el superávit energético diario y favorece un mejor control del peso corporal.<br><br>Perla ENARM: \"Se recomienda que el profesional de la salud sugiera sustituir el consumo de bebidas azucaradas por agua o bebidas bajas en calorías.\"<br><br>Análisis de Distractores: Las opciones A y D son ricos en fructosa o azúcares libres y promueven la ganancia ponderal. La opción B contiene altas concentraciones de sodio y carbohidratos no justificados en pacientes sedentarios.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 22." 
+    },
+    {
+        id: 18, 
+        question: "¿Qué medida administrativa o de control ambiental en los centros educativos sugiere la GPC considerar para combatir el sobrepeso y la obesidad infantil?", 
+        options: ["Cierre de comedores escolares calientes", "Prohibición de venta de bebidas azucaradas", "Retiro de bebederos de agua potable", "Prohibir el ingreso de alimentos caseros"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Obesidad en Niños y Adolescentes, modificar el entorno escolar mediante la restricción del acceso a productos ultraprocesados es la medida de salud pública más costo-efectiva para disminuir la ingesta descontrolada de azúcares añadidos durante la jornada escolar.<br><br>Perla ENARM: \"Se sugiere considerar la prohibición de venta de bebidas azucaradas, así como vigilar los estándares de nutrición y el tamaño de las porciones en centros educativos donde se encuentren niños y adolescentes.\"<br><br>Análisis de Distractores: Las opciones A, C y D atentan contra la nutrición escolar adecuada o contra las medidas sanitarias básicas de hidratación recomendadas.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 22." 
+    },
+    {
+        id: 19, 
+        question: "De acuerdo al algoritmo de diagnóstico de sobrepeso y obesidad en niños y adolescentes, ¿cuál es la acción médica inmediata requerida ante un paciente que presenta antropometría anormal (sobrepeso u obesidad)?", 
+        options: ["Realizar estudio bioquímico sérico", "Enviar de inmediato a Endocrinología Pediátrica", "Prescribir fármacos anorexigénicos de inmediato", "Citar a reevaluación nutricional en 12 meses"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Obesidad en Niños y Adolescentes, antes de decidir la derivación del paciente o el manejo de soporte, el médico de primer nivel debe documentar la existencia de complicaciones metabólicas silenciosas asociadas a la adiposidad.<br><br>Perla ENARM: Algoritmo 1: \"Realizar estudio bioquímico (glucosa sérica y perfil de lípidos)\".<br><br>Análisis de Distractores: La opción B es incorrecta, ya que la referencia directa requiere la previa confirmación de síndrome metabólico o diabetes. La opción C no está autorizada en el algoritmo de primer nivel. La opción D pospone la detección de comorbilidades graves de forma injustificada.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Anexos (Algoritmo 1), Página 25." 
+    },
+    {
+        id: 20, 
+        question: "En un paciente con diagnóstico de sobrepeso u obesidad en quien se confirma la presencia de Síndrome Metabólico o Diabetes Mellitus mediante pruebas bioquímicas, ¿cuál es la conducta definitiva recomendada por el algoritmo?", 
+        options: ["Continuar manejo exclusivo en el primer nivel", "Iniciar tratamiento dietético estricto de 6 meses", "Citar a seguimiento anual de control bioquímico", "Referir a Pediatría o Endocrinología pediátrica"], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo a la GPC de Obesidad en Niños y Adolescentes, las comorbilidades cardiovasculares y metabólicas complejas en la infancia conllevan un alto riesgo de daño vascular temprano y deben ser controladas por el especialista para evitar secuelas a largo plazo.<br><br>Perla ENARM: Algoritmo 1: \"Sindrome metabólico o diabetes mellitus -> SÍ -> Referencia a servicio de Pediatría o Endocrinología pediátrica\".<br><br>Análisis de Distractores: Las opciones A, B y C retrasan el inicio de la terapia especializada necesaria para revertir las complicaciones metabólicas diagnosticadas en este grupo de edad.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Anexos (Algoritmo 1), Página 25." 
+    },
+
+    // BLOQUE 2: Prevención y Diagnóstico de Sobrepeso y Obesidad en Niños y Adolescentes (21-40)
+    {
+        id: 21, 
+        question: "En la consulta de primer nivel, ¿cuál es el porcentaje aproximado de padres que subestiman el diagnóstico de sobrepeso y obesidad en sus hijos de 2 a 12 años de edad?", 
+        options: ["15%", "35%", "52%", "67%"], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo a la GPC de Sobrepeso y Obesidad Pediátrica, existe una altísima prevalencia de subestimación del peso por parte de los cuidadores, lo que retrasa la búsqueda de atención médica oportuna.<br><br>Perla ENARM: \"Se recomienda informar a los padres o cuidadores primarios de niños y adolescentes acerca del riesgo de subestimar el diagnóstico de sobrepeso y obesidad.\"<br><br>Análisis de Distractores: Las opciones A, B y C representan valores significativamente menores al porcentaje real reportado en los estudios de la guía, infravalorando la gravedad de la percepción familiar en esta patología.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 19." 
+    },
+    {
+        id: 22, 
+        question: "En el tratamiento nutricional del sobrepeso y la obesidad en niños y adolescentes, además de evitar azúcares, ¿el consumo de qué macronutrientes se recomienda limitar en la dieta para disminuir la densidad energética?", 
+        options: ["Grasas y proteínas", "Carbohidratos complejos únicamente", "Grasas saturadas exclusivamente", "Proteínas y fibra soluble"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Sobrepeso y Obesidad Pediátrica, para reducir de manera segura la densidad calórica de la dieta en pacientes pediátricos, la restricción debe enfocarse no solo en grasas, sino también en el exceso de proteínas que contribuyen al balance energético positivo.<br><br>Perla ENARM: \"Se recomienda evitar el consumo de bebidas azucaradas industrializadas, limitar su consumo a menos de 240 ml, limitar el consumo de alimentos con alta densidad energética y alto contenido de grasa y proteínas en la dieta; evitar añadir azúcares en la dieta, limitar alimentos preparados fuera de casa.\"<br><br>Análisis de Distractores: Las opciones B, C y D no corresponden a la combinación exacta de macronutrientes que la guía especifica que deben limitarse de forma conjunta para reducir la densidad energética alimentaria.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 21." 
+    },
+    {
+        id: 23, 
+        question: "En el programa de prevención de sobrepeso y obesidad en niños y adolescentes, ¿qué redes comunitarias sugiere identificar el personal de salud para facilitar la implementación del programa?", 
+        options: ["Clubes de lectura escolar", "Grupos o redes de apoyo", "Comités vecinales de seguridad", "Redes de transporte escolar privado"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Sobrepeso y Obesidad Pediátrica, el soporte comunitario facilita la adherencia a largo plazo a los cambios del estilo de vida del paciente y su familia.<br><br>Perla ENARM: \"Se sugiere que el personal de salud identifique grupos o redes de apoyo comunitarios que permitan aplicar programas para la prevención de sobrepeso y obesidad en niños y adolescentes.\"<br><br>Análisis de Distractores: Las opciones A, C y D representan organizaciones que no tienen como finalidad el soporte terapéutico ni la educación para la salud metabólica infantil señalada en la guía.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 24." 
+    },
+    {
+        id: 24, 
+        question: "Durante las consultas de control de un paciente pediátrico en riesgo, ¿qué parámetro conductual específico sugiere la GPC que el personal de salud evalúe directamente con el paciente?", 
+        options: ["Grado de satisfacción escolar", "Nivel de aplicación del programa", "Capacidad de gasto familiar", "Horas semanales de tareas escolares"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Sobrepeso y Obesidad Pediátrica, el monitoreo estrecho del apego a las indicaciones dietéticas y de actividad física permite realizar ajustes tempranos antes de que falle la prevención primaria.<br><br>Perla ENARM: \"Se sugiere que el personal de salud evalúe con el paciente el nivel de aplicación del programa de prevención de sobrepeso y obesidad.\"<br><br>Análisis de Distractores: Las opciones A, C y D, aunque son factores psicosociales o socioeconómicos, no representan el parámetro de adherencia conductual directa que la guía pide evaluar de manera explícita con el menor.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 24." 
+    },
+    {
+        id: 25, 
+        question: "De acuerdo con el Algoritmo de prevención de sobrepeso y obesidad en niños y adolescentes, ¿cuáles son los profesionales que integran el equipo multidisciplinario junto con el médico, enfermera y psicólogo?", 
+        options: ["Odontólogo, rehabilitador físico y maestro", "Activador físico, nutriólogo, trabajador social, profesor y líderes comunitarios", "Cardiólogo pediatra, genetista y neurólogo", "Trabajador social, enfermera especialista e instructor de natación"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Sobrepeso y Obesidad Pediátrica, el éxito de la intervención preventiva depende de la participación coordinada de actores sanitarios, educativos y sociales que rodean el entorno diario del menor.<br><br>Perla ENARM: \"Integración de equipo multidisciplinario que incluya: enfermera, psicólogo, activador físico, nutriólogo, médico, trabajador social, profesor y líderes comunitarios.\"<br><br>Análisis de Distractores: Las opciones A, C y D incluyen especialidades médicas o profesionales que no forman parte del equipo multidisciplinario básico estandarizado en el esquema del Algoritmo 2 de la GPC.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Anexos (Algoritmo 2), Página 26." 
+    },
+    {
+        id: 26, 
+        question: "En un paciente en prevención que a los 6 meses mantiene una antropometría normal pero no ha logrado modificar sus factores de riesgo, ¿cuál es la conducta a seguir según el flujograma de la GPC?", 
+        options: ["Realizar de inmediato química sanguínea y perfil lipídico", "Ajustar el programa o nivel de intervención y seguimiento", "Referir de forma inmediata a Endocrinología Pediátrica", "Suspender el programa preventivo por falta de cooperación"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Sobrepeso y Obesidad Pediátrica, la persistencia de los factores de riesgo en un paciente con peso normal representa una falla conductual que requiere intensificar o reestructurar las estrategias antes de que se altere la antropometría.<br><br>Perla ENARM: \"Paciente se mantuvo con antropometría normal y no se modificaron factores de riesgo -> Ajustar el programa o nivel de intervención y seguimiento\".<br><br>Análisis de Distractores: La opción A solo se indica si el paciente desarrolla antropometría anormal. La opción C es incorrecta porque la derivación requiere sospecha metabólica o comorbilidades. La opción D suspende la prevención activa de forma inadecuada.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Anexos (Algoritmo 2), Página 26." 
+    },
+    {
+        id: 27, 
+        question: "En la prevención primaria del sobrepeso y la obesidad en niños y adolescentes, ¿qué factor protector de base alimentaria se recomienda fomentar de manera prioritaria desde la etapa de lactante?", 
+        options: ["Introducción de fórmulas lácteas", "Lactancia materna", "Inicio de ablactación a los 3 meses", "Suplementación proteica infantil"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Sobrepeso y Obesidad Pediátrica, la alimentación al seno materno exclusivo regula los mecanismos de saciedad y previene la ganancia de peso acelerada en las etapas posteriores del crecimiento.<br><br>Perla ENARM: \"Se recomienda fomentar y promover la lactancia materna.\"<br><br>Análisis de Distractores: Las opciones A y C se asocian con un incremento en el riesgo de obesidad y síndrome metabólico. La opción D carece de indicación en la prevención primaria de la obesidad pediátrica.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 22." 
+    },
+    {
+        id: 28, 
+        question: "Dentro de los factores de riesgo y protección relacionados con el estilo de vida de niños y adolescentes, ¿cuál es un traslado activo asociado inversamente con la presencia de obesidad?", 
+        options: ["Uso de transporte público escolar", "Trasladarse a la escuela caminando o en bicicleta", "Uso de automóvil particular familiar", "Transporte escolar motorizado directo"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Sobrepeso y Obesidad Pediátrica, el desplazamiento activo diario hacia el centro escolar representa una fuente constante de gasto energético moderado que disminuye el sedentarismo.<br><br>Perla ENARM: \"Los factores de protección de presentar obesidad en niños y adolescentes en los que se encontró evidencia de asociación son: trasladarse a la escuela caminando o en bicicleta, realizar ejercicio aeróbico...\"<br><br>Análisis de Distractores: Las opciones A, C y D son métodos de transporte pasivos que no generan un gasto energético ni actúan como factores protectores activos contra la obesidad infantil.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 15." 
+    },
+    {
+        id: 29, 
+        question: "¿Cuál es el factor de riesgo de tipo psicológico/familiar que se asocia de forma positiva con el desarrollo de sobrepeso y obesidad en niños y adolescentes?", 
+        options: ["Estrés de la madre", "Ausencia de hermanos", "Exceso de tareas escolares escritas", "Tipo de escuela pública o privada"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Sobrepeso y Obesidad Pediátrica, la inestabilidad emocional o el estrés crónico materno influyen de forma negativa en la organización de los hábitos alimentarios del hogar y promueven conductas sedentarias o sobrealimentación de confort.<br><br>Perla ENARM: \"Los factores de riesgo de presentar obesidad en niños y adolescentes en los que se encontró evidencia de asociación son: [...] estrés de la madre, aumento de peso de la madre durante el embarazo y el habitar en zonas rurales.\"<br><br>Análisis de Distractores: Las opciones B, C y D no cuentan con evidencia científica de asociación directa y significativa con la génesis de la obesidad infantil en el cuerpo de recomendaciones de la guía.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 15." 
+    },
+    {
+        id: 30, 
+        question: "¿Cuál es la condición de residencia geográfica que se asocia con un riesgo de presentar sobrepeso y obesidad en la población pediátrica mexicana de acuerdo con la guía?", 
+        options: ["Habitar en zonas costeras", "Habitar en zonas rurales", "Habitar en metrópolis industrializadas", "Residencia en zonas fronterizas"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Sobrepeso y Obesidad Pediátrica, la transición nutricional en el país ha impactado de forma desproporcionada a las comunidades rurales, las cuales han visto un aumento en el consumo de productos ultraprocesados con alta densidad calórica.<br><br>Perla ENARM: \"Se recomienda que el profesional de la salud identifique los siguientes factores de riesgo: [...] aumento de peso de la madre durante el embarazo y habitar en zonas rurales.\"<br><br>Análisis de Distractores: Las opciones A, C y D no están enlistadas en la recomendación de riesgo geográfico/demográfico particular de la GPC de Sobrepeso y Obesidad Pediátrica de México.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 16." 
+    },
+    {
+        id: 31, 
+        question: "En el análisis de la dieta de niños a partir de los 3 años de edad, ¿el consumo de qué alimentos refinados se asocia directamente con la persistencia de obesidad en la adolescencia tardía?", 
+        options: ["Granos de maíz entero", "Pan, trigo o arroz", "Avena y centeno integral", "Leguminosas de vaina verde"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Sobrepeso y Obesidad Pediátrica, el consumo excesivo de carbohidratos refinados de rápida absorción genera resistencia insulínica progresiva y ganancia de tejido adiposo que se perpetúa hasta la edad adulta.<br><br>Perla ENARM: \"Consumo de pan, trigo o arroz en niños de 3 años con seguimiento de 10 años, relacionado con obesidad en la adolescencia.\"<br><br>Análisis de Distractores: Las opciones A, C y D representan alimentos ricos en fibra soluble e insoluble que actúan como factores protectores o preventivos, no de riesgo.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Cuadros o Figuras, Página 28." 
+    },
+    {
+        id: 32, 
+        question: "Dentro de las recomendaciones para modificar el entorno alimentario, ¿qué patrón de consumo fuera del hogar se asocia directamente con un mayor Índice de Masa Corporal en niños de 6 a 21 años?", 
+        options: ["Alimentos preparados fuera de casa", "Comidas en comedores comunitarios calientes", "Consumo de vegetales en huertos locales", "Desayuno escolar frío institucional"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Sobrepeso y Obesidad Pediátrica, los alimentos preparados fuera del hogar suelen ser más densos en energía, grasas trans y azúcares añadidos, además de ofrecer porciones significativamente mayores a las requeridas fisiológicamente.<br><br>Perla ENARM: \"Se recomienda evitar el consumo de bebidas azucaradas industrializadas [...] limitar el consumo de alimentos con alta densidad energética y alto contenido de grasa y proteínas en la dieta; evitar añadir azúcares en la dieta, limitar alimentos preparados fuera de casa.\"<br><br>Análisis de Distractores: Las opciones B, C y D representan esquemas de alimentación con mayor supervisión de porciones y contenido nutricional, por lo que no constituyen el factor de riesgo por ultraprocesados descrito.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Evidencias y Recomendaciones, Página 21." 
+    },
+    {
+        id: 33, 
+        question: "En la población escolar de 8 a 12 años, ¿qué conducta respecto a la frecuencia diaria de alimentos se asocia de forma positiva con un incremento en el Índice de Masa Corporal?", 
+        options: ["Comer más de 5 veces al día", "Comer menos de 3 veces al día", "Mantener 3 comidas principales estables", "Establecer colaciones cada 3 horas"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Sobrepeso y Obesidad Pediátrica, saltarse comidas o reducir su frecuencia diaria altera el metabolismo basal, incrementa el apetito compensatorio y promueve una mayor ingesta calórica en las comidas posteriores.<br><br>Perla ENARM: \"Número de veces por semana que niños entre 8 a 12 años que comían menos de 3 veces al día comparado con niños que comían más de 3 veces al día relacionado con el IMC.\"<br><br>Análisis de Distractores: Las opciones A, C y D representan frecuencias fraccionadas de alimentación que ayudan a regular la saciedad y evitan picos insulínicos extremos, disminuyendo el riesgo de sobrepeso.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Cuadros o Figuras, Página 30." 
+    },
+    {
+        id: 34, 
+        question: "¿Cuál es la repercusión a mediano plazo que tiene el hábito de dormir de forma inadecuada en un preescolar de 2.5 años de edad?", 
+        options: ["Trastorno por déficit de atención severo", "Posibilidad de obesidad a los 6 años", "Talla baja armónica constitucional irreversible", "Cierre prematuro de suturas craneales"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Sobrepeso y Obesidad Pediátrica, la privación de sueño a edades tempranas interrumpe el desarrollo endocrino normal, condicionando un riesgo metabólico que se manifiesta somatométricamente en la etapa escolar.<br><br>Perla ENARM: \"Niños de 2.5 años que dormían poco (criterio no uniforme) o niños que no lo hacían adecuadamente con la posibilidad de obesidad a los 6 años.\"<br><br>Análisis de Distractores: Las opciones A, C y D representan patologías o condiciones del neurodesarrollo y endocrinológicas que no son el desenlace antropométrico evaluado y reportado de forma directa por esta GPC.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Cuadros o Figuras, Página 31." 
+    },
+    {
+        id: 35, 
+        question: "¿Cuál es el desenlace metabólico asociado en niños que duermen de 1 a 3 horas menos que lo recomendado para su edad según la evidencia de la GPC?", 
+        options: ["Hipoglucemia reactiva persistente", "Mayor riesgo de sobrepeso u obesidad", "Retraso psicomotor y talla baja", "Disminución de la masa grasa corporal"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Sobrepeso y Obesidad Pediátrica, la restricción de sueño eleva los niveles de cortisol y disminuye la sensibilidad a la insulina, promoviendo el almacenamiento lipídico a nivel visceral.<br><br>Perla ENARM: \"Niños que dormían 1 o 2 o 3 horas menos que lo recomendado para su edad, relacionado con sobrepeso u obesidad.\"<br><br>Análisis de Distractores: La opción A es incorrecta porque la privación de sueño induce hiperglucemia y resistencia insulínica. Las opciones C y D no son los desenlaces clínicos de asociación reportados en los estudios analizados en la guía.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Cuadros o Figuras, Página 31." 
+    },
+    {
+        id: 36, 
+        question: "¿Cuál es el efecto protector expresado en razón de momios (OR) de haber recibido lactancia materna sobre el desarrollo de sobrepeso u obesidad en niños y adolescentes?", 
+        options: ["OR 1.50", "OR 1.25", "OR 0.78", "OR 0.20"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Sobrepeso y Obesidad Pediátrica, la alimentación al seno materno ejerce un efecto protector dosis-dependiente que reduce significativamente la probabilidad de desarrollar obesidad en etapas posteriores de la vida (una reducción de riesgo de aproximadamente 22%).<br><br>Perla ENARM: \"Sobreso u obesidad en niños y adolescentes que fueron alimentados al seno materno comparado con niños que no, relacionado con el peso, IMC o porcentaje de grasa corporal. OR 0.78 (IC 0.74 a 0.81)\".<br><br>Análisis de Distractores: Las opciones A y B representan un incremento de riesgo, no un factor protector. La opción D infravalora de forma exagerada el riesgo basal, no correspondiendo al dato de la evidencia.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Cuadros o Figuras, Página 31." 
+    },
+    {
+        id: 37, 
+        question: "¿Cuál es el rendimiento diagnóstico reportado (sensibilidad y especificidad) del Índice de Masa Corporal para identificar adiposidad y diagnosticar obesidad en niños y adolescentes?", 
+        options: ["Sensibilidad 50% y Especificidad 50%", "Sensibilidad 99% y Especificidad 20%", "Sensibilidad 73% y Especificidad 93%", "Sensibilidad 30% y Especificidad 99%"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Sobrepeso y Obesidad Pediátrica, el IMC tiene una excelente especificidad para confirmar obesidad, pero una sensibilidad moderada, lo que significa que puede subclasificar a un porcentaje de niños con adiposidad real como \"normales\".<br><br>Perla ENARM: \"SENS. 73% (IC 0.67 a 0.79), ESP. 93% (IC 0.88 a 0.96)\".<br><br>Análisis de Distractores: Las opciones A, B y D son incorrectas ya que alteran los valores reales de validez diagnóstica que la literatura de la guía adjudica al Índice de Masa Corporal en la edad pediátrica.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Cuadros o Figuras (Cuadro de Evidencia 2), Página 32." 
+    },
+    {
+        id: 38, 
+        question: "¿Cuál es el porcentaje específico de padres de niños con sobrepeso u obesidad de 2 a 12 años que subestiman la condición de peso real de sus hijos según el Cuadro de Evidencia 3?", 
+        options: ["14.3%", "33.3%", "52.1%", "67.5%"], 
+        answer: 3, 
+        justification: "Justificación: De acuerdo a la GPC de Sobrepeso y Obesidad Pediátrica, la gran mayoría de los cuidadores percibe el exceso de peso de sus hijos como normal o transitorio, lo que limita la efectividad de las campañas de prevención primaria si no se realiza educación explícita.<br><br>Perla ENARM: \"Subestimación por los padres de niños con sobrepeso u obesidad de 2 a 12 años respecto de su peso real de sus hijos: 67.5% (95% CI 62.9 a 71.7)\".<br><br>Análisis de Distractores: La opción A representa el porcentaje de subestimación de peso en niños con peso normal (14.3%). Las opciones B y C son valores que no corresponden a los datos epidemiológicos de la guía.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Cuadros o Figuras (Cuadro de Evidencia 3), Página 32." 
+    },
+    {
+        id: 39, 
+        question: "Según el glosario de la GPC, ¿cómo se define formalmente el comportamiento sedentario en niños y adolescentes?", 
+        options: ["Ausencia de ejercicio estructurado por 14 días", "Pasar más de 6 horas diarias frente a pantallas", "Realizar menos de media hora de actividad física", "Mantener una frecuencia cardíaca basal baja"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Sobrepeso y Obesidad Pediátrica, el umbral de 30 minutos de actividad física al día es el mínimo fisiológico para evitar la catalogación de sedentarismo y el riesgo cardiovascular asociado.<br><br>Perla ENARM: \"Comportamiento sedentario: aquel en el que se realiza menos de media hora de actividad física.\"<br><br>Análisis de Distractores: Las opciones A, B y D son definiciones incorrectas o arbitrarias que no corresponden a la especificación normativa y fisiológica provista por el glosario oficial de la GPC.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Glosario, Página 43." 
+    },
+    {
+        id: 40, 
+        question: "De acuerdo con el glosario de la GPC, ¿cuál es el sitio anatómico exacto donde debe realizarse la medición de la circunferencia de cintura abdominal?", 
+        options: ["En la cicatriz umbilical del paciente", "Punto medio entre la costilla inferior y la cresta iliaca", "En el nivel más prominente de la cresta iliaca anterosuperior", "Justo por debajo del apéndice xifoides del esternón"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Sobrepeso y Obesidad Pediátrica, la estandarización de la técnica de medición reduce el sesgo de medición y permite una correcta estimación del tejido adiposo intraabdominal metabólicamente activo.<br><br>Perla ENARM: \"Circunferencia o perímetro de cintura o abdominal: mínimo perímetro de la cintura, se hace identificando el punto medio entre la costilla inferior y la cresta iliaca, en personas con sobrepeso se debe medir en la parte más amplia del abdomen.\"<br><br>Análisis de Distractores: Las opciones A, C y D representan puntos de referencia erróneos que modifican los resultados reales de la circunferencia abdominal, alterando el cálculo de riesgo metabólico en niños y adolescentes.", 
+        source: "SS-025-08, Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes, 2018, Glosario, Página 43." 
+    }
+        ];
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('02518LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('02518Progress');
+                localStorage.removeItem('02518LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-blue-500 shadow-md z-10 border-blue-500 dark:border-blue-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-cyan-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "PEDIATRÍA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus respuestas correctas/incorrectas en el tablero." 
+                : "SS-025-18 • Prevención y diagnóstico de sobrepeso y obesidad en niños y adolescentes";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="IS06108PE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-blue-100 dark:border-blue-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 dark:has-[:checked]:bg-blue-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('02518Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('02518LastQId', currentQuestionId);
+                else localStorage.removeItem('02518LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('02518Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>

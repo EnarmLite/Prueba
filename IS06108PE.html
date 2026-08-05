@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-cyan-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+
+    // BLOQUE 1: Diagnóstico Oportuno de la Leucemia Aguda en Pediatría (Reactivos 1 al 20)
+    {
+        id: 1, 
+        question: "En Leucemia Aguda Pediátrica, ¿cuál es la principal medida de prevención primaria relacionada con la exposición a radiaciones durante la gestación y la primera infancia?", 
+        options: ["Evitar ultrasonido obstétrico rutinario", "Restringir tomografía por emisión de positrones", "Evitar la exposición a rayos X", "Evitar radiografía de tórax materna trimestral"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, la exposición a radiación ionizante in utero o a edades tempranas incrementa significativamente el riesgo de mutaciones hematopoyéticas precoces. La GPC destaca la importancia de restringir el uso de rayos X durante la gestación y la niñez.<br><br>Perla ENARM: \"Se recomienda evitar la exposición a rayos X durante el embarazo y en la infancia.\"<br><br>Análisis de Distractores: A (ultrasonido) no emite radiación ionizante y es seguro. B y D son subgrupos de estudios diagnósticos, pero la recomendación de la GPC se expresa de manera general para rayos X, siendo esta la indicación preventiva formal.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Prevención, Página 12." 
+    },
+    {
+        id: 2, 
+        question: "En un lactante con diagnóstico de Síndrome de Down, ¿cuál es el esquema de seguimiento clínico recomendado por la GPC para la detección oportuna de Leucemia Aguda Pediátrica?", 
+        options: ["Valoración trimestral hasta cinco años", "Valoración al nacimiento, seis meses y anual", "Valoración anual desde el nacimiento", "Valoración bianual durante la lactancia"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, debido a que el síndrome de Down eleva de 10 a 20 veces la probabilidad de padecer leucemia, se establece un calendario estricto de revisiones clínicas para garantizar una derivación oportuna en los años de mayor incidencia.<br><br>Perla ENARM: \"Todo niño con síndrome de Down debe ser valorado al nacimiento, a los 6 meses de edad y 1 vez al año durante los primeros 6 años de vida por tener mayor riesgo de desarrollar LA.\"<br><br>Análisis de Distractores: A, C y D proponen intervalos de valoración temporal incorrectos que no corresponden a los puntos críticos definidos en la recomendación de la GPC para este grupo de alto riesgo.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Prevención, Página 13." 
+    },
+    {
+        id: 3, 
+        question: "En Leucemia Aguda Pediátrica, ¿cuál es la conducta recomendada ante pacientes detectados con enfermedades genéticas asociadas a un alto riesgo de desarrollar esta patología?", 
+        options: ["Realizar aspirado de médula anual", "Dar seguimiento estrecho y referir", "Iniciar quimioprofilaxis oral inmunomoduladora", "Solicitar cariotipo en sangre periférica"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, las anomalías genéticas como la anemia de Fanconi o el síndrome de Bloom requieren una vigilancia proactiva por el médico de primer contacto para derivar tempranamente si surgen signos de sospecha clínica o citopenias.<br><br>Perla ENARM: \"Se sugiere dar seguimiento estrecho a los pacientes identificados con enfermedades genéticas que se asocian con mayor riesgo de padecer LA, a fin de detectar y referir oportunamente con el subespecialista.\"<br><br>Análisis de Distractores: A (aspirado anual) es un procedimiento invasivo no indicado en pacientes asintomáticos sin sospecha citopénica. C no está indicado ni existen fármacos con este fin. D no es de utilidad para el seguimiento clínico de sospecha hematológica ya que se asume que el diagnóstico genético de base está establecido.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Prevención, Página 13." 
+    },
+    {
+        id: 4, 
+        question: "En Leucemia Aguda Pediátrica, ¿qué medida preventiva de salud pública relacionada con la inmunización debe aplicarse de manera obligatoria?", 
+        options: ["Suspender vacunas de virus vivos", "Aplicar esquema de vacunas vigente", "Diferir vacunación hasta la adolescencia", "Administrar únicamente vacunas celulares inactivadas"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, mantener la inmunización completa protege a la población pediátrica general antes del desarrollo de neoplasias y no interfiere con el riesgo de leucemia, debiendo mantenerse la cartilla nacional completa.<br><br>Perla ENARM: \"Se deben aplicar todas las vacunas de acuerdo a la Cartilla Nacional de Vacunación vigente.\"<br><br>Análisis de Distractores: A, C y D son esquemas modificados que podrían indicarse en pacientes ya diagnosticados bajo inmunosupresión profunda por quimioterapia, pero no representan la recomendación general de prevención de salud pública pre-diagnóstico.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Prevención, Página 14." 
+    },
+    {
+        id: 5, 
+        question: "Como factor protector nutricional contra la Leucemia Aguda Pediátrica, ¿cuál es la recomendación de alimentación infantil que establece la GPC?", 
+        options: ["Fomentar lactancia materna exclusiva trimestral", "Fomentar lactancia materna primer año", "Introducir ablactación proteica a los tres meses", "Suplementar con fórmulas enriquecidas con hierro"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, la leche materna confiere factores inmunológicos protectores y reduce el riesgo de desarrollar neoplasias en la infancia, por lo que se incentiva su duración durante el primer año.<br><br>Perla ENARM: \"Se debe fomentar la lactancia materna durante el primer año de vida.\"<br><br>Análisis de Distractores: A limita el tiempo sugerido por la GPC. C y D no corresponden a factores protectores específicos demostrados contra el cáncer infantil en las recomendaciones preventivas de esta guía.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Prevención, Página 14." 
+    },
+    {
+        id: 6, 
+        question: "En la evaluación diagnóstica de un paciente con sospecha de Leucemia Aguda Pediátrica, ¿cuál es el abordaje clínico inicial indicado?", 
+        options: ["Buscar intencionalmente adenomegalias periféricas aisladas", "Buscar intencionalmente los cinco síndromes", "Realizar tacto rectal buscando masas pélvicas", "Realizar otoscopia bilateral sistemática obligatoria"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, la sospecha diagnóstica debe fundamentarse en un interrogatorio y exploración física minuciosos orientados a identificar el síndrome anémico, infeccioso, purpúrico, infiltrativo y de alteraciones metabólicas.<br><br>Perla ENARM: \"Se debe realizar un interrogatorio y exploración física cuidadosa, buscando intencionalmente los cinco síndromes característicos.\"<br><br>Análisis de Distractores: A se enfoca únicamente en un componente del síndrome infiltrativo. C y D no son los pilares prioritarios de sospecha dirigidos a insuficiencia medular o infiltración descritos en la GPC.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Diagnóstico, Página 15." 
+    },
+    {
+        id: 7, 
+        question: "Durante la exploración física del paciente varón con sospecha de Leucemia Aguda Pediátrica, ¿qué evaluación local específica debe realizarse de manera obligatoria?", 
+        options: ["Transiluminación de escroto bilateral", "Exploración testicular buscando induración", "Medición del volumen prostático transrectal", "Ultrasonido inguinal doppler urgente"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, los testículos representan un \"santuario\" anatómico donde las células malignas pueden infiltrarse y evadir la barrera hematotesticular. Su palpación sistemática permite detectar infiltración extramedular temprana.<br><br>Perla ENARM: \"Se debe realizar exploración testicular buscando induración o crecimiento.\"<br><br>Análisis de Distractores: A (transiluminación) ayuda a evaluar hidrocele pero no detecta la induración blástica sólida. C y D son invasivos o excesivos para el tamizaje físico inicial de rutina.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Diagnóstico, Página 16." 
+    },
+    {
+        id: 8, 
+        question: "En Leucemia Aguda Pediátrica, ¿qué examen clínico específico se recomienda realizar de manera obligatoria en la evaluación inicial para descartar compromiso neurológico?", 
+        options: ["Fondo de ojo bajo dilatación pupilar", "Exploración neurológica completa", "Punción lumbar diagnóstica no traumática", "Potenciales evocados somatosensoriales bilaterales"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, la infiltración de blastos al sistema nervioso central puede presentarse de forma asintomática o manifestarse con signos sutiles de hipertensión intracraneal o afección de pares craneales, requiriendo un abordaje clínico neurológico riguroso de inicio.<br><br>Perla ENARM: \"Se recomienda realizar una exploración neurológica completa en la evaluación inicial.\"<br><br>Análisis de Distractores: A y C son procedimientos complementarios de soporte pero la exploración clínica completa es el paso inicial. D no tiene indicación diagnóstica en el protocolo de la GPC.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Diagnóstico, Página 16." 
+    },
+    {
+        id: 9, 
+        question: "Ante la sospecha clínica de Leucemia Aguda Pediátrica, ¿qué laboratorios constituyen el perfil de evaluación inicial requerido?", 
+        options: ["Biometría, frotis, química, electrólitos, reactantes", "Hemocultivos seriados, coprocultivo, frotis, gasometría", "Mielograma, biopsia ósea, cariotipo, inmunofenotipo", "Panel autoinmune, perfil tiroideo, reactantes"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, los exámenes iniciales buscan identificar citopenias, blastos circulantes, evaluar la función orgánica y prever desequilibrios metabólicos antes de iniciar terapias citorreductoras.<br><br>Perla ENARM: \"La evaluación de pacientes con sospecha de LA debe incluir: Biometría hemática completa con frotis de sangre periférica, Química sanguínea (glucosa, urea, creatinina, ácido úrico), Electrolitos séricos (sodio, potasio, cloro, calcio, fósforo, magnesio), Pruebas de función hepática con deshidrogenasa láctica, Reactantes de fase aguda (velocidad de sedimentación globular, procalcitonina y proteína C reactiva)\"<br><br>Análisis de Distractores: B se enfoca únicamente en procesos puramente infecciosos. C corresponde a estudios especializados confirmatorios de médula ósea. D descarta patologías inmunológicas o endocrinológicas que no integran el panel de sospecha hemato-oncológica.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Diagnóstico, Página 17." 
+    },
+    {
+        id: 10, 
+        question: "En un paciente recién diagnosticado con Leucemia Aguda Pediátrica, ¿cuál es el procedimiento indicado para la exclusión sistemática de infiltración al sistema nervioso central?", 
+        options: ["Tomografía axial computarizada de cráneo simple", "Punción lumbar para análisis citológico", "Resonancia magnética nuclear con gadolinio", "Electroencefalograma cuantitativo de vigilia"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, la búsqueda de blastos en el líquido cefalorraquídeo es un procedimiento universal e indispensable en todo paciente recién diagnosticado para clasificar el riesgo neurológico.<br><br>Perla ENARM: \"En todo paciente recién diagnosticado con LA debe realizarse una punción lumbar por el especialista para el análisis citológico y búsqueda de blastos en el LCR, ya que existe la posibilidad de infiltración a SNC asintomática.\"<br><br>Análisis de Distractores: A y C son estudios de imagen de segunda línea indicados solo ante signos de focalización o sospecha de masa, no reemplazan el estudio citológico. D no evalúa la infiltración neoplásica celular.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Diagnóstico, Página 18." 
+    },
+    {
+        id: 11, 
+        question: "Al momento del diagnóstico de Leucemia Aguda Pediátrica, ¿cuál es el estudio de gabinete inicial obligatorio en todos los pacientes?", 
+        options: ["Tomografía de tórax de alta resolución", "Radiografía anteroposterior y lateral de tórax", "Ultrasonido mediastinal transtorácico en tiempo real", "Resonancia magnética de mediastino superior"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, un porcentaje de pacientes con estirpe T presenta masa mediastinal anterior. La placa AP y lateral de tórax permite un descarte rápido de esta urgencia compresiva respiratoria de forma inicial.<br><br>Perla ENARM: \"Debe realizarse una radiografía AP y lateral de tórax en todos los pacientes con LA al diagnóstico.\"<br><br>Análisis de Distractores: A y D son estudios especializados más costosos reservados para detallar la anatomía si la placa inicial es anormal. C no tiene utilidad diagnóstica de escrutinio en mediastino anterior.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Diagnóstico, Página 18." 
+    },
+    {
+        id: 12, 
+        question: "Ante un paciente pediátrico con dolor óseo persistente e inexplicable, ¿cuál es el estudio de gabinete indicado por la GPC antes de referir para confirmación diagnóstica?", 
+        options: ["Iniciar antiinflamatorios no esteroideos sistémicos", "Realizar radiografía de huesos largos", "Solicitar gammagrafía ósea con tecnecio 99", "Prescribir reposo absoluto en cama"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, el dolor óseo persistente traduce la expansión tumoral de la cavidad medular. Las placas de huesos largos pueden evidenciar bandas radiolúcidas metafisarias, reacciones periósticas o lesiones osteolíticas sospechosas que justifican el aspirado confirmatorio.<br><br>Perla ENARM: \"En pacientes con dolor óseo persistente e inexplicable se debe realizar radiografía de huesos largos; en caso de lesiones sospechosas de leucemia se debe realizar aspirado de médula ósea.\"<br><br>Análisis de Distractores: A puede enmascarar los síntomas. C no está indicado en el abordaje diagnóstico inicial de la GPC. D no tiene utilidad diagnóstica ni terapéutica en la sospecha oncológica.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Diagnóstico, Página 18." 
+    },
+    {
+        id: 13, 
+        question: "¿Cuál es el estudio confirmatorio estándar de oro y el porcentaje celular mínimo exigido para establecer el diagnóstico de Leucemia Aguda Pediátrica?", 
+        options: ["Biopsia ósea con inmunohistoquímica positiva", "Aspirado medular con >20% mieloblastos o >30% linfoblastos", "Cariotipo periférico con traslocaciones específicas", "Citometría de flujo con CD34 positivo >10%"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, el diagnóstico de certeza definitivo requiere cuantificar el porcentaje de células inmaduras (blastos) directamente del sitio de la hematopoyesis a través de una muestra aspirada de médula ósea.<br><br>Perla ENARM: \"El diagnóstico de certeza de LA se realiza con el aspirado de médula ósea con: >20 % de mieloblastos para leucemia mieloide aguda (LMA) o >30 % de linfoblastos para leucemia linfoblástica aguda (LLA)\"<br><br>Análisis de Distractores: A (biopsia ósea) se reserva para casos de \"punción seca\" (médula fibrótica). C y D son estudios complementarios citogenéticos e inmunofenotípicos fundamentales para el sistema MIC pero no son el criterio diagnóstico cuantitativo de certeza primario.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Diagnóstico, Página 19." 
+    },
+    {
+        id: 14, 
+        question: "Al realizar un aspirado de médula ósea en un paciente pediátrico, ¿cuál es el estándar recomendado por la GPC para el manejo de dolor y confort?", 
+        options: ["Aplicar anestesia local infiltrativa exclusiva", "Realizar aspirado con el paciente sedado", "Administrar paracetamol vía oral previo", "Aplicar crioterapia local intensiva previa"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, debido a la naturaleza altamente dolorosa de la punción ósea y aspiración de estroma en niños, es un punto de buena práctica asegurar un procedimiento indoloro y técnicamente óptimo bajo sedación.<br><br>Perla ENARM: \"Se recomienda realizar AMO con el paciente sedado.\"<br><br>Análisis de Distractores: A, C y D no logran abolir el dolor intenso derivado de la punción ósea y la succión medular, por lo que la GPC favorece el uso de sedación formal.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Diagnóstico, Página 19." 
+    },
+    {
+        id: 15, 
+        question: "En Leucemia Aguda Pediátrica, ¿qué clasificación integral sistemática es obligatoria realizar al diagnóstico?", 
+        options: ["Clasificación clínica de estadios TNM", "Clasificación Morfológica, Inmunofenotípica y Citogenética (MIC)", "Clasificación de riesgo de Karnofsky pediátrica", "Clasificación hematométrica celular de Wintrobe"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, la respuesta oncológica y la tasa de recaídas varían según la estirpe y anomalías cromosómicas, por lo que el sistema MIC es indispensable para guiar la intensidad terapéutica.<br><br>Perla ENARM: \"Siempre se debe clasificar la LA por morfología, inmunofenotipo y citogenética (MIC)\"<br><br>Análisis de Distractores: A (TNM) se limita a tumores sólidos. C evalúa capacidad funcional mas no clasifica la neoplasia. D se utiliza en la tipificación morfológica de anemias, no de leucemias.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Clasificación de las leucemias agudas, Página 21." 
+    },
+    {
+        id: 16, 
+        question: "En un paciente con Leucemia Aguda Mieloide, ¿cuál es la conducta clínica primordial tras identificar factores de riesgo citogenéticos favorables en la remisión?", 
+        options: ["Suspender permanentemente la quimioterapia sistémica", "Asociarse con quimioterapia estándar y consolidación", "Indicar trasplante de células progenitoras inmediato", "Reemplazar el tratamiento por inmunoterapia biológica"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, la estratificación define la necesidad de terapias invasivas adicionales. Los pacientes con mutaciones citogenéticas favorables logran remisiones duraderas con esquemas de quimioterapia estándar de consolidación sin requerir trasplante alogénico en primera línea.<br><br>Perla ENARM: \"La identificación de factores de riesgo favorables deberá asociarse a un tratamiento estándar con quimioterapia. Si, por el contrario se identifican factores de pronóstico desfavorable, una vez obtenida la remisión, deberá considerarse consolidación con TCPH\"<br><br>Análisis de Distractores: A es falso pues todos requieren tratamiento quimioterápico. C es incorrecto ya que el trasplante (TCPH) se indica en primera remisión sólo para el grupo de alto riesgo o desfavorable. D no está contemplado en el algoritmo de esta GPC.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Factores pronósticos, Página 21." 
+    },
+    {
+        id: 17, 
+        question: "En un paciente con sospecha de Leucemia Aguda Pediátrica y datos clínicos de masa mediastinal, afección neurológica o testículo indurado, ¿cómo se interpreta este hallazgo clínico?", 
+        options: ["Enfermedad extramedular en fase latente", "Enfermedad avanzada y pronóstico desfavorable", "Respuesta inmune tumoral hiperreactiva local", "Hallazgo secundario de etiología benigna"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, la invasión celular extramedular hacia los denominados órganos o áreas santuario desde el debut clínico representa una enfermedad diseminada masiva asociada a mayor resistencia y recaída.<br><br>Perla ENARM: \"La enfermedad extramedular en SNC, masa mediastinal o testículo traducen una enfermedad avanzada y un pronóstico desfavorable\"<br><br>Análisis de Distractores: A subestima la severidad oncológica del debut. C y D son fisiopatológicamente erróneos, pues se trata de infiltración tumoral maligna activa de mal pronóstico que exige tratamientos intensivos locales y sistémicos.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Factores pronósticos, Página 23." 
+    },
+    {
+        id: 18, 
+        question: "Para la prevención y manejo farmacológico de la hiperuricemia en pacientes con Leucemia Aguda Pediátrica, ¿cuál es la dosis inicial de Alopurinol recomendada por la GPC?", 
+        options: ["100 mg/m2sc/dosis cada 8 horas", "300 mg/m2sc/dosis cada 24 horas", "50 mg/m2sc/dosis cada 12 horas", "500 mg/m2sc/dosis cada 6 horas"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, el alopurinol bloquea la xantina oxidasa para detener la síntesis excesiva de ácido úrico generada por la destrucción masiva de blastos, evitando la precipitación intratubular renal.<br><br>Perla ENARM: \"En pacientes con hiperuricemia se recomienda iniciar alopurinol a dosis de 100 mg/m2sc/dosis cada 8 horas, vía oral, ajustado a la función renal (dosis máxima 800 mg/día).\"<br><br>Análisis de Distractores: B, C y D representan esquemas de dosificación o intervalos de administración incorrectos que se desvían de las pautas pediátricas especificadas en la GPC para el manejo de la lisis tumoral.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Urgencias hemato-oncológicas, Página 24." 
+    },
+    {
+        id: 19, 
+        question: "En el tratamiento del Síndrome de Lisis Tumoral en Leucemia Aguda Pediátrica, ¿cuál es el tipo de fluidoterapia intravenosa recomendado para la hiperhidratación?", 
+        options: ["Soluciones fisiológicas hipertónicas al tres por ciento", "Soluciones mixtas sin potasio", "Solución glucosada al cinco por ciento pura", "Soluciones coloides sintéticas de almidón"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, la lisis blástica vierte grandes cantidades de potasio intracelular al plasma, con riesgo de arritmias cardíacas letales. Por ello, la fluidoterapia intensiva a 3000 ml/m²sc/día debe prescindir estrictamente de este electrolito.<br><br>Perla ENARM: \"Se recomienda mantener la hiperhidratación, con soluciones mixtas sin potasio, valorar el uso de diuréticos y mantener el gasto urinario mayor de 100 ml/m2sc/h.\"<br><br>Análisis de Distractores: A puede agravar el desequilibrio hidroelectrolítico y deshidratar las células. C no aporta el sodio necesario para expandir el volumen circulante. D (coloides) no es la hidratación estándar de la GPC y asocia toxicidad renal añadida.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Urgencias hemato-oncológicas, Página 24." 
+    },
+    {
+        id: 20, 
+        question: "Ante un paciente con Leucemia Aguda Pediátrica que desarrolla un cuadro clínico de Síndrome de Lisis Tumoral, ¿cuál es la conducta de derivación prioritaria que establece la GPC?", 
+        options: ["Mantener en observación en segundo nivel", "Trasladar urgentemente a unidad acreditada", "Referir de forma diferida a consulta externa", "Programar quimioterapia intratecal de rescate inmediata"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, el síndrome de lisis tumoral representa una urgencia metabólica crítica que puede requerir manejo estrecho de arritmias, insuficiencia renal aguda o terapia dialítica. Su atención debe realizarse de inmediato en una unidad de tercer nivel con equipo multidisciplinario.<br><br>Perla ENARM: \"Se recomienda trasladar al paciente de forma urgente y coordinada con la unidad médica acreditada dónde pueda realizarse el tratamiento multidisciplinario.\"<br><br>Análisis de Distractores: A e C retrasan peligrosamente el abordaje intensivo de una emergencia que compromete la vida. D no es el pilar terapéutico para mitigar el descontrol metabólico electrolítico agudo.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Urgencias hemato-oncológicas, Página 25." 
+    },
+
+    // BLOQUE 2: Diagnóstico Oportuno de la Leucemia Aguda en Pediatría (Reactivos 21 al 40)
+    {
+        id: 21, 
+        question: "En el paciente con Leucemia Aguda Pediátrica y Síndrome de Lisis Tumoral, ¿cuál es la indicación para iniciar de inmediato tratamiento de soporte con diálisis o hemodiálisis?", 
+        options: ["Ácido úrico plasmático > 10 mg/dl", "Potasio plasmático > 5 mEq/L", "Oliguria persistente al tratamiento médico", "Fósforo plasmático > 8 mg/dl"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, el depósito intratubular de fosfato de calcio y cristales de urato puede inducir una lesión renal aguda de progresión rápida. Si la diuresis no se restablece con medidas de hiperhidratación y manejo farmacológico, la diálisis es mandatoria.<br><br>Perla ENARM: \"Si el paciente persiste con oliguria a pesar del tratamiento médico se sugiere valorar el tratamiento sustitutivo renal (diálisis/hemodiálisis).\"<br><br>Análisis de Distractores: A, B y D son anomalías metabólicas características del Síndrome de Lisis Tumoral, pero su presencia aislada se maneja de forma inicial con hidratación vigorosa y fármacos (como alopurinol); la indicación de diálisis inmediata se reserva para la falla renal oligúrica/anúrica establecida o refractaria.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Urgencias hemato-oncológicas, Página 24." 
+    },
+    {
+        id: 22, 
+        question: "En el manejo del Síndrome de Lisis Tumoral en Leucemia Aguda Pediátrica, ¿cuál es el intervalo de pH urinario meta que se debe mantener durante la terapia de alcalinización?", 
+        options: ["Entre 6 y 6.5", "Entre 7 y 7.5", "Entre 8 y 8.5", "Entre 5.5 y 6"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, aunque la alcalinización favorece la solubilidad del ácido úrico, un pH urinario excesivamente elevado (mayor a 7.5) promueve la precipitación indeseada de cristales de xantina y fosfato de calcio en los túbulos renales, lo que obliga a mantener un estrecho control del pH urinario.<br><br>Perla ENARM: \"Se debe valorar el uso de bicarbonato, para mantener un pH urinario entre 7 y 7.5, para disminuir el riesgo de precipitación de cristales de xantina y fosfato de calcio en los túbulos renales.\"<br><br>Análisis de Distractores: A y D representan un pH ácido que favorece la cristalización del ácido úrico. C representa un pH alcalino excesivo (>7.5) que induce la precipitación de fosfato de calcio y xantinas.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Urgencias hemato-oncológicas, Página 25." 
+    },
+    {
+        id: 23, 
+        question: "En Leucemia Aguda Pediátrica, ¿cuál es el síntoma clínico inicial reportado en el 95% de los pacientes que desarrollan compresión medular como urgencia médica?", 
+        options: ["Pérdida del control de esfínteres", "Dolor lumbar", "Paraplejía flácida simétrica", "Parestesias distales en calcetín"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, la compresión medular es una emergencia que amenaza la función neurológica permanente del menor. El dolor lumbar es casi de forma universal la manifestación más temprana que precede por semanas o meses a los déficits motores y autonómicos.<br><br>Perla ENARM: \"El dolor lumbar, es el primer síntoma en un 95% de los casos, generalmente precediendo a otros síntomas aproximadamente dos meses.\"<br><br>Análisis de Distractores: A, C y D representan signos de daño neurológico avanzado y tardío de la compresión medular, cuya aparición denota un retraso en el diagnóstico oportuno y peor pronóstico funcional.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Urgencias hemato-oncológicas, Página 25." 
+    },
+    {
+        id: 24, 
+        question: "En el abordaje del paciente con Leucemia Aguda Pediátrica ante la sospecha clínica de compresión medular, ¿cuál es el estudio de imagen considerado estándar de oro?", 
+        options: ["Tomografía computarizada con mielografía", "Resonancia magnética nuclear", "Radiografía lateral de columna lumbar", "Gammagrafía ósea corporal total"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, ante la sospecha de esta urgencia por dolor lumbar progresivo o focalización neurológica, se requiere la máxima resolución anatómica para definir el nivel de compresión. La resonancia magnética posee una sensibilidad del 93% y especificidad del 97%.<br><br>Perla ENARM: \"La IRM es el estándar de oro para el diagnóstico (sensibilidad 93%, especificidad 97% y valor predictivo positivo del 95%).\"<br><br>Análisis de Distractores: A es una alternativa diagnóstica viable únicamente si la resonancia no está disponible. C posee baja sensibilidad para evaluar tejidos blandos o espacio epidural. D no define la compresión del canal de forma rápida ni con la resolución anatómica necesaria.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Urgencias hemato-oncológicas, Página 25." 
+    },
+    {
+        id: 25, 
+        question: "En el paciente con Leucemia Aguda Pediátrica que cursa con anemia, ¿cuál es el umbral de hemoglobina que define la indicación general para transfusión de concentrado eritrocitario?", 
+        options: ["Menor a 7 g/dl", "Menor a 8 g/dl", "Menor a 9 g/dl", "Menor a 10 g/dl"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, la anemia severa secundaria a la infiltración tumoral que desplaza la hematopoyesis fisiológica requiere corrección eritrocitaria restrictiva. Un valor inferior a 7 g/dl representa la pauta para transfundir profilácticamente.<br><br>Perla ENARM: \"El nivel de Hb menor de 7 g/dl es una indicación para transfusión.\"<br><br>Análisis de Distractores: B, C y D representan umbrales más altos que no justifican una transfusión profiláctica de rutina a menos que existan datos severos de hipoxia o descompensación hemodinámica.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Urgencias hemato-oncológicas, Página 26." 
+    },
+    {
+        id: 26, 
+        question: "En el paciente con Leucemia Aguda Pediátrica estable, ¿cuál es el volumen y tiempo de infusión indicados para la transfusión de concentrados eritrocitarios?", 
+        options: ["5 a 10 ml/kg en 1 hora", "10 a 20 ml/kg en 2 a 4 horas", "20 a 30 ml/kg en 6 horas", "3 ml/kg en 30 minutos"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, la transfusión debe programarse calculando el volumen por peso para evitar la sobrecarga de volumen y reacciones hemolíticas o febriles no hemolíticas, permitiendo un incremento seguro del hematocrito.<br><br>Perla ENARM: \"Los concentrados eritrocitarios se transfunden en infusión de 10 a 20 ml/kg/dosis en 2 a 4 horas, con lo que se eleva el nivel de Hb en 2 a 3 g/dl.\"<br><br>Análisis de Distractores: A propone un volumen insuficiente y una velocidad excesivamente rápida para un paciente estable. C representa un volumen excesivo que arriesga sobrecarga hídrica. D es el esquema restrictivo especial para anemia grave y prolongada.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Urgencias hemato-oncológicas, Página 26." 
+    },
+    {
+        id: 27, 
+        question: "En un paciente con Leucemia Aguda Pediátrica que cursa con anemia grave y prolongada con riesgo inminente de insuficiencia cardíaca, ¿cuál es el volumen de infusión del concentrado eritrocitario sugerido por la GPC?", 
+        options: ["15 ml/kg/dosis", "10 ml/kg/dosis", "3 ml/kg/dosis", "5 ml/kg/dosis"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, los niños con anemia de larga evolución e insuficiencia medular tienen una compensación hemodinámica lábil. Transfundir volúmenes estándar puede precipitar una falla cardíaca aguda por sobrecarga, requiriendo un aporte micro-dosificado muy lento.<br><br>Perla ENARM: \"En pacientes con anemia grave y prolongada, hemoglobina (Hb) menor de 5 g/dl o con síntomas de insuficiencia cardiaca, se debe transfundir en infusiones de 3 ml/kg/dosis.\"<br><br>Análisis de Distractores: A y B representan el volumen convencional para pacientes sin falla cardíaca o anemia crónica grave, lo que podría desencadenar sobrecarga aguda si se aplica en este escenario. D es un volumen intermedio pero no corresponde al valor numérico formal dictado por la GPC para este grupo específico.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Urgencias hemato-oncológicas, Página 26." 
+    },
+    {
+        id: 28, 
+        question: "En Leucemia Aguda Pediátrica, ¿cuál es el valor límite de recuento de plaquetas en sangre periférica que define formalmente a la trombocitopenia por infiltración medular?", 
+        options: ["Menor a 150,000/mm3", "Menor a 100,000/mm3", "Menor a 50,000/mm3", "Menor a 20,000/mm3"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, la trombocitopenia es una de las manifestaciones más comunes de la falla medular. La GPC establece un límite cuantitativo específico para este contexto hemato-oncológico que difiere del valor de laboratorio de la población general.<br><br>Perla ENARM: \"La trombocitopenia, se define como el conteo de plaquetas en sangre periférica menor a 100 000/mm3, en leucemia aguda es el resultado de infiltración a la médula ósea.\"<br><br>Análisis de Distractores: A es el límite inferior normal en laboratorio estándar, pero no es la definición específica operativa que la GPC utiliza para la trombocitopenia por falla medular en el menor con leucemia. C y D son umbrales críticos para indicar transfusión, no de definición diagnóstica.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Urgencias hemato-oncológicas, Página 26." 
+    },
+    {
+        id: 29, 
+        question: "Para la transfusión de plaquetas en pacientes con Leucemia Aguda Pediátrica que tengan una superficie corporal mayor a 0.5 metros cuadrados, ¿cuál es la dosis de aféresis plaquetaria indicada?", 
+        options: ["Una unidad por dosis", "Dos unidades por dosis", "Media unidad por dosis", "Tres unidades por dosis"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, la dosificación de plaquetas debe ajustarse según la superficie corporal o el peso en niños pequeños para optimizar el rendimiento y limitar la exposición a múltiples donantes.<br><br>Perla ENARM: \"La dosis recomendada por transfusión de concentrado plaquetario es de 0.1 a 0.2 U/kg o 4 U/m2sc/dosis y de aféresis plaquetaria en niños con superficie corporal menor 0.5 m2 media unidad/dosis, y en niños mayores de 0.5m2sc una unidad/dosis...\"<br><br>Análisis de Distractores: B, C y D representan esquemas de dosificación incorrectos para este rango de superficie corporal. La media unidad (C) está indicada únicamente para niños con superficie corporal menor a 0.5 m2.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Urgencias hemato-oncológicas, Página 26." 
+    },
+    {
+        id: 30, 
+        question: "En un paciente estable con Leucemia Aguda Pediátrica y factores de riesgo asociados, ¿cuál es el umbral de plaquetas que justifica la transfusión profiláctica?", 
+        options: ["Menor a 10,000/mm3", "Menor a 20,000/mm3", "Menor a 50,000/mm3", "Menor a 100,000/mm3"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, la indicación de transfusión profiláctica se ajusta si el paciente presenta factores de riesgo adicionales como fiebre, infección activa o coagulopatía de consumo. En estos casos, se incrementa el umbral de seguridad plaquetaria.<br><br>Perla ENARM: \"Transfundir concentrados o aféresis plaquetaria de forma profiláctica en: Paciente con factores de riesgo y cuenta de plaquetas menor de 20 000/mm3\"<br><br>Análisis de Distractores: A es el umbral de transfusión profiláctica para pacientes estables y sin factores de riesgo asociados. C se reserva para procedimientos menores invasivos o sangrado menor. D se reserva para procedimientos mayores o sangrado grave.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Urgencias hemato-oncológicas, Página 27." 
+    },
+    {
+        id: 31, 
+        question: "En un paciente con Leucemia Aguda Pediátrica que presenta hemorragia mayor que compromete la vida (gastrointestinal o del sistema nervioso central), ¿cuál es el umbral de plaquetas requerido para transfundir plaquetas de forma terapéutica?", 
+        options: ["Menor a 20,000/mm3", "Menor a 50,000/mm3", "Menor a 100,000/mm3", "Menor a 150,000/mm3"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, el manejo de sangrados potencialmente mortales en órganos diana exige mantener niveles plaquetarios elevados y seguros para asegurar la formación de un tapón hemostático firme.<br><br>Perla ENARM: \"Se deben transfundir concentrados o aféresis plaquetaria de forma terapéutica en: Paciente con sangrado mayor (SNC, hemoptisis, gastrointestinal, urinario) y con cuenta plaquetaria menor 100 000/ mm3\"<br><br>Análisis de Distractores: A representa el umbral para sangrados menores como gingivorragia o epistaxis. B representa el umbral terapéutico para pacientes en inducción con leucemia promielocítica. D es innecesariamente alto y no se correlaciona con las pautas de urgencia hemostática de la GPC.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Urgencias hemato-oncológicas, Página 27." 
+    },
+    {
+        id: 32, 
+        question: "En Leucemia Aguda Pediátrica, ¿qué valor de cuenta leucocitaria total define el estado de hiperleucocitosis con alto riesgo de leucoestasis?", 
+        options: ["Mayor a 50,000/mm3", "Mayor a 100,000/mm3", "Mayor a 200,000/mm3", "Mayor a 20,000/mm3"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, la hiperleucocitosis eleva drásticamente la viscosidad del plasma y dificulta la microcirculación cerebral y pulmonar por acumulación mecánica de blastos. Este fenómeno físico de obstrucción vascular se asocia típicamente a un recuento absoluto de leucocitos muy alto.<br><br>Perla ENARM: \"La hiperleucocitosis es el conteo leucocitario > 100 000/ml, causada por proliferación de células leucémicas, es más frecuente en LAM y LAL de estirpe T.\"<br><br>Análisis de Distractores: A es un factor de mal pronóstico para la estratificación del riesgo en Leucemia Linfoblástica Aguda al diagnóstico, pero no define operativamente la urgencia oncológica de hiperleucocitosis severa con leucoestasis. C y D no corresponden al umbral estandarizado por la GPC.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Urgencias hemato-oncológicas, Página 27." 
+    },
+    {
+        id: 33, 
+        question: "En un paciente menor de 12 kilogramos diagnosticado con Leucemia Aguda Pediátrica e hiperleucocitosis grave, ¿cuál es el procedimiento alternativo a la leucoféresis para reducir mecánicamente la cuenta leucocitaria?", 
+        options: ["Quimioterapia intratecal de dosis alta", "Exanguinotransfusión parcial", "Plasmaféresis terapéutica de volumen alto", "Esplenectomía de urgencia en cama"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, la leucoféresis no se puede realizar de forma segura en niños pequeños con bajo peso debido al volumen de cebado extracorpóreo requerido por las máquinas, por lo que la remoción celular debe realizarse mediante recambio sanguíneo directo manual.<br><br>Perla ENARM: \"En los pacientes menores de 12 kg en los que la leucoféresis está contraindicada, puede realizarse una exanguinotransfusión parcial.\"<br><br>Análisis de Distractores: A es un tratamiento de infiltración de SNC, no para remoción sistémica de volumen blástico. C remueve proteínas plasmáticas pero no es eficaz para depurar la masa celular blástica. D es un procedimiento invasivo quirúrgico no indicado en hiperleucocitosis.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Urgencias hemato-oncológicas, Página 28." 
+    },
+    {
+        id: 34, 
+        question: "De acuerdo a la definición operativa de la GPC de Leucemia Aguda Pediátrica, ¿qué registro de temperatura corporal y duración determinan el estado de fiebre en un paciente con neoplasia hematológica?", 
+        options: ["Mayor a 38.3 °C aleatoria o 38 °C por más de una hora", "Mayor a 38.5 °C aleatoria o 37.8 °C por más de dos horas", "Mayor a 38.0 °C aleatoria o 37.5 °C por más de cuatro horas", "Mayor a 39.0 °C aleatoria o 38.5 °C por más de treinta minutos"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, definir con precisión el umbral térmico permite iniciar de forma rápida la búsqueda de focos infecciosos y la terapia antibiótica empírica en el paciente inmunocomprometido.<br><br>Perla ENARM: \"La fiebre, considerada como temperatura > 38.3 °C en forma aleatoria o 38 °C de más de una hora de duración en forma continua...\"<br><br>Análisis de Distractores: B, C y D proponen cifras de temperatura e intervalos de tiempo arbitrarios que no corresponden a la definición epidemiológica y clínica estandarizada en el texto de la GPC para iniciar el protocolo de fiebre y neutropenia.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Urgencias hemato-oncológicas, Página 28." 
+    },
+    {
+        id: 35, 
+        question: "En un paciente con Leucemia Aguda Pediátrica que presenta fiebre, ¿cuál es el conteo absoluto de neutrófilos que define el estado de neutropenia con alto riesgo de infección bacteriana grave?", 
+        options: ["Menor a 1,500/mm3", "Menor a 1,000/mm3", "Menor a 500/mm3", "Menor a 100/mm3"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, el descenso severo de la principal línea de defensa inmunológica contra bacterias y hongos expone al menor a sepsis de rápida progresión. Un valor inferior a 500/mm3 es el límite para el inicio obligatorio de antibióticos de amplio espectro.<br><br>Perla ENARM: \"...en presencia de neutropenia, con cuenta de neutrófilos absolutos < 500/mm3.\"<br><br>Análisis de Distractores: A y B representan neutropenia leve y moderada que, si bien incrementan el riesgo infeccioso, no son el criterio para el protocolo de neutropenia febril de alto riesgo. D define a la neutropenia profunda, un subgrupo de riesgo aún mayor, pero el límite de inicio de la urgencia es 500/mm3.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Urgencias hemato-oncológicas, Página 29." 
+    },
+    {
+        id: 36, 
+        question: "En el paciente con Leucemia Aguda Pediátrica que desarrolla neutropenia y fiebre, ¿cuál es la recomendación farmacológica de primera línea para el inicio del tratamiento empírico?", 
+        options: ["Cefalosporinas de tercera/cuarta generación, carbapenémicos o piperacilina-tazobactam", "Macrólidos orales de espectro ampliado asociados a trimetoprima-sulfametoxazol", "Penicilina g sódica cristalina combinada con metronidazol intravenoso", "Aminoglucósidos de dosis única diaria asociados a clindamicina oral"], 
+        answer: 0, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, la cobertura contra patógenos oportunistas (especialmente Pseudomonas aeruginosa y enterobacterias Gram negativas) debe ser bactericida, de amplio espectro y administrada por vía intravenosa de forma inmediata (en los primeros 30 minutos).<br><br>Perla ENARM: \"La monoterapia empírica recomendada incluye cefalosporinas de tercera o cuarta generación, carbapenémicos o piperacilina-tazobactam.\"<br><br>Análisis de Distractores: B no ofrece cobertura endovenosa y los macrólidos no cubren bacilos Gram negativos resistentes. C y D carecen de la cobertura de espectro antipseudomónico necesaria como monoterapia de inicio en el paciente neutropénico febril.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Urgencias hemato-oncológicas, Página 29." 
+    },
+    {
+        id: 37, 
+        question: "En el protocolo inicial de neutropenia y fiebre en Leucemia Aguda Pediátrica, ¿cuál es el papel terapéutico recomendado para el uso de vancomicina por la GPC?", 
+        options: ["Indicado como monoterapia inicial obligatoria", "No forma parte del régimen inicial de tratamiento", "Indicado únicamente si el paciente cursa con neutropenia leve", "Indicado de rutina combinado con ceftriaxona"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, el uso indiscriminado de glicopéptidos favorece la aparición de cepas bacterianas multirresistentes. Su adición debe restringirse a sospecha fundamentada de infección de catéter, choque séptico o colonización previa.<br><br>Perla ENARM: \"La vancomicina no forma parte del régimen inicial de tratamiento.\"<br><br>Análisis de Distractores: A, C y D recomiendan el uso de vancomicina en escenarios de rutina o inadecuados, lo cual contraviene la directriz de uso prudente de antibióticos de la GPC.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Urgencias hemato-oncológicas, Página 29." 
+    },
+    {
+        id: 38, 
+        question: "En Leucemia Aguda Pediátrica con sospecha de Coagulación Intravascular Diseminada, ¿con qué frecuencia temporal deben solicitarse las pruebas de coagulación para monitorizar la resolución?", 
+        options: ["Cada 24 horas", "Cada 12 horas", "Cada 6 horas", "Cada 48 horas"], 
+        answer: 2, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, la coagulopatía de consumo en leucemia progresa con extrema rapidez hacia hemorragias fatales, requiriendo monitorización estrecha y soporte transfusional dinámico de factores.<br><br>Perla ENARM: \"Se debe solicitar BH, TP, TTP, fibrinógeno y DD en los pacientes con diagnóstico reciente de leucemia, en particular ante la sospecha de LAM subtipo M3, M4 y M5 y repetir cada 6 horas hasta la resolución de la coagulopatía en caso de presentarse.\"<br><br>Análisis de Distractores: A, B y D proponen intervalos de monitorización temporal excesivamente prolongados que arriesgan pasar por alto caídas severas de factores de coagulación o plaquetas, incrementando la letalidad por sangrado masivo.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Urgencias hemato-oncológicas, Página 31." 
+    },
+    {
+        id: 39, 
+        question: "En el paciente con Leucemia Aguda Pediátrica que desarrolla Coagulación Intravascular Diseminada, ¿cuál es el valor meta de fibrinógeno plasmático recomendado para reducir el riesgo de hemorragia grave?", 
+        options: ["Mayor a 50 mg/dl", "Mayor a 100 mg/dl", "Mayor a 200 mg/dl", "Mayor a 150 mg/dl"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, la reposición de fibrinógeno mediante crioprecipitados o plasma fresco congelado es vital para restaurar la formación de fibrina y contrarrestar la hiperfibrinólisis secundaria a la liberación de procoagulantes blásticos.<br><br>Perla ENARM: \"Se recomienda mantener niveles de fibrinógeno > 100 mg/dl mediante el uso de plasma fresco congelado, concentrado de fibrinógeno o crioprecipitados.\"<br><br>Análisis de Distractores: A representa un nivel críticamente bajo asociado a un riesgo extremo de hemorragia incontrolable. C y D son valores normales o metas fisiológicas ideales, pero la meta de reposición hemostática mínima de seguridad según la GPC es 100 mg/dl.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Urgencias hemato-oncológicas, Página 31." 
+    },
+    {
+        id: 40, 
+        question: "De acuerdo a los criterios diagnósticos laboratoriales de Cairo-Bishop para Síndrome de Lisis Tumoral en Leucemia Aguda Pediátrica, ¿cuál es el punto de corte del fósforo sérico que define a la hiperfosfatemia?", 
+        options: ["Mayor o igual a 4.5 mg/dl", "Mayor o igual a 6.5 mg/dl", "Mayor o igual a 8.0 mg/dl", "Mayor o igual a 5.5 mg/dl"], 
+        answer: 1, 
+        justification: "Justificación: De acuerdo a la GPC de Leucemia Aguda Pediátrica, la hiperfosfatemia es consecuencia de la lisis masiva de blastos (que contienen hasta cuatro veces más fósforo intracelular que los linfocitos maduros). Su elevación favorece la formación de fosfato de calcio e hipocalcemia secundaria.<br><br>Perla ENARM: En el Cuadro 6 de Síndrome de lisis tumoral (Cairo-Bishop), se establece bajo \"Fósforo\": \"> 6.5 mg/dl o > 25% del valor basal\".<br><br>Análisis de Distractores: A y D representan valores normales o de elevación leve en pediatría que no integran el criterio formal de Cairo-Bishop para la definición de lisis tumoral bioquímica. C es un valor excesivo y tardío.", 
+        source: "SS-061-08, Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención, 2017, Anexos, Página 35 (Cuadro 6)." 
+    }
+        ];
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('06108LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('06108Progress');
+                localStorage.removeItem('06108LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-blue-500 shadow-md z-10 border-blue-500 dark:border-blue-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-cyan-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "PEDIATRÍA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus respuestas correctas/incorrectas en el tablero." 
+                : "SS-061-08 • Diagnóstico oportuno de la leucemia aguda en pediatría en primer y segundo nivel de atención";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="JS18818PE.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-blue-100 dark:border-blue-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 dark:has-[:checked]:bg-blue-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('06108Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('06108LastQId', currentQuestionId);
+                else localStorage.removeItem('06108LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('06108Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    const firebaseConfig = {apiKey: "AIzaSyB26PT8kuB-0fxyUYgGk51yC1rAsW0dYj0", authDomain: "enarm-lite.firebaseapp.com", projectId: "enarm-lite", storageBucket: "enarm-lite.firebasestorage.app", messagingSenderId: "767032952477", appId: "1:767032952477:web:84347320ed3d376f7e7674", measurementId: "G-PVR3RBVNSV"};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.1s ease';
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {const userDocRef = doc(db, "usuarios_autorizados", user.email);
+            const userDocSnap = await getDoc(userDocRef);
+            if(userDocSnap.exists()) {document.body.style.opacity = '1';} else {window.location.href = "index.html";}} else {window.location.href = "index.html";}
+    });
+</script>
+</body>
+</html>
