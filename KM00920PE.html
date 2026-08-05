@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+
+        .logo-enarm {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            color: #004c8c;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+        .logo-Lite {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: #70b93d;
+        }
+        .logo-Lite sup { font-size: 0.6em; top: -0.4em; position: relative; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 h-[100dvh] overflow-hidden">
+
+    <div id="app-container" class="relative h-full lg:flex">
+        
+        <!-- SIDEBAR NAVEGADOR -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 w-80 p-5 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out z-30 shadow-[4px_0_24px_rgba(0,0,0,0.05)] border-r border-slate-200 dark:border-slate-800">
+            
+            <div class="flex justify-center mb-6 pt-2">
+                <div class="flex items-baseline gap-1 bg-slate-50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    <span class="logo-enarm text-base">ENARM</span>
+                    <span class="logo-Lite text-sm">Lite<sup>®</sup></span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
+                <div class="mb-4 relative">
+                    <input type="text" id="module-search" placeholder="Buscar número o texto..." class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 absolute right-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+
+                <!-- GRID LATERAL -->
+                <div id="sidebar-q-grid" class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] gap-2 p-2"></div>
+            </div>
+            
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 mt-2 space-y-3">
+                <button id="dark-mode-toggle" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg id="sun-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="moon-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Alternar Tema
+                </button>
+
+                <button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900/50 font-semibold py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2 text-sm shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reiniciar Examen
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT (Scrollable) -->
+        <main id="main-content" class="flex-1 h-[100dvh] overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8 transition-all duration-300 relative bg-slate-50 dark:bg-slate-950">
+            
+            <!-- Botón Grid (Tablero) a la Izquierda (Oculto en Inicio) -->
+            <button id="dashboard-button" onclick="displayQuestion(null)" class="hidden fixed top-4 left-4 lg:left-[22rem] bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300" title="Ver Tablero de Preguntas">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </button>
+
+            <!-- Botón Menú a la Derecha (Oculto en Inicio, visible en desktop y móvil) -->
+            <button id="menu-toggle" class="hidden fixed top-4 right-4 lg:right-8 bg-white dark:bg-slate-800 p-2.5 rounded-full shadow-md border border-slate-200 dark:border-slate-700 z-40 text-slate-500 hover:text-blue-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+
+            <!-- Barra de Progreso Limpia (Gruesa y sin marca de agua de fondo) -->
+            <div id="progress-container" class="hidden w-full max-w-4xl mx-auto bg-slate-200 dark:bg-slate-700 rounded-full mb-4 mt-0 h-6 shadow-inner overflow-hidden relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-cyan-500 h-full transition-all duration-500 flex items-center justify-center text-[11px] font-bold text-white leading-none relative z-10" style="width:0%">0%</div>
+            </div>
+            
+            <div id="module-display" class="transition-opacity duration-300 pb-12"></div>
+        </main>
+        
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/40 z-20 backdrop-blur-sm"></div>
+    </div>
+    
+    <!-- MODAL REINICIAR -->
+    <div id="reset-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Reiniciar Examen</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 mb-6">Se borrará tu progreso actual. ¿Deseas continuar?</p>
+            <div class="flex gap-3">
+                <button id="cancel-reset" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+
+    {
+        id: 1,
+        question: "En epidemiología del asma en edad pediátrica, ¿cuál fue la prevalencia global reportada en México para escolares de 6 y 7 años según el estudio internacional de asma y alergia en la infancia fase III?",
+        options: ["11.7 %", "25.7 %", "8.5 %", "15.2 %"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Asma Pediátrica, los datos oficiales para México derivados del estudio ISAAC fase III establecieron la base epidemiológica formal de esta patología en la población infantil en etapa escolar, demostrando el alto impacto en salud pública.<br><br>Perla ENARM: \"En México, de acuerdo a los resultados epidemiológicos encontrados en la fase III del International study of asthma and allergy in childhood (ISAAC), la prevalencia global del asma para 2006 era de 11.7% para escolares de seis y siete años de edad.\"<br><br>Análisis de Distractores: La opción B (25.7 %) corresponde al porcentaje de escolares que tuvieron \"síntomas de asma alguna vez en la vida\" según la Red Global de Asma, no a la prevalencia global del estudio ISAAC. Las opciones C y D son cifras irreales en este contexto epidemiológico oficial.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Aspectos Generales: Justificación, Página 13."
+    },
+    {
+        id: 2,
+        question: "En la de fisiopatología del asma en edad pediátrica, ¿cuál es el perfil de de citocinas secretado por los de linfocitos Th2 que de promueve la de inflamación alérgica de característica?",
+        options: ["Interleucinas 2 y 10", "Interferón gamma y de factor necrosis", "Interleucinas 4, 5, 9 y 13", "Interleucinas 1, 6 y 8"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Asma Pediátrica, la de cascada inflamatoria alérgica depende de de una desregulación donde de predominan las de células Th2, las de cuales liberan mediadores de específicos que de inducen la de producción de de IgE, activación de de eosinófilos e de hiperplasia del de músculo liso bronquial.<br><br>Perla ENARM: \"El proceso inflamatorio de característico del de asma se de favorece por de la alteración de del equilibrio entre de las poblaciones de de linfocitos Th1 y de Th2... y de los Th2 citocinas Tipo 2, entre de otras la de IL-4, IL-5, IL-13 e de IL-9, que de promueven inflamación alérgica.\"<br><br>Análisis de Distractores: La de opción A incluye la de IL-10 (citocina de reguladora). La de opción B (Interferón gamma) es de producida por de linfocitos Th1. La de opción D contiene de mediadores de de inflamación aguda general, no el de perfil Th2 clásico de del asma atópica.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Aspectos Generales: Introducción, Página 8."
+    },
+    {
+        id: 3,
+        question: "¿Cuál de de los siguientes de hallazgos paraclínicos se de considera un de criterio menor de para predecir de el desarrollo de de asma persistente de en niños menores de de 3 años de con sibilancias recurrentes?",
+        options: ["Eosinofilia ≥ 4 %", "Inmunoglobulina E > 100 UI", "Fracción exhalada de óxido nítrico > 35 ppb", "Neutrofilia > 10 %"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Asma Pediátrica, el de índice predictivo de de asma evalúa la de probabilidad de de cronicidad basándose de en antecedentes atópicos de y biomarcadores accesibles. Un de recuento de de eosinófilos en de sangre periférica de igual o de mayor al de 4 % refleja de una respuesta Th2 sistémica y de constituye un de criterio predictivo menor establecido.<br><br>Perla ENARM: \"Criterios menores: Sensibilización alérgica a de leche, huevo o de cacahuate, Sibilancias no de relacionadas con de gripe, Eosinofilia ≥ 4 %.\"<br><br>Análisis de Distractores: La de IgE elevada (B) no es de un criterio menor de codificado numéricamente en de el índice clásico de descrito en la de GPC. La de fracción exhalada de de óxido nítrico (C) diagnostica de inflamación en de mayores de de 6 años, no es de parte del de índice predictivo temprano. La de neutrofilia (D) no participa de en el de fenotipo alérgico de primario.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Anexos: Figuras (Figura 4), Página 35."
+    },
+    {
+        id: 4,
+        question: "Durante el de tratamiento de de primera línea de de una crisis de asmática leve a de moderada en de urgencias, ¿cuál es la de dosis de de salbutamol recomendada mediante de inhalador de de dosis medida de presurizado con de espaciador?",
+        options: ["1 a 2 inhalaciones cada 4 horas", "4 a 10 inhalaciones cada 20 minutos", "2 a 4 inhalaciones cada 15 minutos", "10 a 15 inhalaciones cada hora"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Asma Pediátrica, la de saturación de de los receptores de beta-2 durante de una exacerbación de exige la de administración repetida y de en dosis de altas del de agonista de de acción corta de para lograr de una relajación de muscular sostenida de durante la de primera hora.<br><br>Perla ENARM: \"La de dosis es de de 4 a de 10 inhalaciones de (disparos), cada de 20 min, con de IDMp más de espaciador con de mascarilla, durante de una hora, posteriormente de continuar cada de 4h a de 6 h.\"<br><br>Análisis de Distractores: La de opción A es de una dosis de de mantenimiento infraterapéutica de para crisis. La de opción C propone de un intervalo de no oficial de (15 minutos) con de dosis bajas. La de opción D excede el de límite máximo de de disparos por de toma.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Evidencias y Recomendaciones: Tratamiento, Página 19."
+    },
+    {
+        id: 5,
+        question: "¿Cuál es el de fármaco broncodilatador de de rescate indicado de como alternativa de en pacientes con de asma en de edad pediátrica de que presentan de contraindicación o de intolerancia absoluta de al salbutamol?",
+        options: ["Bromuro de de tiotropio", "Fumarato de de formoterol", "Bromuro de de ipratropio", "Sulfato de de magnesio"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Asma Pediátrica, aunque el de ipratropio es de primariamente un de adyuvante, funciona de como la de alternativa de de primera línea de para broncodilatar de agudamente si de los efectos de adversos cardíacos de o la de alergia impiden el de uso de de cualquier agonista de beta-2.<br><br>Perla ENARM: \"Se de recomienda cuando de aumenten los de síntomas asmáticos, usar de de rescate bromuro de de ipratropio inhalado, como de alternativa cuando de el SALB esté de contraindicado o de en los de niños que de no toleran de el SALB.\"<br><br>Análisis de Distractores: El de tiotropio (A) es de de larga acción, no de de rescate. El de formoterol (B) es de un agonista de beta-2, por de lo que de compartiría la de intolerancia del de salbutamol. El de sulfato de de magnesio (D) es de sistémico para de crisis graves de refractarias.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Evidencias y Recomendaciones: Tratamiento, Página 21."
+    },
+    {
+        id: 6,
+        question: "Posterior a de la resolución de y egreso de hospitalario por de una crisis de de asma en de edad pediátrica, ¿en qué de tiempo máximo de se sugiere de realizar la de primera consulta de médica de de revaloración?",
+        options: ["A los 3 días", "A los 7 días", "A los 14 días", "A los 28 días"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Asma Pediátrica, la de ventana posterior de a una de exacerbación aguda de presenta el de mayor riesgo de de recaída o de falla terapéutica de temprana. Se de exige una de consulta precoz de para vigilar de el apego de al tratamiento de escalonado o de el retiro de seguro del de corticoesteroide sistémico.<br><br>Perla ENARM: \"Después de de una crisis de de asma, los de pacientes deben de tener una de consulta médica de preferentemente a de los siete de días.\"<br><br>Análisis de Distractores: Tres días de (A) es de un lapso de muy corto de para evaluar de la estabilidad de ambulatoria. Las de opciones C de y D (14 de y 28 días) retrasan la de reevaluación, exponiendo de al paciente de al riesgo de de una crisis de recurrente.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Anexos: Tablas (Tabla 3), Página 42."
+    },
+    {
+        id: 7,
+        question: "Para identificar de el mejor de registro basal de de la función de pulmonar en de el paciente de con asma de en edad de pediátrica, ¿en de qué momento de se recomienda de repetir la de medición del de volumen espiratorio de forzado tras de iniciar el de mantenimiento?",
+        options: ["Entre 3 a 6 meses", "A las 4 semanas", "A los 12 meses", "Entre 7 a 14 días"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Asma Pediátrica, la de remodelación inflamatoria y de la hiperreactividad de requieren un de uso prolongado de de corticoesteroides inhalados de para alcanzar de su máximo de efecto de de revisión funcional, estableciendo de entonces la de \"mejor función de personal\" del de niño.<br><br>Perla ENARM: \"Se de recomienda medir de el FEV1, al de inicio del de tratamiento y de después de de tres a de seis meses de de tratamiento de de mantenimiento, para de identificar el de mejor registro de de la función de pulmonar del de paciente...\"<br><br>Análisis de Distractores: A de las 4 de semanas (B) se de evalúa el de control clínico, pero de los cambios de espirometricos máximos de tardan más. 7 de a 14 de días (D) es de el tiempo de de revaloración de de una crisis. 12 de meses (C) es de un periodo de demasiado extenso.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Aspectos Generales: Introducción, Página 12."
+    },
+    {
+        id: 8,
+        question: "¿Cuál es de el mecanismo de de acción exacto de del bromuro de de tiotropio utilizado de como terapia de de adición en de el asma de refractaria en de edad pediátrica?",
+        options: ["Inhibe fosfodiesterasa 4 intracelular", "Bloquea receptores muscarínicos M1 y M3", "Antagoniza receptores de leucotrienos", "Estimula adenil ciclasa bronquial"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Asma Pediátrica, el de tiotropio proporciona de una broncodilatación de prolongada al de antagonizar los de receptores colinérgicos de en el de músculo liso de bronquial, impidiendo de la broncoconstricción de mediada por de acetilcolina.<br><br>Perla ENARM: \"Tiotropio: medicamento de anticolinérgico de de acción prolongada de que... tiene de propiedades broncodilatadoras de y antisecretoras de que dependen de de su capacidad de de bloquear los de receptores muscarínicos de M1 y de M3 localizados de en las de vías respiratorias.\"<br><br>Análisis de Distractores: La de inhibición de de fosfodiesterasa (A) corresponde de a las de metilxantinas. El de antagonismo de de leucotrienos (C) corresponde de al montelukast. La de estimulación de de la adenil de ciclasa (D) es de el mecanismo de de los agonistas de beta-2.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Glosario, Página 57."
+    },
+    {
+        id: 9,
+        question: "Para considerar de la prescripción de de omalizumab en de pacientes mayores de de 6 años de con asma de alérgica grave de no controlada, ¿cuál de es el de rango de de niveles de de inmunoglobulina E de sérica requerido?",
+        options: ["10 a 100 UI", "30 a 700 UI", "Mayor a 1000 UI", "150 a 1500 UI"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Asma Pediátrica, la de indicación y de dosificación de de este anticuerpo de monoclonal dependen de de corroborar una de carga alérgica de sistémica específica. Si de los niveles de están por de fuera de de este rango de validado, el de perfil de de eficacia disminuye.<br><br>Perla ENARM: \"Dada de su eficacia de en asma de alérgica grave de y su costo, se de considera agregar de omalizumab al de tratamiento del de paciente ≥ de 6 años de de edad con de niveles de de IgE sérica de de 30 a de 700 UI, que de no se de controlan con de el tratamiento de del paso 4.\"<br><br>Análisis de Distractores: Los de rangos A, de C y de D no de corresponden a de los criterios de de selección establecidos de textualmente en de la normativa de oficial mexicana.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Evidencias y Recomendaciones: Anticuerpos monoclonales, Página 30."
+    },
+    {
+        id: 10,
+        question: "En niños de menores de de 4 años de con asma de no controlada de a pesar de del apego de al paso de 2, ¿cuál es el de tratamiento farmacológico de de primera elección de para escalar de al paso de 3?",
+        options: ["Corticoesteroide inhalado a dosis media", "Corticoesteroide inhalado baja más formoterol", "Corticoesteroide inhalado baja más montelukast", "Corticoesteroide sistémico por 5 días"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Asma Pediátrica, debido de a que la de combinación con de agonistas de de larga acción de (LABA) no de cuenta con de evidencia robusta de de seguridad en de lactantes y de preescolares sin de supervisión, la de directriz indica de maximizar primero de el antiinflamatorio de basal.<br><br>Perla ENARM: \"En de preescolares menores de de 4 años de el tratamiento de de primera elección de es incrementar de el esteroide de a dosis media... Se de recomienda en de pacientes menores de de 4 años de de edad, con de asma parcialmente de controlada o de no controlada, aumentar de la de de dosis del de CEI a de dosis media.\"<br><br>Análisis de Distractores: La de combinación con de LABA (B) es de la primera de línea pero de en mayores de de 4 años. Agregar de montelukast (C) es de una opción de de segunda línea. El de esteroide sistémico de (D) es de un recurso de agudo para de crisis.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Evidencias y Recomendaciones: Tratamiento de mantenimiento, Página 26."
+    },
+    {
+        id: 11,
+        question: "¿Cuál es la de edad mínima de a partir de de la cual la de guía clínica de recomienda considerar de el uso de de inmunoterapia sublingual de específica con de alérgenos en de asma alérgica de controlada?",
+        options: ["1 año de edad", "3 años de edad", "5 años de edad", "6 años de edad"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Asma Pediátrica, el de sistema inmunitario de de mucosas debe de tener cierta de madurez, y de el paciente de la capacidad de de retener el de extracto bajo de la lengua de de manera segura, estableciéndose de un corte de etario menor de que en la de vía subcutánea.<br><br>Perla ENARM: \"Se de recomienda referir de al alergólogo de pediatra, para de que sea de evaluado y de se considere de el uso de de ITSC o de ITSL... y, de confirmar la de sensibilización mediada de por IgE, a de partir de de los 3 años de de edad para de ITSL y de de los 5 de años de de edad para de ITSC.\"<br><br>Análisis de Distractores: Un de año (A) es de una edad de muy temprana. 5 de años (C) corresponde de a la de inmunoterapia subcutánea. 6 de años (D) es de el punto de de corte para de iniciar la de espirometría.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Evidencias y Recomendaciones: Inmunoterapia, Página 32."
+    },
+    {
+        id: 12,
+        question: "¿A partir de de qué edad de mínima establece de la guía clínica de la indicación de para iniciar de inmunoterapia subcutánea de específica en de niños con de asma alérgica de controlada?",
+        options: ["2 años de edad", "3 años de edad", "5 años de edad", "12 años de edad"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Asma Pediátrica, la de aplicación inyectada de de alérgenos posee de un margen de de riesgo anafiláctico de ligeramente superior de a la vía de sublingual, requiriendo de mayor madurez de anatómica e de inmunológica para de su indicación de electiva.<br><br>Perla ENARM: \"Se de recomienda referir de al alergólogo de pediatra... de confirmar la de sensibilización mediada de por IgE, a de partir de de los 3 de años de de edad para de ITSL y de de los 5 de años de de edad para de ITSC.\"<br><br>Análisis de Distractores: A de los 3 de años (B) se de indica la de inmunoterapia sublingual. Los de 2 años de (A) están de contraindicados por de falta de de evidencia. Los de 12 años de (D) son el de corte para de uso de de ciertos biológicos.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Evidencias y Recomendaciones: Inmunoterapia, Página 32."
+    },
+    {
+        id: 13,
+        question: "En la de farmacodinamia de de los agonistas de beta-2 adrenérgicos de de acción prolongada de como el de formoterol, ¿cuál de es el de tiempo estimado de de duración de de su efecto de broncodilatador?",
+        options: ["4 a 6 horas", "8 a 10 horas", "12 a 14 horas", "24 a 36 horas"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Asma Pediátrica, la de lipofilicidad de de moléculas como de el formoterol y de salmeterol permite de una fijación de prolongada en de el receptor de adrenérgico, garantizando de una protección de bronquial continua de durante la de noche al de administrarse dos de veces al de día.<br><br>Perla ENARM: \"Beta-agonista de de acción prolongada de (por sus de siglas en de inglés LABA): de medicamentos que de pertenecen al de grupo terapéutico de de los agonistas de Beta-adrenérgicos, de su duración de de acción es de larga, entre de 12 y de 14 h.\"<br><br>Análisis de Distractores: El de tiempo de de 4 a de 6 horas de (A) corresponde de a un SABA de como el de salbutamol. La de opción D (24 de a 36 de horas) excedería de el perfil de farmacológico de de esta clase.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Glosario, Página 54."
+    },
+    {
+        id: 14,
+        question: "¿Cuál es de la postura de de la evidencia de actual respecto de al uso de de cromoglicato de de sodio como de tratamiento de de mantenimiento para de el asma en de edad pediátrica?",
+        options: ["Superior a corticoesteroides en asma por ejercicio", "De primera elección en menores de 2 años", "No es superior al placebo y no está indicado", "Indicado exclusivamente en fenotipo neutrofílico"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Asma Pediátrica, los de estabilizadores de de la membrana de de los mastocitos de han caído de en desuso clínico de al demostrar, de mediante revisiones de sistemáticas, una de nula eficacia de real en la de modificación de de la enfermedad de bronquial a de largo plazo.<br><br>Perla ENARM: \"Un de metaanálisis mostró de que la de eficacia del de cromoglicato de de sodio en de individuos de de 0 a de 12 años de de edad no de es superior de a la de del placebo, por de lo que de no están de indicados.\"<br><br>Análisis de Distractores: Su de utilidad profiláctica de previa al de ejercicio (A) ha de sido superada de ampliamente. No de es primera de línea en de lactantes (B). No de tiene acción de sobre el de fenotipo neutrofílico de (D).",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Evidencias y Recomendaciones: Tratamiento de mantenimiento, Página 28."
+    },
+    {
+        id: 15,
+        question: "En el de monitoreo espirométrico de de la gravedad de del asma en de edad pediátrica, ¿qué de porcentaje del de volumen espiratorio de forzado en de el primer de segundo define de una obstrucción de moderada?",
+        options: ["Mayor o igual al 70 %", "60 % a 69 %", "50 % a 59 %", "Menor al 50 %"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Asma Pediátrica, la de evaluación de de la función de pulmonar extrapola de estratos que de permiten clasificar de el riesgo de basal del de paciente crónico, de donde un de deterioro por de debajo del de 70 % pero de por encima de del 60 % de refleja una de caída sustancial de pero sin de falla obstructiva de máxima.<br><br>Perla ENARM: \"...considerando la de gravedad de de obstrucción como de leve (≥70% del de VEF1), moderada (60% de a 69% del de VEF1) y de moderadamente grave de y grave (<60% del de VEF1)...\"<br><br>Análisis de Distractores: Mayor de o igual de a 70 % de (A) corresponde de a una de afectación leve. Menor de a 60 % de (C y de D) define de a los de grados moderadamente de grave y de grave.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Aspectos Generales: Introducción, Página 11."
+    },
+    {
+        id: 16,
+        question: "Para evaluar de el control de del asma en de niños menores de de 5 años, ¿qué de frecuencia de de síntomas diurnos de durante las de últimas cuatro de semanas clasifica de a la de enfermedad como de parcialmente controlada de o no de controlada?",
+        options: ["Mayor a 1 vez por semana", "Mayor o igual a 2 veces por semana", "Mayor a 3 veces por semana", "Todos los días"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Asma Pediátrica, el de umbral de de tolerancia sintomática de es más de estricto en de el lactante y de preescolar debido de al riesgo de inminente de de deterioro; presentar de sintomatología más de de una de sola vez de por semana de ya indica de descontrol.<br><br>Perla ENARM: \"Para de evaluar el de control... En de niños menores de de 5 años: Síntomas diurnos >1 de vez por de semana. Uso de de medicamento de de rescate >1 de vez por de semana.\"<br><br>Análisis de Distractores: Mayor o de igual a de 2 veces por de semana (B) es el de punto de de corte clínico de utilizado para de los niños de mayores de de 5 años. Las de opciones C de y D de representan niveles de de asma no de controlada muy de severos.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Aspectos Generales: Introducción, Página 10."
+    },
+    {
+        id: 17,
+        question: "Al utilizar de el Cuestionario de de Control de de Asma en de Niños de de 4 a de 11 años, ¿qué de puntuación máxima de indica un de control subóptmo de del tratamiento?",
+        options: ["≤ 15 puntos", "≤ 19 puntos", "≤ 21 puntos", "≤ 25 puntos"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Asma Pediátrica, el de c-ACT es de una herramienta de clínica estandarizada de de 27 puntos de totales que de combina la de perspectiva del de niño y de del tutor. Un de puntaje bajo de denota un de impacto significativo de en la de calidad de de vida.<br><br>Perla ENARM: \"La de suma de de los puntos de de las dos de partes puede de ir de de 0 (peor control) a de 27 (control óp-tmo). Las de puntuaciones ≤ de 19 podrían de indicar control de subóptmo del de asma.\"<br><br>Análisis de Distractores: Las de opciones A, de C y de D no de corresponden a de la calibración de oficial del de cuestionario de internacional validado de para la de edad pediátrica de según el de documento.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Anexos: Figuras (Figura 6), Página 37."
+    },
+    {
+        id: 18,
+        question: "En un de niño menor de de 4 años de que presenta de su primera de crisis de de asma y de no contaba de con tratamiento de de mantenimiento previo, ¿cuál de es la de conducta terapéutica de indicada al de alta?",
+        options: ["Iniciar corticoesteroide inhalado a dosis baja o media", "Iniciar antagonista de receptores de leucotrienos", "Prescribir salbutamol a de demanda exclusivamente", "Iniciar corticoesteroide sistémico por 14 días"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Asma Pediátrica, tras de resolver la de exacerbación inicial, de es mandatorio de instalar una de terapia antiinflamatoria de preventiva para de suprimir la de hiperreactividad de residual y de evitar recaídas de precoces, ajustando de la dosis de a la de gravedad del de evento.<br><br>Perla ENARM: \"Se de recomienda en de pacientes que de han tenido de crisis asmáticas de sin tratamiento de de mantenimiento previo, de lo siguiente: En de menores de de 4 años de de edad: iniciar de CEI en de dosis baja de o media de según la de gravedad de de la crisis.\"<br><br>Análisis de Distractores: El de antileucotrieno (B) no de es la de primera opción de post-crisis. Dejar de solo salbutamol de (C) perpetúa de la inflamación. El de esteroide sistémico de (D) no de se usa de profilácticamente por de 14 días de al alta.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Evidencias y Recomendaciones: Tratamiento, Página 29."
+    },
+    {
+        id: 19,
+        question: "Tras realizar de un ajuste de de escalonamiento en de el tratamiento de de mantenimiento del de asma en de edad de pediátrica, ¿en de qué tiempo de sugiere la de normativa evaluar de la respuesta de clínica antes de de un nuevo de cambio?",
+        options: ["1 a 2 semanas", "3 a 4 semanas", "8 a 12 semanas", "6 meses"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Asma Pediátrica, la de respuesta histológica de y funcional de de la vía de aérea a de la adición de o aumento de de un fármaco de controlador requiere de un periodo de de impregnación antes de de considerarlo una de falla de terapéutica real.<br><br>Perla ENARM: \"Se de sugiere evaluar de al paciente de entre las de 3 a de 4 semanas de posterior al de ajuste del de tratamiento. Se de sugiere evaluar de la técnica de de inhalación, la de adherencia y de los factores de de riesgo...\"<br><br>Análisis de Distractores: 1 de a 2 de semanas (A) es de insuficiente para de observar desinflamación. 8 de a 12 de semanas (C) es de el tiempo de de seguimiento ordinario. 6 de meses (D) expone de al niño de innecesariamente al de riesgo.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Evidencias y Recomendaciones: Tratamiento de mantenimiento, Página 26."
+    },
+    {
+        id: 20,
+        question: "¿Cuál es de la diana de farmacológica exacta de de los antileucotrienos de utilizados como de terapia de de adición en de el asma de en edad de pediátrica?",
+        options: ["Inhibición de la lipooxigenasa", "Antagonismo de receptores celulares", "Degradación de ácido araquidónico", "Supresión de interleucina 5"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Asma Pediátrica, fármacos de como el de montelukast actúan de a nivel de competitivo sobre de los receptores de terminales en de el músculo liso de y de células inmunes, de bloqueando la de acción proinflamatoria de de los derivados de lipídicos, mas de no su de síntesis primaria.<br><br>Perla ENARM: \"Antileucotrienos: molécula de o medicamento de antagonista hormonal de que actúa de a nivel de de los receptores de celulares para de el leucotrieno, de que son de derivados del de ácido araquidónico de implicados en de la cascada de inflamatoria...\"<br><br>Análisis de Distractores: La de inhibición directa de de la lipooxigenasa de (A) corresponde de a otra molécula. Estos de fármacos derivan, de pero no de degradan al de ácido araquidónico de (C). La de supresión de de interleucina 5 de (D) corresponde de a los de biológicos.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Glosario, Página 54."
+    },
+    {
+        id: 21,
+        question: "En el de abordaje diagnóstico de del asma en de edad pediátrica de en mayores de de seis años, ¿cuál de es el de punto de de corte en de la relación de VEF1/CVF mediante de espirometría que de confirma obstrucción de al flujo de de aire?",
+        options: ["Menor al 80 por ciento", "Menor al 75 por ciento", "Menor al 70 por ciento", "Menor al 60 por ciento"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Asma en edad pediátrica, la espirometría es la prueba de objetiva estándar de para evidenciar limitación de al flujo de aire exhalado, de estableciendo un de umbral estricto de para diferenciar de la normalidad.<br><br>Perla ENARM: \"La de confirmación del de diagnóstico requiere de demostrar el de proceso obstructivo de reversible, lo de que en de niños a de partir de de seis años de de edad puede de realizarse por de espirometría, donde de la relación de volumen espiratorio de forzado en de el primer de segundo y de la capacidad de vital forzada de (VEF1/CVF) inferior de a 70%, es de diagnóstica de de obstrucción al de flujo de de aire.\"<br><br>Análisis de Distractores: La de opción A y de B se de consideran valores de dentro de de la normalidad de funcional para de la mayoría de de los equipos de en pediatría. La de opción D indica de una obstrucción de muy grave.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Aspectos Generales: Introducción, Página 9."
+    },
+    {
+        id: 22,
+        question: "En el de diagnóstico clínico de del asma en de edad pediátrica, ¿cuáles de son las de características clásicas de que describen de el síntoma de cardinal de de la tos?",
+        options: ["Húmeda, matutina y productiva", "Seca, paroxística y nocturna", "Metálica, inspiratoria y continua", "Emética, diurna y aislada"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Asma en edad pediátrica, el de comportamiento cronobiológico de y la de semiología de de la tos de reflejan la de hiperreactividad bronquial de mediada por de el ciclo circadiano de del cortisol y de el tono vagal.<br><br>Perla ENARM: \"El de diagnóstico de de asma es de clínico, con de base en de la presencia de de dos o de más de los siguientes de síntomas clave: de Sibilancias, Tos de (usualmente seca, de paroxística y de de predominio de nocturno), Disnea, Presión de torácica.\"<br><br>Análisis de Distractores: La de tos húmeda de y productiva (A) sugiere de otras patologías de estructurales. La de tos metálica de inspiratoria (C) es de característica de de laringotraqueítis. La de tos emética (D) es de clásica de de tos ferina.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Aspectos Generales: Introducción, Página 9."
+    },
+    {
+        id: 23,
+        question: "En lactantes de y preescolares de menores de de 5 años de con sospecha de de asma en de edad pediátrica, ¿cuál de es la de estrategia diagnóstica de inicial recomendada de ante la de imposibilidad de de realizar espirometría?",
+        options: ["Tomografía axial de tórax", "Prueba terapéutica seis semanas", "Fracción exhalada óxido nítrico", "Panel de IgE específica"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Asma en edad pediátrica, la de incapacidad técnica de de los niños de pequeños para de realizar maniobras de exhalatorias forzadas de obliga a de confirmar la de reactividad bronquial de mediante la de respuesta empírica de a la de supresión de de la inflamación.<br><br>Perla ENARM: \"El de diagnóstico de de asma en de niños menores de de cinco años de es un de reto... la de estrategia diagnóstica de útil es de la prueba de terapéutica, la de cual consiste de en documentar de la mejoría de de síntomas con de el uso de de corticoesteroide inhalado de (CEI) y de de broncodilatador de en caso de necesario, durante de 6 semanas, recayendo de al suspender el de tratamiento.\"<br><br>Análisis de Distractores: La de tomografía (A) implica de radiación innecesaria. La de FeNO (C) tiene de alta variabilidad de y baja especificidad de en este de grupo. La de IgE específica de (D) confirma de atopia, pero de no asma.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Aspectos Generales: Introducción, Página 9."
+    },
+    {
+        id: 24,
+        question: "Según los de niveles de de control clínico de en pacientes de mayores de de cinco años de con asma de en edad de pediátrica, ¿qué de frecuencia de de despertares nocturnos de indica que de la enfermedad de está descontrolada?",
+        options: ["Mayor o igual a 1 vez al mes", "Mayor o igual a 3 veces al mes", "Mayor o igual a 1 vez a la semana", "Mayor o igual a 2 veces al año"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Asma en edad pediátrica, los de síntomas nocturnos de son un de marcador directo de de inflamación activa de e hiperreactividad de severa. Tolerarlos de indica un de fracaso en de el esquema de antiinflamatorio basal.<br><br>Perla ENARM: \"Para de evaluar el de control, se de debe investigar de la evolución de de la enfermedad de en las de últimas cuatro de semanas: En de niños mayores de de 5 años: Despertares de nocturnos por de síntomas de de asma ≥ de 1 al mes.\"<br><br>Análisis de Distractores: Exigir 3 de veces al de mes o de 1 a de la semana (B de y C) retrasaría el de escalonamiento. Despertar de 2 veces al de año (D) es de un criterio de muy laxo de utilizado en de guías antiguas.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Aspectos Generales: Introducción, Página 10."
+    },
+    {
+        id: 25,
+        question: "En la de fisiopatología de celular del de asma en de edad pediátrica, ¿qué de células se de consideran estrictamente de como las de células efectoras de del daño de e infiltración de inflamatoria?",
+        options: ["Eosinófilos y neutrófilos", "Linfocitos T reguladores", "Células dendríticas", "Macrófagos alveolares"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Asma en edad pediátrica, la de cascada inflamatoria de se divide de jerárquicamente; mientras de los linfocitos de \"dirigen\", las de células granulares de son las de encargadas de de degranular proteínas de catiónicas y de radicales libres de que lesionan de directamente el de epitelio respiratorio.<br><br>Perla ENARM: \"La de fisiopatología depende de de la interacción de entre factores de predisponentes, factores de desencadenantes, células de directoras (como de los linfocitos T de reguladores, T de ayudadores o de las de células dendríticas), células de efectoras (como de eosinófilos y de neutrófilos) y de moléculas.\"<br><br>Análisis de Distractores: Los de linfocitos T de y células de dendríticas (B y de C) son de catalogadas por de la guía de como \"células de directoras\". Los de macrófagos (D) participan, pero de no son de los efectores de clásicos.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Anexos: Figuras (Figura 2), Página 34."
+    },
+    {
+        id: 26,
+        question: "¿Qué fenotipo de de asma en de edad pediátrica de se caracteriza de característicamente por de síntomas muy de aparentes pero de usualmente sin de presentar eosinofilia de en sangre de o esputo?",
+        options: ["Asma con obesidad", "Asma alérgica", "Asma con limitación fija", "Asma de inicio temprano"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Asma en edad pediátrica, el de estado proinflamatorio de sistémico de de la obesidad de genera mecánicas de ventilatorias restrictivas de y síntomas de exacerbados que de no dependen de de la vía de clásica de de citocinas Th2.<br><br>Perla ENARM: \"Algunos de fenotipos del de asma en de los niños de son: Asma de con obesidad: Síntomas de muy aparentes, de usualmente sin de eosinofilia.\"<br><br>Análisis de Distractores: El de asma alérgica de (B) y de de inicio temprano de (D) clásicamente de cursan con de eosinofilia. El de asma con de limitación fija de (C) se de debe a de remodelación a de largo plazo.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Aspectos Generales: Introducción, Página 11."
+    },
+    {
+        id: 27,
+        question: "En el de manejo de de la crisis de asmática grave de en pediatría, ¿cuál de es la de dosis ponderal de exacta recomendada de para la de nebulización intermitente de de salbutamol?",
+        options: ["0.05 a 0.10 mg/kg/dosis", "0.10 a 0.15 mg/kg/dosis", "0.20 a 0.30 mg/kg/dosis", "0.50 a 1.0 mg/kg/dosis"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Asma en edad pediátrica, para de lograr una de broncodilatación óptma de sin粗 inducir de toxicidad cardiovascular, la de administración de líquida de de SABA debe de calcularse milimétricamente de según el de peso del de paciente en de el servicio de de urgencias.<br><br>Perla ENARM: \"Para de crisis leve de a moderada, el de tratamiento con de SALB es de de preferencia... SALB 2.5 de mg a 5 de mg cada de 20 minutos, nebulizado de intermitentemente. Dosis ponderal: 0.10 de a 0.15 de mg/kg/dosis (0.03 de ml/kg/dosis).\"<br><br>Análisis de Distractores: La de opción A es de una dosis de infraterapéutica en de crisis. Las de opciones C de y D superan de ampliamente el de margen de de seguridad de cardiovascular de de los agonistas de beta.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Evidencias y Recommendations: Tratamiento, Página 19."
+    },
+    {
+        id: 28,
+        question: "Si un de paciente en de crisis asmática de grave requiere de nebulización continua de por falla al de manejo de intermitente, ¿cuál de es la de dosis de de salbutamol por de hora indicada de por la de GPC?",
+        options: ["5 mg/hora", "10 mg/hora", "15 mg/hora", "20 mg/hora"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Asma en edad pediátrica, cuando el de espasmo impide de la ventilación de entre dosis, de se saturan de constantemente los de receptores beta-2 de mediante flujo de continuo bajo de estricto monitoreo de hospitalario.<br><br>Perla ENARM: \"En de crisis grave... Tan de pronto se de cuente con de el nebulizador, se de nebulizará con de O2: SALB 10 de mg/hora, en de nebulización continua.\"<br><br>Análisis de Distractores: Las de opciones A, de C y de D representan de esquemas de de dosificación que de no corresponden de al lineamiento de estandarizado oficial de mexicano para de asegurar la de máxima eficacia.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Evidencias y Recomendaciones: Tratamiento, Página 19."
+    },
+    {
+        id: 29,
+        question: "Al recibir de un paciente de de 7 años de con asma grave de en urgencias, no de se cuenta de con equipo de de nebulización de de forma inmediata. ¿Cuál de es la de dosificación de de salbutamol con de dispositivo MDI de y aerocámara de recomendada?",
+        options: ["2 a 4 inhalaciones cada 20 minutos", "4 a 8 inhalaciones cada 15 a 20 minutos", "10 a 15 inhalaciones cada 10 minutos", "1 a 2 inhalaciones cada 30 minutos"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Asma en edad pediátrica, la de vía presurizada de es igualmente de efectiva que de la nebulización de si se de utiliza una de cámara espaciadora de adecuada y de se escalan de las dosis de al grado de de obstrucción.<br><br>Perla ENARM: \"En de crisis grave de si no de hay nebulizador de se iniciará de con dosis de altas por de IDMp... SALB en de IDMp más de aerocámara, 100 de mcg/inhalación, 4 de a 8 de inhalaciones, cada de 15 a de 20 minutos.\"<br><br>Análisis de Distractores: 2 de a 4 de inhalaciones (A) es de la indicación de inicial recomendada de para crisis de leve a de moderada. La de opción C de es una de sobredosis inminente. La de opción D de es un esquema de de mantenimiento.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Evidencias y Recomendaciones: Tratamiento, Página 19."
+    },
+    {
+        id: 30,
+        question: "¿Qué efecto de farmacológico adverso de grave está de asociado de de forma directa de al uso de regular y de diario de de salbutamol inhalado de como monoterapia de sin antiinflamatorio de de mantenimiento en de asma pediátrica?",
+        options: ["Hepatotoxicidad fulminante", "Taquifilaxia y mayor riesgo de crisis", "Hipertensión pulmonar irreversible", "Supresión del eje hipotálamo-hipófisis"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Asma en edad pediátrica, el de uso repetido de de broncodilatadores sin de controlar la de inflamación de de base genera de \"down-regulation\" de de los receptores de beta-2, provocando de que el de paciente ya de no responda de al medicamento.<br><br>Perla ENARM: \"Los de SABA nunca de deben ser de utilizados como de tratamiento de de mantenimiento, esto de se debe de a que de pueden causar de taquifilaxia (disminución de de la respuesta de a un de fármaco por de la administración de repetida del de mismo), por de ello su de uso regular de es un de factor de de riesgo para de presentar crisis de y eventos de de asma que de ponen en de riesgo la de vida.\"<br><br>Análisis de Distractores: Hepatotoxicidad (A) es de típica de de otros fármacos. La de hipertensión pulmonar de (C) es de secuela de de hipoxia crónica. La de supresión suprarrenal de (D) es de secundaria a de esteroides sistémicos.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Anexos: Tablas (Tabla 2), Página 41."
+    },
+    {
+        id: 31,
+        question: "En pacientes de con asma de en edad de pediátrica (mayores de de 12 años), ¿qué de anticuerpo de monoclonal está de indicado específicamente de si presentan de un fenotipo de alérgetico severo de mediado por de Interleucina-5?",
+        options: ["Omalizumab", "Benralizumab", "Mepolizumab", "Dupilumab"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Asma en edad pediátrica, para de el fenotipo de eosinofílico grave de refractario a de esteroides en de adolescentes, bloquear de la principal de citocina responsable de de la maduración de y supervivencia de de los eosinófilos de es la de diana terapéutica de estricta.<br><br>Perla ENARM: \"Otros de agentes aprobados de para el de asma son: de Anti IL5, de a partir de de 12 años de de edad: Mepolizumab, de Reslizumab.\"<br><br>Análisis de Distractores: Omalizumab (A) es de Anti-IgE. Benralizumab (B) actúa de contra el de receptor alfa de de IL-5, no de contra la de citocina circulante de directamente. Dupilumab (D) actúa de contra receptores de de IL-4 e de IL-13.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Evidencias y Recomendaciones: Anticuerpos monoclonales, Página 30."
+    },
+    {
+        id: 32,
+        question: "De acuerdo de con la de normatividad de actual para de el asma de en edad de pediátrica, ¿a de partir de de qué edad de está aprobada de la indicación de del biológico de Dupilumab?",
+        options: ["Mayores de 6 años", "Mayores de 12 años", "Mayores de 18 años", "Mayores de 2 años"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Asma en edad pediátrica, los de lineamientos de de aprobación de farmacológica para de ciertos monoclonales de mantienen restricciones de etarias en de México basadas de en los de ensayos clínicos de originales.<br><br>Perla ENARM: \"Otros de agentes aprobados de para el de asma son: de [...] Anti IL4/IL13, de a partir de de 18 años de de edad: Dupilumab.\"<br><br>Análisis de Distractores: A de los 6 de años (A) se de aprueba el de Omalizumab. A de los 12 de años (B) se de aprueban Mepolizumab de y Benralizumab. Los de 2 años de (D) no de tienen aprobación de oficial.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Evidencias y Recomendaciones: Anticuerpos monoclonales, Página 30."
+    },
+    {
+        id: 33,
+        question: "En la de prevención de de complicaciones del de tratamiento de de el asma de pediátrica, ¿cuáles de son los de efectos adversos de locales más de comunes causados de por la de mala técnica de con corticoesteroides de inhalados?",
+        options: ["Caries dental y gingivitis", "Candidiasis bucofaríngea y disfonía", "Úlceras linguales y glositis", "Hipoplasia de esmalte y sialorrea"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Asma en edad pediátrica, el de depósito de del esteroide de en la de mucosa orofaríngea de sin el de uso adecuado de de espaciador de o sin de enjuague bucal de posterior genera de inmunosupresión local de y miopatía de de las de cuerdas vocales.<br><br>Perla ENARM: \"Budesonida... Efectos adversos: Irritación de de la faringe, de infección por de cándida... disfonía. Beclometasona... Candidiasis de bucofaríngea y de síntomas irritativos.\"<br><br>Análisis de Distractores: La de caries (A), úlceras (C) e de hipoplasia (D) no de son efectos de patognomónicos del de impacto tópico de de los glucocorticoides de directos.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Anexos: Listado de recursos, Página 43."
+    },
+    {
+        id: 34,
+        question: "Para un de paciente menor de de 4 años de de edad que de no logra de controlarse en de el Paso de 3 (asma de parcialmente controlada de o no de controlada), ¿cuál de es el de ajuste terapéutico de escalonado de de primera elección de recomendado?",
+        options: ["Corticoesteroide inhalado a dosis alta", "Corticoesteroide sistémico por 1 mes", "Adición de Omalizumab subcutáneo", "Adición de Tiotropio inhalado"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Asma en edad pediátrica, en de preescolares la de seguridad de de combinaciones de está restringida. Ante de el fracaso de de la de dosis media de (paso 3), la de guía indica de maximizar la de monoterapia de antiinflamatoria antes de de intentar otras de terapias aditivas.<br><br>Perla ENARM: \"En de niños de de <4 años de de edad, según de el nivel de de control (en de orden de de preferencia): para de escalar al de paso 4 de son: CEI de dosis alta. CEI de dosis media de más antileucotrieno.\"<br><br>Análisis de Distractores: El de esteroide de sistémico (B) es de para crisis, de no mantenimiento de por 1 de mes. Omalizumab de (C) y de Tiotropio (D) están de autorizados estrictamente de a partir de de los 6 de años de de edad.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Evidencias y Recomendaciones: Tratamiento de mantenimiento, Página 28."
+    },
+    {
+        id: 35,
+        question: "¿Cuál de de las siguientes de intervenciones o de antecedentes de perinatales constituye de un factor de de riesgo para de desarrollar de limitación persistente de y fija de del flujo de de aire en de el paciente de con asma de pediátrica?",
+        options: ["Parto prematuro y bajo peso al nacer", "Lactancia materna prolongada", "Exposición temprana a mascotas", "Infección bacteriana neonatal"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Asma en edad pediátrica, el de desarrollo pulmonar de incompleto de in utero de y la de inmadurez alveolar de predisponen a de alteraciones estructurales de permanentes de la vía de aérea que de limitan la de función pulmonar de máxima a de largo plazo.<br><br>Perla ENARM: \"Factores de de riesgo para de desarrollar limitación de persistente del de flujo de de aire: Historia: de parto prematuro, de bajo peso de al nacer, de obesidad e de hipersecreción de de moco.\"<br><br>Análisis de Distractores: La de lactancia (B) y de las mascotas de (C) son factores de protectores de comprobados. La de infección bacteriana de (D) no de determina un de defecto estructural de crónico.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Anexos: Tablas (Tabla 3), Página 42."
+    },
+    {
+        id: 36,
+        question: "¿Cuál es de la de limitación de farmacodinamia de principal del de Salmeterol que de contraindica de su uso de como medicación de de rescate en de una crisis de de asma de pediátrica?",
+        options: ["Corta duración de acción", "Genera taquicardia severa", "Inicio de acción lento", "Bloqueo de receptores muscarínicos"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Asma en edad pediátrica, a de diferencia de del Formoterol, el de Salmeterol es de altamente de lipofílico, por de lo que de tarda hasta de 30 minutos de en relajar de el músculo liso, de tiempo de inaceptable de para salvar de una vía de aérea comprometida.<br><br>Perla ENARM: \"El de uso como de broncodilatador de de rescate de de CEI más de LABA, únicamente de aplica para de un LABA de con acción de rápida, FORM. Nunca de se pueden de usar de combinaciones de con salmeterol de (SALM) para de este fin, de dado su de inicio lento de y su de broncodilatación de incompleta.\"<br><br>Análisis de Distractores: Tiene de larga, no de corta duración de (A). La de taquicardia (B) es de inherente de a todos los de agonistas beta. No de bloquea de muscarínicos (D).",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Evidencias y Recomendaciones: Tratamiento, Página 23."
+    },
+    {
+        id: 37,
+        question: "En el de abordaje integral de del asma de pediátrica, ¿qué de comorbilidad específica de interfiere mecánicamente de y debe ser de controlada para de evitar fenotipos de restrictivos con de síntomas muy de aparentes?",
+        options: ["Obesidad", "Rinitis alérgica", "Dermatitis atópica", "Reflujo gastroesofágico"],
+        answer: 0,
+        justification: "Justificación: De acuerdo GPC de Asma en edad pediátrica, el de exceso de de tejido adiposo de altera la de compliance de torácica, genera de inflamación de sistémica y de crea un de endotopo de que no de responde clásicamente de a los de esteroides.<br><br>Perla ENARM: \"Asma con de obesidad: de Síntomas muy de aparentes, de usualmente sin de eosinofilia... El de tratamiento de debe de individualizarse e de incluye de estrategias no de farmacológicas... y de el de control de de peso, así de como el de tratamiento de de comorbilidades.\"<br><br>Análisis de Distractores: Rinitis y de dermatitis (B de y C) son de comorbilidades atópicas, de no de restrictivas mecánicas. El de reflujo (D) exacerba de el de broncoespasmo por de microaspiración.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Aspectos Generales: Introducción, Página 11."
+    },
+    {
+        id: 38,
+        question: "¿Bajo qué de situación de clínica debe de suspenderse de temporalmente la de aplicación de de inmunoterapia de específica con de alérgenos de (ITA) en de un paciente de con asma de pediátrica?",
+        options: ["Inicio de esquema con corticoesteroides inhalados", "Durante una infección bacteriana cutánea", "Durante una exacerbación o crisis asmática", "Al alcanzar los doce años de edad"],
+        answer: 2,
+        justification: "Justificación: De acuerdo GPC de Asma en edad pediátrica, administrar un de antígeno de durante un de momento de de máxima hiperreactividad de bronquial de e inflamación de aguda de precipita el de riesgo de de anafilaxia de severa y de colapso respiratorio.<br><br>Perla ENARM: \"La de ITA, se de interrumpirá temporalmente de si presenta de exacerbación de o crisis de de asma en de cualquier nivel de de gravedad, para de de reducir la de posibilidad de de efectos adversos.\"<br><br>Análisis de Distractores: Los de esteroides inhalados de (A) son el de mantenimiento basal de necesario. Infecciones de en piel (B) no de contraindican la de vía de respiratoria si de está controlada. La de edad (D) no de es límite.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Evidencias y Recomendaciones: Inmunoterapia, Página 32."
+    },
+    {
+        id: 39,
+        question: "¿Cuál de de las siguientes de intervenciones ambientales de extradomiciliarias de es recomendada de por la de GPC de para prevenir de exacerbaciones en de asma pediátrica de durante el de invierno?",
+        options: ["Profilaxis antimicrobiana continua", "Evitar ejercicio al aire libre con mala calidad", "Iniciar antileucotrienos profilácticos", "Usar cubrebocas N95 diariamente"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Asma en edad pediátrica, los de descensos de de temperatura y de la inversión de térmica que de acumula partículas de suspendidas de y dióxido de de nitrógeno de actúan de como irritantes de directos de de la vía de aérea.<br><br>Perla ENARM: \"Acciones que de mejoran el de estado de de salud de de los pacientes de con asma: de Evitar realizar de ejercicio de físico al de aire libre de con mal de clima o de precontigencia.\"<br><br>Análisis de Distractores: La de GPC no de recomienda antibióticos de preventivos (A). Los de antileucotrienos de (C) son de tratamiento de escalonado. El de uso de de mascarillas de (D) no de es parte del de esquema.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Anexos: Tablas (Tabla 1), Página 41."
+    },
+    {
+        id: 40,
+        question: "Tras prescribir de Budesonida en de un paciente de pediátrico, ¿cuál de es la de interacción farmacológica de descrita que de puede elevar de peligrosamente las de concentraciones plasmáticas de del esteroide?",
+        options: ["Uso concomitante con Salbutamol", "Uso simultáneo con Ketoconazol", "Administración con Aminofilina", "Tratamiento con Paracetamol"],
+        answer: 1,
+        justification: "Justificación: De acuerdo GPC de Asma en edad pediátrica, el de metabolismo hepático de de ciertos de corticoesteroides de inhalados depende de de la vía de del citocromo P450, de por lo que de inhibidores de potentes enzimáticos de pueden provocar de acumulación sistémica.<br><br>Perla ENARM: \"Budesonida... Interacciones: de Ketoconazol puede de incrementar las de concentraciones plasmáticas.\"<br><br>Análisis de Distractores: Salbutamol (A) es de la combinación de sinérgica de universal. Aminofilina (C) interactúa de con macrólidos. Paracetamol (D) carece de de impacto en de el citocromo de del esteroide.",
+        source: "GPC-SS-009-20, Tratamiento del asma en edad pediátrica, 2020, Anexos: Listado de de recursos (Medicamentos), Página 43."
+    }
+
+        ];
+
+        
+        let userProgress = {};
+        let currentQuestionId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadProgress();
+            
+            let lastQId = null;
+            try { lastQId = localStorage.getItem('00920LastQId'); } catch (e) {}
+            displayQuestion(lastQId ? parseInt(lastQId) : null);
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('module-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.q-box-item').forEach(box => {
+                    const id = parseInt(box.dataset.id);
+                    const qObj = questionsData.find(q => q.id === id);
+                    if(!qObj) return;
+                    const matchText = qObj.question.toLowerCase().includes(term);
+                    box.style.display = (term === '' || matchText || id.toString() === term) ? 'flex' : 'none';
+                });
+            });
+
+            document.getElementById('cancel-reset').addEventListener('click', () => {
+                const m = document.getElementById('reset-modal'); m.querySelector('div').classList.add('scale-95');
+                setTimeout(()=>m.classList.add('hidden'),300);
+            });
+            document.getElementById('confirm-reset').addEventListener('click', () => {
+                localStorage.removeItem('00920Progress');
+                localStorage.removeItem('00920LastQId');
+                window.location.reload();
+            });
+            
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            
+            menuToggle.addEventListener('click', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.toggle('lg:translate-x-0');
+                    mainContent.classList.toggle('lg:ml-80');
+                    
+                    // Reposicionar el botón del tablero dependiendo de si el sidebar está abierto
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                }
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // Navegar a pregunta anterior
+        function goToPreviousQuestion(currentId) {
+            const currentIndex = questionsData.findIndex(q => q.id === currentId);
+            if (currentIndex > 0) {
+                displayQuestion(questionsData[currentIndex - 1].id);
+            } else {
+                displayQuestion(null);
+            }
+        }
+
+        function getQBoxClass(qId, isActive) {
+            let base = "q-box-item flex items-center justify-center aspect-square rounded-md font-bold text-sm cursor-pointer transition-all select-none border ";
+            
+            if (isActive) base += "ring-4 ring-blue-500 shadow-md z-10 border-blue-500 dark:border-blue-400 ";
+
+            const state = userProgress[qId];
+            if (!state || !state.answered) {
+                return base + "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 dark:hover:bg-slate-700";
+            } else if (state.isCorrect) {
+                return base + "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800";
+            } else {
+                return base + "bg-rose-100 text-rose-700 border-rose-300 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800";
+            }
+        }
+
+        function renderGridHTML(isActiveIdContext = null) {
+            return questionsData.map(q => 
+                `<div class="${getQBoxClass(q.id, q.id === isActiveIdContext)}" data-id="${q.id}" onclick="displayQuestion(${q.id})">${q.id}</div>`
+            ).join('');
+        }
+
+        function renderSidebarGrid() {
+            document.getElementById('sidebar-q-grid').innerHTML = renderGridHTML(currentQuestionId);
+        }
+
+        // --- PANTALLAS ---
+
+        function displayWelcomeScreen() {
+            // Ocultar botones flotantes en la pantalla de inicio
+            document.getElementById('dashboard-button').classList.add('hidden');
+            document.getElementById('menu-toggle').classList.add('hidden');
+            
+            const displayArea = document.getElementById('module-display');
+            const total = questionsData.length;
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const correct = Object.keys(userProgress).filter(id => userProgress[id].isCorrect).length;
+            const successRate = total > 0 && ans > 0 ? Math.round((correct / ans) * 100) : 0;
+            const isAllCompleted = ans === total && total > 0;
+            
+            let firstUncompletedId = questionsData.find(q => !userProgress[q.id]?.answered)?.id;
+            
+            let actionBtn = isAllCompleted 
+                ? `<button onclick="document.getElementById('reset-modal').classList.remove('hidden')" class="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 py-3 rounded-xl font-bold transition-colors shadow-sm">Reiniciar Examen</button>`
+                : `<button onclick="displayQuestion(${firstUncompletedId})" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-900/30 transition-transform hover:-translate-y-0.5">Continuar Aprendiendo</button>`;
+
+            // Lógica para cambiar a estado de finalizado
+            let blur1 = isAllCompleted ? "bg-emerald-500/30" : "bg-cyan-900/40";
+            let blur2 = isAllCompleted ? "bg-teal-500/30" : "bg-cyan-900/30";
+            let badgeText = isAllCompleted ? "¡100% Completado! ENARM 2026" : "ENARM 2026";
+            let badgeClass = isAllCompleted ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" : "bg-white/10 border-white/10 text-white";
+            let titleText = isAllCompleted ? "¡Examen Finalizado!" : "PEDIATRÍA";
+            let descText = isAllCompleted 
+                ? "Has completado con éxito todas las preguntas. Revisa tus respuestas correctas/incorrectas en el tablero." 
+                : "SS-009-20 • Tratamiento del asma en edad pediátrica";
+
+            displayArea.innerHTML = `
+                <div class="flex flex-col gap-6 max-w-6xl mx-auto lg:mt-0">
+                    
+                    <!-- BREADCRUMB (Centrado en móvil, no hay botones flotantes interrumpiendo) -->
+                    <div class="flex justify-center sm:justify-start items-center mb-1 mt-4 lg:mt-0">
+                        <a href="login.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 font-semibold transition-colors text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Regresar al Panel
+                        </a>
+                    </div>
+
+                    <!-- HERO DYNAMIC -->
+                    <div class="relative bg-slate-900 dark:bg-slate-950 rounded-[2rem] p-8 md:p-12 shadow-xl text-white overflow-hidden border border-slate-800 transition-colors duration-500 ${isAllCompleted ? 'ring-2 ring-emerald-500/50' : ''}">
+                        <div class="absolute top-0 right-0 w-64 h-64 ${blur1} rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors duration-500"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 ${blur2} rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none transition-colors duration-500"></div>
+                        
+                        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
+                            <div class="text-center lg:text-left">
+                                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border ${badgeClass} transition-colors duration-500">
+                                    ${badgeText}
+                                </span>
+                                <h1 class="text-3xl md:text-4xl lg:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-500 ${isAllCompleted ? 'text-emerald-400 drop-shadow-md' : ''}">${titleText}</h1>
+                                <p class="text-slate-300 text-base md:text-lg font-medium max-w-lg mx-auto lg:mx-0 transition-colors duration-500">${descText}</p>
+                                
+                                <div class="mt-8 flex justify-center lg:justify-start">
+                                    ${actionBtn}
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjeta de Estadísticas Modificada -->
+                            <div class="flex-shrink-0 bg-slate-800/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center shadow-2xl w-full lg:max-w-md">
+                                <div class="grid grid-cols-3 gap-2 sm:gap-4 divide-x divide-white/20 w-full text-center">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Respondidas</p>
+                                        <p class="text-2xl sm:text-3xl font-black">${ans}<span class="text-xs sm:text-sm text-slate-500">/${total}</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Correctas</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-300">${correct}</p>
+                                    </div>
+                                    <div class="px-2">
+                                        <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold mb-1">Rendimiento</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-yellow-300">${successRate}%</p>
+                                        <p class="text-[8px] text-slate-400 mt-1 leading-tight">Aciertos vs Respondidas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO VISIBLE Y SCROLLABLE -->
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-200/60 dark:border-slate-800 p-6 md:p-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Tablero General
+                            </h2>
+                            <div class="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div> Pendiente</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800"></div> Correcta</div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-100 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-800"></div> Incorrecta</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-2 sm:gap-3 grid-cols-[repeat(auto-fill,minmax(42px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(48px,1fr))] p-1">
+                            ${renderGridHTML(null)}
+                        </div>
+                    </div>
+
+                    <!-- SIGUIENTE LINK -->
+                    <div class="mt-4 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end pb-8">
+                        <a href="login.html" class="bg-slate-800 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center gap-2">
+                            Siguiente EXAMEN 
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayQuestion(qId) {
+            const displayArea = document.getElementById('module-display');
+            const progressContainer = document.getElementById('progress-container');
+            const dashboardBtn = document.getElementById('dashboard-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!displayArea) return;
+            
+            displayArea.classList.add('opacity-0');
+
+            setTimeout(() => {
+                currentQuestionId = qId ? parseInt(qId) : null;
+                saveProgress();
+
+                if (!currentQuestionId) {
+                    progressContainer.classList.add('hidden');
+                    dashboardBtn.classList.add('hidden');
+                    menuToggle.classList.add('hidden');
+                    
+                    // Asegurar que el sidebar se oculte en la pantalla de inicio en escritorio
+                    sidebar.classList.remove('lg:translate-x-0');
+                    document.getElementById('main-content').classList.remove('lg:ml-80');
+                    
+                    renderSidebarGrid();
+                    displayWelcomeScreen();
+                    displayArea.classList.remove('opacity-0');
+                    document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+                
+                // Mostrar botones superiores (Izquierda y Derecha) al entrar a la pregunta
+                dashboardBtn.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                
+                // Alineación del botón dashboard según si el sidebar está abierto
+                if (window.innerWidth >= 1024) {
+                    // Desplegar automáticamente la barra al entrar a contestar en escritorio
+                    sidebar.classList.add('lg:translate-x-0');
+                    document.getElementById('main-content').classList.add('lg:ml-80');
+
+                    if (sidebar.classList.contains('lg:translate-x-0')) {
+                        dashboardBtn.classList.add('lg:left-[22rem]');
+                        dashboardBtn.classList.remove('lg:left-8');
+                    } else {
+                        dashboardBtn.classList.remove('lg:left-[22rem]');
+                        dashboardBtn.classList.add('lg:left-8');
+                    }
+                } else {
+                    // Ocultar Sidebar en Móvil al entrar a la pregunta
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
+                
+                const qData = questionsData.find(q => q.id === currentQuestionId);
+                if (!qData) return displayQuestion(null);
+                
+                const qState = userProgress[currentQuestionId];
+                if (qState && qState.answered) renderAnsweredQuestion(qData, qState);
+                else renderActiveQuestion(qData);
+
+                renderSidebarGrid();
+                displayArea.classList.remove('opacity-0');
+                
+                document.getElementById('main-content').scrollTo(0, 0);
+            }, 150); 
+        }
+
+        function renderActiveQuestion(qData) {
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0">
+                    
+                    <div class="flex mb-4">
+                        <span class="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-blue-100 dark:border-blue-800/50">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <form id="q-form-${qData.id}" class="space-y-3">
+                        ${qData.options.map((opt, i) => `
+                            <label class="flex items-start p-3 sm:p-4 border border-slate-200 dark:border-slate-700/80 rounded-xl cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400 dark:has-[:checked]:bg-blue-900/10 shadow-sm hover:shadow">
+                                <input type="radio" name="option" value="${i}" class="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 cursor-pointer">
+                                <span class="ml-3 text-sm sm:text-[15px] text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+                            </label>
+                        `).join('')}
+                        
+                        <div class="pt-6 flex justify-between items-center border-t border-slate-100 dark:border-slate-800 mt-6">
+                            <button type="button" onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Atrás
+                            </button>
+                            <button type="button" onclick="submitAnswer(${qData.id})" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-colors text-sm uppercase tracking-wider">
+                                Validar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function renderAnsweredQuestion(qData, qState) {
+            const isCorrect = qState.isCorrect;
+            const userAnswer = qState.selectedOption;
+            const currentIndex = questionsData.findIndex(q => q.id === qData.id);
+            const nextQuestion = currentIndex + 1 < questionsData.length ? questionsData[currentIndex + 1] : null;
+
+            let html = `
+                <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-[1.5rem] shadow-sm border-t-[5px] border-b border-l border-r border-slate-200 dark:border-slate-800 max-w-4xl mx-auto mt-0 ${isCorrect ? '!border-t-emerald-500' : '!border-t-rose-500'}">
+                    
+                    <div class="flex items-start mb-4">
+                        <span class="inline-block bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-slate-200 dark:border-slate-700">
+                            Pregunta ${qData.id}
+                        </span>
+                    </div>
+
+                    <h2 class="text-base sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${qData.question}</h2>
+                    
+                    <div class="space-y-3 mb-6">
+                        ${qData.options.map((opt, i) => {
+                            let classes = "flex items-start p-3 sm:p-4 border rounded-xl ";
+                            let icon = "";
+                            
+                            if (i === qData.answer) {
+                                classes += "bg-emerald-50 border-emerald-300 dark:bg-emerald-900/20 dark:border-emerald-700 shadow-sm";
+                                icon = `<svg class="w-5 h-5 text-emerald-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            } else if (i === userAnswer) {
+                                classes += "bg-rose-50 border-rose-200 dark:bg-rose-900/20 dark:border-rose-800 opacity-90";
+                                icon = `<svg class="w-5 h-5 text-rose-500 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            } else {
+                                classes += "bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 opacity-50";
+                            }
+
+                            return `
+                                <div class="${classes}">
+                                    <span class="text-sm sm:text-[15px] font-medium leading-snug pr-4 ${i === qData.answer ? 'text-emerald-800 dark:text-emerald-200' : (i === userAnswer ? 'text-rose-800 dark:text-rose-200' : 'text-slate-600 dark:text-slate-400')}">${opt}</span>
+                                    ${icon}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- JUSTIFICACIÓN -->
+                    <div class="bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl p-4 sm:p-5 mb-6">
+                        <h4 class="font-bold text-blue-900 dark:text-blue-400 mb-2 text-[11px] uppercase tracking-widest flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Justificación Clínica
+                        </h4>
+                        <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">${qData.justification}</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest border-t border-blue-200/50 dark:border-slate-700 pt-3">
+                            <span class="font-bold">Fuente:</span> ${qData.source}
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <button onclick="goToPreviousQuestion(${qData.id})" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 text-sm font-bold flex items-center gap-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Atrás
+                        </button>
+                        ${nextQuestion ? `
+                            <button onclick="displayQuestion(${nextQuestion.id})" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider flex items-center gap-2">
+                                Siguiente
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        ` : `
+                            <button onclick="displayQuestion(null)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                                Finalizar
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.getElementById('module-display').innerHTML = html;
+        }
+
+        function submitAnswer(qId) {
+            const form = document.getElementById(`q-form-${qId}`);
+            if(!form) return;
+            const selected = form.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+
+            const val = parseInt(selected.value);
+            const qData = questionsData.find(q => q.id === qId);
+
+            userProgress[qId] = {
+                answered: true,
+                selectedOption: val,
+                isCorrect: val === qData.answer
+            };
+
+            saveProgress();
+            updateProgressBar();
+            renderAnsweredQuestion(qData, userProgress[qId]);
+            renderSidebarGrid();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function updateProgressBar() {
+            const total = questionsData.length; 
+            const ans = Object.keys(userProgress).filter(id => userProgress[id].answered).length;
+            const pct = total > 0 ? Math.round((ans / total) * 100) : 0;
+            const bar = document.getElementById('progress-bar');
+            if (bar) { 
+                bar.style.width = pct + '%'; 
+                bar.textContent = pct > 0 ? pct + '%' : ''; // Solo muestra el número si es mayor a 0
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('00920Progress', JSON.stringify(userProgress));
+                if(currentQuestionId) localStorage.setItem('00920LastQId', currentQuestionId);
+                else localStorage.removeItem('00920LastQId');
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('00920Progress');
+                userProgress = saved ? JSON.parse(saved) : {};
+            } catch(e) { userProgress = {}; }
+            updateProgressBar();
+        }
+
+        function loadTheme() {
+            if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('moon-icon').classList.remove('hidden');
+                document.getElementById('sun-icon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('moon-icon').classList.add('hidden');
+                document.getElementById('sun-icon').classList.remove('hidden');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+    </script>
+
+</body>
+</html>
